@@ -1,0 +1,30 @@
+.project-footer {
+    padding: 32px 32px 0 32px;
+    position: absolute;
+    bottom: 32px;
+}
+.project-body {
+    background-color: #16161c;
+}
+.project-main {
+    padding: 0 82px;
+}
+.project-main-start-card {
+    background-color: #f6f6f6;
+    cursor: pointer;
+    border-radius: 10px;
+    display: block;
+
+}
+.project-main-start-card-box {
+    height: 210px;
+    border-radius: 10px;
+    display: inline-flex;
+}
+.project-main-start-card-box img {
+    height: 200px;
+}
+.project-main-start-card-box i {
+    font-size: 5rem;
+    opacity: 0.7;
+}

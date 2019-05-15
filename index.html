@@ -1,0 +1,130 @@
+---
+layout: default
+title: Home
+---
+<div class="top-panel white-text">
+    <div class="container">
+
+        <nav class="nav-top">
+            <div class="nav-wrapper">
+                <a href="/">
+                    <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
+                </a>
+
+                <ul class="right header-right-bar">
+                    <li>
+                        <a href=https://app.deepmosaic.jp/login>{{ site.data.lang.ja.login }}</a>
+                    </li>
+                    <li>
+                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button'
+                            href="https://app.deepmosaic.jp/signup">{{ site.data.lang.ja.signup }}<i class="tiny material-icons">open_in_new</i></a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+
+        <div class="row">
+            <div class="col s12 m10">
+                <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
+            </div>
+            <div class="col s12 m12">
+
+                <span>画像ファイルをアップロードすることで、<a class="C(#fff) Td(u) Td(n):h" href="/company/terms"
+                    target="_blank" rel="noopener noreferrer"><span>{{ site.data.lang.ja.terms }}</span></a>, <a class="C(#fff) Td(u) Td(n):h" href="/company/privacy" target="_blank" rel="noopener noreferrer"><span>{{ site.data.lang.ja.privacy }}</span></a>, <a class="C(#fff) Td(u) Td(n):h" href="/company/cookie" target="_blank" rel="noopener noreferrer"><span>{{ _['cookie'] }}</span></a>に同意したことになります。</span>
+            </div>
+
+            <div id="file_upload_box">
+                <div class="col s12 m6 file-upload-box animated pulse" :class="isHide">
+                    <input type="file" class="filepond" name="image_file" />
+                </div>
+            </div>
+
+            <div id="file_section_box">
+                <div class="col s12 file-upload-box" :class="isHide">
+
+                    <a class="control-button-css waves-effect waves-light btn btn-small red lighten-1"
+                        :class="isCloseButtonHide" v-on:click="close_file_section">
+                        <i class="material-icons">close</i>
+                    </a>
+
+                    <a class="control-button-css waves-effect waves-light btn blue-grey"
+                        :href="export_url" target="_blank" :class="isExportImageHide">
+                        <i class="material-icons left">file_download</i>
+                        {{ site.data.lang.ja.export_file_blurred }}
+                    </a>
+
+                    <a class="control-button-css waves-effect waves-light btn blue-grey hide"
+                        :href="export_json_url" target="_blank" :class="isExportJsonHide">
+                        <i class="material-icons left">file_download</i>
+                        {{ site.data.lang.ja.export_file_blurred }}
+                    </a>
+
+                    <div class="row">
+                        <div class="col s12">
+                            <div class="card">
+                                <div class="card-image card-image-box center-align">
+
+                                    <div class="preloader-wrapper small active card-image-loader"
+                                        :class="isPreLoaderHide">
+                                        <div class="spinner-layer spinner-blue-only">
+                                            <div class="circle-clipper left">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="gap-patch">
+                                                <div class="circle"></div>
+                                            </div>
+                                            <div class="circle-clipper right">
+                                                <div class="circle"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <img class="responsive-img" :src="src_image" />
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="container">
+    <div class="row summary-section">
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <div class="center light-blue-text summary-icon"><svg class="svg-inline--fa fa-hand-paper fa-w-14 material-icons icon-svg" aria-hidden="true" data-prefix="far" data-icon="hand-paper" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M372.57 112.641v-10.825c0-43.612-40.52-76.691-83.039-65.546-25.629-49.5-94.09-47.45-117.982.747C130.269 26.456 89.144 57.945 89.144 102v126.13c-19.953-7.427-43.308-5.068-62.083 8.871-29.355 21.796-35.794 63.333-14.55 93.153L132.48 498.569a32 32 0 0 0 26.062 13.432h222.897c14.904 0 27.835-10.289 31.182-24.813l30.184-130.958A203.637 203.637 0 0 0 448 310.564V179c0-40.62-35.523-71.992-75.43-66.359zm27.427 197.922c0 11.731-1.334 23.469-3.965 34.886L368.707 464h-201.92L51.591 302.303c-14.439-20.27 15.023-42.776 29.394-22.605l27.128 38.079c8.995 12.626 29.031 6.287 29.031-9.283V102c0-25.645 36.571-24.81 36.571.691V256c0 8.837 7.163 16 16 16h6.856c8.837 0 16-7.163 16-16V67c0-25.663 36.571-24.81 36.571.691V256c0 8.837 7.163 16 16 16h6.856c8.837 0 16-7.163 16-16V101.125c0-25.672 36.57-24.81 36.57.691V256c0 8.837 7.163 16 16 16h6.857c8.837 0 16-7.163 16-16v-76.309c0-26.242 36.57-25.64 36.57-.691v131.563z"></path></svg></div>
+                <h5 class="center bold-text">{{ site.data.lang.ja.precision }}</h5>
+                <p class="light">{{ site.data.lang.ja.precision_desc }}</p>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <div class="center light-blue-text summary-icon">
+                    <i class="medium material-icons">location_searching</i>
+                </div>
+                <h5 class="center bold-text">{{ site.data.lang.ja.find }}</h5>
+                <p class="light">{{ site.data.lang.ja.find_desc }}</p>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="icon-block">
+                <div class="center light-blue-text summary-icon" style="padding-top: 8px;">
+                    <svg class="material-icons icon-svg" aria-hidden="true" data-prefix="fas" data-icon="brain" class="svg-inline--fa fa-brain fa-w-18" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path fill="currentColor" d="M208 0c-29.87 0-54.74 20.55-61.8 48.22-.75-.02-1.45-.22-2.2-.22-35.34 0-64 28.65-64 64 0 4.84.64 9.51 1.66 14.04C52.54 138 32 166.57 32 200c0 12.58 3.16 24.32 8.34 34.91C16.34 248.72 0 274.33 0 304c0 33.34 20.42 61.88 49.42 73.89-.9 4.57-1.42 9.28-1.42 14.11 0 39.76 32.23 72 72 72 4.12 0 8.1-.55 12.03-1.21C141.61 491.31 168.25 512 200 512c39.77 0 72-32.24 72-72V205.45c-10.91 8.98-23.98 15.45-38.36 18.39-4.97 1.02-9.64-2.82-9.64-7.89v-16.18c0-3.57 2.35-6.78 5.8-7.66 24.2-6.16 42.2-27.95 42.2-54.04V64c0-35.35-28.66-64-64-64zm368 304c0-29.67-16.34-55.28-40.34-69.09 5.17-10.59 8.34-22.33 8.34-34.91 0-33.43-20.54-62-49.66-73.96 1.02-4.53 1.66-9.2 1.66-14.04 0-35.35-28.66-64-64-64-.75 0-1.45.2-2.2.22C422.74 20.55 397.87 0 368 0c-35.34 0-64 28.65-64 64v74.07c0 26.09 17.99 47.88 42.2 54.04 3.46.88 5.8 4.09 5.8 7.66v16.18c0 5.07-4.68 8.91-9.64 7.89-14.38-2.94-27.44-9.41-38.36-18.39V440c0 39.76 32.23 72 72 72 31.75 0 58.39-20.69 67.97-49.21 3.93.67 7.91 1.21 12.03 1.21 39.77 0 72-32.24 72-72 0-4.83-.52-9.54-1.42-14.11 29-12.01 49.42-40.55 49.42-73.89z"></path></svg></div>
+                <h5 class="center bold-text">{{ site.data.lang.ja.deep_learning }}</h5>
+                <p class="light">{{ site.data.lang.ja.deep_learning_desc }}</p>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% include footer.html %}
