@@ -24,70 +24,21 @@ title: Home
             </div>
         </nav>
 
-        <div class="row">
-            <div class="col s12 m10">
+        <div class="row center-align">
+
                 <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
-            </div>
+                <div class="sub-phrase">
+                    <p>DeepmosaicはWeb上で利用できるビデオ編集ツールです。Deepmosaicを使えば全ての作業が完結します。</p>
+                </div>
+                <div class="sub-start">
+                    <a class='waves-effect waves-light btn-large blue-grey language-dropdown-button'
+                        href="https://app.deepmosaic.jp/signup">{{ site.data.lang.ja.signup }}</a>
+                </div>
+
             <div class="col s12 m12">
 
-                <span>画像ファイルをアップロードすることで、<a class="C(#fff) Td(u) Td(n):h" href="/company/terms"
-                    target="_blank" rel="noopener noreferrer"><span>{{ site.data.lang.ja.terms }}</span></a>, <a class="C(#fff) Td(u) Td(n):h" href="/company/privacy" target="_blank" rel="noopener noreferrer"><span>{{ site.data.lang.ja.privacy }}</span></a>, <a class="C(#fff) Td(u) Td(n):h" href="/company/cookie" target="_blank" rel="noopener noreferrer"><span>{{ _['cookie'] }}</span></a>に同意したことになります。</span>
-            </div>
+                <img class="home-guide-image responsive-img z-depth-5" src="/assets/img/deepmosaic_app_capcha.jpg">
 
-            <div id="file_upload_box">
-                <div class="col s12 m6 file-upload-box animated pulse" :class="isHide">
-                    <input type="file" class="filepond" name="image_file" />
-                </div>
-            </div>
-
-            <div id="file_section_box">
-                <div class="col s12 file-upload-box" :class="isHide">
-
-                    <a class="control-button-css waves-effect waves-light btn btn-small red lighten-1"
-                        :class="isCloseButtonHide" v-on:click="close_file_section">
-                        <i class="material-icons">close</i>
-                    </a>
-
-                    <a class="control-button-css waves-effect waves-light btn blue-grey"
-                        :href="export_url" target="_blank" :class="isExportImageHide">
-                        <i class="material-icons left">file_download</i>
-                        {{ site.data.lang.ja.export_file_blurred }}
-                    </a>
-
-                    <a class="control-button-css waves-effect waves-light btn blue-grey hide"
-                        :href="export_json_url" target="_blank" :class="isExportJsonHide">
-                        <i class="material-icons left">file_download</i>
-                        {{ site.data.lang.ja.export_file_blurred }}
-                    </a>
-
-                    <div class="row">
-                        <div class="col s12">
-                            <div class="card">
-                                <div class="card-image card-image-box center-align">
-
-                                    <div class="preloader-wrapper small active card-image-loader"
-                                        :class="isPreLoaderHide">
-                                        <div class="spinner-layer spinner-blue-only">
-                                            <div class="circle-clipper left">
-                                                <div class="circle"></div>
-                                            </div>
-                                            <div class="gap-patch">
-                                                <div class="circle"></div>
-                                            </div>
-                                            <div class="circle-clipper right">
-                                                <div class="circle"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <img class="responsive-img" :src="src_image" />
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
             </div>
         </div>
 

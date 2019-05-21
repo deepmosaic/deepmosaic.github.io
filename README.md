@@ -2,9 +2,9 @@
 Deepmosaic Landing Page
 
 
-# jekyll-3.8.5
+# Install jekyll
 ```
-gem install jekyll bundler
+sudo gem install jekyll bundler
 jekyll new .
 ```
 
