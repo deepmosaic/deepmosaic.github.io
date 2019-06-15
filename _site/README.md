@@ -15,6 +15,7 @@ jekyll build --watch
 ```
 
 - server起動
+serverではなくserve
 ```
 jekyll serve
 ```

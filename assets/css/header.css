@@ -24,8 +24,8 @@
 }
 .header-app-dropdown {
     top: 62px !important;
-    min-width: 300px;
-    padding: 20px !important;
+    min-width: 180px;
+    padding: 8px !important;
     border-radius: 10px;
 }
 .header-app-dropdown li:hover{
@@ -48,4 +48,8 @@
     min-width: 300px;
     border-radius: 10px;
     min-height: 300px;
+}
+.header-dehaze {
+    font-size: 2.2rem !important;
+    padding-top: 6px;
 }

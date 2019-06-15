@@ -32,15 +32,8 @@
 <meta name="theme-color" content="#ffffff">
 <link rel="shortcut icon" href="/assets/img/favicon.ico">
 
-<!-- Google Webmaster Tool -->
+<!-- Google Search Console -->
 <meta name="google-site-verification" content="6bC0ENR45CRbQoll9VBbhsvtL69oIJQ1CbenWwUsidU" />
-
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-TT6394D');</script>
 
 <!-- Google Analytics -->
 <script>
@@ -71,13 +64,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- CSS -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css" rel="stylesheet" >
-<link href="/assets/css/style.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
+
 
 <!-- JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/js/materialize.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-<script src="/assets/js/jquery.particleground.min.js"></script>
+<script src="/assets/js/index.js"></script>
 
 <!-- Hotjar Tracking Code for www.deepmosaic.co.jp -->
 <script>
@@ -93,9 +88,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
 </head>
 <body>
-<!-- Google Tag Manager (noscript) -->
-<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TT6394D"
-height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 <!--
 <div id="fb-root"></div>
@@ -119,7 +111,9 @@ fjs.parentNode.insertBefore(js, fjs);
                     <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
                 </a>
 
-                <ul class="right header-right-bar">
+                <div class="hide">
+
+                <ul class="right header-right-bar hide-on-small-only">
                     <li>
                         <a href=https://app.deepmosaic.jp/login>ログイン</a>
                     </li>
@@ -128,6 +122,20 @@ fjs.parentNode.insertBefore(js, fjs);
                             href="https://app.deepmosaic.jp/signup">開始する<i class="tiny material-icons">open_in_new</i></a>
                     </li>
                 </ul>
+
+                <div class="right header-right-bar hide-on-med-only hide-on-large-only show-on-small">
+                    <a class="dropdown-trigger btn-small"
+                        href='#' data-target='header-app-dropdown'>
+                        <i class="header-dehaze material-icons">dehaze</i>
+                    </a>
+
+                    <ul id='header-app-dropdown' class='row dropdown-content header-app-dropdown'>
+                        <li><a href="#!">ログイン</a></li>
+                        <li><a href="#!">開始する</a></li>
+                    </ul>
+                </div>
+
+                </div>
 
             </div>
         </nav>
@@ -140,7 +148,8 @@ fjs.parentNode.insertBefore(js, fjs);
                 </div>
                 <div class="sub-start">
                     <a class='waves-effect waves-light btn-large blue-grey language-dropdown-button'
-                        href="https://app.deepmosaic.jp/signup">開始する</a>
+                    target="_blank"
+                       href="https://docs.google.com/forms/d/e/1FAIpQLSc4ja3Sn0w_3XzPiPJ-_gtqMbmBZxfzQAazMiTQqHXy9k3MLA/viewform?usp=sf_link">デモに申し込む<i class="tiny material-icons">open_in_new</i></a>
                 </div>
 
             <div class="col s12 m12">
