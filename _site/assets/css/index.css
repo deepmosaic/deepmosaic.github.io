@@ -503,8 +503,12 @@ img {
 }
 .usecase-box-card {
     border-radius: 10px;
+    min-height: 340px;
 }
 .usecase-box-card img {
     border-radius: 10px 10px 0 0 !important;
     filter: blur(0.7px);
+}
+.usecase-explain-text {
+    font-size: 18px;
 }
