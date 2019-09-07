@@ -512,3 +512,59 @@ img {
 .usecase-explain-text {
     font-size: 18px;
 }
+.image_upload_section {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    min-height: 300px;
+}
+.modal-project-start-dropzone {
+    min-height: 140px;
+    background-color: #fafafa;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    border-radius: 10px;
+}
+.modal-project-start-dropzone:hover {
+    border-color: #409EFF;
+}
+.dropzone-picture-icon {
+    font-size: 10rem;
+    color: #757575;
+}
+.dropzone-picture-box {
+    padding: 30px;
+}
+.image_upload_loading_box {
+    padding-top: 60px;
+}
+.konva-outbox {
+    position: relative;
+}
+.image_upload_result_img {
+    border-radius: 10px;
+    top: 0;
+    z-index: -100000;
+}
+.konva-box {
+   height: 100%;
+   position: absolute;
+}
+.konva-card {
+    background-color: unset !important;
+}
+.wait-list-section {
+    background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
+    padding: 3rem 0 5rem 0;
+    margin-bottom: 60px;
+}
+.wait-list-section li {
+    font-size: large;
+    margin-bottom: 6px;
+}
+.wait-list-box {
+    margin-top: 2.4rem;
+    margin-bottom: 2.4rem;
+}

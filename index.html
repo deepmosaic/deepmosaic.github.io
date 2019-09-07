@@ -50,12 +50,19 @@ title: Home
 
                 <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
                 <div class="sub-phrase">
-                    <p>DeepmosaicはWeb上で利用できる動画編集ツールです。ディープラーニング技術を用いて対象の物体を自動で検知します。</p>
+                    <p>DeepmosaicはWeb上で利用できる動画・画像編集ツールです。ディープラーニング技術を用いて対象の物体を自動で検知します。</p>
                 </div>
                 <div class="sub-start">
                     <a class='waves-effect waves-light btn-large blue-grey language-dropdown-button'
+                        href="#demo">
+                        デモを試す
+                    </a>                    
+                    
+                    <!--
+                    <a class='waves-effect waves-light btn-large blue-grey language-dropdown-button'
                     target="_blank"
                        href="https://docs.google.com/forms/d/e/1FAIpQLSc4ja3Sn0w_3XzPiPJ-_gtqMbmBZxfzQAazMiTQqHXy9k3MLA/viewform?usp=sf_link">{{ site.data.lang.ja.demo_apply }}<i class="tiny material-icons">open_in_new</i></a>
+                    -->
                 </div>
 
             <div class="col s12 m12">
@@ -67,67 +74,11 @@ title: Home
 
     </div>
 </div>
-<div class="container">
-    <div class="card card-to-detect-list">
 
-        <div class="card-content">
-            <h3 class="center-align title-to-detect-h3">自動で検知できる物体<small>※</small></h3>
-
-            <div class="row box-to-detect-list">
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>人の顔</span>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>人</span>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>車のナンバー</span>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>民家</span>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>テキスト</span>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="check-icon-to-detect-internal-div">
-                        <i class="small material-icons check-icon-to-detect">check_circle</i>
-                        <span>わいせつ物（男性・女性）</span>
-                    </div>
-                </div>
-            </div>
-
-            <small class="grey-text">※ディープラーニングの性質上、100%の精度で検出することはできません</small>
-
-        </div>
-
-        <div class="card-image">
-            <img src="/assets/img/detection-example.jpg">
-        </div>
-
-    </div>
-</div>
 
 
 
 <div class="container usecase-container">
-
-    <div class="divider"></div>
 
     <h4 class="center-align bold-text usecase-title">自動モザイク処理で人件費削減・編集時間短縮</h4>
 
@@ -168,7 +119,168 @@ title: Home
 
     </div>
 </div>
+<!--
+<div class="container" id="demo">
+    <div class="divider"></div>
+    <h4 class="center-align bold-text usecase-title">デモ：わいせつ物（男性・女性）を自動検知する</h4>
+    <p class="center-align">男性・女性の局部の写っている画像をアップロードしてください。ディープラーニング技術により、局部を自動で検知します。</p>
+    <p class="center-align"></p>
+    <div class="row image_upload_section center-align">
 
+        <div id="image_upload" class="col s12 m8 offset-m2">
+            <form method="post" enctype="multipart/form-data"
+            class="modal-project-start-dropzone" id="modal-project-start-dropzone">
+
+                <div class="dz-message row dropzone-picture-box">
+                    <div class="col s12 m8">
+                        <p class="dropzone-picture-text">ここに画像ファイルをドロップするか、クリックして画像ファイルアップロードしてください。</p>
+                    </div>
+                    <div class="col s12 m4 center-align">
+                        <i class="dropzone-picture-icon material-icons">image</i>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div id="image_upload_loading" class="hide image_upload_loading_box">
+            <div class="preloader-wrapper big active">
+                <div class="spinner-layer spinner-blue-only">
+                  <div class="circle-clipper left">
+                    <div class="circle"></div>
+                  </div><div class="gap-patch">
+                    <div class="circle"></div>
+                  </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                  </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="image_upload_result" class="hide row">
+            <div class="col s12 m8 offset-m2">
+                <div class="card hoverable konva-card">
+                    <div id="image_upload_img_result" class="card-image konva-outbox">
+                        <div id="container-konva" class="konva-box"></div>
+                        <img id="img-konva" class="responsive-img image_upload_result_img" 
+                            :src="image_url">
+                    </div>
+                </div>
+            </div>
+            <div class="col s12">
+                <a id="add-bbox" class="waves-effect waves-light btn blue tooltipped"
+                    data-tooltip="ボックスの追加">
+                    <i class="material-icons">add</i>
+                </a>
+                <a id="upload-new-file-button" class="waves-effect waves-light btn blue tooltipped"
+                    data-tooltip="別の画像をアップロード">
+                    <i class="material-icons">refresh</i>
+                </a>
+                <a id="export-with-mosaic" class="waves-effect waves-light btn blue tooltipped"
+                    data-tooltip="モザイク加工した画像のダウンロード">
+                    <i class="material-icons">file_download</i>
+                </a>
+            </div>
+            
+            <div class="col s12 center-align">
+                <div class="card">
+
+                    <ul id="image_upload_meta_result" class="collection with-header">
+                        <li v-for="detection in detections" class="collection-item">
+                            検知した物体: <span>{{ detection.label }}</span>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+            
+            <div class="col s12">
+                <br><b>使い方</b>
+                <p>プラスボタン：四角枠を作成。四角枠内をダブルクリックすることで削除<br>更新ボタン：新しい画像を試す<br>ダウンロードボタン：四角で囲った箇所をモザイク処理してダウンロード</p>
+            </div>
+        </div>
+        
+    </div>
+
+</div>
+-->
+
+<div class="container-fluid wait-list-section white-text center-align">
+    <div class="row">
+        <div class="col s10 offset-s1 m8 offset-m2">
+            <h2>動画のモザイク処理工数を劇的に削減します</h2>
+            <ul class="left-align wait-list-box">
+                <li><b>・</b> 30fps以上の自動検出処理</li>
+                <li><b>・</b> 1ファイル100GBまでのファイルアップロード</li>
+                <li><b>・</b>VR動画対応</li>
+            </ul>
+            <a class='waves-effect waves-light btn blue-grey btn-large' 
+                target="_blank" href="https://forms.gle/zMyHwzU42oqzH2588">
+                ベータ利用の待機リストに登録する
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="divider"></div>
+
+    <div class="card card-to-detect-list">
+
+        <div class="card-content">
+            <h3 class="center-align title-to-detect-h3">自動で検知できる物体<small>※</small></h3>
+
+            <div class="row box-to-detect-list">
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>人の顔</span>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>人（男性・女性）</span>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>車のナンバー</span>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>民家</span>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>看板</span>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="check-icon-to-detect-internal-div">
+                        <i class="small material-icons check-icon-to-detect">check_circle</i>
+                        <span>わいせつ物（男性・女性）</span>
+                    </div>
+                </div>
+            </div>
+
+            <small class="grey-text">※現在開発中</small>
+            <!--ディープラーニングの性質上、100%の精度で検出することはできません-->
+
+        </div>
+
+        <div class="card-image">
+            <img src="/assets/img/detection-example.jpg">
+        </div>
+
+    </div>
+</div>
 
 <!--
 <div class="container">
