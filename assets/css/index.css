@@ -72,7 +72,6 @@ footer.page-footer {
     margin-left: 0px !important;
     margin-right: 0px !important;
 }
-}
 .header-text {
     font-size: 40px;
     margin-bottom: 30px;
@@ -146,7 +145,7 @@ footer.page-footer {
 .rc-company-chapter {
   margin-top: 2rem;
   font-size: 1.6rem;
-  bnumber-bottom: 1px solid #eee;
+  border-bottom: 1px solid #eee;
   padding-bottom: 10px;
   color: #082947;
 }
@@ -483,6 +482,11 @@ img {
 .check-icon-to-detect-internal-div {
     margin-top: 20px;
     padding-left: 60px;
+}
+@media (max-width: 768px) {
+    .check-icon-to-detect-internal-div {
+        padding-left: 0px;
+    }
 }
 .check-icon-to-detect-internal-div span {
     padding-left: 20px;

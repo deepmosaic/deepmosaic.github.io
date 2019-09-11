@@ -8,7 +8,7 @@
 
 $(function() {
 
-    const url = 'http://192.168.11.11:5000'
+    const url = 'https://api.deepmosaic.co.jp'
 
     $('.tooltipped').tooltip({
         outDuration: 0,
@@ -239,7 +239,10 @@ function post_bbox(image_name, bbox) {
         window.open(url + '/v1/detection/images/' + image_name + '/mosaic?rnd=' + rnd_val);
     })
     .catch(function (error) {
-        console.log(error);
+        M.toast({
+            html: error.message,
+            classes: 'red'
+        })
     });
 }
 
@@ -250,6 +253,7 @@ var image_upload_img_result = new Vue({
     }
 });
 
+/*
 var image_upload_meta_result = new Vue({
     el: "#image_upload_meta_result",
     data: {
@@ -266,7 +270,7 @@ var image_upload_meta_result = new Vue({
         ]
     }
 });
-
+*/
 $('#modal-project-start-dropzone').dropzone({
     url: url + "/v1/detection/images",
     timeout: 50000, // milliseconds 
@@ -320,7 +324,7 @@ $('#modal-project-start-dropzone').dropzone({
         $('#image_upload_result').removeClass('hide');
 
         image_upload_img_result.image_url = data.image_url;
-        image_upload_meta_result.detections = [];
+        // image_upload_meta_result.detections = [];
 
         // dropzoneを初期化
         this.removeAllFiles(true);

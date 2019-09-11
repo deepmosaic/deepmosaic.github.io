@@ -1,64 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-    xmlns:xhtml="http://www.w3.org/1999/xhtml">
-    <url>
-        <loc>https://www.deepmosaic.xyz/ja/</loc>
-        <priority>1.0</priority>
-        <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://www.deepmosaic.xyz/ja/"/>
-        <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.deepmosaic.xyz/en/"/>
-    </url>
-    <url>
-        <loc>https://www.deepmosaic.xyz/ja/company/terms</loc>
-        <priority>0.8</priority>
-        <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://www.deepmosaic.xyz/ja/company/terms"/>
-        <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.deepmosaic.xyz/en/company/terms"/>
-    </url>
-    <url>
-        <loc>https://www.deepmosaic.xyz/ja/company/about</loc>
-        <priority>0.8</priority>
-        <xhtml:link
-                 rel="alternate"
-                 hreflang="ja"
-                 href="https://www.deepmosaic.xyz/ja/company/about"/>
-        <xhtml:link
-                 rel="alternate"
-                 hreflang="en"
-                 href="https://www.deepmosaic.xyz/en/company/about"/>
-    </url>
-    <url>
-        <loc>https://www.deepmosaic.xyz/ja/company/privacy</loc>
-        <priority>0.8</priority>
-        <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://www.deepmosaic.xyz/ja/company/privacy"/>
-        <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.deepmosaic.xyz/en/company/privacy"/>
-    </url>
-    <url>
-        <loc>https://www.deepmosaic.xyz/ja/company/cookie</loc>
-        <priority>0.8</priority>
-        <xhtml:link
-                rel="alternate"
-                hreflang="ja"
-                href="https://www.deepmosaic.xyz/ja/company/cookie"/>
-        <xhtml:link
-                rel="alternate"
-                hreflang="en"
-                href="https://www.deepmosaic.xyz/en/company/cookie"/>
-    </url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+<!--  created with free sitemap generation system www.sitemapxml.jp  -->
+<url>
+  <loc>https://www.deepmosaic.co.jp/</loc>
+  <priority>1.0</priority>
+  <lastmod>2019-05-27T22:51:37+09:00</lastmod>
+</url>
+<url>
+  <loc>https://www.deepmosaic.co.jp/company/about</loc>
+  <priority>0.8</priority>
+  <lastmod>2019-05-27T22:51:37+09:00</lastmod>
+</url>
+<url>
+  <loc>https://www.deepmosaic.co.jp/company/terms</loc>
+  <priority>0.8</priority>
+  <lastmod>2019-05-27T22:51:37+09:00</lastmod>
+</url>
+<url>
+  <loc>https://www.deepmosaic.co.jp/company/privacy</loc>
+  <priority>0.8</priority>
+  <lastmod>2019-05-27T22:51:37+09:00</lastmod>
+</url>
+<url>
+  <loc>https://www.deepmosaic.co.jp/company/cookie</loc>
+  <priority>0.8</priority>
+  <lastmod>2019-05-27T22:51:37+09:00</lastmod>
+</url>
+
 </urlset>
