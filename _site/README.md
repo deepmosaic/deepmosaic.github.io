@@ -3,10 +3,7 @@ Deepmosaic Landing Page
 
 
 # Install jekyll
-```
-sudo gem install jekyll bundler
-jekyll new .
-```
+https://jekyllrb.com/docs/installation/macos/
 
 - コードを変更したらbuildコマンドでコードを生成。`_site`ディレクトリにビルドされたファイルが生成される
   --watchを付けると変更があった時に自動で再ビルドしてくれる
