@@ -236,7 +236,8 @@ function post_bbox(image_name, bbox) {
     .then(function (response) {
         // 画像がキャッシュされてしまうのを防ぐためにクエリパラメータを付与する
         var rnd_val = Math.random().toString(36).slice(-8);
-        window.open(url + '/v1/detection/images/' + image_name + '/mosaic?rnd=' + rnd_val);
+        // window.open
+        location.href = url + '/v1/detection/images/' + image_name + '/mosaic?rnd=' + rnd_val;
     })
     .catch(function (error) {
         M.toast({
@@ -281,7 +282,7 @@ $('#modal-project-start-dropzone').dropzone({
     resizeWidth: 1024,
     uploadMultiple: false,
     paramName: 'image_file',
-    acceptedFiles: 'image/png, image/jpeg',
+    acceptedFiles: 'image/png, image/jpeg, image/gif',
     previewTemplate: '<div></div>', // サムネイルが表示されないようにするためにダミーの値をセットしている
     error: function(file, errorMessage, xhr){
     // フロントのエラーとサーバーからのエラーの両方がこの中で扱われる
@@ -305,7 +306,7 @@ $('#modal-project-start-dropzone').dropzone({
         }
         catch (e) {
             M.toast({
-                html: 'エラーが発生しました。他の画像で試してください',
+                html: 'エラーが発生しました。他の画像をお試しください',
                 classes: 'red'
             })
         }
