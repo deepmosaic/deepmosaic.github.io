@@ -8,7 +8,8 @@
 
 $(function() {
 
-    const url = 'https://api.deepmosaic.co.jp'
+    //const url = 'https://api.deepmosaic.co.jp'
+    const url = 'http://192.168.11.11:6000'
 
     $('.tooltipped').tooltip({
         outDuration: 0,
