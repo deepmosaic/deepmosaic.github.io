@@ -3,7 +3,8 @@ Deepmosaic Landing Page
 
 
 # Install jekyll
-https://jekyllrb.com/docs/installation/macos/
+- 以下のページに従ってrubyをインストール  
+  https://jekyllrb.com/docs/  
 
 - コードを変更したらbuildコマンドでコードを生成。`_site`ディレクトリにビルドされたファイルが生成される
   --watchを付けると変更があった時に自動で再ビルドしてくれる

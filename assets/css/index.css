@@ -227,7 +227,7 @@ footer.page-footer {
 }
 .main-phrase {
     margin-top: 86px;
-    font-size: 4.25rem;
+    font-size: 3.6rem;
 }
 .sub-phrase {
     font-size: 1.625rem;
@@ -442,7 +442,6 @@ img {
 }
 .home-guide-image {
     border-radius: 6px;
-    margin: 60px 0 90px 0;
 }
 .footer-company-box {
     margin-top: 20px;
@@ -571,4 +570,19 @@ img {
 .wait-list-box {
     margin-top: 2.4rem;
     margin-bottom: 2.4rem;
+}
+.ai-step-main-title {
+    margin-bottom: 48px;
+}
+.ai-step-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    color: #485aff;
+    margin-bottom: unset;   
+}
+.spec-container {
+    padding-bottom: 70px;
+}
+.spec-container h4 {
+    padding-bottom: 20px;
 }
