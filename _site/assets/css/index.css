@@ -586,3 +586,36 @@ img {
 .spec-container h4 {
     padding-bottom: 20px;
 }
+.download-button-box {
+    margin-bottom: 3.6rem;
+}
+.download-button {
+    text-transform: none !important;
+    height: unset !important;
+    padding: 0.6rem 2rem !important;
+}
+.header-document-link {
+    padding: 7px 15px;
+}
+.header-document-link:hover {
+    background-color: unset;
+    text-decoration: underline;
+}
+.docs-chapter-sub-title {
+    font-size: 1.8rem;
+    color: rgba(0,0,0,0.75);
+    text-shadow: 0 1px 0 #fff;
+    font-weight: 600;
+    padding-bottom: 8px;
+}
+.scrollspy-2nd {
+    padding-left: 28px !important;
+}
+.docs-scrollspy-sidebar{
+    position: sticky;
+    top: 2rem;
+    right: 0;
+    z-index: 2;
+    height: calc(100vh - 7rem);
+    overflow-y: auto;
+}
