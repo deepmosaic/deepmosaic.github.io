@@ -146,14 +146,89 @@ fjs.parentNode.insertBefore(js, fjs);
 </nav>
 
 
-<div class="container"><div class="row">
+<div class="container docs"><div class="row">
     <div class="col s12 m9 l9">
 
-        <h1 class="rc-company-title">ドキュメント</h1>
+      <h1 class="rc-company-title">ドキュメント</h1>
 
-        <div id="first" class="scrollspy">
-            <h2 class="rc-company-chapter">インストールの前に</h2>
-        </div>
+      <div id="first" class="scrollspy">
+          <h2 class="rc-company-chapter">インストールの前に</h2>
+      </div>
+
+      <div id="first-spec" class="scrollspy">
+            
+        <h3 class="rc-company-chapter">動作仕様</h3>
+
+        <p>お使いのPCが動作仕様を満たしているかを確認します</p>
+  
+          <table class="striped">
+              <tbody>
+                  <tr>
+                      <td>OS</td>
+                      <td>Microsoft Windows 10（64 ビット）日本語版バージョン 1809 以降</td>
+                  </tr>
+                  <tr>
+                      <td>CPU</td>
+                      <td>Intel® 第 7 世代以降 CPU または同等の AMD CPU</td>
+                  </tr>
+                  <tr>
+                      <td>Memory</td>
+                      <td>8GB以上</td>
+                  </tr>
+                  <tr>
+                      <td>ストレージ空き容量</td>
+                      <td>25GB以上の空き容量</td>
+                  </tr>
+                  <tr>
+                      <td>GPU</td>
+                      <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ6GB以上が望ましい</td>
+                  </tr>
+                  <tr>
+                      <td>モニター</td>
+                      <td>1,920 x 1,080 以上</td>
+                  </tr>
+                  <tr>
+                      <td>インターネット環境</td>
+                      <td>ソフトウェアの認証、およびサブスクリプションの検証にインターネット接続が必要</td>
+                  </tr>
+              </tbody>
+          </table>
+ 
+      </div>
+
+      <div id="first-cuda" class="scrollspy">
+            
+        <h3 class="rc-company-chapter">NVIDIA CUDA, Driver</h3>
+
+        <p>お使いのグラフィックボードに合わせたNVIDIA CUDAとDriverの最新版をインストールします</p>
+
+        <p><a href="https://developer.nvidia.com/cuda-downloads">NVIDA CUDAのダウンロードページ</a><br>
+
+        <a href="https://www.nvidia.co.jp/Download/index.aspx?lang=jp">NVIDA Driverのダウンロードページ</a>
+        </p>
+      </div>
+
+
+      <div id="first-account-name" class="scrollspy">
+            
+        <h3 class="rc-company-chapter">アカウント名</h3>
+
+        <p>Windowsのアカウント名が下記の例のように全角文字、全角・半角スペースが含まれているとアプリが正常に起動しません
+          <ul>
+            <li>C:\Users\山田太郎\AppData</li>
+            <li>C:\Users\山田　太郎\AppData</li>
+            <li>C:\Users\Taro Yamada\AppData</li>
+          </ul>
+
+        アカウント名に全角文字、全角・半角スペースが含まれている場合は、「<a href="https://faq.nec-lavie.jp/qasearch/1007/app/servlet/relatedqa?QID=017790#a02">Windows 10でユーザーアカウントを追加する方法ページの「2. ローカルアカウントを追加する方法</a>」に従い、スペースを含まない半角文字のみのアカウント名を作成します
+        
+        <p>作成したアカウントでWindowsにサインインし、インストール作業を実施します</p>
+      </div>
+
+
+
+
+
 
         <div id="install" class="scrollspy">
             <h2 class="docs-chapter-sub-title">インストールガイド</h2>
@@ -170,47 +245,47 @@ fjs.parentNode.insertBefore(js, fjs);
             <p>※ダウンロード実績の少ないアプリケーションの場合に下図のメッセージが出る場合があります</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/1.png" width="400">
+              src="/assets/img/docs/download/1.png" width="400">
 
             <p>「お使いのデバイスに問題を起こす可能性があるため、ブロックされました」にマウスポインターを合わせ、「・・・」→「保存」ボタンの順にクリックします</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/2.png" width="326">
+              src="/assets/img/docs/download/2.png" width="326">
 
             <p>保存ボタンをクリックすると「このアプリは、お使いのデバイスに問題を起こす可能性があります」と表示されるので、「詳細表示」をクリックします</p>
             
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/3.png" width="320">
+              src="/assets/img/docs/download/3.png" width="320">
 
             <p>保持するをクリックします</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/4.png" width="320">
+              src="/assets/img/docs/download/4.png" width="320">
 
             <p>ファイルを開くことができるようになります</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/5.png" width="400">
+              src="/assets/img/docs/download/5.png" width="400">
 
             <p>ダウンロードしたファイルをダブルクリックして起動します</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/6.png" width="400">
+              src="/assets/img/docs/download/6.png" width="400">
 
             <p>起動すると「WindowsによってPCが保護されました」が出る場合があります。出た場合は詳細情報をクリックします</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/7.png" width="320">
+              src="/assets/img/docs/download/7.png" width="320">
 
             <p>実行ボタンをクリックします</p>
 
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/8.png" width="320">
+              src="/assets/img/docs/download/8.png" width="320">
 
             <p>Deepmosaic Desktop Appのセットアップ画面が立ち上がります</p>
             
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-              src="/assets/img/download/9.png" width="320">
+              src="/assets/img/docs/download/9.png" width="320">
 
         </div>
 
@@ -221,17 +296,17 @@ fjs.parentNode.insertBefore(js, fjs);
           <p>「現在のユーザのみにインストールする」を選択して次へボタンをクリックします</p>
             
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/download/9.png" width="480">
+            src="/assets/img/docs/download/9.png" width="480">
 
-          <p></p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/download/10.png" width="480">
-
-          <p></p>
+          <p>特に理由がなければ、インストール先フォルダはデフォルトのままでインストールボタンをクリックします</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/download/11.png" width="480">
+            src="/assets/img/docs/download/10.png" width="480">
+
+          <p>完了ボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/download/11.png" width="480">
         
         </div>
 
@@ -239,48 +314,295 @@ fjs.parentNode.insertBefore(js, fjs);
             
           <h3 class="rc-company-chapter">インストール</h3>
 
-          <p>Deepmosaic Desktop Appのインストール画面が立ち上がります</p>
+          <p>認証画面が立ち上がります。初回の場合は画面下のサインアップをクリックします</p>
           
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/1.png" width="640">
+            src="/assets/img/docs/install/1.png" width="640">
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/2.png" width="640">
+          <p>登録するメールアドレスとパスワードを入力し、続けるボタンをクリックしてアカウントを作成します</p>
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/3.png" width="400">
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/2.png" width="640">
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/4.png" width="640">
+          <p>入力したメールアドレス宛に下図のメールが届きます。Verify Linkをクリックし、メールアドレスが正しいことを照明します</p>
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/5.png" width="640">
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/3.png" width="400">
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/6.png" width="640">
+          <p>アカウントが正しく作成されるとインストール画面が立ち上がります<br>
+            次へボタンをクリックします</p>
+          
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/4.png" width="640">
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/7.png" width="640">
+          <p>使用許諾契約を確認の上、問題なければ左下の同意するチェックボックスをクリックし、インストール開始ボタンをクリックします</p>
+          
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/5.png" width="640">
 
-            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/install/8.png" width="640">
+          <p>インストールが開始します<br>
+            インターネット回線の速度によっては1時間以上かかる場合があります</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/6.png" width="640">
+
+          <p>インストールが問題なく完了すれば、プロジェクトフォルダを選択ボタンがクリックできるようになります<br>
+            プロジェクトフォルダはAI検出した結果の保存や編集用の動画ファイルを保存するために使われます<br>
+            プロジェクトフォルダはいつでも変更することができます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/7.png" width="640">
+
+          <p>プロジェクトフォルダの選択が完了すると、アプリが起動し直し、プロジェクト一覧ページが表示されます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/install/8.png" width="640">
 
         </div>
 
         <div id="detection" class="scrollspy">
-          <h2 class="docs-chapter-sub-title">AI検出を開始する</h2>
+          <h2 class="docs-chapter-sub-title">AI検出</h2>
         </div>
+
+        <div id="detection-run" class="scrollspy">
+            
+          <h3 class="rc-company-chapter">AI検出を開始する</h3>
+
+          <p>画面左上のメニューバーから「ファイル」=>「新規動画のインポート」をクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/1.png" width="480">
+
+          <p>AI検出が開始します<br>
+            AIによって検出されたbboxのデフォルト形状を楕円形にする場合は「楕円」を選択します<br>
+            AI検出中には、編集用動画のエンコード・AI検出・検出結果の補正処理の3段階の処理を実施しています</p>
+
+          <p>参考: Core i3 10100, RTX3070tiを用いてAI検出を実行した場合、動画の長さの130%~150%程度の時間で完了します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/2.png" width="320">
+
+          <p>AI検出が完了したら閉じるボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/3.png" width="320">
+
+          <p>AI検出の完了した動画がプロジェクト一覧に表示されます<br>
+            AI検出した動画ファイル1つ1つをプロジェクトと呼びます</p>
+          
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/4.png" width="640">
+
+        </div>
+
+        <div id="project" class="scrollspy">
+          <h2 class="docs-chapter-sub-title">プロジェクト</h2>
+        </div>
+
+        <div id="project-delete" class="scrollspy">
+
+          <h3 class="rc-company-chapter">プロジェクトを削除する</h3>
+
+          <p>プロジェクトを削除する場合は、プロジェクト一覧ページから削除したいプロジェクトの右下にある縦3点をクリックし、削除ボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/5.png" width="640">
+
+          <p>確認画面が表示されるので、問題なければOKボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/project/6.png" width="640">
+
+        </div>
+
+
+
+
+
+
+
+
+        <div id="edit" class="scrollspy">
+          <h2 class="docs-chapter-sub-title">ビデオの編集</h2>
+        </div>
+
+        <div id="edit-overview" class="scrollspy">
+
+          <h3 class="rc-company-chapter">編集画面</h3>
+
+          <p>編集画面左側のビデオ上で編集作業を行います。編集内容は右側のビデオに反映されるので、逐一、編集内容を確認することができます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/1.png" width="640">
+
+        
+        </div>
+
+
+        <div id="edit-toolbar" class="scrollspy">
+
+          <h3 class="rc-company-chapter">ツールバー</h3>
+
+          <p>ツールバーについての説明です</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/1-1.jpg" width="640">
+
+          <ol>
+            <li>ホーム<br>プロジェクト一覧ページに戻る</li>
+            <li>bboxを初期状態に戻す<br>hyouzi</li>
+            <li>bbox一括編集<br></li>
+            <li>bboxの削除<br></li>
+            <li>bboxの挿入（四角形）<br> </li>
+            <li>bboxの挿入（連続四角形）<br> </li>
+            <li>bboxの挿入（楕円形）<br> </li>
+            <li>bboxの挿入（連続楕円形）<br> </li>
+            <li>回避マスクの挿入（四角形）<br></li>
+            <li>回避マスクの挿入（連続四角形）<br> </li>
+            <li>回避マスクの挿入（楕円形）<br></li>
+            <li>回避マスクの挿入（連続楕円形）<br> </li>
+            <li>オートトラッキング<br> </li>
+            <li>ショートカットキー<br> </li>
+          </ol>
+
+          </div>
+
+
+
+
+
+
+
+        <div id="encode" class="scrollspy">
+          <h2 class="docs-chapter-sub-title">ビデオのエンコード</h2>
+        </div>
+
+        <div id="encode-overview" class="scrollspy">
+
+          <p>ビデオをエンコードするには画面左上メニューバーから「ファイル」=> 「エンコード」をクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/1.png" width="480">
+
+          <p>エンコードに必要な値を選択し、開始ボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/2.png" width="480">
+
+          <p>エンコードが開始します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/3.png" width="320">
+
+          <p>エンコードが完了したら閉じるボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/4.png" width="320">
+
+          <p>正常に再生できるかを確認します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/5.png" width="640">
+
+          <p>無料版では画面右上に透かし文字が埋め込まれます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/encode/6.png" width="320">
+        
+        </div>
+
+
+        <div id="other" class="scrollspy">
+          <h2 class="docs-chapter-sub-title">そのほか</h2>
+        </div>
+
+        <div id="other-update" class="scrollspy">
+
+          <h3 class="rc-company-chapter">アプリケーションのアップデート</h3>
+
+          <p>アプリケーションのアップデートをチェックするにはメニューバーの更新チェックをクリックします<br>
+            最新の状態であれば画面左下に「最新バージョンです」と表示されます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/2.png" width="180">
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/3.png" width="640">
+        
+        </div>
+        
+        <div id="other-help" class="scrollspy">
+
+            <h3 class="rc-company-chapter">ヘルプ</h3>
+
+          <p></p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/4.png" width="480">
+        
+        </div>
+
+        <div id="other-logout" class="scrollspy">
+        
+          <h3 class="rc-company-chapter">ログアウト</h3>
+
+          <p>ログアウトする場合は画面右上にあるアイコンをクリックするとログアウトボタンが表示されます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/1.png" width="640">
+
+        </div>
+
+        <div id="other-uninstall" class="scrollspy">
+        
+          <h3 class="rc-company-chapter">アプリのアンインストール</h3>
+
+          <p>Deepmosaic Desktop Appをアンインストールする場合は、「<a href="https://support.microsoft.com/ja-jp/topic/windows-10-%E3%81%A7%E3%82%A2%E3%83%97%E3%83%AA%E3%81%8A%E3%82%88%E3%81%B3%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%82%92%E3%82%A2%E3%83%B3%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E3%81%BE%E3%81%9F%E3%81%AF%E5%89%8A%E9%99%A4%E3%81%99%E3%82%8B-4b55f974-2cc6-2d2b-d092-5905080eaf98">Windows 10 でアプリおよびプログラムをアンインストールまたは削除する</a>」に従います</p>
+          
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+          src="/assets/img/docs/other/5.png" width="480">
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+          src="/assets/img/docs/other/6.png" width="480">
+
+        </div>
+
+
+        
 
 
     </div>
     <div class="col hide-on-small-only m3 l3 docs-scrollspy-sidebar">
       <ul class="section table-of-contents">
         <li><a href="#first">インストールの前に</a></li>
+        <li><a href="#first-spec" class="scrollspy-2nd">動作仕様</a></li>
+        <li><a href="#first-cuda" class="scrollspy-2nd">NVIDIA CUDA, Driver</a></li>
+        <li><a href="#first-account-name" class="scrollspy-2nd">アカウント名</a></li>
+
+
+
         <li><a href="#install">インストールガイド</a></li>
         <li><a href="#install-download" class="scrollspy-2nd">ダウンロード</a></li>
         <li><a href="#install-setup"    class="scrollspy-2nd">セットアップ</a></li>
         <li><a href="#install-install"  class="scrollspy-2nd">インストール</a></li>
-        <li><a href="#detection">AI検出を開始する</a></li>
+
+        <li><a href="#detection">AI検出</a></li>
+        <li><a href="#detection-run"  class="scrollspy-2nd">AI検出を開始する</a></li>
+
+        <li><a href="#project">プロジェクト</a></li>
+        <li><a href="#project-delete"  class="scrollspy-2nd">プロジェクトを削除する</a></li>
+
+        <li><a href="#edit">ビデオの編集</a></li>
+        <li><a href="#edit-overview"    class="scrollspy-2nd">編集画面</a></li>
+        <li><a href="#edit-toolbar"      class="scrollspy-2nd">ツールバー</a></li>
+
+        <li><a href="#encode">ビデオのエンコード</a></li>
+
+        <li><a href="#other">そのほか</a></li>
+        <li><a href="#other-update"     class="scrollspy-2nd">アプリのアップデート</a></li>
+        <li><a href="#other-help"       class="scrollspy-2nd">ヘルプ</a></li>
+        <li><a href="#other-logout"     class="scrollspy-2nd">ログアウト</a></li>
+        <li><a href="#other-uninstall"  class="scrollspy-2nd">アプリのアンインストール</a></li>
       </ul>
     </div>
   </div>

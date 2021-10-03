@@ -619,3 +619,9 @@ img {
     height: calc(100vh - 7rem);
     overflow-y: auto;
 }
+.docs img {
+    margin-bottom: 1.6rem;
+}
+.docs a:hover {
+    text-decoration: underline;
+}
