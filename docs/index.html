@@ -254,6 +254,21 @@ title: Deepmosaic Desktop ドキュメント
 
         </div>
 
+
+        <div id="detection-id" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxへのIDの付与</h3>
+
+          <p>AI検出時に連続していると判断されたbboxには同じIDが付与されます。同じIDのbboxだけをまとめて削除する、同じIDのbboxだけモザイクの値を変更するといった場合に使用されます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/2-4.png" width="480">
+
+
+        </div>
+
+
+
         <div id="project" class="scrollspy">
           <h2 class="docs-chapter-sub-title">プロジェクト</h2>
         </div>
@@ -262,7 +277,7 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">プロジェクトを削除する</h3>
 
-          <p>プロジェクトを削除する場合は、プロジェクト一覧ページから削除したいプロジェクトの右下にある縦3点をクリックし、削除ボタンをクリックします</p>
+          <p>プロジェクトを削除する場合は、プロジェクト一覧ページから削除したいプロジェクトの右下にある縦3点ボタンをクリックし、削除ボタンをクリックします</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/project/5.png" width="640">
@@ -275,12 +290,6 @@ title: Deepmosaic Desktop ドキュメント
         </div>
 
 
-
-
-
-
-
-
         <div id="edit" class="scrollspy">
           <h2 class="docs-chapter-sub-title">ビデオの編集</h2>
         </div>
@@ -290,10 +299,61 @@ title: Deepmosaic Desktop ドキュメント
           <h3 class="rc-company-chapter">編集画面</h3>
 
           <p>編集画面左側のビデオ上で編集作業を行います。編集内容は右側のビデオに反映されるので、逐一、編集内容を確認することができます</p>
+          <p>画面左側で操作する緑色の枠のことをbboxと呼びます</p>
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/1.png">
+
+          <p>bboxをクリックすると、画面右下にクリックしたbboxの情報が表示されます</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/edit/1.png" width="640">
+          src="/assets/img/docs/edit/2-2.png">
 
+          <p>オレンジ色で囲まれた箇所をドラッグすることで、bboxを回転させることができます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+          src="/assets/img/docs/edit/14-1.png"  width="480">
+
+        </div>
+
+        <div id="edit-preview" class="scrollspy">
+
+          <h3 class="rc-company-chapter">プレビュー画面</h3>
+
+          <p>画面右側は実際にエンコードした際のプレビューが表示されます<br>
+            0.25, 0.5, 1倍速で再生した場合は、全フレームに対してプレビュー機能を実行すると処理が追い付かないため、4フレームごとにプレビューされます。0.1倍速で再生した場合、１フレームずつ進めた場合は随時プレビューされます<br>
+            再生速度はオレンジ色枠の箇所で設定することができます
+          </p>
+          
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/2-5.png">
+
+        </div>
+
+
+        <div id="edit-timeline" class="scrollspy">
+
+          <h3 class="rc-company-chapter">タイムライン</h3>
+
+          <p>オレンジ色で囲まれた箇所はタイムラインと呼ばれます。どのフレームにbboxが存在するかを視覚的に確認するために使われます<br>
+            bboxに付与されているIDごとにタイムラインにヘッドラインが表示されます。ヘッドラインをクリックすると、そのbboxのフレーム番号に移動します</p>
+
+          <p><span class="iconify" data-icon="icons8:idea" style="color: orange;" data-width="32" data-height="32"></span>
+            タイムラインはアルファバージョンの機能になるため、動作が不安定です。参考程度にお使いください</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/2-3.png">
+        
+        </div>
+
+
+        <div id="edit-restore-all-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">全てのbboxを初期状態に戻す</h3>
+
+          <p>メニューバーの編集から「全てのbboxを初期状態に戻す」をクリックすることで、すべてのフレームのbboxをAI検出した状態に戻します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/13.png" width="400">
         
         </div>
 
@@ -302,34 +362,217 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">ツールバー</h3>
 
-          <p>ツールバーについての説明です</p>
+          <p>ツールバーについての説明</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/edit/1-1.jpg" width="640">
+            src="/assets/img/docs/edit/1-1.jpg" >
 
           <ol>
             <li>ホーム<br>プロジェクト一覧ページに戻る</li>
-            <li>bboxを初期状態に戻す<br>hyouzi</li>
-            <li>bbox一括編集<br></li>
-            <li>bboxの削除<br></li>
-            <li>bboxの挿入（四角形）<br> </li>
-            <li>bboxの挿入（連続四角形）<br> </li>
-            <li>bboxの挿入（楕円形）<br> </li>
-            <li>bboxの挿入（連続楕円形）<br> </li>
-            <li>回避マスクの挿入（四角形）<br></li>
-            <li>回避マスクの挿入（連続四角形）<br> </li>
-            <li>回避マスクの挿入（楕円形）<br></li>
-            <li>回避マスクの挿入（連続楕円形）<br> </li>
-            <li>オートトラッキング<br> </li>
-            <li>ショートカットキー<br> </li>
+            <li><a href="#edit-restore-bbox">bboxを初期状態に戻す</a></li>
+            <li><a href="#edit-all-bbox">bbox一括編集</a></li>
+            <li><a href="#edit-delete-bbox">bboxの削除</a></li>
+            <li><a href="#edit-add-bbox">bboxの追加（四角形）</a></li>
+            <li><a href="#edit-add-bbox">bboxの追加（連続四角形）</a></li>
+            <li><a href="#edit-add-bbox">bboxの追加（楕円形）</a></li>
+            <li><a href="#edit-add-bbox">bboxの追加（連続楕円形）</a></li>
+            <li><a href="#edit-add-avoid-mask">回避マスクの追加（四角形）</a></li>
+            <li><a href="#edit-add-avoid-mask">回避マスクの追加（連続四角形）</a></li>
+            <li><a href="#edit-add-avoid-mask">回避マスクの追加（楕円形）</a></li>
+            <li><a href="#edit-add-avoid-mask">回避マスクの追加（連続楕円形）</a></li>
+            <li><a href="#edit-auto-tracking">オートトラッキング</a></li>
+            <li><a href="#edit-shortcut-key">ショートカットキー</a></li>
           </ol>
 
-          </div>
+        </div>
+
+        <div id="edit-restore-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxを初期状態に戻す</h3>
+
+          <p>ツールバーの時間を戻すアイコンをクリックすることで、表示中のフレームのbboxをAI検出した時点に戻します</p>
+
+        </div>
+
+
+        <div id="edit-all-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxの一括編集</h3>
+
+          <p>全フレームのbboxの値を変更します<br>
+            bboxの部分編集を実行した後に一括編集をした場合は、一括編集の値で上書きされます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/4-1.png" width="280">
+
+          <ol>
+            <li>不透明度<br>
+              0.0 - 1.0の範囲で不透明度を指定します<br>
+              0.0: 透明<br>
+              1.0: 不透明
+            </li>
+            <br>
+            
+            <li>エッジのぼかし<br>
+              0 - 100の範囲でエッジの縁のぼかしを指定します<br>
+              0: エッジの縁がくっきりと描画される<br>
+              100: エッジの縁が大きくぼかされる
+            </li>
+            <br>
+            
+            <li>bboxの拡大<br>
+              0.00 - 1.00の範囲でbboxの拡大比率を指定します。編集画面左側のbboxの大きさに対しての拡大比率になります
+            </li>
+            <br>
+
+            <li>オートブロックサイズ<br>
+              モザイクのブロックサイズをbboxの大きさに応じて自動的に変動させる設定をオンまたはオフにします<br>
+              オートブロックサイズをオンにした場合、初期値は、bboxの面積がフレーム全体の0.01％のとき、ブロックサイズが30となり、bboxの面積がフレーム全体の0.5％のとき、ブロックサイズは50になります。bboxの面積が0.01 - 0.5の間になる場合は、ブロックサイズが0.01 - 0.5の範囲に対して均等に算出されます。例えば、bboxの面積がフレームに対して0.25%であれば、ブロックサイズは40になります<br>
+              オートブロックサイズがオフの場合、ブロックサイズのデフォルト値は30になります
+            </li>
+            <br>
+            
+            <li>bboxサイズ<br>
+              bboxの面積がフレーム全体に対して何%かを指定します<br>
+              オートブロックサイズがオンの場合に有効となります
+            </li>
+            <br>
+            
+            <li>ブロックサイズ<br>
+              bboxの面積がフレーム全体の何%のとき、ブロックサイズをいくつにするかを指定します<br>
+              オートブロックサイズがオンの場合に有効となります
+            </li>
+            <br>
+            
+            <li>モザイクの形状<br>
+              モザイクの形状をモザイクかぼかしかを指定します
+            </li>
+            <br>
+            
+            <li>シャープカラー<br>
+              モザイクのシャープカラーを有効または無効にします
+            </li>
+            <br>
+
+            <li>初期状態に戻す<br>
+              1-8の値を初期状態に戻します
+            </li>
+
+          </ol>          
+
+        </div>
+
+
+        <div id="edit-part-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxの部分編集</h3>
+
+          <p>bboxを選択した状態でオレンジ色枠の編集ボタンをクリックすることで、bboxの部分編集メニューが表示されます<br>
+            部分編集を実行することで同じIDのbboxの値を変更することができます<br>
+            一括編集を実行した後に部分編集を実行した場合は、部分編集の値で上書きされます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/9-1.png" width="520">
+
+        </div>
+
+
+        <div id="edit-delete-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxを削除する</h3>
+
+          <p>bboxを削除するには4通りの方法があります</p>
+
+          <ol>
+            <li>削除したいbboxをダブルクリックする<br>
+              bbox（緑の枠）内をダブルクリックすることで、表示中のフレームのbboxを削除します</li>
+            
+              <li>削除したいbboxを選択している状態でDeleteキーを押下する</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/7-1.png" width="480">
+            
+            <li>消しゴム機能を使う<br>
+              ツールバーの消しゴムアイコン、または、キーボードのEを押下することで、マウスポインターが消しゴムモードになります。マウスの左ボタンをクリックし続けている状態で、マウスポインターをbboxに重ねることでbboxを削除します<br>
+              フレームを進めながら削除することも可能です</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/7.png" width="480">
+
+            <li>特定のIDを持つbboxをまとめて削除する<br>
+              bboxを選択した状態で下図の赤色で囲われたゴミ箱アイコンをクリックすると、同じIDのbboxがまとめて削除されます</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/2-1.png" width="520">
+          </ol>
+          
+        
+        </div>
+
+        <div id="edit-add-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxを追加する</h3>
+
+          <p>表示中のフレームにだけ追加するbboxとフレームを進めても継続する連続bboxがあります<br>
+            連続bboxはフレームを戻すことで終了します<br>
+            bboxは四角形と楕円形を選ぶことができます<br>
+            bboxには個別にIDが付与されます。連続bboxの場合は、連続状態が終了するまで同じIDが付与されます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/1-2.png" width="520">
+
+        </div>
+
+        <div id="edit-copy-and-paste-bbox" class="scrollspy">
+
+          <h3 class="rc-company-chapter">bboxのコピーアンドペースト</h3>
+
+          <p>bboxはコピーアンドペーストで複製することができます<br>
+            bboxを選択している状態でキーボードのCTRL+Cを押下することでbboxをコピーし、任意のフレームでキーボードのCTRL+Vを押下することで、コピーした個所とほぼ同じ場所にbboxをペーストします<br>
+            コピー: CTRL+C<br>
+            ペースト: CTRL+V</p>
+
+        </div>
+
+        <div id="edit-add-avoid-mask" class="scrollspy">
+
+          <h3 class="rc-company-chapter">回避マスクを追加する</h3>
+
+          <p>bboxに回避マスクを重ねることで、重ねた個所にモザイクがかからないようにすることができます<br>
+            表示中のフレームにだけ適用される回避マスクとフレームが進んでも回避マスクが適用される連続回避マスクがあります<br>
+            四角形と楕円形を選ぶことができます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/8.png">
+
+        </div>
+
+        <div id="edit-shortcut-key" class="scrollspy">
+
+          <h3 class="rc-company-chapter">ショートカットキー</h3>
+
+          <p>キーボードから特定の機能を利用することができます</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/5.png" width="420">
+
+        </div>
 
 
 
+        <div id="edit-auto-tracking" class="scrollspy">
+
+          <h3 class="rc-company-chapter">オートトラッキング機能</h3>
+
+          <p>連続四角形または連続楕円形のbboxを選択状態でオートトラッキングボタンをクリックするとbboxの色が黄色に変わります<br>
+            この状態でマウスホイールを前に倒すかキーボードの右矢印キーを押下することで対象の物体がトラッキングされながらフレームが進みます<br>
+            オートトラッキングはCPUへの負荷が高いため、マウスホイールかキーボードの操作でのみ有効となります。再生した場合はオートトラッキングは機能しません<br>
+            マウスホイールを後ろに倒す、キーボードの左矢印キーを押下する、bboxを削除することでオートトラッキング機能は終了します</p>
 
 
+          <p><span class="iconify" data-icon="icons8:idea" style="color: orange;" data-width="32" data-height="32"></span>
+            bboxがずれてきたらbboxの範囲を調整することで対象の物体をトラッキングし続けます</p>
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/6.png" width="640">
+        
+        </div>
 
 
         <div id="encode" class="scrollspy">
@@ -338,10 +581,12 @@ title: Deepmosaic Desktop ドキュメント
 
         <div id="encode-overview" class="scrollspy">
 
+          <h3 class="rc-company-chapter">エンコードを実行する</h3>
+
           <p>ビデオをエンコードするには画面左上メニューバーから「ファイル」=> 「エンコード」をクリックします</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/encode/1.png" width="480">
+            src="/assets/img/docs/encode/1.png" width="380">
 
           <p>エンコードに必要な値を選択し、開始ボタンをクリックします</p>
 
@@ -379,7 +624,7 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">アプリケーションのアップデート</h3>
 
-          <p>アプリケーションのアップデートをチェックするにはメニューバーの更新チェックをクリックします<br>
+          <p>アプリケーションのアップデート有無をチェックするにはメニューバーの更新チェックをクリックします<br>
             最新の状態であれば画面左下に「最新バージョンです」と表示されます</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
@@ -387,17 +632,47 @@ title: Deepmosaic Desktop ドキュメント
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/other/3.png" width="640">
-        
-        </div>
-        
-        <div id="other-help" class="scrollspy">
 
-            <h3 class="rc-company-chapter">ヘルプ</h3>
-
-          <p></p>
+          <p>アップデートが存在する場合は、下図ウィンドウが表示されるのでアップデートボタンをクリックします</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/other/4.png" width="480">
+            src="/assets/img/docs/other/8.png" width="420">
+
+          <p>バックグラウンドで最新のアプリケーションのダウンロードが開始します。ダウンロード中は画面右上にローディングアイコンが表示されます</p>
+        
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/9-1.png" width="640">
+
+          <p>ダウンロードが完了するとアプリケーションが停止し、インストール画面が立ち上がります。次へボタンをクリックします</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/10.png" width="480">
+          
+          <p>インストールが進行します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/11.png" width="480">
+
+          <p>インストールが完了すると完了ボタンが押せるようになります。完了ボタンをクリックすると。アプリケーションが起動します</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/12.png" width="480">
+
+        </div>
+        
+        <div id="other-contact" class="scrollspy">
+
+            <h3 class="rc-company-chapter">お問い合わせ</h3>
+
+            <p>メニューバーの「ヘルプ」=> 「お問い合わせ」からご入力ください</p>
+
+            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/4.png" width="320">
+
+            <p>お問い合わせボタンをクリックするとGoogle Formsの入力ページへ遷移します</p>
+
+            <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/other/7.png" width="480">
         
         </div>
 
@@ -447,21 +722,35 @@ title: Deepmosaic Desktop ドキュメント
 
         <li><a href="#detection">AI検出</a></li>
         <li><a href="#detection-run"  class="scrollspy-2nd">AI検出を開始する</a></li>
+        <li><a href="#detection-id"   class="scrollspy-2nd">bboxへのIDの付与</a></li>
 
         <li><a href="#project">プロジェクト</a></li>
         <li><a href="#project-delete"  class="scrollspy-2nd">プロジェクトを削除する</a></li>
 
         <li><a href="#edit">ビデオの編集</a></li>
-        <li><a href="#edit-overview"    class="scrollspy-2nd">編集画面</a></li>
-        <li><a href="#edit-toolbar"      class="scrollspy-2nd">ツールバー</a></li>
+        <li><a href="#edit-overview"         class="scrollspy-2nd">編集画面</a></li>
+        <li><a href="#edit-preview"          class="scrollspy-2nd">プレビュー画面</a></li>
+        <li><a href="#edit-timeline"         class="scrollspy-2nd">タイムライン</a></li>
+        <li><a href="#edit-restore-all-bbox" class="scrollspy-2nd">全てのbboxを初期状態に戻す</a></li>
+        <li><a href="#edit-toolbar"          class="scrollspy-2nd">ツールバー</a></li>
+        <li><a href="#edit-restore-bbox"     class="scrollspy-2nd">bboxを初期状態に戻す</a></li>
+        <li><a href="#edit-all-bbox"         class="scrollspy-2nd">bboxの一括編集</a></li>
+        <li><a href="#edit-part-bbox"        class="scrollspy-2nd">bboxの部分編集</a></li>
+        <li><a href="#edit-delete-bbox"      class="scrollspy-2nd">bboxを削除する</a></li>
+        <li><a href="#edit-add-bbox"         class="scrollspy-2nd">bboxを追加する</a></li>
+        <li><a href="#edit-copy-and-paste-bbox" class="scrollspy-2nd">bboxのコピペ</a></li>
+        <li><a href="#edit-add-avoid-mask"   class="scrollspy-2nd">回避マスクを追加する</a></li>
+        <li><a href="#edit-auto-tracking"    class="scrollspy-2nd">オートトラッキングを実行する</a></li>
+        <li><a href="#edit-shortcut-key"     class="scrollspy-2nd">ショートカットキー</a></li>
 
         <li><a href="#encode">ビデオのエンコード</a></li>
+        <li><a href="#encode-overview">エンコードを実行する</a></li>
 
         <li><a href="#other">そのほか</a></li>
-        <li><a href="#other-update"     class="scrollspy-2nd">アプリのアップデート</a></li>
-        <li><a href="#other-help"       class="scrollspy-2nd">ヘルプ</a></li>
-        <li><a href="#other-logout"     class="scrollspy-2nd">ログアウト</a></li>
-        <li><a href="#other-uninstall"  class="scrollspy-2nd">アプリのアンインストール</a></li>
+        <li><a href="#other-update"        class="scrollspy-2nd">アプリのアップデート</a></li>
+        <li><a href="#other-contact"       class="scrollspy-2nd">お問い合わせ</a></li>
+        <li><a href="#other-logout"        class="scrollspy-2nd">ログアウト</a></li>
+        <li><a href="#other-uninstall"     class="scrollspy-2nd">アプリのアンインストール</a></li>
       </ul>
     </div>
   </div>

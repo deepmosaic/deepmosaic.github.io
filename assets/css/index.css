@@ -443,6 +443,9 @@ img {
 .home-guide-image {
     border-radius: 6px;
 }
+.index-objects-detected-img {
+    margin-top: 4.8rem;
+}
 .footer-company-box {
     margin-top: 20px;
 }
@@ -624,4 +627,7 @@ img {
 }
 .docs a:hover {
     text-decoration: underline;
+}
+.download-button-explain {
+    color: rgba(255,255,255,0.65);
 }
