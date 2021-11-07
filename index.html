@@ -2,67 +2,32 @@
 layout: default
 title: AIで動画編集を一段上のレベルに
 ---
+
+<style>
+.header-color {
+    background: unset;
+    background-size: unset;
+}
+</style>
+
 <div class="top-panel white-text">
 
+    {% include header.html %}
+
     <div class="container">
-
-        <nav class="nav-top">
-            <div class="nav-wrapper">
-                <a href="/">
-                    <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
-                </a>
-
-                <ul class="right header-right-bar">
-                    <li>
-                        <a href="/docs" class="header-document-link">{{ site.data.lang.ja.document }}</a>
-                    </li>
-                    <li class="header-contact-display-button">
-                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button header-contact-button' target="_blank"
-                            href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link">{{ site.data.lang.ja.contact }}<i class="tiny material-icons">open_in_new</i>
-                        </a>
-                    </li>
-                </ul>
-
-                <!--
-                <ul class="right header-right-bar hide-on-small-only">
-                    <li>
-                        <a href=https://app.deepmosaic.jp/login>{{ site.data.lang.ja.login }}</a>
-                    </li>
-                    <li>
-                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button'
-                            href="https://app.deepmosaic.jp/signup">{{ site.data.lang.ja.signup }}<i class="tiny material-icons">open_in_new</i></a>
-                    </li>
-                </ul>
-
-                <div class="right header-right-bar hide-on-med-only hide-on-large-only show-on-small">
-                    <a class="dropdown-trigger btn-small"
-                        href='#' data-target='header-app-dropdown'>
-                        <i class="header-dehaze material-icons">dehaze</i>
-                    </a>
-
-                    <ul id='header-app-dropdown' class='row dropdown-content header-app-dropdown'>
-                        <li><a href="#!">{{ site.data.lang.ja.login }}</a></li>
-                        <li><a href="#!">{{ site.data.lang.ja.signup }}</a></li>
-                    </ul>
-                </div>
-                -->
-
-            </div>
-        </nav>
-
         <div class="row center-align">
 
             <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
             <div class="sub-phrase">
-                <p>Deepmosaicはモザイク処理工数を削減する動画編集ツールです。AI技術を用いて対象の物体を自動で検出支援します。</p>
+                <p>Deepmosaicはモザイク処理工数を削減する動画編集アプリケーションです。AI技術を用いて対象の物体を自動で検出支援します。</p>
             </div>
             
             <div class="sub-start download-button-box">
-               <!-- <a class="waves-effect waves-light btn download-button" download
-                href="https://github.com/deepmosaic/desktop_app_support/releases/download/v0.8.2/Deepmosaic.Setup.0.8.2.exe">
+                <a class="waves-effect waves-light btn download-button" download
+                href="{{ site.data.lang.ja.app_download_link }}">
                     無料でダウンロード
                 </a>
-                <span class="download-button-explain"><br>対応OS: Windows 10（64 ビット）</span>  -->
+                <span class="download-button-explain"><br>対応OS: Windows 10（64 ビット）</span>  
             </div>
                 
 
@@ -76,6 +41,7 @@ title: AIで動画編集を一段上のレベルに
         </div>
 
     </div>
+    
 </div>
 
 

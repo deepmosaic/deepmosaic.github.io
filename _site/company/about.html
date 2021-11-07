@@ -106,14 +106,42 @@ fjs.parentNode.insertBefore(js, fjs);
 
 <nav role="navigation" class="header-color nav-top">
     <div class="container">
-        <div class="nav-wrapper">
+        <nav class="nav-top">
+            <div class="nav-wrapper">
+                <a href="/">
+                    <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
+                </a>
 
-            <a href="/">
-                <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png" class="logo-font">
-            </a>
+                <ul id="slide-out" class="sidenav right">
+                    <li class="sidenav-icon-box"><a href="/">
+                        <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
+                    </a></li>
+                    <li><a href="/price">料金</a></li>
+                    <li><a href="/docs">ドキュメント</a></li>
+                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank">問い合わせ</a></li>
+                </ul>
+                
+                <ul class="sidenav-trigger-button">
+                    <a href="#" data-target="slide-out" class="sidenav-trigger">
+                        <i class="material-icons">menu</i>
+                    </a>
+                </ul>
 
-            <div class="hide">
+                <ul class="right header-right-bar header-contact-display-button">
+                    <li>
+                        <a href="/price" class="header-document-link">料金</a>
+                    </li>
+                    <li>
+                        <a href="/docs" class="header-document-link">ドキュメント</a>
+                    </li>
+                    <li>
+                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button header-contact-button' target="_blank"
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link">問い合わせ<i class="tiny material-icons">open_in_new</i>
+                        </a>
+                    </li>
+                </ul>
 
+                <!--
                 <ul class="right header-right-bar hide-on-small-only">
                     <li>
                         <a href=https://app.deepmosaic.jp/login>ログイン</a>
@@ -135,10 +163,10 @@ fjs.parentNode.insertBefore(js, fjs);
                         <li><a href="#!">開始する</a></li>
                     </ul>
                 </div>
+                -->
 
             </div>
-
-        </div>
+        </nav>
     </div>
 </nav>
 

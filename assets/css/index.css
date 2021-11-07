@@ -51,7 +51,7 @@ footer.page-footer {
 }
 
 .nav-top {
-    height: 64px;
+    height: 66px;
     background : none;
     -webkit-box-shadow: none;
     box-shadow: none;
@@ -631,8 +631,79 @@ img {
 .download-button-explain {
     color: rgba(255,255,255,0.65);
 }
-@media (max-width: 480px) {
+@media (max-width: 993px) {
     .header-contact-display-button {
         display: none;
     }
+}
+.header-contact-display-button {
+    line-height: 56px;
+}
+.sidenav {
+    color: white;
+background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
+}
+.sidenav li a {
+    color: white;
+}
+.sidenav-trigger-button {
+    color: white;
+    display: block;
+    position: absolute;
+    top: 4px;
+    right: 0px;
+}
+.sidenav-icon-box {
+    margin-bottom: 1.6rem;
+}
+.plan-card-box {
+    min-height: 38rem; 
+    border-top: 4px solid #0d4375d9;
+    border-bottom: 4px solid #0d4375d9;
+    padding: unset;
+}
+.plan-card-box h3 {
+    margin: 0;
+    padding: 8px 0 11px;
+    border-bottom: 1px solid #e7e7e7; 
+    color: #444;
+    font-size: 34px;
+    line-height: 1.25;
+    font-weight: 600;
+}
+.plan-user-month {
+    display: inline-block;
+}
+.plan-header-body {
+    height: 3.8rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+}
+.plan-yen-mark {
+    font-size: 3rem;
+}
+.plan-price {
+    font-size: 5rem;
+}
+.plan-yen-japanese {
+    font-size: 2rem;
+}
+.plan-each-explanation-box {
+    padding: 1rem 4.2rem 1rem 3.6rem !important;
+}
+.plan-each-explanation-box li  {
+    list-style-type: disc !important;
+}
+.plan-section {
+    margin-bottom: 5rem !important;
+}
+.plan-price-box {
+    margin-bottom: 1rem;
+}
+
+.docs-plan-steps-list{
+    padding-left: 2rem !important;
+}
+.docs-plan-steps-list li {
+    list-style-type: disc !important;
 }
