@@ -205,8 +205,8 @@ fjs.parentNode.insertBefore(js, fjs);
                       <td>10GB以上の空き容量</td>
                   </tr>
                   <tr>
-                      <td>GPU</td>
-                      <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ4GB以上<br>※AI検出機能・オートトラッキング機能を利用する場合はGPU必須</td>
+                      <td>GPU（推奨）</td>
+                      <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ4GB以上<br>※オートトラッキング機能を利用する場合はGPU必須</td>
                   </tr>
                   <tr>
                       <td>モニター</td>
@@ -225,7 +225,7 @@ fjs.parentNode.insertBefore(js, fjs);
             
         <h3 class="rc-company-chapter">NVIDIA CUDA, Driver</h3>
 
-        <p>お使いのグラフィックボードに合わせたNVIDIA CUDAとDriverの最新版をインストールします</p>
+        <p>グラフィックボードを搭載している場合は、お使いのグラフィックボードに合わせたNVIDIA CUDAとDriverの最新版をインストールします</p>
 
         <p><a href="https://developer.nvidia.com/cuda-downloads">NVIDA CUDAのダウンロードページ</a><br>
 
@@ -318,22 +318,7 @@ fjs.parentNode.insertBefore(js, fjs);
             
           <h3 class="rc-company-chapter">インストール</h3>
 
-          <p>認証画面が立ち上がります。初回の場合は画面下のサインアップをクリックします</p>
-          
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/1.png" width="640">
-
-          <p>登録するメールアドレスとパスワードを入力し、続けるボタンをクリックしてアカウントを作成します</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/2.png" width="640">
-
-          <p>入力したメールアドレス宛に下図のメールが届きます。Verify Linkをクリックし、メールアドレスが正しいことを照明します</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/3.png" width="400">
-
-          <p>アカウントが正しく作成されるとインストール画面が立ち上がります<br>
+          <p>インストール画面が立ち上がります<br>
             次へボタンをクリックします</p>
           
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
@@ -377,11 +362,21 @@ fjs.parentNode.insertBefore(js, fjs);
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/project/1.png" width="480">
 
-          <p>AI検出が開始します<br>
-            AIによって検出されたbboxのデフォルト形状を楕円形にする場合は「楕円」を選択します<br>
-            AI検出中には、編集用動画のエンコード・AI検出・検出結果の補正処理の3段階の処理を実施しています</p>
+          <p>AI検出オプション設定画面が開きます<br>AI検出したい対象とbboxのデフォルトの形状を選び、開始ボタンをクリックするとAI検出が開始します</p>
 
-          <p>参考: Core i3 10100, RTX3070tiを用いてAI検出を実行した場合、動画の長さの130%~150%程度の時間で完了します</p>
+          <p>GPU/CPUのチェックが完了するまでは開始ボタンはクリックできません</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+              src="/assets/img/docs/project/7.png" width="420">
+
+          <p>利用できるグラフィックボードがない場合はCPUが選択されます<br>
+          </p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+              src="/assets/img/docs/project/8.png" width="420">
+
+          <p>AI検出が開始します<br>
+            AI検出中には、編集用動画のエンコード・AI検出・検出結果の補正処理の3段階の処理を実施しています</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/project/2.png" width="320">
@@ -775,7 +770,7 @@ fjs.parentNode.insertBefore(js, fjs);
             <li>お客様: プラン変更申し込みフォームから申請</li>
             <li>弊社: 担当者から支払い方法等についてメールで案内</li>
             <li>お客様: 支払い方法を登録</li>
-            <li>弊社: アカウントのプランをTrialからEnterpriseへ変更</li>
+            <li>弊社: Enterprise版利用方法を案内</li>
             <li>お客様: 利用開始</li>
           </ul>
 
@@ -785,7 +780,7 @@ fjs.parentNode.insertBefore(js, fjs);
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/other/1-1.png" width="640">
 
-          <p>プランの変更ボタンをクリックすると、Google Formページがブラウザで開かれます<br>
+          <p>プランの変更ボタンをクリックすると、Google Formページがブラウザで開きます<br>
             ユーザIDと登録済みEmailは自動で入力されます。登録済みEmail以外でのやりとりを希望される場合は返信先Emailにメールアドレスを入力します</p>
           
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
@@ -809,7 +804,7 @@ fjs.parentNode.insertBefore(js, fjs);
             <li>お客様: プラン変更申し込みフォームから解約申請</li>
             <li>弊社: 解約の申し込みを受理。解約受理の旨をメールにて連絡</li>
             <li>お客様: 月末まではEnterpriseプランを利用可能</li>
-            <li>弊社: 翌月1日にアカウントをEnterpriseプランからTrialプランへ変更。解約が完了した旨をメールにて連絡</li>
+            <li>弊社: Enterprise版の解約予約手続きを実施。手続きが完了した旨をメールにて連絡</li>
             <li>お客様: Trialプランとしての利用は引き続き可能</li>
           </ul>
 
@@ -887,16 +882,6 @@ fjs.parentNode.insertBefore(js, fjs);
         
         </div>
 
-        <div id="other-logout" class="scrollspy">
-        
-          <h3 class="rc-company-chapter">ログアウト</h3>
-
-          <p>ログアウトする場合は画面右上にあるアイコンをクリックするとログアウトボタンが表示されます</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/other/1.png" width="640">
-
-        </div>
 
         <div id="other-uninstall" class="scrollspy">
         
@@ -961,7 +946,6 @@ fjs.parentNode.insertBefore(js, fjs);
         <li><a href="#other-cancel-enterprise" class="scrollspy-2nd">Enterpriseプランを解約する</a></li>
         <li><a href="#other-update"        class="scrollspy-2nd">アプリのアップデート</a></li>
         <li><a href="#other-contact"       class="scrollspy-2nd">お問い合わせ</a></li>
-        <li><a href="#other-logout"        class="scrollspy-2nd">ログアウト</a></li>
         <li><a href="#other-uninstall"     class="scrollspy-2nd">アプリのアンインストール</a></li>
       </ul>
     </div>
@@ -993,19 +977,19 @@ fjs.parentNode.insertBefore(js, fjs);
                     data-layout="button"
                     data-size="small"
                     data-mobile-iframe="true">
-                    <a class="blue-grey z-depth-1" target="_blank"  href="https://www.facebook.com/sharer/sharer.php?u=https://www.deepmosaic.xyz">
+                    <a class="blue-grey z-depth-1" target="_blank"  href="https://www.facebook.com/sharer/sharer.php?u=https://www.deepmosaic.co.jp">
                         <svg aria-hidden="true" data-prefix="fab" data-icon="facebook-f" class="svg-inline--fa fa-facebook-f fa-w-9" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 512"><path fill="currentColor" d="M76.7 512V283H0v-91h76.7v-71.7C76.7 42.4 124.3 0 193.8 0c33.3 0 61.9 2.5 70.2 3.6V85h-48.2c-37.8 0-45.1 18-45.1 44.3V192H256l-11.7 91h-73.6v229"></path></svg>
                     </a>
                 </div>
             </li>
             <li>
-                <a class="blue-grey z-depth-1" target="_blank" href="https://twitter.com/share?url=https://www.deepmosaic.xyz">
+                <a class="blue-grey z-depth-1" target="_blank" href="https://twitter.com/share?url=https://www.deepmosaic.co.jp">
                     <svg aria-hidden="true" data-prefix="fab" data-icon="twitter" class="svg-inline--fa fa-twitter fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg>
                 </a>
                 <script async src="https://platform.twitter.com/widgets.js"></script>
             </li>
             <li>
-                <a class="blue-grey z-depth-1" target="_blank" href="https://social-plugins.line.me/lineit/share?url=https://www.deepmosaic.xyz">
+                <a class="blue-grey z-depth-1" target="_blank" href="https://social-plugins.line.me/lineit/share?url=https://www.deepmosaic.co.jp">
                     <svg aria-hidden="true" data-prefix="fab" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.9 56" class="svg-inline--fa fa-twitter fa-w-16"><defs><style>.cls-1{fill:#FFF;fill-rule:evenodd}.cls-1:hover{fill: #039be5;}</style></defs><path class="cls-1" d="M58.9 23.85C58.9 10.7 45.69 0 29.45 0S0 10.7 0 23.85c0 11.78 10.48 21.66 24.63 23.52 1 .21 2.27.63 2.6 1.45a6.13 6.13 0 0 1 .09 2.66S27 53.55 26.9 54c-.13.75-.59 2.91 2.55 1.59s17-10 23.14-17.06c4.27-4.68 6.31-9.42 6.31-14.68zm-39.84 7a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.58.58 0 0 1 .58-.57h2.04a.57.57 0 0 1 .57.57v10.17h5.62a.58.58 0 0 1 .57.57zm5 0a.58.58 0 0 1-.57.57H21.4a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm14.22 0a.58.58 0 0 1-.57.57H35.47a.67.67 0 0 1-.15-.14l-5.89-7.94v7.61a.57.57 0 0 1-.57.57h-2.24a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.23l.05.06 5.88 7.92v-7.41a.57.57 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm11.39-10.72a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.57v2.07a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.58v2.06a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.55.55 0 0 1 .16-.39.59.59 0 0 1 .4-.16h8.25a.58.58 0 0 1 .57.57z"></path></svg>
                 </a>
             </li>

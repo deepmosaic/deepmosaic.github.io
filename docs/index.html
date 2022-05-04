@@ -39,8 +39,8 @@ title: Deepmosaic Desktop ドキュメント
                       <td>10GB以上の空き容量</td>
                   </tr>
                   <tr>
-                      <td>GPU</td>
-                      <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ4GB以上<br>※AI検出機能・オートトラッキング機能を利用する場合はGPU必須</td>
+                      <td>GPU（推奨）</td>
+                      <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ4GB以上<br>※オートトラッキング機能を利用する場合はGPU必須</td>
                   </tr>
                   <tr>
                       <td>モニター</td>
@@ -59,7 +59,7 @@ title: Deepmosaic Desktop ドキュメント
             
         <h3 class="rc-company-chapter">NVIDIA CUDA, Driver</h3>
 
-        <p>お使いのグラフィックボードに合わせたNVIDIA CUDAとDriverの最新版をインストールします</p>
+        <p>グラフィックボードを搭載している場合は、お使いのグラフィックボードに合わせたNVIDIA CUDAとDriverの最新版をインストールします</p>
 
         <p><a href="https://developer.nvidia.com/cuda-downloads">NVIDA CUDAのダウンロードページ</a><br>
 
@@ -152,22 +152,7 @@ title: Deepmosaic Desktop ドキュメント
             
           <h3 class="rc-company-chapter">インストール</h3>
 
-          <p>認証画面が立ち上がります。初回の場合は画面下のサインアップをクリックします</p>
-          
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/1.png" width="640">
-
-          <p>登録するメールアドレスとパスワードを入力し、続けるボタンをクリックしてアカウントを作成します</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/2.png" width="640">
-
-          <p>入力したメールアドレス宛に下図のメールが届きます。Verify Linkをクリックし、メールアドレスが正しいことを照明します</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/install/3.png" width="400">
-
-          <p>アカウントが正しく作成されるとインストール画面が立ち上がります<br>
+          <p>インストール画面が立ち上がります<br>
             次へボタンをクリックします</p>
           
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
@@ -211,11 +196,21 @@ title: Deepmosaic Desktop ドキュメント
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/project/1.png" width="480">
 
-          <p>AI検出が開始します<br>
-            AIによって検出されたbboxのデフォルト形状を楕円形にする場合は「楕円」を選択します<br>
-            AI検出中には、編集用動画のエンコード・AI検出・検出結果の補正処理の3段階の処理を実施しています</p>
+          <p>AI検出オプション設定画面が開きます<br>AI検出したい対象とbboxのデフォルトの形状を選び、開始ボタンをクリックするとAI検出が開始します</p>
 
-          <p>参考: Core i3 10100, RTX3070tiを用いてAI検出を実行した場合、動画の長さの130%~150%程度の時間で完了します</p>
+          <p>GPU/CPUのチェックが完了するまでは開始ボタンはクリックできません</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+              src="/assets/img/docs/project/7.png" width="420">
+
+          <p>利用できるグラフィックボードがない場合はCPUが選択されます<br>
+          </p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+              src="/assets/img/docs/project/8.png" width="420">
+
+          <p>AI検出が開始します<br>
+            AI検出中には、編集用動画のエンコード・AI検出・検出結果の補正処理の3段階の処理を実施しています</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/project/2.png" width="320">
@@ -609,7 +604,7 @@ title: Deepmosaic Desktop ドキュメント
             <li>お客様: プラン変更申し込みフォームから申請</li>
             <li>弊社: 担当者から支払い方法等についてメールで案内</li>
             <li>お客様: 支払い方法を登録</li>
-            <li>弊社: アカウントのプランをTrialからEnterpriseへ変更</li>
+            <li>弊社: Enterprise版利用方法を案内</li>
             <li>お客様: 利用開始</li>
           </ul>
 
@@ -619,7 +614,7 @@ title: Deepmosaic Desktop ドキュメント
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
             src="/assets/img/docs/other/1-1.png" width="640">
 
-          <p>プランの変更ボタンをクリックすると、Google Formページがブラウザで開かれます<br>
+          <p>プランの変更ボタンをクリックすると、Google Formページがブラウザで開きます<br>
             ユーザIDと登録済みEmailは自動で入力されます。登録済みEmail以外でのやりとりを希望される場合は返信先Emailにメールアドレスを入力します</p>
           
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
@@ -643,7 +638,7 @@ title: Deepmosaic Desktop ドキュメント
             <li>お客様: プラン変更申し込みフォームから解約申請</li>
             <li>弊社: 解約の申し込みを受理。解約受理の旨をメールにて連絡</li>
             <li>お客様: 月末まではEnterpriseプランを利用可能</li>
-            <li>弊社: 翌月1日にアカウントをEnterpriseプランからTrialプランへ変更。解約が完了した旨をメールにて連絡</li>
+            <li>弊社: Enterprise版の解約予約手続きを実施。手続きが完了した旨をメールにて連絡</li>
             <li>お客様: Trialプランとしての利用は引き続き可能</li>
           </ul>
 
@@ -721,16 +716,6 @@ title: Deepmosaic Desktop ドキュメント
         
         </div>
 
-        <div id="other-logout" class="scrollspy">
-        
-          <h3 class="rc-company-chapter">ログアウト</h3>
-
-          <p>ログアウトする場合は画面右上にあるアイコンをクリックするとログアウトボタンが表示されます</p>
-
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/other/1.png" width="640">
-
-        </div>
 
         <div id="other-uninstall" class="scrollspy">
         
@@ -795,7 +780,6 @@ title: Deepmosaic Desktop ドキュメント
         <li><a href="#other-cancel-enterprise" class="scrollspy-2nd">Enterpriseプランを解約する</a></li>
         <li><a href="#other-update"        class="scrollspy-2nd">アプリのアップデート</a></li>
         <li><a href="#other-contact"       class="scrollspy-2nd">お問い合わせ</a></li>
-        <li><a href="#other-logout"        class="scrollspy-2nd">ログアウト</a></li>
         <li><a href="#other-uninstall"     class="scrollspy-2nd">アプリのアンインストール</a></li>
       </ul>
     </div>
