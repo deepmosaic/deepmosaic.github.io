@@ -1,6 +1,9 @@
 # deepmosaic.github.io
 Deepmosaic Landing Page
 
+# Install Ruby
+2.xの最新をインストールすること
+https://rubyinstaller.org/downloads/
 
 # Install jekyll
 - 以下のページに従ってrubyをインストール  
@@ -17,7 +20,7 @@ bundle add webrick
 - server起動
 serverではなくserve
 ```
-jekyll serve
+bundle exec jekyll serve
 ```
 
 - コードを変更したらbuildコマンドでコードを生成。`_site`ディレクトリにビルドされたファイルが生成される
