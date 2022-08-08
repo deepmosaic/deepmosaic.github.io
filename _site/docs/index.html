@@ -66,7 +66,8 @@
 <!-- CSS -->
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css" rel="stylesheet" >
-<link href="/assets/css/animate.min.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/vendor/animate.min.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/vendor/video.min.css" type="text/css" rel="stylesheet" media="screen"/>
 <link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
 <link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
 
@@ -75,6 +76,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/js/materialize.min.js"></script>
 <script src="/assets/js/vendor/vue.min.js"></script>
 <script src="/assets/js/vendor/iconify.min.js"></script>
+<script src="/assets/js/vendor/video.min.js"></script>
 <script src="/assets/js/index.js"></script>
 
 <!-- Hotjar Tracking Code for www.deepmosaic.co.jp
@@ -702,16 +704,57 @@ fjs.parentNode.insertBefore(js, fjs);
 
           <h3 class="rc-company-chapter">オートトラッキング機能</h3>
 
-          <p>連続四角形または連続楕円形のbboxを選択状態でオートトラッキングボタンをクリックするとbboxの色が黄色に変わります<br>
-            この状態でマウスホイールを前に倒すかキーボードの右矢印キーを押下することで対象の物体がトラッキングされながらフレームが進みます<br>
-            オートトラッキングはCPUへの負荷が高いため、マウスホイールかキーボードの操作でのみ有効となります。再生した場合はオートトラッキングは機能しません<br>
-            マウスホイールを後ろに倒す、キーボードの左矢印キーを押下する、bboxを削除することでオートトラッキング機能は終了します</p>
+          <p>オートトラッキング機能は対象の物体に依存せず、任意の物体を自動で追跡することができます<br>動作仕様を満たすGPUを搭載しているパソコンでのみどうさせることができます</p>
 
+          <p>オートトラッキング機能の実演動画</p>
+          <video
+            id="edit_track"
+            class="video-js responsive-video"
+            controls
+            preload="auto"
+            width="640"
+            height="264"
+            data-setup="{}"
+          >
+            <source src="/assets/videos/editAutoTrack.mp4" type="video/mp4" />
+            <p class="vjs-no-js">動画が読み込めませんでした。ページをリロードしてください</p>
+          </video>
 
-          <p><span class="iconify" data-icon="icons8:idea" style="color: orange;" data-width="32" data-height="32"></span>
-            bboxがずれてきたらbboxの範囲を調整することで対象の物体をトラッキングし続けます</p>
-          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/edit/6.png" width="640">
+          <br>
+
+          <h6><b>オートトラッキング機能使い方手順</b></h6>
+
+          <ol>
+            <li>連続bboxを描画<br>
+              オートトラッキングが実行可能な下図のオレンジ色で囲まれている連続bboxボタンをクリックすることでbboxを描画します</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/21_1.png" width="520">
+            
+            <li>連続bboxをオートトラッキング状態にする<br>
+              トラッキングしたい対象を連続bboxで囲み、下図オレンジ色で囲まれているオートトラッキングボタンをクリックすることで、bboxが黄色になり、オートトラッキングモードに切り替わります<br>キーボードのTを押下することでもオートトラッキングモードに切り替えることができます</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/21_2.png" width="480">
+
+            <li>再生<br>
+              スペースキーまたは画面左下の再生ボタンをクリックすることで、オートトラッキングが実行されます。下図オレンジ色で囲まれているローディングアイコンが出ていればオートトラッキング機能が正常に動作しています
+            <p>マウスホイールを前に倒すか、キーボードの右矢印キーを押下することでもオートトラッキングしながらビデオを再生することができます</p></li>
+           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/21.png" width="480">
+
+            <li>一時停止、再開<br>
+              オートトラッキングを実行中に、ビデオを一時停止し、異なる物体を囲みなおしてから再開することで、オートトラッキングを中断せずにスムーズに異なる物体をオートトラッキングすることができます</li>
+
+            <p><span class="iconify" data-icon="icons8:idea" style="color: orange;" data-width="32" data-height="32"></span>
+              bboxがずれてきたらビデオを一時停止し、マウスホイールを後ろに倒してフレームを戻してbboxの位置や形を調整します</p>
+            
+              <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/22.png" width="480">
+
+            <li>オートトラッキングの終了<br>
+              オートトラッキングアイコンまたはキーボードのTを押下することで、bboxのオートトラッキングモードが解除されます</li>
+            <br><img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/edit/23.png" width="480">
+          </ol>
         
         </div>
 
@@ -936,8 +979,9 @@ fjs.parentNode.insertBefore(js, fjs);
         <li><a href="#edit-add-bbox"         class="scrollspy-2nd">bboxを追加する</a></li>
         <li><a href="#edit-copy-and-paste-bbox" class="scrollspy-2nd">bboxのコピペ</a></li>
         <li><a href="#edit-add-avoid-mask"   class="scrollspy-2nd">回避マスクを追加する</a></li>
-        <li><a href="#edit-auto-tracking"    class="scrollspy-2nd">オートトラッキングを実行する</a></li>
         <li><a href="#edit-shortcut-key"     class="scrollspy-2nd">ショートカットキー</a></li>
+
+        <li><a href="#edit-auto-tracking">オートトラッキングを実行する</a></li>
 
         <li><a href="#encode">ビデオのエンコード</a></li>
         <li><a href="#encode-overview">エンコードを実行する</a></li>
