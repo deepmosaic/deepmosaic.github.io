@@ -707,3 +707,15 @@ background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
 .docs-plan-steps-list li {
     list-style-type: disc !important;
 }
+.introduce-video-box {
+    border-radius: 6px;
+}
+.introduce-functions-box-first {
+    margin-top: 1rem;
+}
+.introduce-functions-box-second {
+    margin-top: 3rem;
+}
+.introduce-functions-explanation {
+    padding: 0 1.8rem;
+}

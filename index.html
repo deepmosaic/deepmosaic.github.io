@@ -121,34 +121,49 @@ title: AIで動画編集を一段上のレベルに
     </div>
 </div>
 
-<!--
+
 <div class="container spec-container">
     
     <div class="row">
         <div class="divider"></div>
-        <div class="col m9 offset-m1 s12">
-            <br>
-            <h4 class="bold-text center-align">オートトラッキング</h4>
+        <div class="row">
+        <div class="col s12"> 
+            <h4 class="bold-text center-align">機能紹介</h4>
+        </div></div>
 
-            
-            <video
-            id="edit_track"
-            class="video-js responsive-video"
-            controls
-            preload="auto"
-            width="640"
-            height="264"
-            data-setup="{}"
-          >
-            <source src="/assets/videos/index_auto_tracking_demo.mp4" type="video/mp4" />
-            <p class="vjs-no-js">動画が読み込めませんでした。ページをリロードしてください</p>
-          </video>
-
+        <div class="row introduce-functions-box-first">
+            <div class="col s12 m6 right"> 
+                <h5 class="bold-text center-align">AI検出</h5>
+                <p class="introduce-functions-explanation">Deepmosaicでは対象の物体を検出支援するためにディープラーニング技術を用いています。30,000枚以上の画像データで学習された最先端の物体検出モデルが対象の物体を検出支援します</p>
+            </div>
+            <div class="col s12 m6">
+                <div class="">
+                    <video class="responsive-video introduce-video-box hoverable" controls>
+                        <source src="/assets/videos/index_detection.mp4" type="video/mp4" />
+                    </video>
+                </div>
+            </div>           
         </div>
+
+        <div class="row introduce-functions-box-second">
+            <div class="col s12 m6"> 
+                <h5 class="bold-text center-align">オートトラッキング</h5>
+                <p class="introduce-functions-explanation">ディープラーニング領域で技術革新と言われているトランスフォーマーベースのオートトラッキング技術を用いています。AI検出と違い、対象とする物体に制限はなく、任意の物体をオートトラッキングすることができます</p>
+            </div>
+            <div class="col s12 m6">       
+
+                <div class="">
+                    <video class="responsive-video introduce-video-box hoverable" controls>
+                        <source src="/assets/videos/index_auto_tracking_demo.mp4" type="video/mp4" />
+                    </video>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-
+<!--
 <div class="container" id="demo">
     <div class="divider"></div>
     <h4 class="center-align bold-text usecase-title">デモ：わいせつ物（男性・女性）を自動検知する</h4>
