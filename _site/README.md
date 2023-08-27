@@ -2,7 +2,7 @@
 Deepmosaic Landing Page
 
 # Install Ruby
-2.xの最新をインストールすること
+Ruby+gemをインストール
 https://rubyinstaller.org/downloads/
 
 # Install jekyll
