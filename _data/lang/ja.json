@@ -1,6 +1,6 @@
 {
     "url": "https://www.deepmosaic.co.jp",
-    "app_download_link": "https://github.com/deepmosaic/desktop_app_support/releases/download/v0.13.14/Deepmosaic.Setup.0.13.14.exe",
+    "app_download_link": "https://github.com/deepmosaic/desktop_app_support/releases/download/v0.13.15/Deepmosaic.Setup.0.13.15.exe",
     "my_lang": "ja",
     "og_lang": "ja_JP",
     "meta_desc": "Deepmosaicは、手作業で行なっているモザイク処理をディープラーニング技術で自動化します。わいせつ物、肖像権に該当するもの等をAI(人工知能)に学習させることで、それらを映像から自動的に判別し、自動的にモザイク加工処理を行います。",
