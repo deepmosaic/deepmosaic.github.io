@@ -69,6 +69,7 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css" rel="stylesheet" >
 <link href="/assets/css/vendor/animate.min.css" type="text/css" rel="stylesheet" media="screen"/>
 <link href="/assets/css/vendor/video.min.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/vendor/lity.min.css" rel="stylesheet" >
 <link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
 <link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
 
@@ -78,6 +79,7 @@
 <script src="/assets/js/vendor/vue.min.js"></script>
 <script src="/assets/js/vendor/iconify.min.js"></script>
 <script src="/assets/js/vendor/video.min.js"></script>
+<script src="/assets/js/vendor/lity.min.js"></script>
 <script src="/assets/js/index.js"></script>
 
 <!-- Hotjar Tracking Code for www.deepmosaic.co.jp
@@ -301,6 +303,69 @@ fjs.parentNode.insertBefore(js, fjs);
             <h4 class="bold-text center-align">機能紹介</h4>
         </div></div>
 
+        <!-- Tutorial -->
+        <div class="col s12 project-tutorial-section" v-bind:class="{ hide: isProjectTutorial }">
+
+            <div class="row">
+               
+            
+                <div class="col s12 m6 l4">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/L6qT2XUpXmc" 
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step1.jpg">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png">
+                            </a>                            
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP1 動画を読み込む</h6>
+                            <p>動画の読み込みからAI検出の実行までを説明します。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l4">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/uslaD2GXSmo" 
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step2.jpg">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png">
+                            </a>                            
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP2 動画を編集する</h6>
+                            <p>AI検出した動画を編集する方法を説明します。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6 l4">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/DVlolHe--og" 
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step3.jpg">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png">
+                            </a>                            
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP3 有料版に申し込む</h6>
+                            <p>無制限で利用するために有料版に申し込む方法を説明します。</p>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+
+            <div id="inline" style="background:#fff" class="lity-hide">
+                Inline content
+            </div>
+
+        </div>
+<!---
         <div class="row introduce-functions-box-first">
             <div class="col s12 m6 right"> 
                 <h5 class="bold-text center-align">AI検出</h5>
@@ -329,7 +394,7 @@ fjs.parentNode.insertBefore(js, fjs);
                 </div>
             </div>
         </div>
-
+    -->
     </div>
 </div>
 
@@ -464,7 +529,7 @@ fjs.parentNode.insertBefore(js, fjs);
                     </tr>
                     <tr>
                         <td>GPU（推奨）</td>
-                        <td>GeForce 10, 16, 20, 30シリーズ以上。メモリ4GB以上<br>※オートトラッキング機能を利用する場合はGPU必須</td>
+                        <td>GeForce 10, 16, 20, 30, 40シリーズ以上。メモリ4GB以上<br>※オートトラッキング機能を利用する場合はGPU必須</td>
                     </tr>
                     <tr>
                         <td>モニター</td>
