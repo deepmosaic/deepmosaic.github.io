@@ -32,7 +32,7 @@ title: Deepmosaic Desktop ドキュメント
                   </tr>
                   <tr>
                       <td>Memory</td>
-                      <td>8GB以上</td>
+                      <td>16GB以上</td>
                   </tr>
                   <tr>
                       <td>ストレージ空き容量</td>
@@ -266,16 +266,21 @@ title: Deepmosaic Desktop ドキュメント
 
         <div id="adobe-after-effects" class="scrollspy">
           <h2 class="docs-chapter-sub-title">Deepmosaic Importerプラグイン</h2>
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/1-1.png" width="640">
         </div>
 
         <div id="adobe-after-effects-introduce" class="scrollspy">
 
           <h3 class="rc-company-chapter">機能紹介</h3>
 
-          <p></p>
+          <p>Deepmosaic Importerは、DeepmosaicでAI検出したモザイク情報をAdobe After EffectsへインポートするためのAfter Effectsプラグインです。世界中に利用者がいるAfter Effectsに追加できるプラグインなので操作を一から覚える必要がありません。また、After Effectsで処理した内容は、Adobeの標準機能を用いてPremiere Proと連携することが可能です。
+          </p>
+
+          <p>After Effectsの仕様上、長時間の映像編集には向かないため、Deepmosaic Importerでは動画を1分ごとに分割して、After Effectsへインポートする仕様になっています。1分ごとに分割された動画をPremiere Proへ読み込み、連結して最終的な動画へ仕上げるという使い方を想定しています。</p>
 
           <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
-            src="/assets/img/docs/importer/9.jpg" width="640">
+            src="/assets/img/docs/importer/1-2.jpg" width="640">
 
         </div>
 
@@ -301,7 +306,15 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">Adobe After Effects向けにデータをエクスポート</h3>
 
-          <p></p>
+          <p>検出が完了した時点で、自動でAfter Effects向けのエクスポート処理が実行されるため、操作は不要です。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/2-4.jpg" width="640">
+
+          <p>編集画面においても、編集が完了次第、自動でAfter Effects向けのエクスポート処理が実行されます。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/2-5.jpg" width="640">
           
         </div>
 
@@ -310,16 +323,61 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">Deepmosaic Importerを起動する</h3>
 
-          <p></p>
+          <p>After Effetcsを起動し、メニューバーのウィンドウをクリックします。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/3-1.jpg" width="640">
+
+          <p>エクステンションにマウスカーソルを合わせ、Deepmosaic Importerをクリックします。<br>Deepmosaic Importerが表示されない場合は、インストールが正常に完了できていため、再度インストール作業を行ってください。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/3-2.jpg" width="640">
+
+          <p>Deepmosaic Importerプラグインが起動し、検出済みの動画の一覧が表示されます。</p>
+
+          <p>After Effectsの仕様上、長時間の映像編集には向かないため、Deepmosaic Importerでは動画を1分ごとに分割しています。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/3-3.jpg" width="640">
+
+                    
+          <p>Deepmosaic Importerプラグインの起動中にDeepmosaic Desktopで新しく動画を検出した場合は、Deepmosaic Importerプラグインを再起動することで動画が読み込まれます。</p>
+
+          <p>下図のようにプラグインを一度閉じ、再度開くと、最新の状態になります。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/3-4.jpg" width="640">
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/3-5.jpg" width="640">
           
         </div>
 
 
         <div id="adobe-after-effects-import-mosaic-data" class="scrollspy">
 
-          <h3 class="rc-company-chapter">bboxを読み込む</h3>
+          <h3 class="rc-company-chapter">モザイクを読み込む</h3>
 
-          <p></p>
+          <p>読み込みたい動画の「読み込み」ボタンをクリックします。</p>
+          <p>読み込みには1分（59.94フレームレート）の動画で5分程度かかります。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/4-1.jpg" width="640">
+
+          <p>読み込みが完了すると下図のようにモザイクのマスクが編集できるようになります。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/4-2.jpg" width="640">
+
+          <p>モザイクの読み込みが完了し、マスク情報が表示されても、下図のように動画が読み込まれない場合は、プロジェクトを保存し、再度開くと動画が正常に再生できるようになります。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/4-3.jpg" width="640">
+
+          <p>プロジェクトの保存方法</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+            src="/assets/img/docs/importer/4-4.jpg" width="320">
           
         </div>
 
@@ -328,7 +386,10 @@ title: Deepmosaic Desktop ドキュメント
 
           <h3 class="rc-company-chapter">Adobe After Effectsでモザイクを編集する</h3>
 
-          <p></p>
+          <p>Deepmoasic Importerでは、1つの調整レイヤーの配下にすべてのマスクを置いているので、一括でマスクを編集することができます。</p>
+
+          <img alt="edit window" class="home-guide-image responsive-img z-depth-5" 
+          src="/assets/img/docs/importer/5-1.jpg" width="640">
           
         </div>
 
@@ -943,7 +1004,7 @@ title: Deepmosaic Desktop ドキュメント
         <li><a href="#adobe-after-effects-intall-deepmosaic-importer" class="scrollspy-2nd">Deepmosaic Importerのインストール</a></li>
         <li><a href="#adobe-after-effects-export-data-adobe-after-effects" class="scrollspy-2nd">Adobe After Effects向けにデータをエクスポート</a></li>
         <li><a href="#adobe-after-effects-start-deepmosaic-importer" class="scrollspy-2nd">Deepmosaic Importerを起動する</a></li>
-        <li><a href="#adobe-after-effects-import-mosaic-data" class="scrollspy-2nd">bboxを読み込む</a></li>
+        <li><a href="#adobe-after-effects-import-mosaic-data" class="scrollspy-2nd">モザイクを読み込む</a></li>
         <li><a href="#adobe-after-effects-edit-mosaic-adobe-after-effects" class="scrollspy-2nd">Adobe After Effectsでモザイクを編集する</a></li>
 
         <li><a href="#edit">ビデオの編集</a></li>

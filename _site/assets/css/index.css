@@ -589,6 +589,20 @@ img {
 .spec-container h4 {
     padding-bottom: 20px;
 }
+.pr-video-box {
+    width: 80%;
+    margin-bottom: 4rem;
+    margin: auto;
+}
+@media screen and (min-width: 1000px) {
+     .pr-video-box {
+        width: 50%;
+    }
+}
+.desktop-download-button-box  {
+    margin-top: 2rem;
+    margin-bottom: 3rem;
+}
 .download-button-box {
     margin-bottom: 3.6rem;
 }
@@ -751,4 +765,7 @@ background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
 }
 .tutorial-youtube-icon:hover {
     cursor: pointer;
+}
+.importer-section {
+    padding-top: 3rem;
 }
