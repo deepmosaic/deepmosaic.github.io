@@ -9,6 +9,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0)
     eventmachine (1.2.7)
+    eventmachine (1.2.7-x86-mingw32)
     ffi (1.15.5)
     forwardable-extended (2.6.0)
     http_parser.rb (0.8.0)
@@ -69,11 +70,12 @@ GEM
     tzinfo-data (1.2023.3)
       tzinfo (>= 1.0.0)
     unicode-display_width (1.8.0)
-    wdm (0.1.1)
+    wdm (0.2.0)
     webrick (1.8.1)
 
 PLATFORMS
   x64-mingw-ucrt
+  x86-mingw32
 
 DEPENDENCIES
   jekyll (~> 4.2.1)
@@ -81,7 +83,7 @@ DEPENDENCIES
   minima (~> 2.5)
   tzinfo (~> 1.2)
   tzinfo-data
-  wdm (~> 0.1.1)
+  wdm (~> 0.2.0)
   webrick (~> 1.7)
 
 BUNDLED WITH
