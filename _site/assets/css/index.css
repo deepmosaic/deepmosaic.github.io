@@ -9,6 +9,9 @@ p {
 label {
     color: #039be5;
 }
+.black-text {
+    color: black;
+}
 .bold-text {
     font-weight: bold;
 }
@@ -60,7 +63,7 @@ footer.page-footer {
     background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
     background-size: cover;
     position: relative;
-    padding-bottom: 76px;
+    padding-bottom: 1rem;
 }
 .particleground {
     width: 100%;
@@ -226,7 +229,6 @@ footer.page-footer {
     width: 230px;
 }
 .main-phrase {
-    margin-top: 86px;
     font-size: 3.6rem;
 }
 .sub-phrase {
@@ -444,7 +446,8 @@ img {
     border-radius: 6px;
 }
 .index-objects-detected-img {
-    margin-top: 4.8rem;
+    margin-top: 2.8rem;
+    text-align: center;
 }
 .footer-company-box {
     margin-top: 20px;
@@ -591,7 +594,7 @@ img {
 }
 .pr-video-box {
     width: 80%;
-    margin-bottom: 4rem;
+    margin-bottom: 4rem !important;
     margin: auto;
 }
 @media screen and (min-width: 1000px) {
@@ -600,7 +603,6 @@ img {
     }
 }
 .desktop-download-button-box  {
-    margin-top: 2rem;
     margin-bottom: 3rem;
 }
 .download-button-box {
@@ -643,7 +645,7 @@ img {
     text-decoration: underline;
 }
 .download-button-explain {
-    color: rgba(255,255,255,0.65);
+    color: rgba(0, 0, 0, 0.65);
 }
 @media (max-width: 993px) {
     .header-contact-display-button {
@@ -767,5 +769,8 @@ background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
     cursor: pointer;
 }
 .importer-section {
-    padding-top: 3rem;
+    padding: 4rem 0;
+}
+.deepmosaic-desktop-section {
+    padding: 4rem 0;
 }
