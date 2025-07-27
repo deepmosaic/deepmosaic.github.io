@@ -29,6 +29,7 @@ end
 gem "wdm", "~> 0.2.0", :platforms => [:mingw, :x64_mingw, :mswin]
 
 
-
+gem 'csv', '~> 3.3', '>= 3.3.5'
 gem "webrick", "~> 1.7"
-
+gem 'base64', '~> 0.3.0'
+gem 'bigdecimal', '~> 3.2', '>= 3.2.2'

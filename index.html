@@ -19,10 +19,11 @@ title: AIで動画編集を一段上のレベルに
 
             <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
             <div class="sub-phrase">
-                <p>Deepmosaicはモザイク入れ作業を自動化支援します。<br>AI技術を用いて対象の物体を自動で検出支援するDeepmosaic Desktopと検出結果をAdobe After EffectsへインポートするDeepmosaic Importerを提供しています。</p>
+                <p>Deepmosaicはモザイク処理を自動化支援します。<br>AI技術を用いて対象の物体を自動で検出支援し、検出されたモザイク情報はAdobe Premiere Pro, Adobe After Effectsへインポートすることができます。</p>
             </div>
         
-            <div class="card pr-video-box center-align z-depth-5">
+            <!--<div class="card pr-video-box center-align z-depth-5">
+                
                 <div class="card-image youtube-wrap">
                     <a href="https://youtu.be/CBWMIqbMuVE" 
                         title="YouTube video player" frameborder="0"
@@ -31,8 +32,22 @@ title: AIで動画編集を一段上のレベルに
                         <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png">
                     </a>                            
                 </div>
+            
+
+                
+
+            </div>-->
+
+            <div class="col s12">
+                <img alt="edit window" class="home-guide-image responsive-img" width="640" src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png">
             </div>
-                          
+
+            <div class="col s12">
+                <img alt="edit window" class="home-guide-image index-objects-detected-img responsive-img z-depth-5" width="360" src="/assets/img/objects_detected.jpg">
+            </div>
+
+            
+                            
         </div>
 
     </div>
@@ -46,7 +61,7 @@ title: AIで動画編集を一段上のレベルに
         <div class="s12">
             <img alt="edit window" class="home-guide-image responsive-img" src="/assets/img/Deepmosaic_desktop_logo.png" height="50px">
             <div class="sub-phrase black-text">
-                <p>Deepmosaic Desktopは、独自の物体検出技術を用いて自動検出を行います。自動検出されたモザイク情報は、ボタン1つでAfter Effectsへエクスポートすることができます。</p>
+                <p>DeepmosaicはWindows OSで動作するデスクトップアプリケーションです。独自の物体検出技術を用いて対象の物体を自動検出し、自動検出されたモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートします。</p>
             </div>
 
         </div>
@@ -65,9 +80,7 @@ title: AIで動画編集を一段上のレベルに
             <img alt="edit window" class="home-guide-image responsive-img z-depth-5" src="/assets/img/Deepmosaic_Desktop.png">
         </div>
 
-        <div class="col s12">
-            <img alt="edit window" class="home-guide-image index-objects-detected-img responsive-img z-depth-5" width="360" src="/assets/img/objects_detected.jpg">
-        </div>
+        
     </div>
 </div>
 
@@ -82,24 +95,24 @@ title: AIで動画編集を一段上のレベルに
                 <div class="row">
                     <div class="col l8 offset-l2 m12">
                         <img alt="edit window" class="home-guide-image responsive-img"
-                    src="/assets/img/ae/Deepmosaic_Ae_white_logo.png">
+                    src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png">
                     </span></div>
                 </div>
 
                 <div class="sub-phrase">
-                    <p>Deepmosaic Importerプラグインは、Deepmosaic DesktopでAI検出したモザイク情報をAdobe After EffectsへインポートするためのAfter Effectsプラグインです。</p>
+                    <p>Deepmosaicでは、AI検出したモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートすることができます。一からモザイク処理することなく、AI検出で処理されたモザイクを使い慣れたAdobe製品で修正することができます。</p>
                 </div>
                 
                 <div class="sub-start download-button-box">
-                    <a class="waves-effect waves-light btn download-button" download
-                    href="{{ site.data.lang.ja.importer_download_link }}">
-                        無料でダウンロード
-                    </a>
-                    <p><a href="/docs/#adobe-after-effects-intall-deepmosaic-importer">インストール方法はこちら</a></p>
+                    <p><a href="/docs/#adobe-after-effects-intall-deepmosaic-importer">使い方はこちら</a></p>
                 </div>
-
+                
+                <div class="col s6">
                 <img alt="edit window" class="home-guide-image responsive-img z-depth-5"
-                    src="/assets/img/ae/toppage.png">
+                    src="/assets/img/pr_image.png"></div>
+                <div class="col s6">
+                <img alt="edit window" class="home-guide-image responsive-img z-depth-5"
+                    src="/assets/img/ae_image.png"></div>
                 
             </div>
 
@@ -248,22 +261,6 @@ title: AIで動画編集を一段上のレベルに
                     </div>
                 </div>
 
-                <div class="col s12 m6">
-                    <div class="card project-tutorial-card-box">
-                        <div class="card-image youtube-wrap">
-                            <a href="https://youtu.be/7z3tWQ2wSa8" 
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
-                                <img class="responsive-img" src="./assets/img/deepmosaic_importer_howtouse_thumbnail.png">
-                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png">
-                            </a>                            
-                        </div>
-                        <div class="card-content">
-                            <h6 style="font-weight: 500;">Deepmosaic Importerの使い方</h6>
-                            <p>Deepmosaic Desktopで検出したモザイク情報をAfter Effectsへインポートする方法を説明します。</p>
-                        </div>
-                    </div>
-                </div>
                 
             </div>
 
@@ -428,7 +425,7 @@ title: AIで動画編集を一段上のレベルに
                     </tr>
                     <tr>
                         <td>Memory</td>
-                        <td>16GB以上</td>
+                        <td>32GB以上を推奨</td>
                     </tr>
                     <tr>
                         <td>ストレージ空き容量</td>
