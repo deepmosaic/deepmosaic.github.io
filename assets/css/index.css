@@ -39,6 +39,17 @@ i.left {
 .parallax-container .section {
     width: 100%;
 }
+.index-main-box {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+/* 画面幅が600px以下のときだけ適用 */
+@media only screen and (max-width: 600px) {
+    .index-main-box-right {
+        padding-top: 1.6rem !important; /* 他のスタイルに上書きされないよう !important を推奨 */
+    }
+}
 
 @media only screen and (max-width : 992px) {
   .parallax-container .section {
