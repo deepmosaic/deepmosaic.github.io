@@ -1,0 +1,193 @@
+---
+dammy: dammy
+---
+
+<!DOCTYPE html>
+<html lang="{{ site.data.lang.ja.my_lang }}">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>{{ page.title }} | Deepmosaic - AI動画モザイク処理ソフト</title>
+<meta name="title" content="Deepmosaic - ディープラーニングで動画編集を一段上のレベルに">
+<meta name="description" content="{{ site.data.lang.ja.meta_desc }}">
+<meta name='keywords' content="{{ site.data.lang.ja.keywords_seo }}">
+{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+
+<!-- Canonical & Hreflang -->
+<link rel="canonical" href="https://www.deepmosaic.co.jp{{ page.url }}" />
+<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ page.url }}" />
+<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp{{ page.url }}" />
+
+<!-- Bing Web Master -->
+<meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
+
+<!-- Icon -->
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/img/ico/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/img/ico/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/img/ico/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/img/ico/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/img/ico/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/img/ico/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/img/ico/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/img/ico/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/ico/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/ico/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/ico/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/ico/favicon-16x16.png">
+<link rel="manifest" href="/assets/img/ico/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/img/ico/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+<!-- Google Search Console -->
+<meta name="google-site-verification" content="6bC0ENR45CRbQoll9VBbhsvtL69oIJQ1CbenWwUsidU" />
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6EKGBQ8QWS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6EKGBQ8QWS');
+</script>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:title" content="Deepmosaic - {{ site.data.lang.ja.title_index }}" />
+<meta property="og:description" content="{{ site.data.lang.ja.meta_desc }}" />
+<meta property="og:url" content="https://www.deepmosaic.co.jp{{ page.url }}" />
+<meta property="og:site_name" content="Deepmosaic" />
+<meta property="og:locale" content="{{ site.data.lang.ja.og_lang }}" />
+<meta property="fb:app_id" content="360882787795999" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@deepmosaic">
+<meta name="twitter:domain" content="www.deepmosaic.co.jp" />
+<meta name="twitter:creator" content="@deepmosaic">
+<meta name="twitter:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+
+<!-- Structured Data: Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Deepmosaic合同会社",
+  "url": "https://www.deepmosaic.co.jp",
+  "logo": "https://www.deepmosaic.co.jp/assets/img/logo-font.png",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "contact@deepmosaic.co.jp",
+    "contactType": "customer service"
+  }
+}
+</script>
+
+<!-- Structured Data: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Deepmosaic Desktop",
+  "operatingSystem": "Windows 10, Windows 11",
+  "applicationCategory": "MultimediaApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY",
+    "description": "無料トライアル（6時間分の動画インポート）"
+  },
+  "description": "AIで動画のモザイク処理を自動化するデスクトップアプリケーション。Adobe Premiere Pro, After Effectsと連携。",
+  "url": "https://www.deepmosaic.co.jp"
+}
+</script>
+
+{% if page.url == '/' %}
+<!-- Structured Data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "無料で使えますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "どのAdobe製品と連携できますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "GPUは必須ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "解約はいつでもできますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。"
+      }
+    }
+  ]
+}
+</script>
+{% endif %}
+
+<!-- Preconnect -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+<!-- LINE -->
+<script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
+
+<!-- CSS: Critical -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css" rel="stylesheet">
+<link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
+
+<!-- CSS: Non-critical (deferred) -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></noscript>
+<link href="/assets/css/vendor/animate.min.css" type="text/css" rel="stylesheet" media="print" onload="this.media='all'"/>
+<link href="/assets/css/vendor/lity.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+{% if page.needs_video %}
+<link href="/assets/css/vendor/video.min.css" type="text/css" rel="stylesheet" media="screen"/>
+{% endif %}
+
+</head>
+<body>
+
+{{ content }}
+
+<!-- JS: moved to end of body for performance -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/js/materialize.min.js"></script>
+<script src="/assets/js/vendor/lity.min.js"></script>
+{% if page.needs_video %}
+<script src="/assets/js/vendor/video.min.js"></script>
+{% endif %}
+<script src="/assets/js/index.js"></script>
+
+</body>
+</html>
