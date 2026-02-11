@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+<title>AIで動画編集を一段上のレベルに | Deepmosaic - AI動画モザイク処理ソフト</title>
+<meta name="title" content="Deepmosaic - ディープラーニングで動画編集を一段上のレベルに">
+<meta name="description" content="Deepmosaicは、手作業で行なっているモザイク処理をディープラーニング技術で自動化します。わいせつ物、肖像権に該当するもの等をAI(人工知能)に学習させることで、それらを映像から自動的に判別し、自動的にモザイク加工処理を行います。自動的に検出したモザイク情報はAdobe After Effectsへインポートすることができます。">
+<meta name='keywords' content="動画モザイク処理, AI自動モザイク, モザイク編集ソフト, Adobe Premiere Pro プラグイン, After Effects モザイク, 顔モザイク自動, ディープラーニング動画編集, Windows モザイクアプリ, 動画編集自動化, 肖像権対策">
+
+
+<!-- Canonical & Hreflang -->
+<link rel="canonical" href="https://www.deepmosaic.co.jp/" />
+<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp/" />
+<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp/" />
+
+<!-- Bing Web Master -->
+<meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
+
+<!-- Icon -->
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/img/ico/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/img/ico/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/img/ico/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/img/ico/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/img/ico/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/img/ico/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/img/ico/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/img/ico/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/ico/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/ico/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/ico/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/ico/favicon-16x16.png">
+<link rel="manifest" href="/assets/img/ico/manifest.json">
+<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileImage" content="/assets/img/ico/ms-icon-144x144.png">
+<meta name="theme-color" content="#ffffff">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+<!-- Google Search Console -->
+<meta name="google-site-verification" content="6bC0ENR45CRbQoll9VBbhsvtL69oIJQ1CbenWwUsidU" />
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6EKGBQ8QWS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6EKGBQ8QWS');
+</script>
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:title" content="Deepmosaic - ディープラーニングを用いたモザイク処理" />
+<meta property="og:description" content="Deepmosaicは、手作業で行なっているモザイク処理をディープラーニング技術で自動化します。わいせつ物、肖像権に該当するもの等をAI(人工知能)に学習させることで、それらを映像から自動的に判別し、自動的にモザイク加工処理を行います。自動的に検出したモザイク情報はAdobe After Effectsへインポートすることができます。" />
+<meta property="og:url" content="https://www.deepmosaic.co.jp/" />
+<meta property="og:site_name" content="Deepmosaic" />
+<meta property="og:locale" content="ja_JP" />
+<meta property="fb:app_id" content="360882787795999" />
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@deepmosaic">
+<meta name="twitter:domain" content="www.deepmosaic.co.jp" />
+<meta name="twitter:creator" content="@deepmosaic">
+<meta name="twitter:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+
+<!-- Structured Data: Organization -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Deepmosaic合同会社",
+  "url": "https://www.deepmosaic.co.jp",
+  "logo": "https://www.deepmosaic.co.jp/assets/img/logo-font.png",
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "contact@deepmosaic.co.jp",
+    "contactType": "customer service"
+  }
+}
+</script>
+
+<!-- Structured Data: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Deepmosaic Desktop",
+  "operatingSystem": "Windows 10, Windows 11",
+  "applicationCategory": "MultimediaApplication",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "JPY",
+    "description": "無料トライアル（6時間分の動画インポート）"
+  },
+  "description": "AIで動画のモザイク処理を自動化するデスクトップアプリケーション。Adobe Premiere Pro, After Effectsと連携。",
+  "url": "https://www.deepmosaic.co.jp"
+}
+</script>
+
+
+<!-- Structured Data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "無料で使えますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "どのAdobe製品と連携できますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "GPUは必須ですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "解約はいつでもできますか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。"
+      }
+    }
+  ]
+}
+</script>
+
+
+<!-- Preconnect -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
+<!-- LINE -->
+<script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
+
+<!-- CSS: Critical -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/css/materialize.min.css" rel="stylesheet">
+<link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
+<link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
+
+<!-- CSS: Non-critical (deferred) -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></noscript>
+<link href="/assets/css/vendor/animate.min.css" type="text/css" rel="stylesheet" media="print" onload="this.media='all'"/>
+<link href="/assets/css/vendor/lity.min.css" rel="stylesheet" media="print" onload="this.media='all'">
+
+
+</head>
+<body>
+
+<style>
+.header-color {
+    background: unset;
+    background-size: unset;
+}
+</style>
+
+<div class="top-panel white-text">
+
+    <nav role="navigation" class="header-color nav-top">
+    <div class="container">
+        <nav class="nav-top">
+            <div class="nav-wrapper">
+                <a href="/">
+                    <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
+                </a>
+
+                <ul id="slide-out" class="sidenav right">
+                    <li class="sidenav-icon-box"><a href="/">
+                        <img alt="Deepmosaic" class="nav-main-logo" src="/assets/img/logo-font.png">
+                    </a></li>
+                    <li>
+                        <a download
+                        href="https://github.com/deepmosaic/desktop_app_support/releases/download/v1.0.3/Deepmosaic.Setup.1.0.3.exe">ダウンロード</a>
+                    </li>
+                    <li><a href="/price">料金</a></li>
+                    <li><a href="/docs">ドキュメント</a></li>
+                    <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank">問い合わせ</a></li>
+                </ul>
+                
+                <ul class="sidenav-trigger-button">
+                    <a href="#" data-target="slide-out" class="sidenav-trigger">
+                        <i class="material-icons">menu</i>
+                    </a>
+                </ul>
+
+                <ul class="right header-right-bar header-contact-display-button">
+                    <li>
+                        <a class="waves-effect waves-light btn-small header-download-cta" download
+                        href="https://github.com/deepmosaic/desktop_app_support/releases/download/v1.0.3/Deepmosaic.Setup.1.0.3.exe">
+                            <i class="tiny material-icons left">file_download</i>ダウンロード
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/price" class="header-document-link">料金</a>
+                    </li>
+                    <li>
+                        <a href="/docs" class="header-document-link">ドキュメント</a>
+                    </li>
+                    <li>
+                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button header-contact-button' target="_blank"
+                            href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link">問い合わせ<i class="tiny material-icons">open_in_new</i>
+                        </a>
+                    </li>
+                </ul>
+
+                <!--
+                <ul class="right header-right-bar hide-on-small-only">
+                    <li>
+                        <a href=https://app.deepmosaic.jp/login>ログイン</a>
+                    </li>
+                    <li>
+                        <a class='waves-effect waves-light btn blue-grey language-dropdown-button'
+                            href="https://app.deepmosaic.jp/signup">開始する<i class="tiny material-icons">open_in_new</i></a>
+                    </li>
+                </ul>
+
+                <div class="right header-right-bar hide-on-med-only hide-on-large-only show-on-small">
+                    <a class="dropdown-trigger btn-small"
+                        href='#' data-target='header-app-dropdown'>
+                        <i class="header-dehaze material-icons">dehaze</i>
+                    </a>
+
+                    <ul id='header-app-dropdown' class='row dropdown-content header-app-dropdown'>
+                        <li><a href="#!">ログイン</a></li>
+                        <li><a href="#!">開始する</a></li>
+                    </ul>
+                </div>
+                -->
+
+            </div>
+        </nav>
+    </div>
+</nav>
+
+
+    <div class="container">
+        <div class="row center-align hero-row" style="padding-top: 1rem; padding-bottom: 2rem;">
+
+            <div class="col s12 m6 left-align hero-text-col">
+                <h1 class="main-phrase bold-text">AIで動画編集を一段上のレベルに</h1>
+                <div class="sub-phrase hero-sub-phrase">
+                    <p>AIが動画内の対象物体を自動検出し、モザイク処理を支援。Adobe Premiere Pro / After Effectsとシームレスに連携します。</p>
+                </div>
+                <div class="hero-cta-group">
+                    <a class="waves-effect waves-light btn-large download-button hero-download-btn" download
+                       href="https://github.com/deepmosaic/desktop_app_support/releases/download/v1.0.3/Deepmosaic.Setup.1.0.3.exe">
+                        <i class="material-icons left">file_download</i>無料でダウンロード
+                    </a>
+                    <span class="download-button-explain hero-os-note">
+                        Windows 10/11 (64bit) | 無料トライアル
+                    </span>
+                </div>
+                <div class="hero-trust-signals">
+                    <span class="hero-trust-item">
+                        <i class="tiny material-icons">check_circle</i> クレジットカード不要
+                    </span>
+                    <span class="hero-trust-item">
+                        <i class="tiny material-icons">check_circle</i> 5分で使い始められます
+                    </span>
+                </div>
+            </div>
+            <div class="col s12 m6 hero-image-col">
+                <img alt="Deepmosaic AI物体検出結果の画面例" class="home-guide-image responsive-img z-depth-3" src="/assets/img/objects_detected.jpg">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="container black-text center-align deepmosaic-desktop-section animate-on-scroll">
+
+    <div class="row">
+
+        <div class="s12">
+            <img alt="Deepmosaic Desktopアプリケーションロゴ" class="home-guide-image responsive-img" src="/assets/img/Deepmosaic_desktop_logo.png" height="50px" loading="lazy">
+            <div class="sub-phrase black-text">
+                <p>DeepmosaicはWindows OSで動作するデスクトップアプリケーションです。独自の物体検出技術を用いて対象の物体を自動検出し、自動検出されたモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートします。</p>
+            </div>
+
+        </div>
+
+        <div class="col s12 sub-start desktop-download-button-box">
+
+
+            <a class="waves-effect waves-light btn download-button" download
+            href="https://github.com/deepmosaic/desktop_app_support/releases/download/v1.0.3/Deepmosaic.Setup.1.0.3.exe">
+                無料でダウンロード
+            </a>
+            <span class="download-button-explain"><br>対応OS: Windows 10, 11（64 ビット）</span>
+        </div>
+
+        <div class="s12">
+            <img alt="Deepmosaic Desktopアプリ編集画面のスクリーンショット" class="home-guide-image responsive-img z-depth-5" src="/assets/img/Deepmosaic_Desktop.png" loading="lazy">
+        </div>
+
+
+    </div>
+</div>
+
+<!-- Social Proof Section -->
+<div class="container social-proof-section animate-on-scroll">
+    <div class="row center-align">
+        <h2 class="bold-text social-proof-heading">多くの映像制作者にご利用いただいています</h2>
+    </div>
+    <div class="row center-align">
+        <div class="col s6 m3">
+            <div class="stat-number">30,000+</div>
+            <div class="stat-label">学習画像データ</div>
+        </div>
+        <div class="col s6 m3">
+            <div class="stat-number">6</div>
+            <div class="stat-label">検出可能な物体種別</div>
+        </div>
+        <div class="col s6 m3">
+            <div class="stat-number">25fps+</div>
+            <div class="stat-label">自動処理速度</div>
+        </div>
+        <div class="col s6 m3">
+            <div class="stat-number">4,800円</div>
+            <div class="stat-label">月額（税別）から</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="top-panel white-text importer-section animate-on-scroll">
+
+    <div class="container">
+        <div class="row center-align">
+
+            <div class="col s12">
+
+                <div class="row">
+                    <div class="col l8 offset-l2 m12">
+                        <img alt="Adobe Premiere Pro After Effects連携機能" class="home-guide-image responsive-img"
+                    src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png" loading="lazy">
+                    </div>
+                </div>
+
+                <div class="sub-phrase">
+                    <p>Deepmosaicでは、AI検出したモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートすることができます。一からモザイク処理することなく、AI検出で処理されたモザイクを使い慣れたAdobe製品で修正することができます。</p>
+                </div>
+
+                <div class="col s6">
+                <img alt="Premiere Proでのモザイク編集画面" class="home-guide-image responsive-img z-depth-5"
+                    src="/assets/img/pr_image.png" loading="lazy"></div>
+                <div class="col s6">
+                <img alt="After Effectsでのモザイク編集画面" class="home-guide-image responsive-img z-depth-5"
+                    src="/assets/img/ae_image.png" loading="lazy"></div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+
+<div class="container usecase-container animate-on-scroll">
+    <div class="row">
+        <div class="col m9 offset-m1 s12">
+            <h2 class="center-align bold-text ai-step-main-title">自動モザイク処理で人件費削減・編集時間短縮</h2>
+            <img class="center-align responsive-img" src="/assets/img/img_step-b_content_1.png" alt="AI自動モザイク処理の3ステップ: 動画選択、AI検出、最終調整" loading="lazy">
+
+        </div>
+
+        <div class="row">
+            <div class="col m9 offset-m1 s12">
+                <div class="col s4">
+                    <h4 class="center-align ai-step-title">動画を選択</h4>
+                </div>
+                <div class="col s4">
+                    <h4 class="center-align ai-step-title">AIが検出</h4>
+                </div>
+                <div class="col s4">
+                    <h4 class="center-align ai-step-title">最終調整</h4>
+                </div>
+            </div>
+            <div class="col m9 offset-m1 s12">
+                <div class="col s4">
+                    <p class="center-align">モザイク処理したい動画を選択</p>
+                </div>
+                <div class="col s4">
+                    <p class="center-align">AIが対象となる物体を自動で検出支援</p>
+                </div>
+                <div class="col s4">
+                    <p class="center-align">モザイクの修正作業を実施</p>
+                </div>
+            </div>
+        </div>
+
+    <!-- Use Case Cards -->
+    <div class="row usecase-box">
+
+        <div class="col s12 m4">
+            <div class="card usecase-box-card hoverable">
+                <div class="card-content center-align">
+                    <i class="medium material-icons" style="color: #0d4375;">face</i>
+                    <h5 class="bold-text">肖像権対策</h5>
+                    <p class="usecase-explain-text">通行人の顔やナンバープレートなど、プライバシーに配慮すべき対象を自動検出</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="card usecase-box-card hoverable">
+                <div class="card-content center-align">
+                    <i class="medium material-icons" style="color: #0d4375;">movie</i>
+                    <h5 class="bold-text">映像制作効率化</h5>
+                    <p class="usecase-explain-text">Adobe連携により、使い慣れたツールでモザイクの微調整が可能</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col s12 m4">
+            <div class="card usecase-box-card hoverable">
+                <div class="card-content center-align">
+                    <i class="medium material-icons" style="color: #0d4375;">speed</i>
+                    <h5 class="bold-text">時間短縮</h5>
+                    <p class="usecase-explain-text">手作業で数時間かかるモザイク処理を、AI検出で大幅に時間短縮</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    </div>
+</div>
+
+
+
+<div class="container spec-container">
+
+    <div class="row">
+        <div class="divider"></div>
+        <div class="row">
+        <div class="col s12">
+            <h2 class="bold-text center-align section-heading">機能紹介</h2>
+        </div></div>
+
+        <!-- Tutorial -->
+        <div class="col s12 project-tutorial-section animate-on-scroll">
+
+            <div class="row">
+
+                <div class="col s12 m6">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/gcRstNiT-GI"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step1.jpg" alt="STEP1 AI検出チュートリアル動画" loading="lazy">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP1 AI検出</h6>
+                            <p>動画の読み込み、AI検出、Adobe製品と連携する操作手順を解説します</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/uslaD2GXSmo"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step2.jpg" alt="STEP2 動画編集チュートリアル動画" loading="lazy">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP2 動画を編集する</h6>
+                            <p>AI検出した動画を編集する方法を説明します。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col s12 m6">
+                    <div class="card project-tutorial-card-box">
+                        <div class="card-image youtube-wrap">
+                            <a href="https://youtu.be/DVlolHe--og"
+                                title="YouTube video player" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
+                                <img class="responsive-img" src="./assets/img/tutorial_step3.jpg" alt="STEP3 有料版申し込みチュートリアル動画" loading="lazy">
+                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+                            </a>
+                        </div>
+                        <div class="card-content">
+                            <h6 style="font-weight: 500;">STEP3 有料版に申し込む</h6>
+                            <p>無制限で利用するために有料版に申し込む方法を説明します。</p>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div id="inline" style="background:#fff" class="lity-hide">
+                Inline content
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div class="container spec-container animate-on-scroll">
+
+    <div class="row">
+        <div class="divider"></div>
+        <div class="col m9 offset-m1 s12">
+            <br>
+            <h2 class="bold-text center-align section-heading">動作環境</h2>
+
+            <table class="striped">
+                <tbody>
+                    <tr>
+                        <td>OS</td>
+                        <td>Microsoft Windows 10, 11（64 ビット）</td>
+                    </tr>
+                    <tr>
+                        <td>CPU</td>
+                        <td>Intel® 第 7 世代以降 CPU または同等の AMD CPU</td>
+                    </tr>
+                    <tr>
+                        <td>Memory</td>
+                        <td>32GB以上を推奨</td>
+                    </tr>
+                    <tr>
+                        <td>ストレージ空き容量</td>
+                        <td>10GB以上の空き容量</td>
+                    </tr>
+                    <tr>
+                        <td>GPU（推奨）</td>
+                        <td>GeForce 10, 16, 20, 30, 40シリーズ以上。メモリ4GB以上<br>※オートトラッキング機能を利用する場合はGPU必須</td>
+                    </tr>
+                    <tr>
+                        <td>モニター</td>
+                        <td>1,920 x 1,080 以上</td>
+                    </tr>
+                    <tr>
+                        <td>インターネット環境</td>
+                        <td>ソフトウェアの認証、およびサブスクリプションの検証にインターネット接続が必要</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- FAQ Section -->
+<div class="container faq-section animate-on-scroll">
+    <div class="row">
+        <div class="col m9 offset-m1 s12">
+            <h2 class="bold-text center-align section-heading">よくある質問</h2>
+            <ul class="collapsible">
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>無料で使えますか？</div>
+                    <div class="collapsible-body"><p>はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。</p></div>
+                </li>
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>どのAdobe製品と連携できますか？</div>
+                    <div class="collapsible-body"><p>Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。</p></div>
+                </li>
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>GPUは必須ですか？</div>
+                    <div class="collapsible-body"><p>AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。</p></div>
+                </li>
+                <li>
+                    <div class="collapsible-header"><i class="material-icons">help_outline</i>解約はいつでもできますか？</div>
+                    <div class="collapsible-body"><p>はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。解約月の末日にサービス提供が終了します。</p></div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Back to Top Button -->
+<a class="back-to-top" id="backToTop" href="#">
+    <i class="material-icons">keyboard_arrow_up</i>
+</a>
+
+<!-- Mobile Sticky CTA -->
+<div class="mobile-sticky-cta">
+    <a class="waves-effect waves-light btn" download
+       href="https://github.com/deepmosaic/desktop_app_support/releases/download/v1.0.3/Deepmosaic.Setup.1.0.3.exe">
+        <i class="material-icons left">file_download</i>無料でダウンロード
+    </a>
+</div>
+
+<footer class="page-footer blue-grey darken-2">
+<div class="container footer-box">
+  <div class="row">
+
+    <div class="col l3 s12">
+      <h5 class="white-text">About</h5>
+      <ul>
+        <li><a class="white-text" href="/company/about">会社について</a></li>
+        <li><a class="white-text" href="/company/terms">利用規約</a></li>
+        <li><a class="white-text" href="/company/privacy">プライバシーポリシー</a></li>
+        <li><a class="white-text" href="/company/cookie">クッキーポリシー</a></li>
+        <li><a class="white-text" href="/company/asct">特定商取引法に基づく表示</a></li>
+        <li><a class="white-text" target="_blank"
+            href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link">問い合わせ<i class="tiny material-icons">open_in_new</i></a></li>
+      </ul>
+    </div>
+    <div class="col l6 s12 right">
+        <h5 class="white-text">Social Share</h5>
+        <ul class="social-box">
+            <li>
+                <div class="fb-share-button"
+                    data-href="https://www.deepmosaic.xyz/"
+                    data-layout="button"
+                    data-size="small"
+                    data-mobile-iframe="true">
+                    <a class="blue-grey z-depth-1" target="_blank"  href="https://www.facebook.com/sharer/sharer.php?u=https://www.deepmosaic.co.jp">
+                        <svg aria-hidden="true" data-prefix="fab" data-icon="facebook-f" class="svg-inline--fa fa-facebook-f fa-w-9" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 512"><path fill="currentColor" d="M76.7 512V283H0v-91h76.7v-71.7C76.7 42.4 124.3 0 193.8 0c33.3 0 61.9 2.5 70.2 3.6V85h-48.2c-37.8 0-45.1 18-45.1 44.3V192H256l-11.7 91h-73.6v229"></path></svg>
+                    </a>
+                </div>
+            </li>
+            <li>
+                <a class="blue-grey z-depth-1" target="_blank" href="https://twitter.com/share?url=https://www.deepmosaic.co.jp">
+                    <svg aria-hidden="true" data-prefix="fab" data-icon="twitter" class="svg-inline--fa fa-twitter fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg>
+                </a>
+                <script async src="https://platform.twitter.com/widgets.js"></script>
+            </li>
+            <li>
+                <a class="blue-grey z-depth-1" target="_blank" href="https://social-plugins.line.me/lineit/share?url=https://www.deepmosaic.co.jp">
+                    <svg aria-hidden="true" data-prefix="fab" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.9 56" class="svg-inline--fa fa-twitter fa-w-16"><defs><style>.cls-1{fill:#FFF;fill-rule:evenodd}.cls-1:hover{fill: #039be5;}</style></defs><path class="cls-1" d="M58.9 23.85C58.9 10.7 45.69 0 29.45 0S0 10.7 0 23.85c0 11.78 10.48 21.66 24.63 23.52 1 .21 2.27.63 2.6 1.45a6.13 6.13 0 0 1 .09 2.66S27 53.55 26.9 54c-.13.75-.59 2.91 2.55 1.59s17-10 23.14-17.06c4.27-4.68 6.31-9.42 6.31-14.68zm-39.84 7a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.58.58 0 0 1 .58-.57h2.04a.57.57 0 0 1 .57.57v10.17h5.62a.58.58 0 0 1 .57.57zm5 0a.58.58 0 0 1-.57.57H21.4a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm14.22 0a.58.58 0 0 1-.57.57H35.47a.67.67 0 0 1-.15-.14l-5.89-7.94v7.61a.57.57 0 0 1-.57.57h-2.24a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.23l.05.06 5.88 7.92v-7.41a.57.57 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm11.39-10.72a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.57v2.07a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.58v2.06a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.55.55 0 0 1 .16-.39.59.59 0 0 1 .4-.16h8.25a.58.58 0 0 1 .57.57z"></path></svg>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col l6 s12 right footer-company-box">
+        <h5 class="white-text">Deepmosaic合同会社</h5>
+        <!--<span>Tel: <a href="tel:05053633918">050-5363-3918</a></span><br>
+        <span>（10:00~19:00 / 土日・祝日除く）</span>-->
+        <span>Mail: <a href="mailto:contact@deepmosaic.co.jp" target="_self">contact@deepmosaic.co.jp</a></span>
+    </div>
+    <!--
+    <div class="col s12 lang-sestion">
+        <a class='dropdown-trigger btn blue-grey language-dropdown-button'
+            href='#' data-target='dropdown1'>
+        <i class="material-icons left">language</i>
+            
+                English
+            
+        </a>
+
+        <ul id='dropdown1' class='dropdown-content'>
+            <li><a href="/users/lang?lang=ja">Japanese</a></li>
+            <li><a href="/users/lang?lang=en">English</a></li>
+        </ul>
+    </div>
+    -->
+  </div>
+</div>
+<div class="footer-copyright">
+  <div class="container">&copy; 2026 Deepmosaic LLC - All Rights Reserved -</div>
+</div>
+</footer>
+
+
+
+<!-- JS: moved to end of body for performance -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-alpha.3/js/materialize.min.js"></script>
+<script src="/assets/js/vendor/lity.min.js"></script>
+
+<script src="/assets/js/index.js"></script>
+
+</body>
+</html>

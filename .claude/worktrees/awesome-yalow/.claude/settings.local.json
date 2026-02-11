@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc:*)",
+      "Bash(git -C \"C:\\\\Users\\\\core\\\\deepmosaic\\\\deepmosaic.github.io\\\\.claude\\\\worktrees\\\\awesome-yalow\" log -1 --format=\"%H %aI %s\")",
+      "Bash(git -C \"C:\\\\Users\\\\core\\\\deepmosaic\\\\deepmosaic.github.io\\\\.claude\\\\worktrees\\\\awesome-yalow\" diff HEAD~5..HEAD --stat)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(gh auth status:*)"
+    ]
+  }
+}

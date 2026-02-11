@@ -1,0 +1,76 @@
+---
+layout: default
+title: Deepmosaic 料金
+---
+
+{% include header.html %}
+
+<div class="container docs">
+
+  <h1 class="rc-company-title center">{{ site.data.lang.ja.price }}</h1>
+  <div class="row center plan-section">    
+
+      <div class="col s12 m12 l5 offset-l1">
+        <div class="card-panel plan-card-box center">
+          
+          <h3 class="center">Trial</h3>
+          
+          <div class="divider"></div>
+          <p class="center plan-header-body">6時間分までの動画インポートが可能なお試しプラン</p>
+
+          <div class="center plan-price-box">
+            <span class="plan-yen-mark">&yen;</span>
+            <span class="plan-price">0</span>
+            <span class="plan-user-month">1ユーザー</span>           
+          </div>
+
+          <a class="waves-effect waves-light btn" download
+            href="{{ site.data.lang.ja.app_download_link }}">
+                無料でダウンロード
+            </a>
+
+            <ul class="left-align plan-each-explanation-box">
+              <li>全ての機能を利用可能</li>
+              <li>支払い登録不要</li>
+              <li>お試し終了後も新規インポート以外は利用可能</li>
+              <li>エクスポート時のウォーターマーク（透かし）あり</li>
+            </ul>
+        
+        </div>
+      </div>
+  
+      <div class="col s12 m12 l5">
+        <div class="card-panel plan-card-box">
+          
+          <h3 class="center">Enterprise</h3>
+          <div class="divider"></div>
+  
+          <p class="center plan-header-body">利用無制限のプラン</p>
+  
+          <div class="center plan-price-box">
+            <span class="plan-yen-mark">&yen;</span>
+            <span class="plan-price">4,800</span>
+            <span class="plan-user-month">1ユーザー/1ヵ月<br>+消費税</span>           
+          </div>
+
+          <a class="waves-effect waves-light btn" href="/docs/#other-apply-enterprise">申し込む</a>
+  
+            <ul type="disc" class="left-align plan-each-explanation-box">
+              <li>7日間無料。申し込み7日後から請求開始</li>
+              <li>支払いは月額料金のみ</li>
+              <li>クレジットカードに対応</li>
+              <li>いつでも解約可能、解約月の日割り計算なし</li>
+              <li>解約に伴う違約金等は一切なし</li>
+              <li>再契約の場合は初月から請求開始</li>
+              <li>エクスポート時のウォーターマーク（透かし）なし</li>
+              <!--<li>Adobe After Effectsへのエクスポート</li>-->
+            </ul>
+  
+          </div>
+      </div>
+
+
+  </div>
+</div>
+
+{% include footer.html %}
