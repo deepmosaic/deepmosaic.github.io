@@ -245,16 +245,36 @@ font-size: 1.65rem;
         top: 0;
     }
     .main-phrase {
-        margin-top: 36px;
-        font-size: 3em;
+        margin-top: 24px;
+        font-size: 2.2rem;
+        line-height: 1.3;
     }
     .sub-phrase {
-        font-size: 1.2rem;
+        font-size: 1rem;
         padding: 4px 0px 16px 0px;
     }
     .nav-main-logo {
         width: 180px;
         margin-top:5px;
+    }
+    .hero-text-col {
+        text-align: center;
+    }
+    .hero-sub-phrase p {
+        text-align: center;
+    }
+    .ai-step-title {
+        font-size: 1rem;
+    }
+    .ai-step-main-title {
+        font-size: 1.4rem;
+    }
+    .stat-number {
+        font-size: 2rem;
+    }
+    .usecase-box-card {
+        min-height: unset;
+        margin-bottom: 1rem;
     }
 }
 .file-upload-box {
@@ -590,7 +610,8 @@ img {
 .spec-container {
     padding-bottom: 70px;
 }
-.spec-container h4 {
+.spec-container h4,
+.spec-container h2 {
     padding-bottom: 20px;
 }
 .pr-video-box {
@@ -774,4 +795,174 @@ background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
 }
 .deepmosaic-desktop-section {
     padding: 4rem 0;
+}
+
+/* Hero Section */
+.hero-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.hero-image-col {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.hero-text-col {
+    padding-top: 2rem;
+}
+.hero-sub-phrase {
+    padding: 4px 0 16px 0;
+}
+.hero-sub-phrase p {
+    text-align: left;
+}
+.hero-cta-group {
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+.hero-download-btn {
+    text-transform: none !important;
+    font-size: 1.3rem;
+    border-radius: 8px;
+    padding: 0 2rem;
+}
+.hero-os-note {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.6);
+}
+.hero-trust-signals {
+    margin-top: 1.2rem;
+}
+.hero-trust-item {
+    display: inline-block;
+    margin-right: 1.2rem;
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.8);
+}
+.hero-trust-item i {
+    color: #4caf50;
+    vertical-align: middle;
+    margin-right: 2px;
+}
+
+/* Social Proof Section */
+.social-proof-section {
+    padding: 3rem 0;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+.social-proof-heading {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+}
+.stat-number {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #082947;
+    line-height: 1.2;
+}
+.stat-label {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 0.3rem;
+}
+
+/* Section Headings */
+.section-heading {
+    font-size: 1.8rem;
+    padding-bottom: 20px;
+}
+
+/* FAQ Section */
+.faq-section {
+    padding: 3rem 0;
+}
+.faq-section .section-heading {
+    margin-bottom: 1rem;
+}
+.collapsible-header {
+    font-weight: 500;
+    font-size: 1.1rem;
+}
+.collapsible-body p {
+    font-size: 1rem;
+}
+
+/* Mobile Sticky CTA */
+.mobile-sticky-cta {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: #082947;
+    padding: 12px 16px;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    text-align: center;
+}
+.mobile-sticky-cta .btn {
+    width: 100%;
+    text-transform: none;
+    font-size: 1.1rem;
+    border-radius: 6px;
+}
+@media only screen and (max-width: 600px) {
+    .mobile-sticky-cta {
+        display: block;
+    }
+    footer.page-footer {
+        padding-bottom: 70px;
+    }
+}
+
+/* Header Download CTA */
+.header-download-cta {
+    text-transform: none;
+    border-radius: 4px;
+    margin-top: 10px;
+    background-color: #2196F3 !important;
+    padding: 0 12px;
+}
+.header-download-cta:hover {
+    background-color: #1976D2 !important;
+}
+
+/* Back to Top Button */
+.back-to-top {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 998;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #082947;
+    color: #fff;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    transition: opacity 0.3s;
+}
+.back-to-top.visible {
+    display: flex;
+}
+.back-to-top:hover {
+    background: #0d4375;
+}
+
+/* Scroll Animations */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
 }
