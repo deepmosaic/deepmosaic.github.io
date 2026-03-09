@@ -1,1 +1,34 @@
-baseurl: /
+# Site settings
+title: Deepmosaic
+description: "AIで動画のモザイク処理を自動化するデスクトップアプリケーション"
+url: "https://www.deepmosaic.co.jp"
+baseurl: ""
+lang: ja
+
+# Build settings
+markdown: kramdown
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CHANGELOG.md
+  - LICENSE
+  - .claude
+  - .serena
+  - node_modules
+  - vendor
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default

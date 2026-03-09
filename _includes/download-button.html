@@ -1,0 +1,5 @@
+<a class="waves-effect waves-light btn download-button" download
+   href="{{ site.data.lang.ja.app_download_link }}">
+    {% if include.label %}{{ include.label }}{% else %}無料でダウンロード{% endif %}
+</a>
+<span class="download-button-explain">{% if include.note %}<br>{{ include.note }}{% endif %}</span>

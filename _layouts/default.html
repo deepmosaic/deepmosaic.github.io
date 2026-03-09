@@ -1,5 +1,4 @@
 ---
-dammy: dammy
 ---
 
 <!DOCTYPE html>
@@ -15,9 +14,10 @@ dammy: dammy
 {% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
 
 <!-- Canonical & Hreflang -->
-<link rel="canonical" href="https://www.deepmosaic.co.jp{{ page.url }}" />
-<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ page.url }}" />
-<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp{{ page.url }}" />
+{% assign canonical_path = page.url | replace: 'index.html', '' %}
+<link rel="canonical" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
+<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
+<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
 
 <!-- Bing Web Master -->
 <meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
@@ -62,7 +62,7 @@ dammy: dammy
 <meta property="og:image:height" content="630" />
 <meta property="og:title" content="Deepmosaic - {{ site.data.lang.ja.title_index }}" />
 <meta property="og:description" content="{{ site.data.lang.ja.meta_desc }}" />
-<meta property="og:url" content="https://www.deepmosaic.co.jp{{ page.url }}" />
+<meta property="og:url" content="https://www.deepmosaic.co.jp{{ canonical_path }}" />
 <meta property="og:site_name" content="Deepmosaic" />
 <meta property="og:locale" content="{{ site.data.lang.ja.og_lang }}" />
 <meta property="fb:app_id" content="360882787795999" />

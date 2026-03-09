@@ -1,1 +1,6 @@
 .claude/
+.serena/
+_site/
+.jekyll-cache/
+.sass-cache/
+vendor/
