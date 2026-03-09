@@ -9,3 +9,4 @@
 - [x] TICKET-005: Gemfile.lock削除（bundle install再実行で再生成が必要）
 - [x] TICKET-006: canonical URL正規化（index.html除去、_siteをgit追跡から除外）
 - [x] TICKET-007: .gitignore整備（_site, .jekyll-cache, .sass-cache, vendor追加）
+- [x] TICKET-008: GitHub Actions Jekyll 4.4デプロイワークフロー追加（GitHub Pages標準ビルドはJekyll 3.9固定のため）
