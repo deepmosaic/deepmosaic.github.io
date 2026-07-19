@@ -4,3 +4,7 @@ _site/
 .jekyll-cache/
 .sass-cache/
 /vendor/
+
+# Node / Vite (front-end build) — built assets are regenerated in CI
+node_modules/
+assets/dist/

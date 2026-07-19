@@ -6,6 +6,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script>document.documentElement.classList.add('js');</script>
 
 <title>{{ page.title }} | Deepmosaic - AI動画モザイク処理ソフト</title>
 <meta name="title" content="Deepmosaic - ディープラーニングで動画編集を一段上のレベルに">
@@ -153,26 +154,16 @@
 </script>
 {% endif %}
 
-<!-- Preconnect -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://cdnjs.cloudflare.com">
-
-<!-- LINE -->
+<!-- LINE social plugin loader -->
 <script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
 
-<!-- CSS: Critical -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
-<link href="/assets/css/index.css" type="text/css" rel="stylesheet" media="screen"/>
-<link href="/assets/css/header.css" type="text/css" rel="stylesheet" media="screen"/>
+<!-- CSS: self-hosted Roboto + Tailwind/Svelte island styles (built by Vite → assets/dist/) -->
+<link href="/assets/css/fonts.css" rel="stylesheet" media="screen"/>
+<link href="/assets/dist/app.css" rel="stylesheet" media="screen"/>
 
-<!-- CSS: Non-critical (deferred) -->
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" media="print" onload="this.media='all'">
-<noscript><link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"></noscript>
-<link href="/assets/css/vendor/animate.min.css" type="text/css" rel="stylesheet" media="print" onload="this.media='all'"/>
-<link href="/assets/css/vendor/lity.min.css" rel="stylesheet" media="print" onload="this.media='all'">
 {% if page.needs_video %}
-<link href="https://vjs.zencdn.net/8.21.0/video-js.css" type="text/css" rel="stylesheet" media="screen"/>
+<!-- CSS: video.js (docs only) -->
+<link href="https://vjs.zencdn.net/8.23.9/video-js.css" type="text/css" rel="stylesheet" media="screen"/>
 {% endif %}
 
 </head>
@@ -180,14 +171,12 @@
 
 {{ content }}
 
-<!-- JS: moved to end of body for performance -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script src="/assets/js/vendor/lity.min.js"></script>
+<!-- JS: end of body for performance -->
 {% if page.needs_video %}
-<script src="https://vjs.zencdn.net/8.21.0/video.min.js"></script>
+<script src="https://vjs.zencdn.net/8.23.9/video.min.js"></script>
 {% endif %}
-<script src="/assets/js/index.js"></script>
+<!-- Tailwind + Svelte island bundle (built by Vite → assets/dist/) -->
+<script type="module" src="/assets/dist/app.js"></script>
 
 </body>
 </html>

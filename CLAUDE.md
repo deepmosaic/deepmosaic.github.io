@@ -8,19 +8,28 @@ DeepMosaic 公式サイト。Jekyll ベースの静的サイト (GitHub Pages �
 
 ## Commands
 
-```bash
-# 依存インストール
-bundle install
+フロントエンドは **2 段ビルド**。Vite が Tailwind CSS + Svelte アイランドを `assets/dist/app.{css,js}` に出力し、その後 Jekyll がサイトを生成する。**`npm run build` を先に実行してから** `jekyll build/serve` すること。
 
-# ローカル dev server (port 4000)
+```bash
+# 依存インストール (初回)
+bundle install      # Ruby gem
+npm install         # Node (Tailwind v4 / Svelte 5 / Vite)
+
+# フロントエンドアセットをビルド (assets/dist/app.css, app.js)
+npm run build
+
+# ローカル dev server (port 4000) ※ 先に npm run build 済みであること
 bundle exec jekyll serve
 
-# ビルド (出力: _site/)
-bundle exec jekyll build
+# 反復開発: 別ターミナルで Vite watch を回す
+npm run dev         # = vite build --watch (assets/dist/ を保存時に再生成)
 
-# Draft 含めて serve
-bundle exec jekyll serve --drafts
+# 本番ビルド (出力: _site/)
+npm run build && bundle exec jekyll build
 ```
+
+> Windows では `jekyll serve --detach` は `fork()` 未実装のため不可。`--detach` を付けずに実行する。
+> `assets/dist/` と `node_modules/` は gitignore 対象で CI で再生成される。`package-lock.json` はコミットする。
 
 ## Architecture
 
@@ -32,8 +41,11 @@ bundle exec jekyll serve --drafts
 | `_layouts/` | テンプレート (`default.html`) |
 | `_includes/` | パーツ (`header.html`, `footer.html`, `download-button.html`, `spec-table.html`) |
 | `_data/` | YAML データ (lang/i18n) |
-| `_site/` | ビルド出力 (gitignore 対象) |
-| `assets/` | css / js / img / fonts / videos |
+| `_site/` | Jekyll ビルド出力 (gitignore 対象) |
+| `src/` | フロントエンド source: `app.css` (Tailwind v4), `main.js`, `islands/*.svelte` (Svelte 5) |
+| `assets/dist/` | Vite ビルド出力 `app.css` / `app.js` (gitignore 対象・CI 再生成) |
+| `assets/` | css (`fonts.css` 等) / js / img / fonts / videos |
+| `vite.config.js` / `package.json` | フロントエンドビルド設定 |
 | `docs/` | ドキュメントページ |
 | `company/` | 企業情報ページ |
 | `price/` | 価格ページ |
@@ -50,15 +62,24 @@ bundle exec jekyll serve --drafts
 - Jekyll の Liquid テンプレート構文
 - 画像は `assets/img/` に配置 (WebP 推奨)
 - 動画は `assets/videos/` に配置
-- CSS は `assets/css/` (素の CSS / SCSS)
-- JS は `assets/js/` (素の JS)
+- **スタイルは Tailwind CSS v4**。デザイントークン/移植した独自スタイルは `src/app.css` の `@theme` / `@layer components`、それ以外は markup に Tailwind ユーティリティを直書き。Materialize.css は撤去済み。
+- **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
+- 新クラス追加時は Tailwind の `@source`（`src/app.css`）が対象 HTML を走査していること。新ディレクトリの HTML は `@source` に追加。
 - Front matter: 全ページに `layout` / `title` / `description` を必ず指定 (SEO)
 
-## Dependencies (`Gemfile`)
+## Dependencies
 
-- `jekyll`
-- `github-pages`
-- 関連プラグイン (`jekyll-seo-tag`, `jekyll-sitemap` 等)
+**Ruby (`Gemfile`)**
+- `jekyll` (~> 4.4)
+- 関連プラグイン (`jekyll-feed`, `jekyll-seo-tag`, `jekyll-sitemap`)
+
+**Node (`package.json`, devDependencies)**
+- `tailwindcss` + `@tailwindcss/vite` (v4, CSS-first)
+- `svelte` (v5, `mount()` API) + `@sveltejs/vite-plugin-svelte`
+- `vite`
+
+**外部 (CDN, 条件付き)**
+- `video.js` (docs のみ・`needs_video: true` 時)
 
 ---
 

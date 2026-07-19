@@ -1,0 +1,17 @@
+{
+  "name": "deepmosaic-site-assets",
+  "private": true,
+  "type": "module",
+  "description": "Front-end build (Tailwind CSS v4 + Svelte 5 islands) for the Jekyll site",
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch"
+  },
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.2.0",
+    "@tailwindcss/vite": "^4.3.3",
+    "svelte": "^5.56.6",
+    "tailwindcss": "^4.3.3",
+    "vite": "^8.1.5"
+  }
+}

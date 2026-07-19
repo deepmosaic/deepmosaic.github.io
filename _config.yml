@@ -20,11 +20,16 @@ exclude:
   - Gemfile.lock
   - README.md
   - CHANGELOG.md
+  - CLAUDE.md
   - LICENSE
   - .claude
   - .serena
   - node_modules
   - vendor
+  - src
+  - package.json
+  - package-lock.json
+  - vite.config.js
 
 # Default front matter
 defaults:

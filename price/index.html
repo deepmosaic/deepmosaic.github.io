@@ -5,69 +5,73 @@ title: Deepmosaic 料金
 
 {% include header.html %}
 
-<div class="container docs">
+<section>
+  <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6">
 
-  <h1 class="rc-company-title center">{{ site.data.lang.ja.price }}</h1>
-  <div class="row center plan-section">    
+    <h1 class="mb-10 text-center text-3xl font-bold text-navy">{{ site.data.lang.ja.price }}</h1>
 
-      <div class="col s12 m12 l5 offset-l1">
-        <div class="card-panel plan-card-box center">
-          
-          <h3 class="center">Trial</h3>
-          
-          <div class="divider"></div>
-          <p class="center plan-header-body">6時間分までの動画インポートが可能なお試しプラン</p>
+    <div class="mx-auto grid max-w-3xl grid-cols-1 gap-8 md:grid-cols-2">
 
-          <div class="center plan-price-box">
-            <span class="plan-yen-mark">&yen;</span>
-            <span class="plan-price">0</span>
-            <span class="plan-user-month">1ユーザー</span>           
+      <div class="flex flex-col rounded-lg border-t-4 border-b-4 border-navy-2 bg-white p-8 text-center shadow">
+
+        <h2 class="border-b border-gray-200 pb-3 text-3xl font-semibold text-gray-700">Trial</h2>
+
+        <p class="mt-4 text-gray-700">6時間分までの動画インポートが可能なお試しプラン</p>
+
+        <div class="mt-6">
+          <div class="flex items-baseline justify-center gap-1">
+            <span class="text-xl font-semibold">&yen;</span>
+            <span class="text-6xl font-bold">0</span>
           </div>
-
-          {% include download-button.html %}
-
-            <ul class="left-align plan-each-explanation-box">
-              <li>全ての機能を利用可能</li>
-              <li>支払い登録不要</li>
-              <li>お試し終了後も新規インポート以外は利用可能</li>
-              <li>エクスポート時のウォーターマーク（透かし）あり</li>
-            </ul>
-        
+          <p class="mt-1 text-sm text-gray-500">1ユーザー</p>
         </div>
-      </div>
-  
-      <div class="col s12 m12 l5">
-        <div class="card-panel plan-card-box">
-          
-          <h3 class="center">Enterprise</h3>
-          <div class="divider"></div>
-  
-          <p class="center plan-header-body">利用無制限のプラン</p>
-  
-          <div class="center plan-price-box">
-            <span class="plan-yen-mark">&yen;</span>
-            <span class="plan-price">4,800</span>
-            <span class="plan-user-month">1ユーザー/1ヵ月<br>+消費税</span>           
-          </div>
 
-          <a class="waves-effect waves-light btn" href="/docs/#other-apply-enterprise">申し込む</a>
-  
-            <ul type="disc" class="left-align plan-each-explanation-box">
-              <li>7日間無料。申し込み7日後から請求開始</li>
-              <li>支払いは月額料金のみ</li>
-              <li>クレジットカードに対応</li>
-              <li>いつでも解約可能、解約月の日割り計算なし</li>
-              <li>解約に伴う違約金等は一切なし</li>
-              <li>再契約の場合は初月から請求開始</li>
-              <li>エクスポート時のウォーターマーク（透かし）なし</li>
-              <!--<li>Adobe After Effectsへのエクスポート</li>-->
-            </ul>
-  
-          </div>
+        <div class="mt-6">
+          {% include download-button.html %}
+        </div>
+
+        <ul class="mt-8 list-disc space-y-1 pl-6 text-left">
+          <li>全ての機能を利用可能</li>
+          <li>支払い登録不要</li>
+          <li>お試し終了後も新規インポート以外は利用可能</li>
+          <li>エクスポート時のウォーターマーク（透かし）あり</li>
+        </ul>
+
       </div>
 
+      <div class="flex flex-col rounded-lg border-t-4 border-b-4 border-navy-2 bg-white p-8 text-center shadow">
 
+        <h2 class="border-b border-gray-200 pb-3 text-3xl font-semibold text-gray-700">Enterprise</h2>
+
+        <p class="mt-4 text-gray-700">利用無制限のプラン</p>
+
+        <div class="mt-6">
+          <div class="flex items-baseline justify-center gap-1">
+            <span class="text-xl font-semibold">&yen;</span>
+            <span class="text-6xl font-bold">4,800</span>
+          </div>
+          <p class="mt-1 text-sm text-gray-500">1ユーザー/1ヵ月<br>+消費税</p>
+        </div>
+
+        <div class="mt-6">
+          <a class="btn-primary" href="/docs/#other-apply-enterprise">申し込む</a>
+        </div>
+
+        <ul class="mt-8 list-disc space-y-1 pl-6 text-left">
+          <li>7日間無料。申し込み7日後から請求開始</li>
+          <li>支払いは月額料金のみ</li>
+          <li>クレジットカードに対応</li>
+          <li>いつでも解約可能、解約月の日割り計算なし</li>
+          <li>解約に伴う違約金等は一切なし</li>
+          <li>再契約の場合は初月から請求開始</li>
+          <li>エクスポート時のウォーターマーク（透かし）なし</li>
+          <!--<li>Adobe After Effectsへのエクスポート</li>-->
+        </ul>
+
+      </div>
+
+    </div>
   </div>
-</div>
+</section>
 
 {% include footer.html %}

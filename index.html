@@ -3,298 +3,206 @@ layout: default
 title: AIで動画編集を一段上のレベルに
 ---
 
-<style>
-.header-color {
-    background: unset;
-    background-size: unset;
-}
-</style>
+<!-- Hero -->
+<section class="bg-hero-gradient text-white">
+  {% include header.html %}
+  <div class="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6">
+    <div class="flex flex-col items-center gap-8 md:flex-row">
+      <div class="w-full text-center md:w-7/12 md:text-left">
+        <h1 class="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">{{ site.data.lang.ja.main_phrase }}</h1>
+        <p class="mt-4 text-lg text-white/70">AIが動画内の対象物体を自動検出し、モザイク処理を支援。Adobe Premiere Pro / After Effectsとシームレスに連携します。</p>
 
-<div class="top-panel white-text">
-
-    {% include header.html %}
-
-    <div class="container">
-        <div class="row center-align index-main-box" style="padding-top: 1rem; padding-bottom: 2rem;">
-
-            <div class="col s12 m7 left-align hero-text-col">
-                <h1 class="main-phrase bold-text">{{ site.data.lang.ja.main_phrase }}</h1>
-                <div class="sub-phrase hero-sub-phrase">
-                    <p>AIが動画内の対象物体を自動検出し、モザイク処理を支援。Adobe Premiere Pro / After Effectsとシームレスに連携します。</p>
-                </div>
-                
-                <div class="hero-cta-group">
-                    <a class="waves-effect waves-light btn-large download-button hero-download-btn" download
-                       href="{{ site.data.lang.ja.app_download_link }}">
-                        <i class="material-icons left">file_download</i>無料でダウンロード
-                    </a>
-                    <span class="download-button-explain hero-os-note">
-                        Windows 10/11 (64bit) | 無料トライアル
-                    </span>
-                </div>
-                <div class="hero-trust-signals">
-                    <span class="hero-trust-item">
-                        <i class="tiny material-icons">check_circle</i> クレジットカード不要
-                    </span>
-          
-                </div>
-            </div>
-
-            <div class="col s12 m5 index-main-box-right">
-                <img alt="Deepmosaic AI物体検出結果の画面例" class="home-guide-image responsive-img z-depth-3" src="/assets/img/objects_detected.jpg">
-            </div>
-
+        <div class="mt-8">
+          {% include download-button.html size="large" %}
+          <p class="mt-2 text-sm text-white/60">Windows 10/11 (64bit) | 無料トライアル</p>
         </div>
+
+        <div class="mt-5">
+          <span class="inline-flex items-center gap-1 text-sm text-white/80">
+            <svg class="h-4 w-4 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            クレジットカード不要
+          </span>
+        </div>
+      </div>
+
+      <div class="w-full md:w-5/12">
+        <img alt="Deepmosaic AI物体検出結果の画面例" class="w-full rounded-md shadow-2xl" src="/assets/img/objects_detected.jpg">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Desktop intro -->
+<section class="animate-on-scroll">
+  <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
+    <img alt="Deepmosaic Desktopアプリケーションロゴ" class="mx-auto h-[50px] w-auto" src="/assets/img/Deepmosaic_desktop_logo.png" loading="lazy">
+    <p class="mx-auto mt-4 max-w-2xl leading-8">DeepmosaicはWindows OSで動作するデスクトップアプリケーションです。独自の物体検出技術を用いて対象の物体を自動検出し、自動検出されたモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートします。</p>
+    <div class="mt-8 mb-12">
+      {% include download-button.html note="対応OS: Windows 10, 11（64 ビット）" %}
+    </div>
+    <img alt="Deepmosaic Desktopアプリ編集画面のスクリーンショット" class="mx-auto w-full rounded-md shadow-2xl" src="/assets/img/Deepmosaic_Desktop.png" loading="lazy">
+  </div>
+</section>
+
+<!-- Social proof -->
+<section class="animate-on-scroll border-y border-gray-200">
+  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
+    <h2 class="text-center text-2xl font-bold">多くの映像制作者にご利用いただいています</h2>
+    <div class="mt-8 grid grid-cols-3 gap-4 text-center">
+      <div>
+        <div class="text-3xl font-bold text-navy sm:text-4xl">100,000+</div>
+        <div class="mt-1 text-sm text-gray-500">学習画像データ</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-navy sm:text-4xl">25fps+</div>
+        <div class="mt-1 text-sm text-gray-500">自動処理速度</div>
+      </div>
+      <div>
+        <div class="text-3xl font-bold text-navy sm:text-4xl">4,800円</div>
+        <div class="mt-1 text-sm text-gray-500">月額（税別）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Adobe importer -->
+<section class="animate-on-scroll bg-hero-gradient text-white">
+  <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
+    <img alt="Adobe Premiere Pro After Effects連携機能" class="mx-auto w-full max-w-2xl" src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png" loading="lazy">
+    <p class="mx-auto mt-6 max-w-3xl leading-8 text-white/80">Deepmosaicでは、AI検出したモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートすることができます。一からモザイク処理することなく、AI検出で処理されたモザイクを使い慣れたAdobe製品で修正することができます。</p>
+    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
+      <img alt="Premiere Proでのモザイク編集画面" class="w-full rounded-md shadow-2xl" src="/assets/img/pr_image.png" loading="lazy">
+      <img alt="After Effectsでのモザイク編集画面" class="w-full rounded-md shadow-2xl" src="/assets/img/ae_image.png" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- Usecase: 3 steps -->
+<section class="animate-on-scroll">
+  <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+    <h2 class="mb-12 text-center text-2xl font-bold sm:text-3xl">自動モザイク処理で人件費削減・編集時間短縮</h2>
+    <img class="mx-auto w-full" src="/assets/img/img_step-b_content_1.png" alt="AI自動モザイク処理の3ステップ: 動画選択、AI検出、最終調整" loading="lazy">
+    <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+      <div>
+        <h3 class="font-bold text-accent">動画を選択</h3>
+        <p class="mt-2 text-sm">モザイク処理したい動画を選択</p>
+      </div>
+      <div>
+        <h3 class="font-bold text-accent">AIが検出</h3>
+        <p class="mt-2 text-sm">AIが対象となる物体を自動で検出支援</p>
+      </div>
+      <div>
+        <h3 class="font-bold text-accent">最終調整</h3>
+        <p class="mt-2 text-sm">モザイクの修正作業を実施</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 機能紹介 / Tutorials -->
+<section class="animate-on-scroll border-t border-gray-200">
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6" data-island="video-lightbox">
+    <h2 class="mb-10 text-center text-2xl font-bold sm:text-3xl">機能紹介</h2>
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
+        <a href="https://youtu.be/gcRstNiT-GI" data-video-url="https://youtu.be/gcRstNiT-GI" target="_blank" rel="noopener noreferrer"
+           class="group relative block aspect-video overflow-hidden" aria-label="STEP1 AI検出チュートリアル動画を再生">
+          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step1.jpg" alt="STEP1 AI検出チュートリアル動画" loading="lazy">
+          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+        </a>
+        <div class="p-4">
+          <h3 class="font-medium">STEP1 AI検出</h3>
+          <p class="mt-1 text-sm text-white/80">動画の読み込み、AI検出、Adobe製品と連携する操作手順を解説します</p>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
+        <a href="https://youtu.be/uslaD2GXSmo" data-video-url="https://youtu.be/uslaD2GXSmo" target="_blank" rel="noopener noreferrer"
+           class="group relative block aspect-video overflow-hidden" aria-label="STEP2 動画編集チュートリアル動画を再生">
+          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step2.jpg" alt="STEP2 動画編集チュートリアル動画" loading="lazy">
+          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+        </a>
+        <div class="p-4">
+          <h3 class="font-medium">STEP2 動画を編集する</h3>
+          <p class="mt-1 text-sm text-white/80">AI検出した動画を編集する方法を説明します。</p>
+        </div>
+      </div>
+
+      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
+        <a href="https://youtu.be/DVlolHe--og" data-video-url="https://youtu.be/DVlolHe--og" target="_blank" rel="noopener noreferrer"
+           class="group relative block aspect-video overflow-hidden" aria-label="STEP3 有料版申し込みチュートリアル動画を再生">
+          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step3.jpg" alt="STEP3 有料版申し込みチュートリアル動画" loading="lazy">
+          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
+        </a>
+        <div class="p-4">
+          <h3 class="font-medium">STEP3 有料版に申し込む</h3>
+          <p class="mt-1 text-sm text-white/80">無制限で利用するために有料版に申し込む方法を説明します。</p>
+        </div>
+      </div>
 
     </div>
+  </div>
+</section>
 
-</div>
+<!-- 動作環境 -->
+<section class="animate-on-scroll">
+  <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+    <h2 class="mb-8 text-center text-2xl font-bold sm:text-3xl">動作環境</h2>
+    {% include spec-table.html %}
+  </div>
+</section>
 
-<div class="container black-text center-align deepmosaic-desktop-section animate-on-scroll">
-
-    <div class="row">
-
-        <div class="s12">
-            <img alt="Deepmosaic Desktopアプリケーションロゴ" class="home-guide-image responsive-img" src="/assets/img/Deepmosaic_desktop_logo.png" height="50px" loading="lazy">
-            <div class="sub-phrase black-text">
-                <p>DeepmosaicはWindows OSで動作するデスクトップアプリケーションです。独自の物体検出技術を用いて対象の物体を自動検出し、自動検出されたモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートします。</p>
-            </div>
-
-        </div>
-
-        <div class="col s12 sub-start desktop-download-button-box">
-
-
-            {% include download-button.html note="対応OS: Windows 10, 11（64 ビット）" %}
-        </div>
-
-        <div class="s12">
-            <img alt="Deepmosaic Desktopアプリ編集画面のスクリーンショット" class="home-guide-image responsive-img z-depth-5" src="/assets/img/Deepmosaic_Desktop.png" loading="lazy">
-        </div>
-
-
+<!-- FAQ -->
+<section class="animate-on-scroll bg-gray-50">
+  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+    <h2 class="mb-8 text-center text-2xl font-bold sm:text-3xl">よくある質問</h2>
+    <div class="space-y-3" data-island="accordion">
+      <details class="group rounded-lg border border-gray-200 bg-white">
+        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
+          無料で使えますか？
+          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+        </summary>
+        <div class="px-5 pb-4 text-gray-700"><p>はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。</p></div>
+      </details>
+      <details class="group rounded-lg border border-gray-200 bg-white">
+        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
+          どのAdobe製品と連携できますか？
+          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+        </summary>
+        <div class="px-5 pb-4 text-gray-700"><p>Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。</p></div>
+      </details>
+      <details class="group rounded-lg border border-gray-200 bg-white">
+        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
+          GPUは必須ですか？
+          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+        </summary>
+        <div class="px-5 pb-4 text-gray-700"><p>AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。</p></div>
+      </details>
+      <details class="group rounded-lg border border-gray-200 bg-white">
+        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
+          解約はいつでもできますか？
+          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
+        </summary>
+        <div class="px-5 pb-4 text-gray-700"><p>はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。解約月の末日にサービス提供が終了します。</p></div>
+      </details>
     </div>
-</div>
+  </div>
+</section>
 
-<!-- Social Proof Section -->
-<div class="container social-proof-section animate-on-scroll">
-    <div class="row center-align">
-        <h2 class="bold-text social-proof-heading">多くの映像制作者にご利用いただいています</h2>
-    </div>
-    <div class="row center-align">
-        <div class="col s6 m4">
-            <div class="stat-number">100,000+</div>
-            <div class="stat-label">学習画像データ</div>
-        </div>
-        <div class="col s6 m4">
-            <div class="stat-number">25fps+</div>
-            <div class="stat-label">自動処理速度</div>
-        </div>
-        <div class="col s6 m4">
-            <div class="stat-number">4,800円</div>
-            <div class="stat-label">月額（税別）</div>
-        </div>
-    </div>
-</div>
-
-
-<div class="top-panel white-text importer-section animate-on-scroll">
-
-    <div class="container">
-        <div class="row center-align">
-
-            <div class="col s12">
-
-                <div class="row">
-                    <div class="col l8 offset-l2 m12">
-                        <img alt="Adobe Premiere Pro After Effects連携機能" class="home-guide-image responsive-img"
-                    src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png" loading="lazy">
-                    </div>
-                </div>
-
-                <div class="sub-phrase">
-                    <p>Deepmosaicでは、AI検出したモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートすることができます。一からモザイク処理することなく、AI検出で処理されたモザイクを使い慣れたAdobe製品で修正することができます。</p>
-                </div>
-
-                <div class="col s6">
-                <img alt="Premiere Proでのモザイク編集画面" class="home-guide-image responsive-img z-depth-5"
-                    src="/assets/img/pr_image.png" loading="lazy"></div>
-                <div class="col s6">
-                <img alt="After Effectsでのモザイク編集画面" class="home-guide-image responsive-img z-depth-5"
-                    src="/assets/img/ae_image.png" loading="lazy"></div>
-
-            </div>
-
-        </div>
-    </div>
-
-</div>
-
-
-<div class="container usecase-container animate-on-scroll">
-    <div class="row">
-        <div class="col m9 offset-m1 s12">
-            <h2 class="center-align bold-text ai-step-main-title">自動モザイク処理で人件費削減・編集時間短縮</h2>
-            <img class="center-align responsive-img" src="/assets/img/img_step-b_content_1.png" alt="AI自動モザイク処理の3ステップ: 動画選択、AI検出、最終調整" loading="lazy">
-
-        </div>
-
-        <div class="row">
-            <div class="col m9 offset-m1 s12">
-                <div class="col s4">
-                    <h4 class="center-align ai-step-title">動画を選択</h4>
-                </div>
-                <div class="col s4">
-                    <h4 class="center-align ai-step-title">AIが検出</h4>
-                </div>
-                <div class="col s4">
-                    <h4 class="center-align ai-step-title">最終調整</h4>
-                </div>
-            </div>
-            <div class="col m9 offset-m1 s12">
-                <div class="col s4">
-                    <p class="center-align">モザイク処理したい動画を選択</p>
-                </div>
-                <div class="col s4">
-                    <p class="center-align">AIが対象となる物体を自動で検出支援</p>
-                </div>
-                <div class="col s4">
-                    <p class="center-align">モザイクの修正作業を実施</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-
-
-<div class="container spec-container">
-
-    <div class="row">
-        <div class="divider"></div>
-        <div class="row">
-        <div class="col s12">
-            <h2 class="bold-text center-align section-heading">機能紹介</h2>
-        </div></div>
-
-        <!-- Tutorial -->
-        <div class="col s12 project-tutorial-section animate-on-scroll">
-
-            <div class="row">
-
-                <div class="col s12 m6">
-                    <div class="card project-tutorial-card-box">
-                        <div class="card-image youtube-wrap">
-                            <a href="https://youtu.be/gcRstNiT-GI"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
-                                <img class="responsive-img" src="./assets/img/tutorial_step1.jpg" alt="STEP1 AI検出チュートリアル動画" loading="lazy">
-                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-                            </a>
-                        </div>
-                        <div class="card-content">
-                            <h6 style="font-weight: 500;">STEP1 AI検出</h6>
-                            <p>動画の読み込み、AI検出、Adobe製品と連携する操作手順を解説します</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="card project-tutorial-card-box">
-                        <div class="card-image youtube-wrap">
-                            <a href="https://youtu.be/uslaD2GXSmo"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
-                                <img class="responsive-img" src="./assets/img/tutorial_step2.jpg" alt="STEP2 動画編集チュートリアル動画" loading="lazy">
-                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-                            </a>
-                        </div>
-                        <div class="card-content">
-                            <h6 style="font-weight: 500;">STEP2 動画を編集する</h6>
-                            <p>AI検出した動画を編集する方法を説明します。</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s12 m6">
-                    <div class="card project-tutorial-card-box">
-                        <div class="card-image youtube-wrap">
-                            <a href="https://youtu.be/DVlolHe--og"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" data-lity>
-                                <img class="responsive-img" src="./assets/img/tutorial_step3.jpg" alt="STEP3 有料版申し込みチュートリアル動画" loading="lazy">
-                                <img class="responsive-img tutorial-youtube-icon" src="./assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-                            </a>
-                        </div>
-                        <div class="card-content">
-                            <h6 style="font-weight: 500;">STEP3 有料版に申し込む</h6>
-                            <p>無制限で利用するために有料版に申し込む方法を説明します。</p>
-                        </div>
-                    </div>
-                </div>
-
-
-            </div>
-
-            <div id="inline" style="background:#fff" class="lity-hide">
-                Inline content
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-<div class="container spec-container animate-on-scroll">
-
-    <div class="row">
-        <div class="divider"></div>
-        <div class="col m9 offset-m1 s12">
-            <br>
-            <h2 class="bold-text center-align section-heading">動作環境</h2>
-
-            {% include spec-table.html %}
-        </div>
-    </div>
-</div>
-
-<!-- FAQ Section -->
-<div class="container faq-section animate-on-scroll">
-    <div class="row">
-        <div class="col m9 offset-m1 s12">
-            <h2 class="bold-text center-align section-heading">よくある質問</h2>
-            <ul class="collapsible">
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>無料で使えますか？</div>
-                    <div class="collapsible-body"><p>はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。</p></div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>どのAdobe製品と連携できますか？</div>
-                    <div class="collapsible-body"><p>Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。</p></div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>GPUは必須ですか？</div>
-                    <div class="collapsible-body"><p>AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。</p></div>
-                </li>
-                <li>
-                    <div class="collapsible-header"><i class="material-icons">help_outline</i>解約はいつでもできますか？</div>
-                    <div class="collapsible-body"><p>はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。解約月の末日にサービス提供が終了します。</p></div>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<!-- Back to Top Button -->
-<a class="back-to-top" id="backToTop" href="#">
-    <i class="material-icons">keyboard_arrow_up</i>
+<!-- Back to top -->
+<a class="back-to-top fixed bottom-20 right-5 z-40 h-11 w-11 items-center justify-center rounded-full bg-navy text-white shadow-lg transition hover:bg-navy-2" id="backToTop" href="#" aria-label="ページ上部へ戻る">
+  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
 </a>
 
-<!-- Mobile Sticky CTA -->
-<div class="mobile-sticky-cta">
-    <a class="waves-effect waves-light btn" download
-       href="{{ site.data.lang.ja.app_download_link }}">
-        <i class="material-icons left">file_download</i>無料でダウンロード
-    </a>
+<!-- Mobile sticky CTA -->
+<div class="fixed inset-x-0 bottom-0 z-30 bg-navy p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.2)] md:hidden">
+  <a class="flex w-full items-center justify-center gap-2 rounded bg-sky px-4 py-2.5 font-medium text-white" download href="{{ site.data.lang.ja.app_download_link }}">
+    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
+    無料でダウンロード
+  </a>
 </div>
 
 {% include footer.html %}

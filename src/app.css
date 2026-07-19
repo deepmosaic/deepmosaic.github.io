@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Class sources — Jekyll templates hold most classes; Tailwind v4 must be
+   told where to scan (paths are relative to this file in src/).
+   ========================================================================== */
+@source "../_layouts/**/*.html";
+@source "../_includes/**/*.html";
+@source "../*.html";
+@source "../docs/**/*.html";
+@source "../price/**/*.html";
+@source "../company/**/*.html";
+@source "./**/*.svelte";
+/* Never scan Jekyll's generated output (also gitignored). */
+@source not "../_site";
+
+/* ==========================================================================
+   Design tokens (brand palette + fonts) — generate bg-/text-/border-/font-*
+   utilities. Roboto is self-hosted from assets/fonts/ (no Google Fonts).
+   ========================================================================== */
+@theme {
+  --color-navy: #082947;
+  --color-navy-2: #0d4375;
+  --color-accent: #485aff;
+  --color-sky: #039be5;
+  --color-success: #4caf50;
+
+  --font-sans: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans",
+    Meiryo, sans-serif;
+}
+
+/* Roboto @font-face lives in the static assets/css/fonts.css (served directly
+   by Jekyll) so Vite never rewrites the self-hosted font URLs. */
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    color: #1a1a1a;
+  }
+}
+
+/* ==========================================================================
+   Ported bespoke styles (things not worth expressing as long utility chains).
+   ========================================================================== */
+@layer components {
+  /* Buttons (replace Materialize .btn / .waves-effect) */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded bg-sky px-8 py-3
+      text-base font-medium text-white shadow transition hover:bg-[#0288c7]
+      active:scale-95;
+  }
+
+  /* Navy hero / section gradient (was Materialize .top-panel / .header-color) */
+  .bg-hero-gradient {
+    background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
+    background-size: cover;
+  }
+
+  /* Scroll-triggered reveal — toggled by the vanilla IntersectionObserver in
+     main.js. Gated behind `.js` (set by an inline head script) so content stays
+     fully visible when JavaScript is unavailable. */
+  .js .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .js .animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Responsive 16:9 YouTube/video embed wrapper */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+  }
+  .video-embed iframe,
+  .video-embed video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Back-to-top button — .visible toggled by main.js */
+  .back-to-top {
+    display: none;
+  }
+  .back-to-top.visible {
+    display: flex;
+  }
+
+  /* Docs TOC active link — .active toggled by the Scrollspy island */
+  .docs-toc a.active {
+    color: var(--color-accent);
+    font-weight: 600;
+  }
+
+  /* Prose rhythm for docs / legal pages (was .rc-company / .docs) */
+  .rich-prose :where(p) {
+    line-height: 2;
+    margin-bottom: 1rem;
+  }
+  .rich-prose :where(a) {
+    color: var(--color-sky);
+  }
+  .rich-prose :where(a):hover {
+    text-decoration: underline;
+  }
+  .rich-prose :where(img) {
+    border-radius: 6px;
+    margin-bottom: 1.6rem;
+    max-width: 100%;
+    height: auto;
+  }
+  .rich-prose :where(ul, ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    list-style: revert;
+  }
+}
