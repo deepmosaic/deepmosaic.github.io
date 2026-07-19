@@ -11,69 +11,109 @@
 @source "../price/**/*.html";
 @source "../company/**/*.html";
 @source "./**/*.svelte";
-/* Never scan Jekyll's generated output (also gitignored). */
 @source not "../_site";
 
 /* ==========================================================================
-   Design tokens (brand palette + fonts) — generate bg-/text-/border-/font-*
-   utilities. Roboto is self-hosted from assets/fonts/ (no Google Fonts).
+   Dark design tokens (from the new-app design system) + fonts.
+   Roboto is self-hosted via assets/css/fonts.css; JP falls back to system.
    ========================================================================== */
 @theme {
-  --color-navy: #082947;
-  --color-navy-2: #0d4375;
-  --color-accent: #485aff;
-  --color-sky: #039be5;
+  --color-surface: #1f1f1f;      /* page background */
+  --color-surface-alt: #242424;  /* alternating section bg */
+  --color-panel: #2b2b2b;        /* cards */
+  --color-panel-2: #2f2f2f;      /* elevated cards / faq */
+  --color-elevated: #353535;     /* hover */
+  --color-footer: #1a1a1a;
+  --color-hair: #333333;         /* subtle line */
+  --color-edge: #3a3a3a;         /* default border */
+  --color-edge-strong: #4a4a4a;
+  --color-accent: #4f8be8;
+  --color-accent-soft: #6fa3f0;  /* links / accent hover */
   --color-success: #4caf50;
+  --color-ink: #f0f0f0;          /* primary text */
+  --color-ink-2: #b0b0b0;        /* secondary text */
+  --color-ink-3: #8a8a8a;        /* tertiary text */
+  --color-ink-4: #707070;        /* muted */
 
-  --font-sans: "Roboto", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-    "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans",
-    Meiryo, sans-serif;
+  --font-sans: "Roboto", "Noto Sans JP", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo,
+    sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", ui-monospace, monospace;
 }
-
-/* Roboto @font-face lives in the static assets/css/fonts.css (served directly
-   by Jekyll) so Vite never rewrites the self-hosted font URLs. */
 
 /* ==========================================================================
    Base
    ========================================================================== */
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
     font-family: var(--font-sans);
-    color: #1a1a1a;
+    background: var(--color-surface);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: rgba(79, 139, 232, 0.35);
   }
 }
 
 /* ==========================================================================
-   Ported bespoke styles (things not worth expressing as long utility chains).
+   Components
    ========================================================================== */
 @layer components {
-  /* Buttons (replace Materialize .btn / .waves-effect) */
+  /* Buttons (AppButton: primary / secondary / ghost, sizes via .btn-lg) */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+      text-sm font-medium whitespace-nowrap transition;
+  }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded bg-sky px-8 py-3
-      text-base font-medium text-white shadow transition hover:bg-[#0288c7]
-      active:scale-95;
+    background: var(--color-accent);
+    color: #fff;
+    border: 1px solid transparent;
+  }
+  .btn-primary:hover {
+    background: var(--color-accent-soft);
+  }
+  .btn-secondary {
+    background: var(--color-edge);
+    color: var(--color-ink);
+    border: 1px solid var(--color-edge-strong);
+  }
+  .btn-secondary:hover {
+    background: var(--color-elevated);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background: var(--color-edge);
+  }
+  .btn-lg {
+    @apply px-5 py-3 text-base;
   }
 
-  /* Navy hero / section gradient (was Materialize .top-panel / .header-color) */
-  .bg-hero-gradient {
-    background: linear-gradient(135deg, #082947e3, #082947 20%, #0d4375d9);
-    background-size: cover;
+  /* Section kicker (blue eyebrow) */
+  .kicker {
+    color: var(--color-accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
   }
 
-  /* Scroll-triggered reveal — toggled by the vanilla IntersectionObserver in
-     main.js. Gated behind `.js` (set by an inline head script) so content stays
-     fully visible when JavaScript is unavailable. */
-  .js .animate-on-scroll {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.6s ease, transform 0.6s ease;
-  }
-  .js .animate-on-scroll.animated {
-    opacity: 1;
-    transform: translateY(0);
+  /* Feature / step icon chip */
+  .icon-chip {
+    @apply inline-flex h-[42px] w-[42px] items-center justify-center rounded-[10px];
+    background: rgba(79, 139, 232, 0.14);
+    color: var(--color-accent-soft);
   }
 
-  /* Responsive 16:9 YouTube/video embed wrapper */
+  /* Responsive 16:9 embed wrapper (kept for any iframe/video use) */
   .video-embed {
     position: relative;
     padding-bottom: 56.25%;
@@ -88,40 +128,68 @@
     height: 100%;
   }
 
-  /* Back-to-top button — .visible toggled by main.js */
-  .back-to-top {
-    display: none;
-  }
-  .back-to-top.visible {
-    display: flex;
-  }
-
-  /* Docs TOC active link — .active toggled by the Scrollspy island */
+  /* Docs TOC active link — toggled by the Scrollspy island */
   .docs-toc a.active {
-    color: var(--color-accent);
-    font-weight: 600;
+    color: var(--color-accent-soft);
+    border-left-color: var(--color-accent);
   }
 
-  /* Prose rhythm for docs / legal pages (was .rc-company / .docs) */
+  /* Optional scroll reveal (gated by .js so no-JS keeps content visible) */
+  .js .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .js .animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Prose for docs / legal pages (dark) */
+  .rich-prose {
+    color: var(--color-ink-2);
+  }
   .rich-prose :where(p) {
     line-height: 2;
     margin-bottom: 1rem;
   }
   .rich-prose :where(a) {
-    color: var(--color-sky);
+    color: var(--color-accent-soft);
   }
   .rich-prose :where(a):hover {
     text-decoration: underline;
   }
+  .rich-prose :where(h1, h2, h3, h4) {
+    color: var(--color-ink);
+  }
+  .rich-prose :where(strong, b) {
+    color: var(--color-ink);
+  }
   .rich-prose :where(img) {
-    border-radius: 6px;
+    border-radius: 8px;
     margin-bottom: 1.6rem;
     max-width: 100%;
     height: auto;
+    border: 1px solid var(--color-edge);
   }
   .rich-prose :where(ul, ol) {
     padding-left: 1.5rem;
     margin-bottom: 1rem;
     list-style: revert;
+  }
+  .rich-prose :where(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  .rich-prose :where(th, td) {
+    border: 1px solid var(--color-edge);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .rich-prose :where(th) {
+    color: var(--color-ink);
+    font-weight: 600;
   }
 }

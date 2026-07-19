@@ -3,206 +3,159 @@ layout: default
 title: AIで動画編集を一段上のレベルに
 ---
 
+{% include header.html %}
+
 <!-- Hero -->
-<section class="bg-hero-gradient text-white">
-  {% include header.html %}
-  <div class="mx-auto max-w-6xl px-4 pb-10 pt-4 sm:px-6">
-    <div class="flex flex-col items-center gap-8 md:flex-row">
-      <div class="w-full text-center md:w-7/12 md:text-left">
-        <h1 class="text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">{{ site.data.lang.ja.main_phrase }}</h1>
-        <p class="mt-4 text-lg text-white/70">AIが動画内の対象物体を自動検出し、モザイク処理を支援。Adobe Premiere Pro / After Effectsとシームレスに連携します。</p>
+<section class="relative overflow-hidden pt-[88px] pb-24">
+  <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-[-260px] h-[600px] w-[900px] -translate-x-1/2" style="background:radial-gradient(ellipse at center,rgba(79,139,232,.16),transparent 65%)"></div>
+  <div class="relative mx-auto w-[92%] max-w-[1120px] text-center">
+    <h1 class="mx-auto max-w-[820px] text-[clamp(38px,5.4vw,60px)] font-bold leading-[1.25] tracking-[-0.02em] text-ink">AIで動画編集を<br><span class="text-accent">一段上のレベル</span>に</h1>
+    <p class="mx-auto mt-[22px] max-w-[620px] text-[17px] leading-[2] text-ink-2">AIが動画内の対象物体を自動検出し、モザイク処理を自動化。物体トラッキング、Premiere Pro連携までひとつのアプリで。</p>
+    <img src="/assets/img/detectable-objects.png" alt="検出支援できる物体: 男性器・女性器・人間の顔" class="mx-auto mt-6 block w-[min(360px,80%)] rounded-[10px] border border-edge">
+    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
+      <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>
+      <a href="/docs" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
+    </div>
+    <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64bit)</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}無料で6時間分まで利用可能</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}クレジットカード不要</span>
+    </div>
+    <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
+      <img src="/assets/img/screenshots/edit-player.png" alt="Deepmosaic Desktop 編集画面" class="block w-full">
+    </div>
+  </div>
+</section>
 
-        <div class="mt-8">
-          {% include download-button.html size="large" %}
-          <p class="mt-2 text-sm text-white/60">Windows 10/11 (64bit) | 無料トライアル</p>
-        </div>
+<!-- Stats -->
+<section class="border-y border-panel-2 bg-surface-alt">
+  <div class="mx-auto grid w-[92%] max-w-[1120px] grid-cols-3 gap-6 py-10">
+    <div class="text-center"><div class="text-2xl font-bold tracking-[-0.01em] text-ink sm:text-[32px]">100,000+</div><div class="mt-1 text-[13px] text-ink-3">学習画像データ</div></div>
+    <div class="text-center"><div class="text-2xl font-bold tracking-[-0.01em] text-ink sm:text-[32px]">25fps+</div><div class="mt-1 text-[13px] text-ink-3">自動処理速度</div></div>
+    <div class="text-center"><div class="text-2xl font-bold tracking-[-0.01em] text-ink sm:text-[32px]">6時間</div><div class="mt-1 text-[13px] text-ink-3">無料で利用可能</div></div>
+  </div>
+</section>
 
-        <div class="mt-5">
-          <span class="inline-flex items-center gap-1 text-sm text-white/80">
-            <svg class="h-4 w-4 text-success" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            クレジットカード不要
-          </span>
-        </div>
+<!-- Features -->
+<section id="features" class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="FEATURES" title="モザイク処理に必要なすべてを、ひとつのアプリに" sub="動画の読み込みからAI検出、編集、書き出しまで。手作業のモザイク処理をワークフローごと置き換えます。" %}
+    <div class="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3">
+      <div class="rounded-xl border border-edge bg-panel-2 p-[26px]"><div class="icon-chip mb-4">{% include icon.html name="RefreshCw" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">自動アップデート</h3><p class="text-sm leading-[1.95] text-ink-2">起動時に新しいバージョンを自動確認。ワンクリックで最新版に更新できます。</p></div>
+      <div class="rounded-xl border border-edge bg-panel-2 p-[26px]"><div class="icon-chip mb-4">{% include icon.html name="Grid3x3" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">自動モザイク粒度</h3><p class="text-sm leading-[1.95] text-ink-2">対象物のサイズに連動してモザイクのピクセルサイズを自動調整。カット内で粒度が一定に保たれます。</p></div>
+      <div class="rounded-xl border border-edge bg-panel-2 p-[26px]"><div class="icon-chip mb-4">{% include icon.html name="Activity" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">進捗の可視化</h3><p class="text-sm leading-[1.95] text-ink-2">各ステージと全体進捗、処理fps、残り時間を表示。処理の一時停止・再開・中断も可能です。</p></div>
+      <div class="rounded-xl border border-edge bg-panel-2 p-[26px]"><div class="icon-chip mb-4">{% include icon.html name="Clapperboard" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">Premiere Pro連携</h3><p class="text-sm leading-[1.95] text-ink-2">検出したモザイク情報をAdobe Premiere Proへワンクリックでインポートできます。</p></div>
+      <div class="rounded-xl border border-edge bg-panel-2 p-[26px]"><div class="icon-chip mb-4">{% include icon.html name="PenLine" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">検出結果の編集</h3><p class="text-sm leading-[1.95] text-ink-2">検出枠の編集、モザイク設定、モザイクを焼き込んだ動画の書き出しまでアプリ内で完結します。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Pipeline -->
+<section class="border-y border-panel-2 bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[860px]">
+    {% include section-title.html kicker="PIPELINE" title="4段階の検出パイプライン" sub="処理は 準備 → 前処理 → 検出 → 解析 の4段階で進行。ステージごとの状態と全体進捗・処理速度・残り時間をリアルタイムに確認できます。" %}
+    <div class="rounded-xl border border-edge bg-panel p-8">
+      <div class="flex items-center">
+        <div class="flex flex-col items-center"><div class="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white">{% include icon.html name="Check" class="h-4 w-4" %}</div><span class="mt-2 text-[11px] text-ink">準備</span></div>
+        <div class="mx-1 mb-5 h-0.5 flex-1 bg-accent"></div>
+        <div class="flex flex-col items-center"><div class="flex h-8 w-8 items-center justify-center rounded-full bg-accent text-white">{% include icon.html name="Check" class="h-4 w-4" %}</div><span class="mt-2 text-[11px] text-ink">前処理</span></div>
+        <div class="mx-1 mb-5 h-0.5 flex-1 bg-accent"></div>
+        <div class="flex flex-col items-center"><div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-accent bg-accent/15 text-xs font-bold text-accent">3</div><span class="mt-2 text-[11px] font-semibold text-ink">検出</span></div>
+        <div class="mx-1 mb-5 h-0.5 flex-1 bg-hair"></div>
+        <div class="flex flex-col items-center"><div class="flex h-8 w-8 items-center justify-center rounded-full border-2 border-edge text-xs font-bold text-ink-4">4</div><span class="mt-2 text-[11px] text-ink-4">解析</span></div>
       </div>
-
-      <div class="w-full md:w-5/12">
-        <img alt="Deepmosaic AI物体検出結果の画面例" class="w-full rounded-md shadow-2xl" src="/assets/img/objects_detected.jpg">
+      <div class="mt-6">
+        <div class="mb-2 flex justify-between text-[13px] text-ink-2"><span>interview_take3.mp4</span><span class="font-mono">62% ・ 27.4 fps ・ 残り 3:12</span></div>
+        <div class="h-2 w-full overflow-hidden rounded-full bg-hair"><div class="h-full rounded-full bg-accent" style="width:62%"></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Desktop intro -->
-<section class="animate-on-scroll">
-  <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
-    <img alt="Deepmosaic Desktopアプリケーションロゴ" class="mx-auto h-[50px] w-auto" src="/assets/img/Deepmosaic_desktop_logo.png" loading="lazy">
-    <p class="mx-auto mt-4 max-w-2xl leading-8">DeepmosaicはWindows OSで動作するデスクトップアプリケーションです。独自の物体検出技術を用いて対象の物体を自動検出し、自動検出されたモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートします。</p>
-    <div class="mt-8 mb-12">
-      {% include download-button.html note="対応OS: Windows 10, 11（64 ビット）" %}
+<!-- Premiere integration -->
+<section class="py-24">
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-center gap-14">
+    <div class="flex-[1_1_380px]">
+      <div class="kicker mb-2.5">INTEGRATION</div>
+      <h2 class="text-[28px] font-bold tracking-[-0.01em] text-ink sm:text-[32px]">Adobe Premiere Proへ、<br>ワンクリックでインポート</h2>
+      <p class="mt-[18px] text-[15.5px] leading-[2] text-ink-2">AI検出したモザイク情報をPremiere Proのプロジェクトへ自動でインポート。一からモザイク処理することなく、使い慣れた編集環境で最終調整だけを行えます。</p>
+      <ul class="mt-[22px] flex flex-col gap-3">
+        <li class="flex items-center gap-2.5 text-[14.5px] text-ink-2">{% include icon.html name="CheckCircle2" class="h-[17px] w-[17px] shrink-0 text-success" %}動画カードのメニューから直接送信</li>
+        <li class="flex items-center gap-2.5 text-[14.5px] text-ink-2">{% include icon.html name="CheckCircle2" class="h-[17px] w-[17px] shrink-0 text-success" %}プラグインのセットアップも自動で案内</li>
+        <li class="flex items-center gap-2.5 text-[14.5px] text-ink-2">{% include icon.html name="CheckCircle2" class="h-[17px] w-[17px] shrink-0 text-success" %}モザイク位置・サイズをそのまま再現</li>
+      </ul>
     </div>
-    <img alt="Deepmosaic Desktopアプリ編集画面のスクリーンショット" class="mx-auto w-full rounded-md shadow-2xl" src="/assets/img/Deepmosaic_Desktop.png" loading="lazy">
-  </div>
-</section>
-
-<!-- Social proof -->
-<section class="animate-on-scroll border-y border-gray-200">
-  <div class="mx-auto max-w-5xl px-4 py-12 sm:px-6">
-    <h2 class="text-center text-2xl font-bold">多くの映像制作者にご利用いただいています</h2>
-    <div class="mt-8 grid grid-cols-3 gap-4 text-center">
-      <div>
-        <div class="text-3xl font-bold text-navy sm:text-4xl">100,000+</div>
-        <div class="mt-1 text-sm text-gray-500">学習画像データ</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold text-navy sm:text-4xl">25fps+</div>
-        <div class="mt-1 text-sm text-gray-500">自動処理速度</div>
-      </div>
-      <div>
-        <div class="text-3xl font-bold text-navy sm:text-4xl">4,800円</div>
-        <div class="mt-1 text-sm text-gray-500">月額（税別）</div>
-      </div>
+    <div class="flex-[1_1_420px]">
+      <img src="/assets/img/pr_image.png" alt="Premiere Proでのモザイク編集画面" class="w-full rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
     </div>
   </div>
 </section>
 
-<!-- Adobe importer -->
-<section class="animate-on-scroll bg-hero-gradient text-white">
-  <div class="mx-auto max-w-4xl px-4 py-16 text-center sm:px-6">
-    <img alt="Adobe Premiere Pro After Effects連携機能" class="mx-auto w-full max-w-2xl" src="/assets/img/Deepmosaic_Pr_Ae_white_logo.png" loading="lazy">
-    <p class="mx-auto mt-6 max-w-3xl leading-8 text-white/80">Deepmosaicでは、AI検出したモザイク情報をAdobe Premiere Pro, After Effectsへ自動でインポートすることができます。一からモザイク処理することなく、AI検出で処理されたモザイクを使い慣れたAdobe製品で修正することができます。</p>
-    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <img alt="Premiere Proでのモザイク編集画面" class="w-full rounded-md shadow-2xl" src="/assets/img/pr_image.png" loading="lazy">
-      <img alt="After Effectsでのモザイク編集画面" class="w-full rounded-md shadow-2xl" src="/assets/img/ae_image.png" loading="lazy">
+<!-- Workflow steps -->
+<section class="border-y border-panel-2 bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="WORKFLOW" title="3ステップで完了" sub="自動モザイク処理で人件費削減・編集時間短縮。" %}
+    <div class="grid gap-[18px] sm:grid-cols-3">
+      <div class="relative rounded-xl border border-edge bg-panel p-[28px]"><div class="absolute right-[22px] top-5 text-[44px] font-bold leading-none text-[#383838]">1</div><div class="icon-chip mb-4">{% include icon.html name="FolderInput" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">動画を選択</h3><p class="text-sm leading-[1.95] text-ink-2">モザイク処理したい動画やフォルダを選択、またはドラッグ&ドロップ。</p></div>
+      <div class="relative rounded-xl border border-edge bg-panel p-[28px]"><div class="absolute right-[22px] top-5 text-[44px] font-bold leading-none text-[#383838]">2</div><div class="icon-chip mb-4">{% include icon.html name="ScanSearch" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">AIが検出</h3><p class="text-sm leading-[1.95] text-ink-2">AIが対象物体を自動検出します。</p></div>
+      <div class="relative rounded-xl border border-edge bg-panel p-[28px]"><div class="absolute right-[22px] top-5 text-[44px] font-bold leading-none text-[#383838]">3</div><div class="icon-chip mb-4">{% include icon.html name="FileOutput" class="h-[22px] w-[22px]" %}</div><h3 class="mb-2 text-[16.5px] font-bold text-ink">編集して書き出し</h3><p class="text-sm leading-[1.95] text-ink-2">検出結果を確認・修正して、モザイクを焼き込んだ動画を書き出し。</p></div>
     </div>
   </div>
 </section>
 
-<!-- Usecase: 3 steps -->
-<section class="animate-on-scroll">
-  <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-    <h2 class="mb-12 text-center text-2xl font-bold sm:text-3xl">自動モザイク処理で人件費削減・編集時間短縮</h2>
-    <img class="mx-auto w-full" src="/assets/img/img_step-b_content_1.png" alt="AI自動モザイク処理の3ステップ: 動画選択、AI検出、最終調整" loading="lazy">
-    <div class="mt-6 grid grid-cols-3 gap-4 text-center">
-      <div>
-        <h3 class="font-bold text-accent">動画を選択</h3>
-        <p class="mt-2 text-sm">モザイク処理したい動画を選択</p>
-      </div>
-      <div>
-        <h3 class="font-bold text-accent">AIが検出</h3>
-        <p class="mt-2 text-sm">AIが対象となる物体を自動で検出支援</p>
-      </div>
-      <div>
-        <h3 class="font-bold text-accent">最終調整</h3>
-        <p class="mt-2 text-sm">モザイクの修正作業を実施</p>
-      </div>
+<!-- Requirements -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[820px]">
+    {% include section-title.html kicker="REQUIREMENTS" title="動作環境" %}
+    <div class="overflow-hidden rounded-xl border border-edge">
+      <div class="grid grid-cols-[120px_1fr] bg-panel sm:grid-cols-[180px_1fr]"><div class="p-[16px_20px] px-5 py-4 text-[13.5px] font-bold text-ink-3">OS</div><div class="px-5 py-4 text-sm leading-[1.9] text-[#d0d0d0]">Microsoft Windows 10, 11（64 ビット）</div></div>
+      <div class="grid grid-cols-[120px_1fr] border-t border-hair bg-[#282828] sm:grid-cols-[180px_1fr]"><div class="px-5 py-4 text-[13.5px] font-bold text-ink-3">メモリ</div><div class="px-5 py-4 text-sm leading-[1.9] text-[#d0d0d0]">8GB以上（16GB推奨）</div></div>
+      <div class="grid grid-cols-[120px_1fr] border-t border-hair bg-panel sm:grid-cols-[180px_1fr]"><div class="px-5 py-4 text-[13.5px] font-bold text-ink-3">GPU</div><div class="px-5 py-4 text-sm leading-[1.9] text-[#d0d0d0]">NVIDIA CUDA対応GPU + 最新ドライバ<br>NVENCハードウェアエンコードにはドライバ570以上<br>GPUがない場合はCPUモードで動作（検出速度は低下）</div></div>
+      <div class="grid grid-cols-[120px_1fr] border-t border-hair bg-[#282828] sm:grid-cols-[180px_1fr]"><div class="px-5 py-4 text-[13.5px] font-bold text-ink-3">インターネット環境</div><div class="px-5 py-4 text-sm leading-[1.9] text-[#d0d0d0]">初回セットアップ時のAIモデル自動ダウンロード、ライセンス認証に必要</div></div>
     </div>
-  </div>
-</section>
-
-<!-- 機能紹介 / Tutorials -->
-<section class="animate-on-scroll border-t border-gray-200">
-  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6" data-island="video-lightbox">
-    <h2 class="mb-10 text-center text-2xl font-bold sm:text-3xl">機能紹介</h2>
-    <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
-
-      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
-        <a href="https://youtu.be/gcRstNiT-GI" data-video-url="https://youtu.be/gcRstNiT-GI" target="_blank" rel="noopener noreferrer"
-           class="group relative block aspect-video overflow-hidden" aria-label="STEP1 AI検出チュートリアル動画を再生">
-          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step1.jpg" alt="STEP1 AI検出チュートリアル動画" loading="lazy">
-          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-        </a>
-        <div class="p-4">
-          <h3 class="font-medium">STEP1 AI検出</h3>
-          <p class="mt-1 text-sm text-white/80">動画の読み込み、AI検出、Adobe製品と連携する操作手順を解説します</p>
-        </div>
-      </div>
-
-      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
-        <a href="https://youtu.be/uslaD2GXSmo" data-video-url="https://youtu.be/uslaD2GXSmo" target="_blank" rel="noopener noreferrer"
-           class="group relative block aspect-video overflow-hidden" aria-label="STEP2 動画編集チュートリアル動画を再生">
-          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step2.jpg" alt="STEP2 動画編集チュートリアル動画" loading="lazy">
-          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-        </a>
-        <div class="p-4">
-          <h3 class="font-medium">STEP2 動画を編集する</h3>
-          <p class="mt-1 text-sm text-white/80">AI検出した動画を編集する方法を説明します。</p>
-        </div>
-      </div>
-
-      <div class="overflow-hidden rounded-lg bg-[#434343] text-white shadow-lg">
-        <a href="https://youtu.be/DVlolHe--og" data-video-url="https://youtu.be/DVlolHe--og" target="_blank" rel="noopener noreferrer"
-           class="group relative block aspect-video overflow-hidden" aria-label="STEP3 有料版申し込みチュートリアル動画を再生">
-          <img class="h-full w-full object-cover" src="/assets/img/tutorial_step3.jpg" alt="STEP3 有料版申し込みチュートリアル動画" loading="lazy">
-          <img class="absolute inset-0 m-auto w-16 transition group-hover:scale-110" src="/assets/img/yt_icon_rgb.png" alt="再生" loading="lazy">
-        </a>
-        <div class="p-4">
-          <h3 class="font-medium">STEP3 有料版に申し込む</h3>
-          <p class="mt-1 text-sm text-white/80">無制限で利用するために有料版に申し込む方法を説明します。</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- 動作環境 -->
-<section class="animate-on-scroll">
-  <div class="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-    <h2 class="mb-8 text-center text-2xl font-bold sm:text-3xl">動作環境</h2>
-    {% include spec-table.html %}
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="animate-on-scroll bg-gray-50">
-  <div class="mx-auto max-w-3xl px-4 py-16 sm:px-6">
-    <h2 class="mb-8 text-center text-2xl font-bold sm:text-3xl">よくある質問</h2>
-    <div class="space-y-3" data-island="accordion">
-      <details class="group rounded-lg border border-gray-200 bg-white">
-        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
-          無料で使えますか？
-          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
-        </summary>
-        <div class="px-5 pb-4 text-gray-700"><p>はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。</p></div>
+<section class="pb-24">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    {% include section-title.html kicker="FAQ" title="よくある質問" %}
+    <div class="flex flex-col gap-2.5" data-island="accordion">
+      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">無料で使えますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">はい。無料で6時間分までの動画インポートがご利用いただけます。クレジットカードの登録は不要です。有料プランには7日間の無料トライアルもあります。</p>
       </details>
-      <details class="group rounded-lg border border-gray-200 bg-white">
-        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
-          どのAdobe製品と連携できますか？
-          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
-        </summary>
-        <div class="px-5 pb-4 text-gray-700"><p>Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。</p></div>
+      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">どのAdobe製品と連携できますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">Adobe Premiere Proに対応しています。AI検出したモザイク情報を自動でインポートできます。</p>
       </details>
-      <details class="group rounded-lg border border-gray-200 bg-white">
-        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
-          GPUは必須ですか？
-          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
-        </summary>
-        <div class="px-5 pb-4 text-gray-700"><p>AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。</p></div>
+      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">GPUは必須ですか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">AI検出はCPUのみでも動作しますが、検出速度が大幅に低下します。快適にご利用いただくにはNVIDIA CUDA対応GPUを推奨します。</p>
       </details>
-      <details class="group rounded-lg border border-gray-200 bg-white">
-        <summary class="flex cursor-pointer items-center justify-between px-5 py-4 font-medium">
-          解約はいつでもできますか？
-          <svg class="h-5 w-5 shrink-0 transition group-open:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" /></svg>
-        </summary>
-        <div class="px-5 pb-4 text-gray-700"><p>はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。解約月の末日にサービス提供が終了します。</p></div>
+      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">アプリのアップデートはどうすればよいですか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">起動時に自動で新しいバージョンを確認し、更新がある場合はダイアログでお知らせします。ワンクリックで更新できます。</p>
+      </details>
+      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">解約はいつでもできますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">はい。有料プランはいつでも解約可能です。違約金等は一切ありません。</p>
       </details>
     </div>
   </div>
 </section>
 
-<!-- Back to top -->
-<a class="back-to-top fixed bottom-20 right-5 z-40 h-11 w-11 items-center justify-center rounded-full bg-navy text-white shadow-lg transition hover:bg-navy-2" id="backToTop" href="#" aria-label="ページ上部へ戻る">
-  <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7" /></svg>
-</a>
-
-<!-- Mobile sticky CTA -->
-<div class="fixed inset-x-0 bottom-0 z-30 bg-navy p-3 shadow-[0_-2px_10px_rgba(0,0,0,0.2)] md:hidden">
-  <a class="flex w-full items-center justify-center gap-2 rounded bg-sky px-4 py-2.5 font-medium text-white" download href="{{ site.data.lang.ja.app_download_link }}">
-    <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" /></svg>
-    無料でダウンロード
-  </a>
-</div>
+<!-- CTA -->
+<section class="border-t border-panel-2 pt-20 pb-24" style="background:linear-gradient(180deg,#242424,#1f1f1f)">
+  <div class="mx-auto w-[92%] max-w-[1120px] text-center">
+    <img src="/assets/img/app-icon-128.png" alt="" class="mx-auto mb-5 h-14 w-14">
+    <h2 class="text-[28px] font-bold text-ink sm:text-[32px]">今すぐ無料で始める</h2>
+    <p class="mt-3.5 text-[15px] text-ink-2">6時間分の動画インポートが無料。クレジットカード不要。</p>
+    <div class="mt-7 flex flex-wrap justify-center gap-3.5">
+      <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>
+      <a href="/price" class="btn-ghost btn-lg">料金を見る</a>
+    </div>
+  </div>
+</section>
 
 {% include footer.html %}

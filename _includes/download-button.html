@@ -1,8 +1,6 @@
-<a class="btn-primary{% if include.size == 'large' %} px-10 py-4 text-lg{% endif %}" download
+<a class="btn-primary{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
    href="{{ site.data.lang.ja.app_download_link }}">
-  <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" />
-  </svg>
+  {% include icon.html name="Download" class="h-5 w-5" %}
   {% if include.label %}{{ include.label }}{% else %}無料でダウンロード{% endif %}
 </a>
-{% if include.note %}<p class="mt-2 text-sm text-black/60">{{ include.note }}</p>{% endif %}
+{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}

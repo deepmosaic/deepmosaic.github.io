@@ -38,9 +38,9 @@
 <link rel="icon" type="image/png" sizes="96x96" href="/assets/img/ico/favicon-96x96.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/ico/favicon-16x16.png">
 <link rel="manifest" href="/assets/img/ico/manifest.json">
-<meta name="msapplication-TileColor" content="#ffffff">
+<meta name="msapplication-TileColor" content="#1f1f1f">
 <meta name="msapplication-TileImage" content="/assets/img/ico/ms-icon-144x144.png">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#1f1f1f">
 <link rel="shortcut icon" href="/assets/img/favicon.ico">
 
 <!-- Google Search Console -->
@@ -103,9 +103,9 @@
     "@type": "Offer",
     "price": "0",
     "priceCurrency": "JPY",
-    "description": "無料トライアル（6時間分の動画インポート）"
+    "description": "無料で6時間分の動画インポートが可能"
   },
-  "description": "AIで動画のモザイク処理を自動化するデスクトップアプリケーション。Adobe Premiere Pro, After Effectsと連携。",
+  "description": "AIで動画のモザイク処理を自動化するデスクトップアプリケーション。Adobe Premiere Proと連携。",
   "url": "https://www.deepmosaic.co.jp"
 }
 </script>
@@ -122,7 +122,7 @@
       "name": "無料で使えますか？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "はい。Trialプランでは6時間分までの動画インポートが無料でご利用いただけます。クレジットカードの登録は不要です。"
+        "text": "はい。無料で6時間分までの動画インポートがご利用いただけます。クレジットカードの登録は不要です。有料プランには7日間の無料トライアルもあります。"
       }
     },
     {
@@ -130,7 +130,7 @@
       "name": "どのAdobe製品と連携できますか？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Adobe Premiere ProとAdobe After Effectsに対応しています。AI検出したモザイク情報を自動でインポートできます。"
+        "text": "Adobe Premiere Proに対応しています。AI検出したモザイク情報を自動でインポートできます。"
       }
     },
     {
@@ -138,7 +138,15 @@
       "name": "GPUは必須ですか？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "AI検出機能はCPUのみでも動作しますが、オートトラッキング機能を利用する場合はNVIDIA GeForce 20シリーズ以上のGPUが必要です。"
+        "text": "AI検出はCPUのみでも動作しますが、検出速度が大幅に低下します。快適にご利用いただくにはNVIDIA CUDA対応GPUを推奨します。"
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "アプリのアップデートはどうすればよいですか？",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "起動時に自動で新しいバージョンを確認し、更新がある場合はダイアログでお知らせします。ワンクリックで更新できます。"
       }
     },
     {
@@ -146,7 +154,7 @@
       "name": "解約はいつでもできますか？",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "はい。Enterpriseプランはいつでも解約可能です。違約金等は一切ありません。"
+        "text": "はい。有料プランはいつでも解約可能です。違約金等は一切ありません。"
       }
     }
   ]

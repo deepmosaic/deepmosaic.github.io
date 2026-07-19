@@ -1,63 +1,38 @@
-<footer class="bg-[#455a64] text-white">
-  <div class="mx-auto max-w-[90%] py-10 lg:max-w-[85%]">
-    <div class="grid gap-8 md:grid-cols-3">
+<footer class="border-t border-hair bg-footer text-ink-2">
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-8 pt-10 pb-7">
 
-      <!-- About -->
-      <div>
-        <h5 class="mb-3 text-lg font-medium">About</h5>
-        <ul class="space-y-1.5">
-          <li><a class="hover:text-sky" href="/company/about">{{ site.data.lang.ja.company }}</a></li>
-          <li><a class="hover:text-sky" href="/company/terms">{{ site.data.lang.ja.terms }}</a></li>
-          <li><a class="hover:text-sky" href="/company/privacy">{{ site.data.lang.ja.privacy }}</a></li>
-          <li><a class="hover:text-sky" href="/company/cookie">{{ site.data.lang.ja.cookie }}</a></li>
-          <li><a class="hover:text-sky" href="/company/asct">{{ site.data.lang.ja.asct }}</a></li>
-          <li>
-            <a class="inline-flex items-center gap-1 hover:text-sky" target="_blank" rel="noopener noreferrer"
-               href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link">
-              {{ site.data.lang.ja.contact }}
-              <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5m0-5L10 14M19 14v5H5V5h5" />
-              </svg>
-            </a>
-          </li>
-        </ul>
+    <div class="flex-[1_1_260px]">
+      <div class="mb-3 flex items-center gap-2.5">
+        <img src="/assets/img/app-icon-128.png" alt="" class="h-8 w-8">
+        <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" class="h-[26px] w-auto">
       </div>
-
-      <!-- Social share -->
-      <div>
-        <h5 class="mb-3 text-lg font-medium">Social Share</h5>
-        <ul class="flex gap-3">
-          <li>
-            <a class="inline-flex rounded-full bg-[#607d8b] p-2.5 shadow transition hover:text-sky" aria-label="Facebookでシェア"
-               target="_blank" rel="noopener noreferrer" href="https://www.facebook.com/sharer/sharer.php?u=https://www.deepmosaic.co.jp">
-              <svg class="h-6 w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 264 512"><path fill="currentColor" d="M76.7 512V283H0v-91h76.7v-71.7C76.7 42.4 124.3 0 193.8 0c33.3 0 61.9 2.5 70.2 3.6V85h-48.2c-37.8 0-45.1 18-45.1 44.3V192H256l-11.7 91h-73.6v229"></path></svg>
-            </a>
-          </li>
-          <li>
-            <a class="inline-flex rounded-full bg-[#607d8b] p-2.5 shadow transition hover:text-sky" aria-label="Xでシェア"
-               target="_blank" rel="noopener noreferrer" href="https://twitter.com/share?url=https://www.deepmosaic.co.jp">
-              <svg class="h-6 w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="currentColor" d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg>
-            </a>
-          </li>
-          <li>
-            <a class="inline-flex rounded-full bg-[#607d8b] p-2.5 shadow transition hover:text-sky" aria-label="LINEでシェア"
-               target="_blank" rel="noopener noreferrer" href="https://social-plugins.line.me/lineit/share?url=https://www.deepmosaic.co.jp">
-              <svg class="h-6 w-6" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 58.9 56"><path fill="currentColor" fill-rule="evenodd" d="M58.9 23.85C58.9 10.7 45.69 0 29.45 0S0 10.7 0 23.85c0 11.78 10.48 21.66 24.63 23.52 1 .21 2.27.63 2.6 1.45a6.13 6.13 0 0 1 .09 2.66S27 53.55 26.9 54c-.13.75-.59 2.91 2.55 1.59s17-10 23.14-17.06c4.27-4.68 6.31-9.42 6.31-14.68zm-39.84 7a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.58.58 0 0 1 .58-.57h2.04a.57.57 0 0 1 .57.57v10.17h5.62a.58.58 0 0 1 .57.57zm5 0a.58.58 0 0 1-.57.57H21.4a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm14.22 0a.58.58 0 0 1-.57.57H35.47a.67.67 0 0 1-.15-.14l-5.89-7.94v7.61a.57.57 0 0 1-.57.57h-2.24a.58.58 0 0 1-.57-.57V18.06a.58.58 0 0 1 .57-.57h2.23l.05.06 5.88 7.92v-7.41a.57.57 0 0 1 .57-.57h2.07a.58.58 0 0 1 .57.57zm11.39-10.72a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.57v2.07a.58.58 0 0 1-.57.57h-5.62v2.16h5.62a.58.58 0 0 1 .57.58v2.06a.58.58 0 0 1-.57.57h-8.26a.55.55 0 0 1-.39-.16.55.55 0 0 1-.16-.39V18.06a.55.55 0 0 1 .16-.39.59.59 0 0 1 .4-.16h8.25a.58.58 0 0 1 .57.57z"></path></svg>
-            </a>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Company -->
-      <div class="md:text-right">
-        <h5 class="mb-3 text-lg font-medium">Deepmosaic合同会社</h5>
-        <span>Mail: <a class="hover:text-sky" href="mailto:contact@deepmosaic.co.jp">contact@deepmosaic.co.jp</a></span>
-      </div>
-
+      <p class="text-[13px] leading-[1.9] text-ink-4">AIによる動画モザイク処理の自動化。<br>Deepmosaic合同会社</p>
     </div>
-  </div>
 
-  <div class="bg-black/20 py-3 text-center text-sm">
-    <div class="mx-auto max-w-[90%] lg:max-w-[85%]">&copy; {{ site.time | date: '%Y' }} Deepmosaic LLC - All Rights Reserved -</div>
+    <div class="flex flex-wrap gap-14">
+      <div>
+        <div class="mb-3 text-xs font-bold tracking-[0.1em] text-ink-4">製品</div>
+        <ul class="flex flex-col gap-2.5 text-[13.5px]">
+          <li><a href="/price" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.price }}</a></li>
+          <li><a href="/docs" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.document }}</a></li>
+          <li><a href="{{ site.data.lang.ja.app_download_link }}" download class="text-ink-2 hover:text-accent-soft">ダウンロード</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="mb-3 text-xs font-bold tracking-[0.1em] text-ink-4">会社情報</div>
+        <ul class="flex flex-col gap-2.5 text-[13.5px]">
+          <li><a href="/company/about" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.company }}</a></li>
+          <li><a href="/company/terms" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.terms }}</a></li>
+          <li><a href="/company/privacy" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.privacy }}</a></li>
+          <li><a href="/company/cookie" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.cookie }}</a></li>
+          <li><a href="/company/asct" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.asct }}</a></li>
+          <li><a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.contact }}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="border-t border-[#2c2c2c]">
+    <div class="mx-auto w-[92%] max-w-[1120px] py-4 text-xs text-[#5a5a5a]">&copy; {{ site.time | date: '%Y' }} Deepmosaic LLC - All Rights Reserved -</div>
   </div>
 </footer>

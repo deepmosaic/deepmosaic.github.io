@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 2026-07-19 - Fix/Feature: ダウンロードリンクを R2 へ + モバイルドロワー修正
+
+- [x] **ダウンロードリンクを Cloudflare R2 の "latest" エイリアスへ**: `app_download_link` を旧 `desktop_app_support` v1.0.3 (GitHub) → `https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows`（**版数非依存**）。front は private のため直リンク不可 → R2 (public worker) 配信を利用。全 CTA(9ページ)に反映。
+  - **latest エイリアスの実装（別リポ `front/worker-r2-proxy/src/index.ts`）**: `GET /download/latest/windows`（`/download/latest`）を `latest.json` の現行 Windows インストーラ URL へ **302 リダイレクト**する追加専用ルートを実装。→ 新リリース公開時もサイト側リンクの更新不要（`latest.json` を辿るため自動追従）。現行の転送先は v1.0.11（署名済み・HEAD 200 確認）。
+  - ⚠️ **要デプロイ（ユーザー操作）**: この worker 変更は未デプロイ。`cd front/worker-r2-proxy && npx wrangler deploy` を実行するまでエイリアスは 401 のまま。**worker を先にデプロイしてからサイトを公開**すること（順序が逆だとダウンロードが一時的に 401）。CF 資格情報が無いため当環境ではデプロイ不可。
+- [x] **モバイルドロワー修正**: sticky ヘッダの `backdrop-filter` が `position:fixed` の containing block を生成し、ドロワー/オーバーレイが 60px ヘッダ内に閉じ込められて背景が崩れヒーローに被る不具合。overlay+drawer を `document.body` へ portal して解消（全画面高さで正常表示、実機確認済み）。
+
+## 2026-07-19 - Feature: ダークテーマ全面リニューアル（新アプリ準拠デザイン）
+
+Claude Design のエクスポート `ui_kits/website/index.html` を本番実装。ライト版から**ダークテーマ**へ全面刷新し、コンテンツも新アプリ準拠に更新（新機能・4段階パイプライン・Pro プラン ¥9,800・16章の新ドキュメント）。スタック（Jekyll + Tailwind v4 + Svelte アイランド）は維持し、SPA ではなく実 URL のマルチページとして実装。
+
+- [x] DR-01: ダークデザイントークン（`@theme`: surface/panel/accent #4f8be8 等）+ `.btn-*`/`.rich-prose`(dark) + `_includes/icon.html`(lucide SVG 20種) + 新画像/スクショ複製
+- [x] DR-02: 共通テンプレ ダーク化（sticky blur ヘッダ / footer / section-title）、default.html の theme-color #1f1f1f・meta・FAQ JSON-LD(新5問) 更新、MobileNav ダーク
+- [x] DR-03: home 実装（Hero/Stats/Features5/Pipeline/Premiere/Steps3/Spec/Faq5/Cta）。実機QA・FAQ単一開閉確認
+- [x] DR-04: pricing（Free ¥0 / Pro ¥9,800 featured）+ docs（17章・サイドバーTOC・Scrollspy・スクショ7枚）
+- [x] DR-05: legal/404 ダーク追従（クラス置換のみ・文言verbatim）+ 最終検証
+
+**検証結果（2026-07-19）**
+- `npm run build` + `jekyll build --strict_front_matter` 成功
+- 実機QA（Playwright）: home/pricing/docs/legal をダークで確認。モバイルドロワー(#1f1f1f)・FAQ単一開閉・docsスクロールスパイ(17 TOC)動作
+- SEO 不変: JSON-LD(Organization/SoftwareApplication/FAQPage=新5問)・OG・canonical・sitemap(7)・feed・gtag 維持、theme-color #1f1f1f、FAQ DOM=JSON-LD一致
+- 依存: materialize/jquery/lity 参照ゼロ継続、全ページに app.css
+- アセット: detectable-objects/app-icon-128/logo-font-cropped + スクショ7枚を複製
+
+> **注意（公開前確認）**: 料金 ¥4,800/Enterprise → ¥9,800/Pro、新機能・新ドキュメントに刷新。実製品と一致するか最終確認のうえ公開（コミット/プッシュはユーザー承認後）。
+
 ## 2026-07-19 - Feature: Materialize/jQuery 撤去 → Tailwind CSS + Svelte アイランド
 
 Materialize.css 1.0.0（EOL）/ jQuery / lity を全撤去し、CSS を Tailwind CSS v4、対話部品を Svelte 5 アイランドへ書き直し。Jekyll はコンテンツ/SEO 層として継続。

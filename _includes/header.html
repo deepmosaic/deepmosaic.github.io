@@ -1,33 +1,35 @@
 {%- capture contact_url -%}https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link{%- endcapture -%}
-<header class="{% if page.url == '/' %}bg-transparent{% else %}bg-hero-gradient{% endif %} text-white">
-  <div class="mx-auto flex max-w-[90%] items-center justify-between py-3 lg:max-w-[85%]">
+{%- assign u = page.url -%}
+<header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
+  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-7">
 
-    <a href="/" class="shrink-0">
-      <img alt="Deepmosaic" class="w-[180px] max-w-full md:w-[220px]" src="/assets/img/logo-font.png">
+    <a href="/" class="flex items-center">
+      <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" class="h-[26px] w-auto">
     </a>
 
     <!-- Desktop nav -->
-    <nav class="hidden items-center gap-2 md:flex">
-      <a href="/price" class="px-4 py-2 hover:underline">{{ site.data.lang.ja.price }}</a>
-      <a href="/docs" class="px-4 py-2 hover:underline">{{ site.data.lang.ja.document }}</a>
-      <a href="{{ contact_url }}" target="_blank" rel="noopener noreferrer"
-         class="ml-2 inline-flex items-center gap-1 rounded bg-white/15 px-4 py-2 font-medium transition hover:bg-white/25">
-        {{ site.data.lang.ja.contact }}
-        <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M14 5h5v5m0-5L10 14M19 14v5H5V5h5" />
-        </svg>
-      </a>
+    <nav class="ml-3 hidden gap-1 md:flex">
+      <a href="/" class="rounded-md px-3 py-1.5 text-sm {% if u == '/' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ホーム</a>
+      <a href="/price" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/price' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">料金</a>
+      <a href="/docs" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/docs' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ドキュメント</a>
     </nav>
 
-    <!-- Mobile nav (Svelte island renders hamburger + drawer; noscript fallback for no-JS) -->
+    <div class="flex-1"></div>
+
+    <!-- Desktop download CTA -->
+    <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-primary hidden md:inline-flex">
+      {% include icon.html name="Download" class="h-4 w-4" %}無料でダウンロード
+    </a>
+
+    <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true},{"label":"{{ site.data.lang.ja.price }}","href":"/price"},{"label":"{{ site.data.lang.ja.document }}","href":"/docs"},{"label":"{{ site.data.lang.ja.contact }}","href":"{{ contact_url }}","target":"_blank"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
-          <a href="/price" class="px-2 py-1 hover:underline">{{ site.data.lang.ja.price }}</a>
-          <a href="/docs" class="px-2 py-1 hover:underline">{{ site.data.lang.ja.document }}</a>
-          <a href="{{ contact_url }}" target="_blank" rel="noopener noreferrer" class="px-2 py-1 hover:underline">{{ site.data.lang.ja.contact }}</a>
+          <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>
+          <a href="/price" class="px-2 py-1 text-ink-2 hover:text-ink">料金</a>
+          <a href="/docs" class="px-2 py-1 text-ink-2 hover:text-ink">ドキュメント</a>
         </nav>
       </noscript>
     </div>
