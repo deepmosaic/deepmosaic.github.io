@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 2026-07-25 - Docs: 動画の読み込み / 検出オプションの解説を拡充
+
+ドキュメントに「動画を読み込んだ後に出る検出オプション画面」の説明が一切無く、
+読み込み方法も 1 文だけだった。実アプリのキャプチャを撮り直して両節を書き起こす。
+
+- [x] DOC-IMPORT-01: 「動画の読み込み」節を拡充 — 3 つの読み込み経路 (ファイル選択 /
+  フォルダ選択 / ドラッグ&ドロップ)、対応形式 12 種、複数まとめ読み込み時の挙動
+  - フォルダ選択の実挙動を明記: **直下のみ (サブフォルダ非対象)** / ファイル名昇順 /
+    最大 100 件 / 映像として読めないファイルは除外 (front `folder_scan.rs` + `+layout.svelte` 準拠)
+  - 複数読み込み時は「1 本目の設定が全件に適用される」「検出範囲の指定だけは 1 本目のみ有効」
+- [x] DOC-IMPORT-02: 「検出オプション」節を新設 — プレビュー / 検出範囲 (複数範囲) /
+  検出対象トグル / モザイク初期設定 / GPU 表示と使用モデル。目次にも追加
+  - 「AI検出」節の導入文から新節へリンク。トラブルシューティングに 2 項目追加
+    (プレビューが出ない / フォルダで動画が見つからない)
+  - `_includes/icon.html` に `Trash2` を追加 (未定義のアイコン名は空 SVG になるため)
+- [x] DOC-IMPORT-03: スクリーンショット (`import-menu.png` / `detect-options.png` /
+  `detect-options-panel.png`) を `assets/img/screenshots/` に追加。撮影は front リポの
+  `node scripts/e2e/screenshots.mjs --only-options` (実アプリを CDP 駆動)
+
+**検証結果 (2026-07-25)**
+- `npm run build` + `bundle exec jekyll build --strict_front_matter` 成功
+- ローカル配信 (port 4123) を Playwright で実機確認: 目次 17 → 18 項目、`#detect-options`
+  へのアンカー、画像 3 枚の表示、Trash2 アイコンの描画、節間リンクを確認
+- ⚠️ CLAUDE.md 記載の `bundle exec jekyll build --strict_front_matter --strict_variables` は
+  jekyll 4.4.1 で `invalid option: --strict_variables` になる (`--strict_front_matter` のみで実行)
+
 ## 2026-07-19 - Fix/Feature: ダウンロードリンクを R2 へ + モバイルドロワー修正
 
 - [x] **ダウンロードリンクを Cloudflare R2 の "latest" エイリアスへ**: `app_download_link` を旧 `desktop_app_support` v1.0.3 (GitHub) → `https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows`（**版数非依存**）。front は private のため直リンク不可 → R2 (public worker) 配信を利用。全 CTA(9ページ)に反映。

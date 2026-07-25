@@ -17,6 +17,7 @@ title: ドキュメント
         <li><a href="#license" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">ログインとライセンス</a></li>
         <li><a href="#plan" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">プランの変更</a></li>
         <li><a href="#import" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">動画の読み込み</a></li>
+        <li><a href="#detect-options" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">検出オプション</a></li>
         <li><a href="#detect" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">AI検出</a></li>
         <li><a href="#edit-overview" class="block border-l-2 border-transparent py-1.5 pl-7 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">編集ページ</a></li>
         <li><a href="#edit-player" class="block border-l-2 border-transparent py-1.5 pl-7 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">プレイヤーとタイムライン</a></li>
@@ -86,18 +87,81 @@ title: ドキュメント
       <section id="import" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">動画の読み込み</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-          <p>メニューの「ファイル」から動画ファイルまたは動画フォルダを選択するか、ホーム画面に動画ファイルを直接ドラッグ&amp;ドロップしてください。</p>
+          <p>読み込みには3つの方法があります。どの方法でも、読み込むと続けて<a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>画面が開きます。</p>
+          <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">動画ファイルを選択</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">メニューの「ファイル」から。ダイアログで動画を1本選びます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">動画フォルダを選択</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">フォルダ内の動画をまとめて読み込みます。対象は<b>選んだフォルダの直下のみ</b>（サブフォルダは含みません）で、ファイル名の昇順に最大100件まで。100件を超える場合は先頭100件のみ読み込み、その旨が通知されます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ドラッグ&amp;ドロップ</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">ホーム画面に動画ファイルを直接ドロップします。複数同時にドロップでき、動画以外のファイルは自動的に無視されます</div>
+            </div>
+          </div>
+          <figure class="my-4">
+            <img src="/assets/img/screenshots/import-menu.png" alt="「ファイル」メニューを開いたホーム画面" class="w-full rounded-[10px] border border-edge">
+            <figcaption class="mt-2 text-[12.5px] text-ink-4">「ファイル」メニュー。画面へのドラッグ&amp;ドロップでも読み込めます。処理結果の保存先は「プロジェクトフォルダを選択」で変更します</figcaption>
+          </figure>
+          <p><b>対応形式</b>：mp4 / avi / mkv / mov / wmv / flv / webm / ts / m2ts / m4v / mpg / mpeg（拡張子の大文字・小文字は問いません）。フォルダから読み込む際は、拡張子が一致しても映像として読めないファイルは除外され、除外件数が通知されます。</p>
+          <p><b>複数をまとめて読み込んだとき</b>は、1本目が検出オプション画面に表示されます。「開始」を押すと<b>その設定が残り全部に適用され</b>、順番に処理されます。ただし検出範囲の指定だけは1本目のみ有効で、2本目以降は動画全体が対象になります。すでに検出処理が動いているときに読み込んだ場合も待ち行列に加わり、実行中の処理が終わり次第、自動で始まります。</p>
           <figure class="my-4">
             <img src="/assets/img/screenshots/home.png" alt="ホーム画面（処理済み動画一覧）" class="w-full rounded-[10px] border border-edge">
-            <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）</figcaption>
+            <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）。ドラッグ&amp;ドロップはこの画面が受け口になります</figcaption>
           </figure>
+        </div>
+      </section>
+
+      <section id="detect-options" class="scroll-mt-24">
+        <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">検出オプション</h2>
+        <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+          <p>動画を読み込むと検出オプション画面が開きます。ここで「動画のどの区間を」「何を対象に」検出するかを決めて「開始」を押します。</p>
+          <figure class="my-4">
+            <img src="/assets/img/screenshots/detect-options.png" alt="検出オプション画面" class="w-full rounded-[10px] border border-edge">
+            <figcaption class="mt-2 text-[12.5px] text-ink-4">検出オプション画面（プレビュー・検出範囲・検出対象）</figcaption>
+          </figure>
+          <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">プレビュー</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">いま指定しているフレームの静止画です。スライダーや数値入力を動かすと、その位置の画が表示されるので、範囲の当たりをつけられます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">検出範囲</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">初期値は動画全体です。スライダーの両端か「開始」「終了」の数値入力でフレーム単位に指定できます。見出しには <span class="font-mono text-[12.5px]">00:00:00 (#0) ~ 00:00:10 (#300)</span> のように時刻とフレーム番号が並びます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">範囲を追加</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">離れた複数の区間を指定できます。重なった範囲や連続した範囲は自動で1つにまとめられ、開始と終了が逆でも入れ替えて解釈されます。2つ以上あるときは {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %} で個別に削除でき、すべて削除すると動画全体に戻ります</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">検出対象</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">「局部」「男性の顔」「女性の顔」から選びます（初期値は3つともON）。ここでの選択は保存され、次回以降の読み込みでも引き継がれます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ピクセルサイズ自動</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。検出後に編集ページの<a href="#edit-mosaic" class="text-accent-soft hover:underline">モザイク設定</a>からいつでも変更できます</div>
+            </div>
+            <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+              <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">GPU表示（右上）</div>
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出に使うGPU名です。CUDA対応GPUが認識されていれば高精度モデル、認識されていなければCPU向けの軽量モデルが<b>自動で</b>選ばれます（手動選択はありません）</div>
+            </div>
+          </div>
+          <figure class="my-4">
+            <img src="/assets/img/screenshots/detect-options-panel.png" alt="検出対象とモザイク初期設定" class="mx-auto w-full max-w-[330px] rounded-[10px] border border-edge">
+            <figcaption class="mt-2 text-[12.5px] text-ink-4">検出対象とモザイク初期設定</figcaption>
+          </figure>
+          <p>検出にかかる時間は処理するフレーム数にほぼ比例します。長尺動画のうち一部だけを処理したい場合は、検出範囲を絞ると待ち時間を短縮できます。</p>
+          <p>ライセンスの期限切れや使用量の上限超過があると、この画面でプラン変更を促すダイアログが表示され、検出を開始できません（<a href="#plan" class="text-accent-soft hover:underline">プランの変更</a>を参照）。</p>
         </div>
       </section>
 
       <section id="detect" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">AI検出</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-          <p>検出オプションを設定して処理を開始すると、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。</p>
+          <p><a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
           <figure class="my-4">
             <img src="/assets/img/screenshots/detect.png" alt="検出進捗画面（4段階ステッパー + 進捗バー）" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（4段階ステッパー + 進捗バー）</figcaption>
@@ -331,6 +395,8 @@ title: ドキュメント
           <ul>
             <li>起動時にダウンロードが繰り返される場合: 回線を確認のうえアプリを再起動してください。破損したデータのみ自動で再取得されます。</li>
             <li>検出が極端に遅い場合: GPUが認識されているか、NVIDIAドライバが最新かをご確認ください。GPU不在時はCPUモードで動作し、速度が低下します。</li>
+            <li>検出オプション画面にプレビューが出ない場合: 「動画情報を取得できませんでした」と表示されるときは、ファイルの破損か非対応形式の可能性があります。「ffmpeg / ffprobe が見つかりません」と表示されるときは、アプリを再起動して初回セットアップのダウンロードを完了させてください。</li>
+            <li>フォルダを選んでも「処理できる動画が見つかりませんでした」と出る場合: サブフォルダの中は対象外です。動画が入っているフォルダを直接選び直してください。</li>
             <li>解決しない場合はアプリ内のフィードバック送信、または問い合わせフォームからご連絡ください。</li>
           </ul>
         </div>
