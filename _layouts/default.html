@@ -167,7 +167,9 @@
 
 <!-- CSS: self-hosted Roboto + Tailwind/Svelte island styles (built by Vite → assets/dist/) -->
 <link href="/assets/css/fonts.css" rel="stylesheet" media="screen"/>
-<link href="/assets/dist/app.css" rel="stylesheet" media="screen"/>
+<!-- ?v= はビルド時刻。Cloudflare が app.css を max-age=14400 で配るため、これが無いと
+     新しく生成された Tailwind ユーティリティが最大 4 時間 既存訪問者に届かない (実測)。 -->
+<link href="/assets/dist/app.css?v={{ site.time | date: '%s' }}" rel="stylesheet" media="screen"/>
 
 {% if page.needs_video %}
 <!-- CSS: video.js (docs only) -->
@@ -184,7 +186,7 @@
 <script src="https://vjs.zencdn.net/8.23.9/video.min.js"></script>
 {% endif %}
 <!-- Tailwind + Svelte island bundle (built by Vite → assets/dist/) -->
-<script type="module" src="/assets/dist/app.js"></script>
+<script type="module" src="/assets/dist/app.js?v={{ site.time | date: '%s' }}"></script>
 
 </body>
 </html>

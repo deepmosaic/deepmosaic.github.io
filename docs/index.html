@@ -150,7 +150,12 @@ title: ドキュメント
             </div>
           </div>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/detect-options-panel.png" alt="検出対象とモザイク初期設定" class="mx-auto w-full max-w-[330px] rounded-[10px] border border-edge">
+            <!-- 幅はインラインで指定する。新規の Tailwind ユーティリティ (max-w-[330px] 等) は
+                 assets/dist/app.css がキャッシュバスティング無し (max-age=14400) のため、
+                 旧 CSS を掴んでいる閲覧者に届かず原寸を大きく超えて描画される。 -->
+            <img src="/assets/img/screenshots/detect-options-panel.png" alt="検出対象とモザイク初期設定"
+                 width="316" height="260" style="max-width:316px;width:100%;height:auto;margin:0 auto"
+                 class="block rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出対象とモザイク初期設定</figcaption>
           </figure>
           <p>検出にかかる時間は処理するフレーム数にほぼ比例します。長尺動画のうち一部だけを処理したい場合は、検出範囲を絞ると待ち時間を短縮できます。</p>
