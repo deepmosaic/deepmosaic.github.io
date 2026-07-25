@@ -17,7 +17,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 
 - [x] TICKET-SITE-01: デザイントークン14種追加 + components 層 + `@source` に `/spec/` 追加
 - [x] TICKET-SITE-02: `icon.html` に lucide 14種追加 + 1行→複数行整形
-- [ ] TICKET-SITE-03: `_data/` 新設 (plans/faq/spec/disclosure/presets/site) — 料金の単一真実源
+- [x] TICKET-SITE-03: `_data/` 新設 (site/plans/faq/spec/disclosure/mosaic) — 料金と数値の単一真実源
 - [ ] TICKET-SITE-04: `_includes` 新設 (kv-table/pricing-cards/cta-download/faq/disclosure-table)
 
 ### Phase 1 — トップ刷新 + /spec/ 新設
@@ -25,7 +25,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 - [ ] TICKET-SITE-05: description のページ単位化 + JSON-LD 分離 + jekyll-seo-tag 除去
 - [ ] TICKET-SITE-06: トップ前半 (HERO / TRUST BAR / STATS / COMPARISON) — 未検証の数値は出さない
 - [ ] TICKET-SITE-07: 未検証の数値と未実装機能の言及を全ページから棚卸し
-- [ ] TICKET-SITE-08: 実測値の取得 (`detection_runs` / `encode_runs` から 2時間素材の実所要)
+- [x] TICKET-SITE-08: 実測値の取得 (`detection_runs` から算出)
 - [ ] TICKET-SITE-09: `RoiCalculator.svelte` アイランド (React 廃止)
 - [ ] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
 - [ ] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
@@ -69,6 +69,69 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
   3 プランを出すと特商法・景表法の実害
 - **DISCLOSURE の伏字「○時間・○シーン」** — 節は残し「検出率の実測値は、計測条件とあわせて
   公開します」に書き換え
+
+### TICKET-SITE-08 の記録 — 「25fps+」は実測で裏付けが取れない
+
+本番テレメトリ (`detection_runs`) から処理速度を実測した。**現行サイトに載っている
+「25fps+ 自動処理速度」は代表値として成立しない**という結果になった。
+
+集計条件: `status=completed` / 範囲指定なし (全編検出) / 集計対象外アカウント除外 /
+2026-06-15〜07-25 / **34 件 / 10 ユーザー**
+
+| 指標 | 実測 |
+|---|---|
+| 端から端まで (準備→前処理→検出→解析) の処理 fps | **中央値 7.4** / 最良 27.1 |
+| 動画長の何倍かかるか | **中央値 4.2 倍** / 上位25% 2.5 倍 / 最良 1.1 倍 |
+| 検出ステージのみ (`dur_detect_ms`) の fps | 中央値 16.4 / 最大 43.9 |
+
+GPU 別 (幅 1080〜1920px に揃えた中央値):
+
+| GPU | 件数 | 全体 fps | 実時間倍率 |
+|---|---|---|---|
+| RTX 4070 Ti | 11 | 11.7 | 3.2 倍 |
+| RTX 3070 Ti | 9 | 4.8 | 6.3 倍 |
+| RTX 4060 | 1 | 15.2 | 2.0 倍 |
+| RTX 3070 | 1 | 27.1 | 1.1 倍 |
+| GTX 1070 Ti | 1 | 16.0 | 1.9 倍 |
+| GPU なし | 2 | 1.9 | 12.8 倍 |
+
+**判断**
+
+- 「25fps+」を **STATS 帯から外す**。25fps を超えたのは 34 件中 1 件 (RTX 3070) だけで、
+  最良ケースの一点を代表値として出すのは景表法 (優良誤認) のリスクを負う
+- Claude Design の `/spec/` GPU 表 (「RTX40以降 = 25fps 以上」「RTX30 = 20〜25fps」) は
+  **実測より過大**。実測値に差し替えた (`_data/spec.yml`)
+- 「CPU のみ 2fps 前後」は実測 2.1 で **正確**。そのまま使う
+- 2 時間の作品は中央値で **約 8.4 時間** かかる。「40分」は成立しない
+  (ヒーローから数値を外した判断が実測でも裏付けられた)
+- STATS 帯は検証できる事実に差し替える: `0 byte`（映像の外部送信量。設計上の事実で
+  ユーザー自身が検証できる = 最も強い主張）/ `100,000+`（学習画像データ。自社が持つ事実）/
+  `12 形式`（読み込み対応フォーマット。実装と一致）/ `4 段階`（検出パイプライン。UI と一致）
+
+**注意**: `detection_runs.avg_fps` 列は 101 件すべて NULL だった (列はあるが充填されていない)。
+本集計は `total_frames / (dur_total_ms / 1000)` で算出している。`avg_fps` の充填は別チケット。
+`encode_runs.source_duration_seconds` も全件 NULL でエンコード側の実測は取れていない。
+
+### TICKET-SITE-03 の記録
+
+`_data/` を新設し、料金と数値の単一真実源を作った。Claude Design の成果物は料金を
+**料金カードの markup と `renderVals()` の計算ロジックの 2 箇所にハードコード**しており、
+必ず片方だけ更新されて破綻する構造だった。これは移植しない。
+
+| ファイル | 内容 |
+|---|---|
+| `site.yml` | ヒーローコピー / ROI 既定値 / **実測値 (SITE-08)** / STATS 帯 |
+| `plans.yml` | 料金プラン。**アプリが実際に強制している値だけ** (Free 6h / Pro ¥9,800 無制限) |
+| `faq.yml` | FAQ 9 件。表示本体と FAQPage JSON-LD を同一データから生成する |
+| `spec.yml` | 動作環境。GPU 表は実測値。macOS は「開発中」表記のみで DL ボタンなし |
+| `disclosure.yml` | 通信内容の開示 / オフライン検証手順 / 苦手なケース / 責任の明記 |
+| `mosaic.yml` | モザイク設定。**「審査基準準拠プリセット」は未実装**なので、実装済みの設定項目を説明する形に縮小した |
+
+`plans.yml` に新プラン (Light ¥2,980 等) は **入れていない**。サイトの記述がライセンス
+サーバーの挙動と食い違うと虚偽記載になるため、課金実装 (TICKET-BILL 群) の完了後に
+TICKET-SITE-20 で差し替える。
+
+`--strict_front_matter` ビルドと Liquid からの参照 (9 パス) を確認済み。
 
 ### TICKET-SITE-01 の記録
 

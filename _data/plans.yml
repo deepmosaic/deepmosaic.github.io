@@ -1,0 +1,57 @@
+# 料金プランの単一真実源 (TICKET-SITE-03)
+#
+# ここを唯一の出所にして、料金カード / ROI 計算機 / 比較表 / JSON-LD Offer /
+# docs のプラン表 / FAQ の全部から参照する。料金改定が 1 ファイル 1 箇所で済む。
+#
+# Claude Design の成果物は料金を **料金カードの markup と renderVals() の計算ロジックの
+# 2 箇所にハードコード**していた。必ず片方だけ更新されて破綻するので、その構造は移植しない。
+#
+# ⚠️ ここに書くのは **アプリが実際に強制している値** だけ。サイトの記述が
+#    ライセンスサーバーの挙動と食い違うと虚偽記載になる。
+#    新プラン (Light ¥2,980 / Pro 月40時間 / Enterprise) は課金実装 (TICKET-BILL 群) の
+#    完了後に TICKET-SITE-20 で差し替える。
+
+# 表示通貨と税表記 (全プランで共通)
+currency: "JPY"
+currency_symbol: "¥"
+tax_note: "税別"
+
+# 現行プラン。`included_hours: null` は無制限を表す。
+tiers:
+  - code: free
+    name: "Free"
+    price: 0
+    # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 6h と一致
+    included_hours: 6
+    included_basis: "cumulative"
+    overage_per_hour: null # 超過不可 (有料化が必要)
+    trial_days: 0
+    featured: false
+    public: true
+    summary: "6時間分までの動画インポートが可能なお試しプラン"
+    bullets:
+      - "全ての機能を利用可能"
+      - "支払い登録不要"
+      - "無料分終了後も新規インポート以外は利用可能"
+    cta:
+      label: "無料でダウンロード"
+      kind: "download"
+
+  - code: pro
+    name: "Pro"
+    price: 9800
+    included_hours: null # 無制限
+    included_basis: "unlimited"
+    overage_per_hour: null
+    trial_days: 7
+    featured: true
+    public: true
+    summary: "利用無制限のプラン"
+    bullets:
+      - "動画インポート無制限"
+      - "7日間無料トライアル。トライアル終了後から請求開始"
+      - "支払いは月額料金のみ（クレジットカード対応）"
+      - "いつでも解約可能・違約金なし"
+    cta:
+      label: "トライアルを開始"
+      kind: "download"

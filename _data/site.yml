@@ -1,0 +1,97 @@
+# サイト全体で使う値の単一真実源 (TICKET-SITE-03)
+#
+# ここに置く原則: **複数箇所に出る値** と **後から差し替えたい値**。
+# 1 箇所でしか使わない文言はページ本体に直接書く。
+
+# ── ヒーロー訴求 ───────────────────────────────────────────────────────
+# Claude Design の成果物は A(安心) / B(数値) / C(不安直撃) の 3 案を内包していた。
+# 採用は「B の構造 (工数削減訴求) を維持しつつ、検証できない数値を出さない」形。
+# 詳細な判断根拠は CHANGELOG の 2026-07-26 エントリを参照。
+hero:
+  headline_lead: "モザイク作業を、"
+  headline_accent: "最終確認だけに。"
+  sub: "処理はすべてお使いのPC内で完結します。AIが全編を検出してトラッキングし、あなたは検出結果の確認と修正だけを行います。"
+
+# ── ROI 計算機の既定値 ─────────────────────────────────────────────────
+# 「現状の1本あたりコスト」の既定 ¥24,000 は 時給¥3,000 × 8時間 の試算。
+# 比較表の金額と同じ値なので、ここを唯一の出所にして二重管理を防ぐ。
+roi:
+  default_videos_per_month: 6
+  default_length_hours: 2
+  default_cost_per_video: 24000
+  # 手作業の想定工数 (完成尺の何倍か)。**社内にも顧客にも実測が無い仮置き値**。
+  # 計算機と比較表の両方でこの値を使い、UI 上でも「仮置きの試算」と明示する。
+  manual_work_multiplier: 4
+
+# ── 実測値 (TICKET-SITE-08) ────────────────────────────────────────────
+# 出所: Supabase `detection_runs`。集計条件は下記 measurement を参照。
+#
+# ⚠️ 重要: 現行サイトの「25fps+ 自動処理速度」は **実測で裏付けが取れない**。
+#    端から端まで (準備→前処理→検出→解析) の処理 fps は中央値 7.4、
+#    最良の 1 件が 27.1。検出ステージだけに絞っても中央値 16.4 / 最大 43.9。
+#    「25fps+」は最良ケースの一点であって代表値ではないため、STATS 帯からは外す。
+#    数値を戻すなら、条件を明示した上で「検出ステージ / 特定GPU / 特定解像度」と
+#    書かねばならない。
+performance:
+  measurement:
+    source: "Supabase detection_runs (本番テレメトリ)"
+    period: "2026-06-15 〜 2026-07-25"
+    runs: 34
+    users: 10
+    conditions: "status=completed / 範囲指定なし(全編検出) / 集計対象外アカウント除外"
+    # 計算式: total_frames / (dur_total_ms / 1000)
+    #        実時間倍率 = (dur_total_ms / 1000) / video_duration_seconds
+  # 端から端まで (準備 → 前処理 → 検出 → 解析) の処理 fps
+  total_fps_median: 7.4
+  total_fps_best: 27.1
+  # 動画長の何倍の時間がかかるか (小さいほど速い)
+  realtime_multiple_median: 4.2
+  realtime_multiple_p25: 2.5
+  realtime_multiple_best: 1.1
+  # 検出ステージ (dur_detect_ms) のみ
+  detect_fps_median: 16.4
+  detect_fps_best: 43.9
+  # GPU 別 (幅 1080〜1920px の実行のみ。解像度が上がるほど遅くなるため揃えた)
+  by_gpu:
+    - name: "NVIDIA GeForce RTX 4070 Ti"
+      runs: 11
+      total_fps_median: 11.7
+      realtime_multiple_median: 3.2
+    - name: "NVIDIA GeForce RTX 3070 Ti"
+      runs: 9
+      total_fps_median: 4.8
+      realtime_multiple_median: 6.3
+    - name: "NVIDIA GeForce RTX 4060"
+      runs: 1
+      total_fps_median: 15.2
+      realtime_multiple_median: 2.0
+    - name: "NVIDIA GeForce RTX 3070"
+      runs: 1
+      total_fps_median: 27.1
+      realtime_multiple_median: 1.1
+    - name: "NVIDIA GeForce GTX 1070 Ti"
+      runs: 1
+      total_fps_median: 16.0
+      realtime_multiple_median: 1.9
+    - name: "GPU なし (CPU のみ)"
+      runs: 2
+      total_fps_median: 1.9
+      realtime_multiple_median: 12.8
+
+# ── 公開して差し支えない事実 (STATS 帯で使う) ──────────────────────────
+# 数値を出すのは「検証できるもの」だけに限る。
+stats:
+  - value: "0 byte"
+    label: "映像データの外部送信量"
+    accent: true
+    # 設計上の事実。ネットワークを切断した状態で検出・書き出しが動作することで
+    # ユーザー自身が検証できる (施策④-2 の中核)
+  - value: "100,000+"
+    label: "学習画像データ"
+    # 自社データセットの規模。テレメトリでは検証できないが自社が持つ事実
+  - value: "12 形式"
+    label: "読み込み対応フォーマット"
+    # front `video/validator.rs` の VALID_EXTENSIONS と docs の記載に一致
+  - value: "4 段階"
+    label: "検出パイプライン"
+    # 準備 → 前処理 → 検出 → 解析。アプリの進捗 UI とドキュメントに一致

@@ -1,0 +1,62 @@
+# 動作環境 (/spec/) のデータ (TICKET-SITE-03)
+#
+# ⚠️ GPU と処理速度の表は **本番テレメトリの実測値** (TICKET-SITE-08)。
+#    Claude Design の成果物は「RTX40以降 = 25fps 以上 / RTX30 = 20〜25fps」と
+#    書いていたが、実測はそれより **大幅に低い**。過大な数値は出さない。
+#    測定条件は `_data/site.yml` の performance.measurement を参照。
+
+windows:
+  - key: "OS"
+    val: "Microsoft Windows 10 / 11（64 ビット）"
+  - key: "メモリ"
+    val: "8GB 以上（16GB 推奨）"
+  - key: "GPU"
+    val: "NVIDIA CUDA 対応 GPU + 最新ドライバ<br>GPU が無い場合も CPU モードで動作しますが、処理速度は大幅に低下します"
+  - key: "ドライバ"
+    val: "NVENC ハードウェアエンコードを使う場合は 570 以上"
+  - key: "ランタイム"
+    val: "Microsoft Edge WebView2（インストーラが自動導入します）"
+  - key: "ストレージ"
+    val: "初回セットアップで AI モデル等に約 10GB"
+
+macos:
+  status: "開発中"
+  # ⚠️ ダウンロードボタンは置かない。存在しない製品への導線は
+  #    施策④-4 (誇大表示の回避) に真っ向から反する。
+  note: "macOS 版は開発中です。提供時期は未定で、先行案内も現時点ではお受けしていません。Windows 版のみのご提供となります。"
+  planned:
+    - key: "対応予定 OS"
+      val: "macOS 13 (Ventura) 以降"
+    - key: "対応予定 CPU"
+      val: "Apple Silicon (M1 以降)。Intel Mac は対象外の見込み"
+    - key: "Premiere Pro 連携"
+      val: "初回リリースでは Windows 版のみの機能になる見込みです"
+
+# ── GPU と処理速度の目安 (実測) ─────────────────────────────────────────
+# fps は「端から端まで (準備 → 前処理 → 検出 → 解析) の総フレーム数 ÷ 総所要秒数」。
+# realtime は「動画長の何倍の時間がかかるか」(小さいほど速い)。
+performance_note: "下記は本番環境の実測値（2026-06〜07 / 34 件 / 10 ユーザー / 全編検出）の中央値です。幅 1080〜1920px の実行に絞っています。素材の解像度・尺・内容によって大きく変動します。"
+performance:
+  - key: "NVIDIA GeForce RTX 4070 Ti"
+    val: "約 12 fps（動画長の約 3 倍の時間）"
+  - key: "NVIDIA GeForce RTX 4060"
+    val: "約 15 fps（動画長の約 2 倍の時間）"
+  - key: "NVIDIA GeForce RTX 3070 Ti"
+    val: "約 5 fps（動画長の約 6 倍の時間）"
+  - key: "GPU なし（CPU のみ）"
+    val: "約 2 fps（動画長の約 13 倍の時間）。長尺の処理には適しません"
+performance_footnote: "計測件数が少ない機種は掲載していません。処理中はアプリを操作する必要がなく、完了後に「確認が必要な箇所」から作業を再開できます。"
+
+network:
+  - key: "初回セットアップ"
+    val: "AI モデル等のダウンロードに通信が必要です"
+  - key: "検出・編集・書き出し"
+    val: "通信は不要です。ネットワークを切断した状態でも動作します"
+  - key: "ライセンス確認"
+    val: "起動時にプランの確認を行います"
+
+formats:
+  - key: "読み込み"
+    val: "MP4 / AVI / MKV / MOV / WMV / FLV / WebM / TS / M2TS / M4V / MPG / MPEG"
+  - key: "書き出し"
+    val: "MP4 (H.264 / H.265) / MOV (ProRes 422 / 422 HQ) / WebM (VP9 / AV1) / MKV (H.264 / H.265) / AVI (H.264)"
