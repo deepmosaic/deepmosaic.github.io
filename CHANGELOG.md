@@ -1,5 +1,100 @@
 # CHANGELOG
 
+## 2026-07-26 - Feature: 売上拡大施策に基づくサイト刷新 (Phase 0+1)
+
+設計: `front/docs/deepmosaic-growth-strategy.md` 施策③ (SEO) / ④ (訴求の変更) / ⑦ (変換資産)
+新デザイン: Claude Design "Deepmosaic Site Renewal"
+
+**移植方針** — 新デザインは 4 ページを 1 ファイルに内包した SPA 形式 (`state.page` 切替) で
+URL が変わらず、施策③ の中核である SEO が構造的に成立しない。よって **4 ページに分割**して
+既存 URL にそのまま載せる (`/` `/price/` `/docs/` + 新設 `/spec/`)。**リダイレクトは一切不要**。
+
+公開は段階移行にする。新デザインには **まだ存在しない製品・機能・実績への言及** が広範に
+含まれるため (Mac 版 / Light・Enterprise プラン / 確認支援ビュー / 検査結果 PDF / 導入事例)、
+一括公開すると施策④ が獲得しようとしている信頼そのものを壊す。
+
+### Phase 0 — 基盤 (見た目変化ゼロ)
+
+- [x] TICKET-SITE-01: デザイントークン14種追加 + components 層 + `@source` に `/spec/` 追加
+- [x] TICKET-SITE-02: `icon.html` に lucide 14種追加 + 1行→複数行整形
+- [ ] TICKET-SITE-03: `_data/` 新設 (plans/faq/spec/disclosure/presets/site) — 料金の単一真実源
+- [ ] TICKET-SITE-04: `_includes` 新設 (kv-table/pricing-cards/cta-download/faq/disclosure-table)
+
+### Phase 1 — トップ刷新 + /spec/ 新設
+
+- [ ] TICKET-SITE-05: description のページ単位化 + JSON-LD 分離 + jekyll-seo-tag 除去
+- [ ] TICKET-SITE-06: トップ前半 (HERO / TRUST BAR / STATS / COMPARISON) — 未検証の数値は出さない
+- [ ] TICKET-SITE-07: 未検証の数値と未実装機能の言及を全ページから棚卸し
+- [ ] TICKET-SITE-08: 実測値の取得 (`detection_runs` / `encode_runs` から 2時間素材の実所要)
+- [ ] TICKET-SITE-09: `RoiCalculator.svelte` アイランド (React 廃止)
+- [ ] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
+- [ ] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
+- [ ] TICKET-SITE-12: フッター再構成 + 全未接続リンク接続 + `price/index.html:54` の切れた導線修正
+- [ ] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
+- [ ] TICKET-SITE-14: 未参照アセット削除 (`assets/img/docs/` 22MB / `assets/videos/` 14MB)
+- [ ] TICKET-SITE-15: SEO 配管 (sitemap 復活 / robots.txt / meta_desc 誤記 / front matter title)
+- [ ] TICKET-SITE-16: `/docs/` 差分マージ (`#review` `#usage` 追加、既存アンカーID は不変)
+
+### ヒーローコピーの確定
+
+新デザインの既定は B 案「1本8時間のモザイク作業を、40分に。」だが、**2 つの数値がいずれも
+現時点で出せない**ため、B の構造 (工数削減訴求) を維持しつつ数値を外した形に確定した。
+
+- 「8時間」 — 社内にデータが無い (ユーザー確認で根拠なしと確定)
+- 「40分」 — 比較表で「うち目視確認 約35分」と内訳が定義されており、**確認支援ビュー
+  (未実装) で「抽出された数十箇所だけ確認する」前提の数値**。現状の製品では 2 時間の作品は
+  全編目視になる
+
+確定コピー:
+
+> **モザイク作業を、最終確認だけに。**
+> 処理はすべてお使いのPC内で完結します。AIが全編を検出してトラッキングし、
+> あなたは検出結果の確認と修正だけを行います。
+
+根拠となる実装済み機能: AI 検出 + SeqTrack トラッキング / 検出結果の編集 (bbox 追加・削除・
+ドラッグ) / **欠落フレームジャンプ (`[` `]`)** / モザイク焼き込み書き出し / Premiere Pro 連携 /
+完全ローカル処理。数値は `_data/site.yml` 経由にして、実測が取れたら 1 行で差し替えられる形にする。
+
+### 意図的に出さない要素
+
+実在しない導線は **リンク先を用意するのではなく要素ごと削除**する。「準備中」ボタンや
+グレーアウトは、このサイトが獲得しようとしている信頼を毀損する。
+
+- **導入事例カード2枚** — 実在顧客なしの公開は景表法 (優良誤認) に該当。取材完了後に追加
+- **検査結果 PDF** — カードごと削除。同じ行の「オフラインでの動作」(実在・ユーザー自己検証可能
+  = 最も強い証明) を 2 カラム幅に拡大
+- **資料ダウンロード** — PDF 未作成
+- **デモ申込** — 「導入について相談する」に改名 (予約基盤が無いため「申し込む」は約束になる)
+- **料金3プランカード** — Phase 1 では出さない。アプリが「Pro 無制限」を売っている状態で
+  3 プランを出すと特商法・景表法の実害
+- **DISCLOSURE の伏字「○時間・○シーン」** — 節は残し「検出率の実測値は、計測条件とあわせて
+  公開します」に書き換え
+
+### TICKET-SITE-01 の記録
+
+Claude Design の成果物は生ヘックスを全面インライン直書きしており、グレーが L\* で約3%しか
+違わない 8 階調 (`#d0d0d0` / `#c8c8c8` / `#c0c0c0` / `#a8a8a8`) に発散していた。この発散は
+移植せず、`--color-ink-body` に 3 階調を統合し `#a8a8a8` は既存 `--color-ink-2` に吸収した。
+
+`@source` に `../spec/**/*.html` と `../_guides/**/*.md` を追加。**これが漏れると新ページで
+しか使わないユーティリティが全部 purge され「/spec/ だけスタイルが当たらない」形で出る。**
+
+既存 markup とのクラス名衝突を 19 クラス × 全 html で確認済み (衝突なし)。
+
+### TICKET-SITE-02 の記録
+
+`_includes/icon.html` は全 22 アイコンが **1 行 3KB** に詰まっており、14 個追加すると
+保守不能になる。パスデータは手書きせず `front/node_modules/lucide-svelte@0.460.1` の
+`iconNode` から機械生成し、`{% when %}` 1 個 = 1 行に整形した (22 → 36 種、53 行)。
+
+- `AlertTriangle` は lucide 0.46 で `triangle-alert` に改称済み (`alert-triangle` は alias)。
+  ファイル名は `triangle-alert.svelte` を参照している
+- **既存 22 アイコンの描画は不変** — `_site/index.html` と `_site/docs/index.html` を
+  変更前後でビルドして diff を取り、差分が cache-busting のタイムスタンプ
+  (`?v={{ site.time }}`) だけ = **SVG markup はバイト一致**であることを確認
+- 全 36 アイコンが実際に形状要素を持つことを一時ページのビルド出力で機械検証
+  (36/36 ブロック、形状要素 112 個)
+
 ## 2026-07-25 - Docs: 動画の読み込み / 検出オプションの解説を拡充
 
 ドキュメントに「動画を読み込んだ後に出る検出オプション画面」の説明が一切無く、
