@@ -18,7 +18,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 - [x] TICKET-SITE-01: デザイントークン14種追加 + components 層 + `@source` に `/spec/` 追加
 - [x] TICKET-SITE-02: `icon.html` に lucide 14種追加 + 1行→複数行整形
 - [x] TICKET-SITE-03: `_data/` 新設 (site/plans/faq/spec/disclosure/mosaic) — 料金と数値の単一真実源
-- [ ] TICKET-SITE-04: `_includes` 新設 (kv-table/pricing-cards/cta-download/faq/disclosure-table)
+- [x] TICKET-SITE-04: `_includes` 新設 (kv-table/pricing-cards/cta-download/faq/disclosure-table)
 
 ### Phase 1 — トップ刷新 + /spec/ 新設
 
@@ -69,6 +69,40 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
   3 プランを出すと特商法・景表法の実害
 - **DISCLOSURE の伏字「○時間・○シーン」** — 節は残し「検出率の実測値は、計測条件とあわせて
   公開します」に書き換え
+
+### TICKET-SITE-04 の記録
+
+**抽出基準** — 「2 ページ以上で使う」か「`_data` ループで生成する」もののみ include 化した。
+1 ページでしか使わないセクションはページ本体に置く (Jekyll の include はネストが深いと
+追跡不能になる)。
+
+| include | 根拠 |
+|---|---|
+| `kv-table.html` | ラベル\|値 の定義表が /spec/ ・/price/ ・/docs/ で **15 箇所以上** 重複 |
+| `pricing-cards.html` | トップの PRICING 節と /price/ で完全重複 |
+| `cta-download.html` | トップ末尾・/price/ 末尾・/spec/ 末尾 の 3 箇所 |
+| `faq.html` | 表示本体と FAQPage JSON-LD を **同一データから生成** (食い違いを構造的に防ぐ) |
+| `disclosure-table.html` | 通信内容の対比表。施策④-2 の中核 |
+
+- `section-title.html` に `align="left"` を追加 (2 カラム構成の節用)。**第 2 バリアントは
+  作らない** — デザイン差分の再現よりトークンの一貫性を優先する
+- `download-button.html` (未使用だった) は `cta-download.html` の中身として再利用。
+  DL URL の単一管理点になる
+- **`spec-table.html` は破棄**。未使用なだけでなく内容が誤っていた
+  (メモリ「32GB以上」/ CPU「Intel 第7世代」。現行 index.html は「8GB以上」)
+
+**Liquid の罠 2 件を回避**
+
+1. `include.zebra | default: true` は使えない — Liquid の `default` は `false` を「空」と
+   みなして既定値に置き換えてしまう。`{% if include.zebra == false %}` で明示判定した
+2. `{% if a and b | filter %}` は書けない — `if` 条件にフィルタを置けないので、
+   zebra の偶奇判定は先に `assign` している
+3. Liquid に桁区切りフィルタが無いため、料金は数値 (`price`、計算用) と表示文字列
+   (`price_display`) を分けて `_data` に持たせた
+
+検証: 一時ページをビルドして kv-row 8 / kv-alt 3 (zebra=false が効いている) /
+FAQ details 9 / 開示リスト 11 / プランカード 2 / `¥9,800` の桁区切り /
+`align=left` / **新 include に生ヘックスなし** を機械確認。
 
 ### TICKET-SITE-08 の記録 — 「25fps+」は実測で裏付けが取れない
 

@@ -1,0 +1,37 @@
+{%- comment -%}
+ダウンロード CTA ブロック (TICKET-SITE-04)。
+
+トップ末尾 / `/price/` 末尾 / `/spec/` 末尾 の 3 箇所で使う。
+実体のボタンは既存の `download-button.html` を再利用する (DL URL の単一管理点)。
+
+**Mac 版のボタンは置かない。** 存在しない製品への導線は施策④-4 (誇大表示の回避) に
+真っ向から反する。macOS 版がリリースされたら `_data/spec.yml` の `macos.status` を
+見て出し分ける (TICKET-MAC-405)。
+
+params:
+  title    (任意) 見出し。既定「無料でご利用いただけます」
+  sub      (任意) 補足文。既定は plans.yml の Free 枠から生成
+  secondary_href / secondary_label  (任意) 副ボタン
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section class="border-t border-hair bg-gradient-to-b from-surface-alt to-surface py-20">
+  <div class="mx-auto w-[92%] max-w-[760px] text-center">
+    <img src="/assets/img/app-icon-128.png" alt="" width="56" height="56" class="mx-auto mb-5 h-14 w-14">
+    <h2 class="text-3xl font-bold tracking-[-0.01em] text-ink">{{ include.title | default: "無料でご利用いただけます" }}</h2>
+    <p class="mx-auto mt-3.5 max-w-[560px] text-[15px] leading-[1.95] text-ink-2">
+      {%- if include.sub -%}
+        {{ include.sub }}
+      {%- else -%}
+        累計{{ free_plan.included_hours }}時間分の動画インポートが無料。クレジットカード不要。<br>
+        セットアップ後はネットワークを切断した状態でも動作します。
+      {%- endif -%}
+    </p>
+    <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
+      {% include download-button.html size="large" %}
+      {%- if include.secondary_href %}
+      <a href="{{ include.secondary_href }}" class="btn-secondary btn-lg">{{ include.secondary_label }}</a>
+      {%- endif %}
+    </div>
+    <p class="mt-4 text-[13px] text-ink-4">Windows 10 / 11（64bit）</p>
+  </div>
+</section>

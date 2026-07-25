@@ -1,0 +1,23 @@
+{%- comment -%}
+FAQ アコーディオン (TICKET-SITE-04)。
+
+`_data/faq.yml` から生成する。表示本体と FAQPage JSON-LD
+(`_includes/schema/faq.html`) を **同一データから** 作ることで、両者が食い違う
+(= Google のガイドライン違反) 事故を構造的に防ぐ。
+
+マークアップは移行前の index.html のものを踏襲している。Claude Design 版は
+開閉インジケータが `+` 固定 (開いても変わらない) で開状態の強調も無く、
+現行のほうが優れているため。
+
+params:
+  items   (任意) 表示する項目。既定は site.data.faq 全件
+{%- endcomment -%}
+{%- assign faq_items = include.items | default: site.data.faq -%}
+<div class="flex flex-col gap-2.5" data-island="accordion">
+  {%- for item in faq_items %}
+  <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
+    <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">{{ item.q }}</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
+    <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">{{ item.a }}</p>
+  </details>
+  {%- endfor %}
+</div>

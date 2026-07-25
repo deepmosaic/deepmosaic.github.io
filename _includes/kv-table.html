@@ -1,0 +1,45 @@
+{%- comment -%}
+ラベル | 値 の定義表 (TICKET-SITE-04)。
+
+刷新デザインでは動作環境・計測ルール・モザイク設定・通信内容など **15 箇所以上** で
+同じ形の表が出る。1 つの include に畳んで、markup から生ヘックスと重複を排除する。
+
+狭い画面では 1 カラムに積む (`.kv-row` の grid が 40rem 未満で 1fr になる)。
+Claude Design 版は `clamp()` と `auto-fit` だけでメディアクエリが無く、
+4 カラム表がモバイルで確実に破綻するため、こちらは明示的に積む。
+
+値には HTML (`<strong>` / `<br>` 等) を書けるようにしている。`_data` に入るのは
+自分たちが書いた文字列だけなので、エスケープはしない。
+
+params:
+  rows         (必須) {key, val} のリスト。通常は _data から渡す
+  label_width  (任意) ラベル列の幅。既定 220px
+  head         (任意) 見出し行にするラベル/値。省略時は見出し無し
+  zebra        (任意) true で偶数行に背景色 (既定 true)
+  class        (任意) 外側に足すクラス
+
+例:
+  {% include kv-table.html rows=site.data.spec.windows label_width="200px" %}
+{%- endcomment -%}
+{%- comment -%}
+  Liquid の `default` フィルタは false を「空」とみなして既定値に置き換えてしまうため、
+  zebra=false を明示的に判定する (`include.zebra | default: true` は使えない)。
+{%- endcomment -%}
+{%- assign kv_zebra = true -%}
+{%- if include.zebra == false -%}{%- assign kv_zebra = false -%}{%- endif -%}
+<div class="kv {{ include.class }}" style="--kv-label-w: {{ include.label_width | default: '220px' }}">
+  {%- if include.head %}
+  <div class="kv-row kv-head">
+    <div class="kv-key">{{ include.head }}</div>
+    <div class="kv-val">{{ include.head_val }}</div>
+  </div>
+  {%- endif %}
+  {%- for row in include.rows %}
+  {%- comment -%} Liquid の if 条件にフィルタは書けないので先に assign する {%- endcomment -%}
+  {%- assign kv_odd = forloop.index0 | modulo: 2 -%}
+  <div class="kv-row{% if kv_zebra and kv_odd == 1 %} kv-alt{% endif %}">
+    <div class="kv-key">{{ row.key }}</div>
+    <div class="kv-val">{{ row.val }}{% if row.note %}<span class="mt-1 block text-[12.5px] text-ink-4">{{ row.note }}</span>{% endif %}</div>
+  </div>
+  {%- endfor %}
+</div>

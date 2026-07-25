@@ -21,6 +21,8 @@ tiers:
   - code: free
     name: "Free"
     price: 0
+    # 表示形。Liquid に桁区切りフィルタが無いため、数値 (計算用) と表示文字列を分けて持つ。
+    price_display: "0"
     # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 6h と一致
     included_hours: 6
     included_basis: "cumulative"
@@ -40,6 +42,7 @@ tiers:
   - code: pro
     name: "Pro"
     price: 9800
+    price_display: "9,800"
     included_hours: null # 無制限
     included_basis: "unlimited"
     overage_per_hour: null

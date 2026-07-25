@@ -1,5 +1,13 @@
-<div class="mb-12 text-center">
+{%- comment -%}
+セクション見出し (kicker / h2 / sub の 3 層)。
+
+刷新デザインの各セクション冒頭は例外なくこの 3 層構造なので、第 2 バリアントは作らない
+(デザイン差分の再現よりトークンの一貫性を優先する)。
+
+TICKET-SITE-04: 2 カラム構成の節 (WORKFLOW / DISCLOSURE) 用に `align="left"` を追加した。
+{%- endcomment -%}
+<div class="mb-12 {% if include.align == 'left' %}text-left{% else %}text-center{% endif %}">
   {% if include.kicker %}<div class="kicker mb-2.5">{{ include.kicker }}</div>{% endif %}
   <h2 class="text-3xl font-bold tracking-[-0.01em] text-ink sm:text-[34px]">{{ include.title }}</h2>
-  {% if include.sub %}<p class="mx-auto mt-3.5 max-w-[640px] text-[15.5px] leading-[1.9] text-ink-2">{{ include.sub }}</p>{% endif %}
+  {% if include.sub %}<p class="{% unless include.align == 'left' %}mx-auto {% endunless %}mt-3.5 max-w-[640px] text-[15.5px] leading-[1.9] text-ink-2">{{ include.sub }}</p>{% endif %}
 </div>

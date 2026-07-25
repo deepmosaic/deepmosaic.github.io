@@ -1,0 +1,41 @@
+{%- comment -%}
+通信内容の開示 — 「送信するもの / 送信しないもの」の対比表 (TICKET-SITE-04)。
+
+施策④-2 の中核。**この対比表そのものが説得材料**なので、`_data/disclosure.yml` を
+唯一の出所にして実装とズレないようにする。
+
+「送信しない」側を緑にするのは、そちらが訴求の主役だから (映像が出ていかない)。
+{%- endcomment -%}
+<div class="grid gap-5 md:grid-cols-2">
+
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">
+      {% include icon.html name="ArrowUpFromLine" class="h-[18px] w-[18px] shrink-0 text-warning" %}
+      <h3 class="text-[15px] font-bold text-ink">送信するもの</h3>
+    </div>
+    <ul class="flex flex-col gap-3">
+      {%- for row in site.data.disclosure.network.sent %}
+      <li class="flex gap-2.5 text-[14px] leading-[1.85] text-ink-body">
+        <span class="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-warning"></span>
+        <span>{{ row.item }}{% if row.note %}<span class="mt-0.5 block text-[12.5px] text-ink-4">{{ row.note }}</span>{% endif %}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">
+      {% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}
+      <h3 class="text-[15px] font-bold text-ink">送信しないもの</h3>
+    </div>
+    <ul class="flex flex-col gap-3">
+      {%- for row in site.data.disclosure.network.not_sent %}
+      <li class="flex gap-2.5 text-[14px] leading-[1.85] text-ink-body">
+        {% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}
+        <span>{{ row.item }}{% if row.note %}<span class="mt-0.5 block text-[12.5px] text-ink-4">{{ row.note }}</span>{% endif %}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+
+</div>

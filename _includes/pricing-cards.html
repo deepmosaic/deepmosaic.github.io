@@ -1,0 +1,72 @@
+{%- comment -%}
+料金プランカード (TICKET-SITE-04)。
+
+トップの PRICING 節と `/price/` の両方で使う (移行前は完全重複していた)。
+金額・込み時間・特典はすべて `_data/plans.yml` から取る — Claude Design の成果物は
+料金カードの markup と計算ロジックの 2 箇所にハードコードしており、必ず片方だけ
+更新されて破綻する構造だった。
+
+`public: false` のプランは表示しない (将来の非公開プラン / グランドファザリング枠用)。
+`included_basis` が `unlimited` のときは時間表記を「無制限」にする。
+{%- endcomment -%}
+{%- assign visible = site.data.plans.tiers | where: "public", true -%}
+{%- assign cols = visible | size -%}
+<div class="grid gap-5 {% if cols == 2 %}md:grid-cols-2{% elsif cols == 3 %}md:grid-cols-3{% else %}md:grid-cols-2 lg:grid-cols-4{% endif %}">
+  {%- for plan in visible %}
+  <div class="{% if plan.featured %}plan-card-featured{% else %}plan-card{% endif %} flex flex-col">
+
+    {%- if plan.trial_days > 0 %}
+    <div class="mb-3"><span class="badge-accent">{{ plan.trial_days }}日間無料トライアル</span></div>
+    {%- endif %}
+
+    <h3 class="text-lg font-bold text-ink">{{ plan.name }}</h3>
+    <p class="mt-1.5 text-[13.5px] leading-[1.8] text-ink-4">{{ plan.summary }}</p>
+
+    <div class="mt-5 flex items-baseline gap-1.5">
+      {%- comment -%}
+        Liquid に桁区切りフィルタは無い。無理に組むと読めなくなるので
+        表示形は `price_display` としてデータ側に持たせている。
+      {%- endcomment -%}
+      <span class="text-[34px] font-bold tracking-[-0.02em] text-ink">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
+      {%- if plan.price > 0 %}
+      <span class="text-[13px] text-ink-4">/ 1ユーザー・月（{{ site.data.plans.tax_note }}）</span>
+      {%- else %}
+      <span class="text-[13px] text-ink-4">/ 1ユーザー</span>
+      {%- endif %}
+    </div>
+
+    <div class="mt-4 border-t border-hair pt-4">
+      <div class="text-[13px] text-ink-4">動画インポート</div>
+      <div class="mt-1 text-[15px] font-bold text-ink">
+        {%- if plan.included_basis == 'unlimited' -%}
+          無制限
+        {%- elsif plan.included_basis == 'cumulative' -%}
+          累計 {{ plan.included_hours }} 時間分
+        {%- else -%}
+          月 {{ plan.included_hours }} 時間
+        {%- endif -%}
+      </div>
+      {%- if plan.overage_per_hour %}
+      <div class="mt-1 text-[12.5px] text-ink-4">超過分は {{ site.data.plans.currency_symbol }}{{ plan.overage_per_hour }}/時間</div>
+      {%- endif %}
+    </div>
+
+    <ul class="mt-4 flex flex-1 flex-col gap-2.5">
+      {%- for b in plan.bullets %}
+      <li class="flex gap-2 text-[13.5px] leading-[1.8] text-ink-2">
+        {% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}<span>{{ b }}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+
+    <div class="mt-6">
+      {%- if plan.cta.kind == 'download' %}
+      {% include download-button.html label=plan.cta.label full=true %}
+      {%- else %}
+      <a href="{{ plan.cta.href }}" class="btn-secondary w-full">{{ plan.cta.label }}</a>
+      {%- endif %}
+    </div>
+
+  </div>
+  {%- endfor %}
+</div>
