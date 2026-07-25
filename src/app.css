@@ -10,6 +10,8 @@
 @source "../docs/**/*.html";
 @source "../price/**/*.html";
 @source "../company/**/*.html";
+@source "../spec/**/*.html";
+@source "../_guides/**/*.md";
 @source "./**/*.svelte";
 @source not "../_site";
 
@@ -31,9 +33,35 @@
   --color-accent-soft: #6fa3f0;  /* links / accent hover */
   --color-success: #4caf50;
   --color-ink: #f0f0f0;          /* primary text */
+  --color-ink-body: #c8c8c8;     /* body copy in tables/cards */
   --color-ink-2: #b0b0b0;        /* secondary text */
   --color-ink-3: #8a8a8a;        /* tertiary text */
   --color-ink-4: #707070;        /* muted */
+
+  /* --- Added by TICKET-SITE-01 (renewal design) -------------------------
+     The Claude Design deliverable wrote raw hex inline and let greys drift
+     into 8 shades (#d0d0d0 / #c8c8c8 / #c0c0c0 / #a8a8a8) whose L* differs by
+     ~3% — visually indistinguishable. Those are consolidated here:
+       #d0d0d0 / #c8c8c8 / #c0c0c0 -> --color-ink-body
+       #a8a8a8                     -> --color-ink-2 (existing)
+     --------------------------------------------------------------------- */
+  --color-th: #303030;           /* table / panel header row */
+  --color-row-alt: #292929;      /* zebra row */
+  --color-warning: #ffa726;
+  --color-danger: #ef5350;
+  --color-accent-bright: #9dc2f6; /* emphasised link, link hover */
+  --color-surface-deep: #1c1c1c;  /* CTA gradient start */
+  --color-numeral: #383838;       /* oversized step numbers */
+
+  /* Highlighted card (featured plan / consultation / calculator result).
+     A blue-grey family, deliberately separate from --color-panel so the
+     emphasis does not depend on the accent colour alone. */
+  --color-hi-from: #2f3742;
+  --color-hi-edge: #3f4b5c;
+  --color-hi-ink: #dfe6ee;
+  --color-hi-ink-2: #a8b4c4;
+  --color-hi-ink-3: #8a9aad;
+  --color-success-edge: #3f5a44;
 
   --font-sans: "Roboto", "Noto Sans JP", ui-sans-serif, system-ui, -apple-system,
     "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo,
@@ -143,6 +171,158 @@
   .js .animate-on-scroll.animated {
     opacity: 1;
     transform: translateY(0);
+  }
+
+  /* ======================================================================
+     TICKET-SITE-01: components for the renewal design.
+     These exist so the markup never carries raw hex (see CLAUDE.md and the
+     design system's adherence rule "Raw hex color — use a token via var()").
+     ====================================================================== */
+
+  /* --- Cards ---------------------------------------------------------- */
+  .card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+  }
+  /* Highlighted variant: featured plan, consultation, calculator result. */
+  .card-hi {
+    background: linear-gradient(160deg, var(--color-hi-from), var(--color-panel));
+    border: 1px solid var(--color-hi-edge);
+    border-radius: 12px;
+    color: var(--color-hi-ink);
+  }
+
+  /* --- Definition table (label | value) -------------------------------
+     Used ~15 times across /, /price/, /spec/ and /docs/. Stacks on narrow
+     screens; the label column width can be tuned per instance with
+     `style="--kv-label-w: 260px"`. */
+  .kv {
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .kv-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-bottom: 1px solid var(--color-hair);
+  }
+  .kv-row:last-child {
+    border-bottom: 0;
+  }
+  @media (min-width: 40rem) {
+    .kv-row {
+      grid-template-columns: var(--kv-label-w, 220px) 1fr;
+    }
+  }
+  .kv-head {
+    background: var(--color-th);
+  }
+  .kv-head .kv-key,
+  .kv-head .kv-val {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  .kv-alt {
+    background: var(--color-row-alt);
+  }
+  .kv-key {
+    padding: 0.9rem 1.15rem;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--color-ink-body);
+  }
+  .kv-val {
+    padding: 0.9rem 1.15rem;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-ink-2);
+  }
+  /* On wide screens give the value cell a divider so long rows stay readable. */
+  @media (min-width: 40rem) {
+    .kv-val {
+      border-left: 1px solid var(--color-hair);
+    }
+  }
+
+  /* --- Badges (review-status chips, plan flags) ------------------------ */
+  .badge-warn,
+  .badge-danger,
+  .badge-done,
+  .badge-accent {
+    @apply inline-flex items-center rounded px-[7px] py-[2px] text-[11.5px] font-bold
+      whitespace-nowrap;
+  }
+  .badge-warn {
+    background: var(--color-warning);
+    color: var(--color-surface);
+  }
+  .badge-danger {
+    background: var(--color-danger);
+    color: #fff;
+  }
+  .badge-done {
+    background: var(--color-edge);
+    color: var(--color-ink);
+  }
+  .badge-accent {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  /* --- Pricing cards --------------------------------------------------- */
+  .plan-card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+    padding: 1.85rem 1.6rem;
+  }
+  .plan-card-featured {
+    position: relative;
+    background: linear-gradient(160deg, var(--color-hi-from), var(--color-panel));
+    border: 1px solid var(--color-accent);
+    border-radius: 12px;
+    padding: 1.85rem 1.6rem;
+    box-shadow:
+      0 16px 48px rgb(0 0 0 / 0.45),
+      0 0 60px rgb(79 139 232 / 0.12);
+  }
+
+  /* --- Tabs (preset switcher) ----------------------------------------- */
+  .tab {
+    @apply cursor-pointer rounded-t-lg px-4 py-2 text-sm font-medium transition;
+    background: transparent;
+    color: var(--color-ink-2);
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--color-hair);
+  }
+  .tab:hover {
+    color: var(--color-ink);
+  }
+  .tab-active {
+    background: var(--color-panel);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hair);
+    border-bottom-color: transparent;
+  }
+  /* JS-disabled fallback: the Tabs island hides panels with [hidden]; without
+     JS every panel stays visible (the presets are a comparison table anyway). */
+  .tabpanels > [role="tabpanel"] + [role="tabpanel"] {
+    margin-top: 1rem;
+  }
+
+  /* --- Oversized step numerals ---------------------------------------- */
+  .numeral {
+    color: var(--color-numeral);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Wide content must scroll inside itself, never the page ---------- */
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
   /* Prose for docs / legal pages (dark) */
