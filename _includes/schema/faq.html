@@ -1,0 +1,31 @@
+{%- comment -%}
+JSON-LD: FAQPage (TICKET-SITE-05)。
+
+**表示本体 (`_includes/faq.html`) と同じ `_data/faq.yml` から生成する。**
+移行前は default.html に 5 件ハードコードされており、index.html の `<details>` とは
+別管理だった (= 必ずズレる。Google のガイドライン違反になる)。
+
+期待値は下げておくこと: Google は 2023 年に FAQ リッチリザルトを政府・医療系サイトに
+限定したため、一般サイトでは **表示されない**。害はないので出すが、SEO 上の実効性が
+あるのは Product/Offer・BreadcrumbList・Article の 3 つ。
+
+文字列は `jsonify` でエスケープする (引用符・改行を含んでも壊れない)。
+{%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for item in site.data.faq %}
+    {
+      "@type": "Question",
+      "name": {{ item.q | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ item.a | jsonify }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}
+</script>

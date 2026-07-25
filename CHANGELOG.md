@@ -22,7 +22,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 
 ### Phase 1 — トップ刷新 + /spec/ 新設
 
-- [ ] TICKET-SITE-05: description のページ単位化 + JSON-LD 分離 + jekyll-seo-tag 除去
+- [x] TICKET-SITE-05: description のページ単位化 + JSON-LD 分離 + jekyll-seo-tag 除去
 - [ ] TICKET-SITE-06: トップ前半 (HERO / TRUST BAR / STATS / COMPARISON) — 未検証の数値は出さない
 - [ ] TICKET-SITE-07: 未検証の数値と未実装機能の言及を全ページから棚卸し
 - [x] TICKET-SITE-08: 実測値の取得 (`detection_runs` から算出)
@@ -69,6 +69,47 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
   3 プランを出すと特商法・景表法の実害
 - **DISCLOSURE の伏字「○時間・○シーン」** — 節は残し「検出率の実測値は、計測条件とあわせて
   公開します」に書き換え
+
+### TICKET-SITE-05 の記録
+
+**description のページ単位化** — 移行前は全ページが同一の `meta_desc` を出しており、
+`description` を持つページが **1 つも無かった**。リポジトリ `CLAUDE.md` の
+「全ページに layout / title / description を必ず指定 (SEO)」という規約が守られていない
+状態だったので、規約に合わせた。`og:title` もページ単位にした。
+
+**構造化データを `_includes/schema/*` へ分離** し、front matter の `schemas:` で選ぶ形にした。
+
+| include | 出力対象 | データ源 |
+|---|---|---|
+| `organization.html` | 全ページ | ハードコード (会社情報) |
+| `software-application.html` | `/` `/price/` (+ 後で `/spec/`) | `_data/plans.yml` の `AggregateOffer` |
+| `faq.html` | `/` | `_data/faq.yml` |
+| `breadcrumb.html` | `/docs/` (+ 後で `/spec/` `/guides/*`) | `page` |
+
+移行前の問題を 3 つ解消した:
+
+1. **SoftwareApplication が全ページに重複出力**されていた (会社概要ページにもアプリの
+   構造化データが載っていた)
+2. **FAQPage が二重管理**だった (`default.html` にハードコード 5 件 / `index.html` の
+   `<details>` 5 件)。同一データから生成する形にした
+3. `"price": "0"` / `operatingSystem` / 説明文がハードコードで、料金改定・Mac 対応で腐る
+   構造だった。`AggregateOffer` (lowPrice / highPrice / offerCount) を `_data` から組む
+
+**あわせて直したもの**
+
+- `index.html` の FAQ 節を `{% include faq.html %}` に差し替えた。JSON-LD だけ 9 件に
+  増やして表示が 5 件のままだと **公開した時点で不整合**になるため、同じチケット内で解消した
+- `company/privacy.html` と `company/asct.html` の front matter `title` が
+  **どちらも「会社概要」のまま**だった (`<title>` に直接出る)。それぞれ
+  「プライバシーポリシー」「特定商取引法に基づく表示」に修正
+- `jekyll-seo-tag` を **Gemfile と `_config.yml` の両方から**除去。`{% seo %}` が
+  呼ばれておらず無効だったため。⚠️ `_config.yml` の `plugins:` に残っていると
+  `Dependency Error: you don't have jekyll-seo-tag` でビルドが落ちる (実際に踏んだ)
+
+検証: `--strict_front_matter` ビルド成功後に、6 ページの title / og:title / description /
+JSON-LD 種別を出力から抽出し、**description が全ページで異なること**、
+**FAQ の JSON-LD 9 件と表示 9 件が一致すること**、**`/company/about` に
+SoftwareApplication が出ていないこと**、**seo-tag の痕跡が無いこと**を機械確認。
 
 ### TICKET-SITE-04 の記録
 

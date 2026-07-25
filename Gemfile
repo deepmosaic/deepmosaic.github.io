@@ -6,7 +6,9 @@ gem "jekyll", "~> 4.4"
 # Plugins
 group :jekyll_plugins do
   gem "jekyll-feed", "~> 0.17"
-  gem "jekyll-seo-tag", "~> 2.8"
+  # jekyll-seo-tag は削除 (TICKET-SITE-05)。{% seo %} が呼ばれておらず無効だった。
+  # head は _layouts/default.html の手書きが正 (canonical / hreflang / OG /
+  # Twitter Card / JSON-LD まで揃っており seo-tag より制御が効く)。
   gem "jekyll-sitemap", "~> 1.4"
 end
 

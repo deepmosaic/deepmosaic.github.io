@@ -1,0 +1,29 @@
+{%- comment -%}
+JSON-LD: BreadcrumbList (TICKET-SITE-05)。
+
+トップ以外の 2 階層目のページに出す。FAQPage と違って **一般サイトでも実際に
+検索結果へ反映される** ので、SEO 上の実効性がある 3 つのうちの 1 つ。
+
+`page.title` をそのまま 2 階層目の名前に使う。
+{%- endcomment -%}
+{%- assign crumb_path = page.url | replace: 'index.html', '' -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "ホーム",
+      "item": "https://www.deepmosaic.co.jp/"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ page.title | jsonify }},
+      "item": {{ crumb_path | prepend: "https://www.deepmosaic.co.jp" | jsonify }}
+    }
+  ]
+}
+</script>

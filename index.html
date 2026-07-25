@@ -1,6 +1,10 @@
 ---
 layout: default
 title: AIで動画編集を一段上のレベルに
+description: AIが動画内の対象を自動検出し、モザイク処理を自動化するWindows向けデスクトップアプリ。処理はすべてお使いのPC内で完結し、映像は外部に送信しません。Adobe Premiere Pro連携に対応。
+schemas:
+  - software-application
+  - faq
 ---
 
 {% include header.html %}
@@ -120,28 +124,12 @@ title: AIで動画編集を一段上のレベルに
 <section class="pb-24">
   <div class="mx-auto w-[92%] max-w-[760px]">
     {% include section-title.html kicker="FAQ" title="よくある質問" %}
-    <div class="flex flex-col gap-2.5" data-island="accordion">
-      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
-        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">無料で使えますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">はい。無料で6時間分までの動画インポートがご利用いただけます。クレジットカードの登録は不要です。有料プランには7日間の無料トライアルもあります。</p>
-      </details>
-      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
-        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">どのAdobe製品と連携できますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">Adobe Premiere Proに対応しています。AI検出したモザイク情報を自動でインポートできます。</p>
-      </details>
-      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
-        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">GPUは必須ですか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">AI検出はCPUのみでも動作しますが、検出速度が大幅に低下します。快適にご利用いただくにはNVIDIA CUDA対応GPUを推奨します。</p>
-      </details>
-      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
-        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">アプリのアップデートはどうすればよいですか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">起動時に自動で新しいバージョンを確認し、更新がある場合はダイアログでお知らせします。ワンクリックで更新できます。</p>
-      </details>
-      <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
-        <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">解約はいつでもできますか？</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-        <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">はい。有料プランはいつでも解約可能です。違約金等は一切ありません。</p>
-      </details>
-    </div>
+    {%- comment -%}
+      TICKET-SITE-05: FAQ は `_data/faq.yml` から生成する。移行前は表示 (ここの
+      <details> 5 件) と FAQPage JSON-LD (default.html にハードコード 5 件) が
+      二重管理で、必ずズレる構造だった。両方を同一データから作る。
+    {%- endcomment -%}
+    {% include faq.html %}
   </div>
 </section>
 

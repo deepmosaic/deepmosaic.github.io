@@ -1,0 +1,33 @@
+{%- comment -%}
+JSON-LD: SoftwareApplication (TICKET-SITE-05)。
+
+移行前は **全ページに重複出力** されていた (会社概要ページにもアプリの構造化データが
+載っていた)。`page.schemas` に `software-application` を書いたページだけに出す。
+
+価格は `_data/plans.yml` から `AggregateOffer` として組む。移行前は `"price": "0"` と
+「無料で6時間分」という説明文がハードコードされており、料金改定で必ず腐る構造だった。
+
+`operatingSystem` は macOS 版リリース時に更新する (TICKET-MAC-405)。
+{%- endcomment -%}
+{%- assign public_plans = site.data.plans.tiers | where: "public", true -%}
+{%- assign sorted = public_plans | sort: "price" -%}
+{%- assign low = sorted | first -%}
+{%- assign high = sorted | last -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Deepmosaic Desktop",
+  "operatingSystem": "Windows 10, Windows 11",
+  "applicationCategory": "MultimediaApplication",
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": {{ site.data.plans.currency | jsonify }},
+    "lowPrice": {{ low.price | jsonify }},
+    "highPrice": {{ high.price | jsonify }},
+    "offerCount": {{ public_plans | size }}
+  },
+  "description": {{ site.data.lang.ja.meta_desc | jsonify }},
+  "url": "https://www.deepmosaic.co.jp"
+}
+</script>
