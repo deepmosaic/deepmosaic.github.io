@@ -108,13 +108,13 @@ schemas:
             </div>
           </div>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/import-menu.png" alt="「ファイル」メニューを開いたホーム画面" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/import-menu.webp" alt="「ファイル」メニューを開いたホーム画面" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">「ファイル」メニュー。画面へのドラッグ&amp;ドロップでも読み込めます。処理結果の保存先は「プロジェクトフォルダを選択」で変更します</figcaption>
           </figure>
           <p><b>対応形式</b>：mp4 / avi / mkv / mov / wmv / flv / webm / ts / m2ts / m4v / mpg / mpeg（拡張子の大文字・小文字は問いません）。フォルダから読み込む際は、拡張子が一致しても映像として読めないファイルは除外され、除外件数が通知されます。</p>
           <p><b>複数をまとめて読み込んだとき</b>は、1本目が検出オプション画面に表示されます。「開始」を押すと<b>その設定が残り全部に適用され</b>、順番に処理されます。ただし検出範囲の指定だけは1本目のみ有効で、2本目以降は動画全体が対象になります。すでに検出処理が動いているときに読み込んだ場合も待ち行列に加わり、実行中の処理が終わり次第、自動で始まります。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/home.png" alt="ホーム画面（処理済み動画一覧）" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/home.webp" alt="ホーム画面（処理済み動画一覧）" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）。ドラッグ&amp;ドロップはこの画面が受け口になります</figcaption>
           </figure>
         </div>
@@ -125,7 +125,7 @@ schemas:
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
           <p>動画を読み込むと検出オプション画面が開きます。ここで「動画のどの区間を」「何を対象に」検出するかを決めて「開始」を押します。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/detect-options.png" alt="検出オプション画面" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/detect-options.webp" alt="検出オプション画面" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出オプション画面（プレビュー・検出範囲・検出対象）</figcaption>
           </figure>
           <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
@@ -158,7 +158,7 @@ schemas:
             <!-- 幅はインラインで指定する。新規の Tailwind ユーティリティ (max-w-[330px] 等) は
                  assets/dist/app.css がキャッシュバスティング無し (max-age=14400) のため、
                  旧 CSS を掴んでいる閲覧者に届かず原寸を大きく超えて描画される。 -->
-            <img src="/assets/img/screenshots/detect-options-panel.png" alt="検出対象とモザイク初期設定"
+            <img src="/assets/img/screenshots/detect-options-panel.webp" alt="検出対象とモザイク初期設定"
                  width="316" height="260" style="max-width:316px;width:100%;height:auto;margin:0 auto"
                  class="block rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出対象とモザイク初期設定</figcaption>
@@ -173,7 +173,7 @@ schemas:
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
           <p><a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/detect.png" alt="検出進捗画面（4段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（4段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（4段階ステッパー + 進捗バー）</figcaption>
           </figure>
           {%- comment -%}
@@ -184,7 +184,7 @@ schemas:
           <details class="my-4 rounded-[10px] border border-edge bg-panel-2">
             <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">対応する検出対象を見る</summary>
             <div class="px-4 pb-4">
-              <img src="/assets/img/detectable-objects.png" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" loading="lazy" decoding="async" class="w-[min(420px,100%)] rounded-[10px] border border-edge">
+              <img src="/assets/img/detectable-objects.webp" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" loading="lazy" decoding="async" class="w-[min(420px,100%)] rounded-[10px] border border-edge">
               <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">検出対象は「局部」「男性の顔」「女性の顔」の 3 種類で、<a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF を切り替えられます。</p>
             </div>
           </details>
@@ -214,7 +214,7 @@ schemas:
             </div>
           </div>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/edit-overview.png" alt="編集ページ全体（video-detail）" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ全体（video-detail）" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ページ全体（video-detail）</figcaption>
           </figure>
         </div>
@@ -226,7 +226,7 @@ schemas:
           <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
           <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/edit-player.png" alt="bboxオーバレイ付きプレイヤーとタイムライン" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/edit-player.webp" alt="bboxオーバレイ付きプレイヤーとタイムライン" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
           </figure>
         </div>
@@ -275,7 +275,7 @@ schemas:
             </div>
           </div>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/edit-toolbar.png" alt="編集ツールバー" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ツールバー</figcaption>
           </figure>
         </div>
@@ -325,7 +325,7 @@ schemas:
           </div>
           <p>各項目は右端の {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで既定値に戻せます。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/edit-mosaic.png" alt="モザイク設定パネル" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">モザイク設定パネル</figcaption>
           </figure>
         </div>
@@ -367,7 +367,7 @@ schemas:
           </div>
           <p>エンコード開始時に未保存の編集は自動で保存されます。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/edit-encode.png" alt="エンコード設定ダイアログ" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/edit-encode.webp" alt="エンコード設定ダイアログ" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">エンコード設定ダイアログ</figcaption>
           </figure>
         </div>

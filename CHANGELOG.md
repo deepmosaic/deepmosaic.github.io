@@ -30,7 +30,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 - [x] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
 - [x] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
 - [x] TICKET-SITE-12: フッター再構成 + 全未接続リンク接続 + `price/index.html:54` の切れた導線修正
-- [ ] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
+- [x] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
 - [x] TICKET-SITE-14: 未参照アセット削除 (`assets/img/docs/` 22MB / `assets/videos/` 14MB)
 - [x] TICKET-SITE-15: SEO 配管 (sitemap 復活 / robots.txt / meta_desc 誤記 / front matter title)
 - [x] TICKET-SITE-16: `/docs/` 差分マージ (`#review` `#usage` 追加、既存アンカーID は不変)
@@ -144,6 +144,32 @@ SoftwareApplication が出ていないこと**、**seo-tag の痕跡が無いこ
 検証: 一時ページをビルドして kv-row 8 / kv-alt 3 (zebra=false が効いている) /
 FAQ details 9 / 開示リスト 11 / プランカード 2 / `¥9,800` の桁区切り /
 `align=left` / **新 include に生ヘックスなし** を機械確認。
+
+### TICKET-SITE-13 の記録 — 画像最適化
+
+参照されている画像 14 枚を WebP に変換した (ffmpeg / libwebp / quality 82)。
+
+| | 変換前 | 変換後 |
+|---|---|---|
+| 対象 14 枚の合計 | 3,530 KB | **368 KB** (10%) |
+| トップページの画像転送量 | 約 2,000 KB | **216 KB** |
+| `assets/` 全体 | 52 MB (未参照削除前) | **6.4 MB** |
+
+`edit-player.png` は 627 KB → 39 KB、`pr_image.png` は 695 KB → 75 KB。
+`app-icon-128.png` と `logo-font-cropped.png` は小さく互換性を優先して PNG のまま。
+favicon (`assets/img/ico/`) も対象外。
+
+**運用の穴を塞いだ** — スクリーンショットは front リポの `screenshots.mjs` が **PNG で**
+出力し、手で `assets/img/screenshots/` にコピーする運用になっている。変換を手作業に
+すると、次に撮り直したとき PNG に戻って **参照だけ `.webp` のまま残り画像が消える**。
+`scripts/optimize-images.mjs` としてスクリプト化し、`CLAUDE.md` に「コピー後に必ず
+通すこと」と明記した。
+
+ビルドに組み込まない理由: Jekyll プラグインは ImageMagick / libvips を CI ランナーに
+要求する (年数回しか変わらないアセットのためにデプロイの故障点を増やしたくない)。
+Vite に通すと `/assets/img/…` の URL が全部変わる。
+
+検証: ビルド出力の **ローカルアセット参照 229 件を全数検査してリンク切れ 0 件**。
 
 ### TICKET-SITE-16 の記録 — /docs/ 差分マージ
 

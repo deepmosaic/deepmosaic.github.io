@@ -60,7 +60,15 @@ npm run build && bundle exec jekyll build
 ## Conventions
 
 - Jekyll の Liquid テンプレート構文
-- 画像は `assets/img/` に配置 (WebP 推奨)
+- 画像は `assets/img/` に配置。**WebP 必須** (TICKET-SITE-13)
+  - スクリーンショットは front リポの `node scripts/e2e/screenshots.mjs` が **PNG で**出力する。
+    `assets/img/screenshots/` にコピーしたら **必ず** `node scripts/optimize-images.mjs --apply`
+    を通すこと。忘れると参照だけ `.webp` のまま残り、画像が表示されなくなる
+  - 変換は ffmpeg (libwebp) で quality 82。ビルドには組み込まない
+    (CI に ImageMagick/libvips を要求したくない。Vite に通すと URL が全部変わる)
+  - `<img>` には **`width` / `height` を必ず付ける** (CLS 対策)。ヒーローだけ
+    `fetchpriority="high"` で lazy にしない (LCP 要素のため)、それ以外は
+    `loading="lazy" decoding="async"`
 - 動画は `assets/videos/` に配置
 - **スタイルは Tailwind CSS v4**。デザイントークン/移植した独自スタイルは `src/app.css` の `@theme` / `@layer components`、それ以外は markup に Tailwind ユーティリティを直書き。Materialize.css は撤去済み。
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
