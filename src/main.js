@@ -46,6 +46,8 @@ import MobileNav from './islands/MobileNav.svelte';
 import Accordion from './islands/Accordion.svelte';
 import Scrollspy from './islands/Scrollspy.svelte';
 import VideoLightbox from './islands/VideoLightbox.svelte';
+import RoiCalculator from './islands/RoiCalculator.svelte';
+import Tabs from './islands/Tabs.svelte';
 
 function mountIslands(selector, Component) {
   document.querySelectorAll(selector).forEach((el) => {
@@ -62,6 +64,8 @@ function init() {
   mountIslands('[data-island="accordion"]', Accordion);
   mountIslands('[data-island="scrollspy"]', Scrollspy);
   mountIslands('[data-island="video-lightbox"]', VideoLightbox);
+  mountIslands('[data-island="roi"]', RoiCalculator);
+  mountIslands('[data-island="tabs"]', Tabs);
 }
 
 if (document.readyState === 'loading') {

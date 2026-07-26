@@ -23,11 +23,11 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 ### Phase 1 — トップ刷新 + /spec/ 新設
 
 - [x] TICKET-SITE-05: description のページ単位化 + JSON-LD 分離 + jekyll-seo-tag 除去
-- [ ] TICKET-SITE-06: トップ前半 (HERO / TRUST BAR / STATS / COMPARISON) — 未検証の数値は出さない
-- [ ] TICKET-SITE-07: 未検証の数値と未実装機能の言及を全ページから棚卸し
+- [x] TICKET-SITE-06: トップ前半 (HERO / TRUST BAR / STATS / COMPARISON) — 未検証の数値は出さない
+- [x] TICKET-SITE-07: 未検証の数値と未実装機能の言及を全ページから棚卸し
 - [x] TICKET-SITE-08: 実測値の取得 (`detection_runs` から算出)
-- [ ] TICKET-SITE-09: `RoiCalculator.svelte` アイランド (React 廃止)
-- [ ] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
+- [x] TICKET-SITE-09: `RoiCalculator.svelte` アイランド (React 廃止)
+- [x] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
 - [ ] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
 - [ ] TICKET-SITE-12: フッター再構成 + 全未接続リンク接続 + `price/index.html:54` の切れた導線修正
 - [ ] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
@@ -144,6 +144,43 @@ SoftwareApplication が出ていないこと**、**seo-tag の痕跡が無いこ
 検証: 一時ページをビルドして kv-row 8 / kv-alt 3 (zebra=false が効いている) /
 FAQ details 9 / 開示リスト 11 / プランカード 2 / `¥9,800` の桁区切り /
 `align=left` / **新 include に生ヘックスなし** を機械確認。
+
+### TICKET-SITE-06 / 07 / 09 / 10 の記録 — トップページ刷新
+
+**HERO** は確定コピー (数値なし)。`detectable-objects.png` をトップから撤去した
+(alt も一緒に外している。画像だけ外して alt が残ると施策④-5 の目的を達成できない)。
+
+**STATS** は旧「25fps+ 自動処理速度」「6時間 無料で利用可能」を、検証できる 4 つの事実に
+差し替えた: `0 byte`(映像の外部送信量) / `100,000+`(学習画像) / `12 形式`(読み込み対応) /
+`4 段階`(検出パイプライン)。
+
+**COMPARISON** は時間・金額の数値を出さず「判断の軸」だけを並べる形にした。
+手作業側の所要時間は社内に実測データが無いため。Deepmosaic 側の実測は `/spec/` へ誘導する。
+
+**RELIABILITY** は「確認支援ビュー」(低信頼区間の自動抽出) が未実装なので、
+**実装済みの道具だけ**を書いた: 欠落フレームジャンプ (`[` `]`) / 安全マージン (0.5〜2倍) /
+適用範囲 4 段階 / 信頼度フィルタ。
+
+**MOSAIC (旧 STANDARDS)** も「審査基準準拠プリセット」が未実装なので、
+実装済みの設定項目を説明する形に縮小した。
+
+**ROI 計算機 (TICKET-SITE-09)** は React を捨てて Svelte 5 アイランドで実装。
+プラン価格は `data-plans` で `_data/plans.yml` から渡す。見出しと注記はアイランドの外に
+置き、`<noscript>` フォールバックも用意した (JS 無効でも何の計算機か読める)。
+「手作業の想定」が仮置きであることを UI 上に明示している。
+
+**タブ (Tabs.svelte)** は **DOM を生成しない挙動だけのアイランド**。JS 無効なら全パネルが
+縦に並んで見える (比較表なので全部見えても情報として成立する)。矢印キー / Home / End にも対応。
+
+**気付いて直したこと**: セクションの説明を HTML コメントで書いていたため、
+「25fps は実測と乖離するため撤去」といった **社内向けの記述が公開 HTML に出力されていた**。
+Liquid コメント (`{%- comment -%}`) に変換して出力から除いた。
+
+検証 (ビルド出力に対する機械チェック 20 件、全 PASS): 確定コピー / 未検証の数値 3 種が
+出力に無い / 検出対象画像と露骨表現が無い / STATS 4 項目 / 比較表 / ROI アイランドと
+plans と noscript / タブ 2 枚 / 通信開示 / オフライン手順 / 料金カード 2 枚 / 責任の明記 /
+苦手なケース 5 行 / **FAQ 表示 9 件 = JSON-LD 9 件** / CTA / **全画像に width/height** /
+生ヘックスなし / `href="#"` なし。
 
 ### TICKET-SITE-08 の記録 — 「25fps+」は実測で裏付けが取れない
 
