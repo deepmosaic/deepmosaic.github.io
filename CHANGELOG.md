@@ -1,5 +1,121 @@
 # CHANGELOG
 
+## 2026-07-26 (2) - Fix: 刷新後のレビュー指摘の反映 + 料金プランをデザイン準拠へ
+
+ユーザーレビューによる指摘 5 件。うち 4 件は文言・表記の削除で、1 件 (料金プラン) は
+Phase 2 に予約していた `TICKET-SITE-20` の前倒し。
+
+- [x] TICKET-SITE-17: セクションタイトルの読点を除去 (計 7 箇所)
+- [x] TICKET-SITE-18: HERO の「セットアップ後はオフラインで動作」バッジを削除
+- [x] TICKET-SITE-19: フッターの会社概要ブロック (説明文・社名・住所・メール) を削除
+- [x] TICKET-SITE-20: 料金プランを新デザイン準拠の 3 プラン + Free 帯に刷新
+- [x] TICKET-SITE-21: 特商法ページから郵便番号・所在地・電話番号の行を削除
+- [x] TICKET-SITE-22: 登録デバイス表記を「同時起動 1 台」に統一
+- [x] TICKET-SITE-23: 無料トライアルの表記を全廃 + Pro に「最も選ばれています」バッジ
+
+> 予約 ID の変更: 当初 `TICKET-SITE-20` は「`/price/` 3 プラン刷新 (課金実装がゲート)」、
+> `TICKET-SITE-21` は「`free.hours` 6→3 切替」として Phase 2 に予約していた。
+> 20 は前倒しでここで消化し、21 は特商法ページの修正に振り替えた。
+> Free 6→3 の切替は front 側の `FREE_USAGE_LIMIT_SECONDS` 変更と同時に行う。
+
+### TICKET-SITE-17 — 読点の除去
+
+対象 7 箇所 (`index.html` の front matter title / `_data/site.yml` の `hero.headline_lead` /
+RELIABILITY・MOSAIC・INTEGRATION の `section-title` / PRIVACY の h3 / `spec/index.html` の CTA 見出し)。
+
+`company/privacy.html` と `company/terms.html` の条文見出し (「通知・公表または同意取得の方法、
+利用中止要請の方法」等) は **対象外**。あれは列挙の読点で、体言止めの区切りとして入れている
+セクションタイトルの読点とは役割が違う。
+
+### TICKET-SITE-19 / 21 — 住所・電話番号の削除
+
+フッターの会社概要ブロックと、特商法ページの「郵便番号 / 所在地 / 電話番号」の 3 行を削除した。
+`_includes/schema/organization.html` (JSON-LD) には元々住所・電話番号を持たせていないので、
+構造化データ側に表記が残ることはない。
+
+⚠️ **特定商取引法の表示義務との関係は要確認。** 通信販売の広告では「販売業者の氏名 (名称)・
+住所・電話番号」が表示義務の対象とされており、消費者庁の運用では省略可能な項目に含まれない
+と理解している。加えて決済事業者の審査でこの 3 項目を求められることが多い。削除自体は
+指示どおり実施したが、公開前に判断を確認すること。残す場合の代替として「請求があれば
+遅滞なく開示する」旨を明記する方式がある。
+
+### TICKET-SITE-20 — 料金プランの刷新
+
+新デザイン (`.dc.html` L422-490 / L629-692) 準拠。**有料 3 プランをカードで並べ、Free は
+その下の横帯**にする (4 枚並べるとカードが細くなり仕様行が読めない)。振り分けは
+`_data/plans.yml` の `display: card | strip`。
+
+| | 月額 (税別) | 込み時間 | 超過単価 | その他 |
+|---|---|---|---|---|
+| Light | ¥2,980 | 月 5 時間 | ¥800/時間 | 未使用分は翌月繰越 (最大 10 時間) |
+| Pro (featured) | ¥9,800 | 月 40 時間 | ¥500/時間 | 「最も選ばれています」バッジ |
+| Enterprise | ¥8,000 / シート | シート数 × 40 時間をプール共有 | ¥300/時間 | 最低 3 シート・請求書払い |
+| Free (帯) | ¥0 | 累計 6 時間 | — | クレジットカード不要 |
+
+いずれのプランも **同時起動は 1 台** (TICKET-SITE-22)。デザインの「2 台（同時起動 1 台）」は
+登録 2 台がアプリ側で未実装 (device_lock は単一端末 + takeover) なので、実装済みの
+「同時起動 1 台」だけを書く。`rollout_note` の対象からも外した。
+
+**無料トライアルは全廃** (TICKET-SITE-23)。クレジットカードを登録しなければ全員が Free
+プランとして使えるので、試用期間を別に用意する意味がない (再トライアルの穴も作らない)。
+`plans.yml` の `trial_days` は全プラン 0 で、`trial_days > 0` 駆動だったバッジは
+データ駆動の `badge` フィールドに置き換えた (Pro = 「最も選ばれています」)。
+サイト側の表記は `docs/`・`faq.yml`・カード・CTA からすべて外した。
+**アプリ側の機能としての 7 日トライアル削除は front リポジトリ側の作業**
+(`auth/env.rs::TRIAL_DAYS` / `auth/license.rs` / `src/lib/license.ts` / Stripe /
+Supabase)。front の CHANGELOG を参照。
+
+変更したファイル: `_data/plans.yml` (SSOT) / `_includes/pricing-cards.html` /
+`_includes/download-button.html` (`variant` 追加) / `index.html` (PRICING 節・noscript・比較表) /
+`price/index.html` (全面書き換え) / `docs/index.html` / `_data/faq.yml` /
+`src/islands/RoiCalculator.svelte` / `src/lib/pricing.js` (新規) / `src/lib/pricing.test.js` (新規)。
+
+**デザインからあえて変えた点** (いずれも「実在しないものは出さない」既存方針の維持):
+
+1. **Free の込み時間は 6 時間のまま** — デザインの既定は 3 だが、アプリの
+   `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` は 6h を強制している。3 と書くと実挙動と食い違う
+2. **「時間の計測ルール」表は移植しない** — デザインの 7 行のうち「同一ファイルの再処理は
+   非計上」「インポート前の金額提示」「月額上限キャップ」「決済失敗時の 7 日猶予」は
+   アプリ側で未実装。実装済みの計測仕様だけを `/docs/#usage` から参照させる形にした
+3. **Enterprise の CTA は「デモに申し込む」→「導入について相談する」** — 予約基盤が無いため
+   「申し込む」は約束になる (Phase 1 の削除方針を踏襲)
+4. **リード文はサイト上での申し込みを約束せず、アプリ内手続きへ誘導する** — デザインの
+   「上限時間と超過単価をすべて明記しています…」の代わりに、有料プランの申し込みが
+   アプリ内 (プラン管理 → 決済ポータル) で行われる旨を書く。サイトに Checkout 導線が
+   無いことと矛盾しない
+
+**未実装であることの開示** — 上限時間・超過課金・登録デバイス数はアプリ側で未強制なので、
+`plans.yml` の `rollout_note` が料金カード直下に注記を出す。トップ / `/price/` / `/docs/` の
+3 箇所で同じ文が出る。課金実装 (front の TICKET-BILL Phase 1〜6) の出荷後に
+`rollout_note: ""` とすれば注記だけが消え、他は 1 文字も変えなくてよい。
+
+**ROI 計算機の修正 (実害のあったバグ)** — Enterprise の `included_basis: pooled` を
+単純な「基本料 + 超過」で計算すると最低シート数を無視して **1 シート分 ¥8,000** になり、
+Light (¥8,580) より安く見えて常に Enterprise が「適合プラン」に選ばれていた。
+`seatsFor()` で `max(min_seats, ceil(hours / included_hours))` を取るよう修正。
+
+計算ロジックは DOM 非依存の純関数として `src/lib/pricing.js` に切り出し、Node 組み込みの
+test runner で回帰を固定した (`npm test` = `node --test src/lib/*.test.js`。vitest / jsdom は
+足していない)。テストは **`_data/plans.yml` の実データを読む**ので、料金を変えると落ちる。
+CI (`.github/workflows/jekyll.yml`) の build ジョブにも入れたので、表示と計算機が食い違った
+まま公開されることはない。
+
+実測での確認 (Jekyll serve + CDP):
+
+| 月間 | 適合プラン | 月額 | 内訳 |
+|---|---|---|---|
+| 12h (既定) | Light | ¥8,580 | 月 5 時間込み ・ 超過 ¥800/時間 ・ 翌月繰越 (最大 10 時間) |
+| 14h | Pro | ¥9,800 | 月 40 時間込み ・ 超過 ¥500/時間 ・ 7 日間トライアル |
+| 90h | Enterprise | ¥24,000 | 3 シート (120 時間をプール共有) ・ 超過 ¥300/時間 |
+
+既定値の年間削減額は ¥1,625,040 (現状 ¥1,728,000 − Deepmosaic ¥102,960) で、
+移植時に設計した期待値と一致。
+
+**副作用として直したもの** — `/price/` に h1 が無く見出し階層が h2 から始まっていたのを修正
+(`title` + パンくず + `breadcrumb` schema を `/spec/` と同じ形に揃えた)。
+`index.html` の noscript が `site.data.plans.tiers[1]` を index で参照しており、プランを
+増やすと別プランを指す事故になっていたのを確定値の直書きに変更。
+
 ## 2026-07-26 - Feature: 売上拡大施策に基づくサイト刷新 (Phase 0+1)
 
 設計: `front/docs/deepmosaic-growth-strategy.md` 施策③ (SEO) / ④ (訴求の変更) / ⑦ (変換資産)

@@ -1,27 +1,48 @@
-# 料金プランの単一真実源 (TICKET-SITE-03)
+# 料金プランの単一真実源 (TICKET-SITE-03 → TICKET-SITE-20)
 #
-# ここを唯一の出所にして、料金カード / ROI 計算機 / 比較表 / JSON-LD Offer /
-# docs のプラン表 / FAQ の全部から参照する。料金改定が 1 ファイル 1 箇所で済む。
+# ここを唯一の出所にして、料金カード / Free 帯 / ROI 計算機 / JSON-LD の AggregateOffer /
+# HERO の無料枠表記 / CTA ブロック の全部から参照する。料金改定が 1 ファイルで済む。
 #
 # Claude Design の成果物は料金を **料金カードの markup と renderVals() の計算ロジックの
 # 2 箇所にハードコード**していた。必ず片方だけ更新されて破綻するので、その構造は移植しない。
 #
-# ⚠️ ここに書くのは **アプリが実際に強制している値** だけ。サイトの記述が
-#    ライセンスサーバーの挙動と食い違うと虚偽記載になる。
-#    新プラン (Light ¥2,980 / Pro 月40時間 / Enterprise) は課金実装 (TICKET-BILL 群) の
-#    完了後に TICKET-SITE-20 で差し替える。
+# ── TICKET-SITE-20: 2 プラン → 3 プラン + Free 帯 ─────────────────────────
+#
+# ⚠️ アプリ側の課金実装 (front の TICKET-BILL 群) は Phase 0 のみ完了しており、
+#    **上限時間・超過課金・繰越はまだ強制されていない**。
+#    この事実は `rollout_note` の 1 行で開示する。BILL Phase 1〜6 の出荷後に
+#    `rollout_note: ""` とすれば注記だけが消え、他は 1 文字も変えなくてよい。
+#
+#    「同時起動 1 台」は device_lock で既に強制済みなので注記の対象外。
+#
+# ⚠️ Free の `included_hours` は **6 のまま**にしている。新デザインの既定値は 3 だが、
+#    アプリの `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` は 6h を強制しており、3 と書くと
+#    実際の挙動と食い違う。3h 化は front 側の切替と同時に行う。
 
 # 表示通貨と税表記 (全プランで共通)
 currency: "JPY"
 currency_symbol: "¥"
 tax_note: "税別"
 
-# 現行プラン。`included_hours: null` は無制限を表す。
+# 新料金体系の適用状況。**空文字にすると注記が出ない** (課金実装の完了後に空にする)。
+rollout_note: "上限時間と超過課金の適用は順次開始します。開始日は事前にお知らせします。現在ご利用中のお客様の条件は変わりません。"
+
+# 既存 Pro (無制限) の据え置き。新デザインの注記 (`.dc.html` L691) をそのまま採用する。
+# front 側の `from_legacy_plan_name` が全有料文字列を無制限に倒す設計と対応している。
+grandfather_note: "既存の Pro（無制限）をご利用中のお客様は、そのまま無制限で継続してご利用いただけます（据え置き）。上限時間の適用は新規のお申し込みのみです。"
+
+# プラン定義。
+#
+#   display          card = 3 枚並ぶ料金カード / strip = カード下の横帯 (Free)
+#   included_basis   cumulative = 累計 (Free) / monthly = 月次 / pooled = シート共有
+#   included_hours   included_basis が pooled のときは 1 シートあたりの時間
+#   overage_per_hour 超過 1 時間あたりの単価。null は超過不可
+#   specs            カード内の「ラベル | 値」行。デザインのカード仕様をそのまま持つ
 tiers:
   - code: free
     name: "Free"
+    display: strip
     price: 0
-    # 表示形。Liquid に桁区切りフィルタが無いため、数値 (計算用) と表示文字列を分けて持つ。
     price_display: "0"
     # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 6h と一致
     included_hours: 6
@@ -30,31 +51,104 @@ tiers:
     trial_days: 0
     featured: false
     public: true
-    summary: "6時間分までの動画インポートが可能なお試しプラン"
+    summary: "まずは無料で試せます"
     bullets:
-      - "全ての機能を利用可能"
-      - "支払い登録不要"
-      - "無料分終了後も新規インポート以外は利用可能"
+      - "累計 6 時間分の動画インポート"
+      - "クレジットカードの登録は不要"
+      - "無料分の終了後も既存プロジェクトの編集・書き出しは継続できます"
     cta:
       label: "無料でダウンロード"
       kind: "download"
 
+  - code: light
+    name: "Light"
+    display: card
+    price: 2980
+    price_display: "2,980"
+    price_unit: "/ 月"
+    included_hours: 5
+    included_basis: "monthly"
+    overage_per_hour: 800
+    # 未使用分の翌月繰越の上限 (時間)。null なら繰越なし
+    carryover_hours: 10
+    trial_days: 0
+    featured: false
+    public: true
+    summary: "同人・個人撮影のクリエイター向け。月 1〜3 本のペースに合わせた枠です。"
+    specs:
+      - label: "込み時間"
+        value: "月 5 時間"
+      - label: "超過単価"
+        value: "¥800 / 時間"
+      - label: "未使用分"
+        value: "翌月繰越（最大 10 時間）"
+      - label: "同時起動"
+        value: "1 台"
+    cta:
+      label: "ダウンロードして申し込む"
+      kind: "download"
+      # Pro (featured) を主ボタンにして視線を集めるため、Light は副ボタン配色にする
+      variant: "secondary"
+
   - code: pro
     name: "Pro"
+    display: card
     price: 9800
     price_display: "9,800"
-    included_hours: null # 無制限
-    included_basis: "unlimited"
-    overage_per_hour: null
-    trial_days: 7
+    price_unit: "/ 月"
+    included_hours: 40
+    included_basis: "monthly"
+    overage_per_hour: 500
+    carryover_hours: null
+    # 無料トライアルは設けない。クレジットカードを登録しなければ全員が Free プランとして
+    # 使えるので、試用期間を別に用意する意味がない (かつ再トライアルの穴も作らない)。
+    trial_days: 0
     featured: true
+    # カード左上のバッジ (新デザイン準拠)。空なら出さない。
+    badge: "最も選ばれています"
     public: true
-    summary: "利用無制限のプラン"
-    bullets:
-      - "動画インポート無制限"
-      - "7日間無料トライアル。トライアル終了後から請求開始"
-      - "支払いは月額料金のみ（クレジットカード対応）"
-      - "いつでも解約可能・違約金なし"
+    summary: "フリーランス編集者・専業に近い個人向け。込み時間まで使った場合の実効単価は ¥245 / 時間です。"
+    specs:
+      - label: "込み時間"
+        value: "月 40 時間"
+      - label: "超過単価"
+        value: "¥500 / 時間"
+      - label: "同時起動"
+        value: "1 台"
+      - label: "解約"
+        value: "いつでも可能・違約金なし"
+    note: "上限に達しても進行中の処理は停止しません。超過分は ¥500 / 時間で継続してご利用いただけます。"
     cta:
-      label: "トライアルを開始"
+      label: "ダウンロードして申し込む"
       kind: "download"
+
+  - code: enterprise
+    name: "Enterprise"
+    display: card
+    price: 8000
+    price_display: "8,000"
+    price_unit: "/ シート・月"
+    # pooled: シート数 × included_hours をチームで共有する
+    included_hours: 40
+    included_basis: "pooled"
+    min_seats: 3
+    overage_per_hour: 300
+    carryover_hours: null
+    trial_days: 0
+    featured: false
+    public: true
+    summary: "メーカー・ポストプロダクション向け。最低 3 シート（¥24,000〜）。"
+    specs:
+      - label: "込み時間"
+        value: "シート数 × 40 時間をプール共有"
+      - label: "超過単価"
+        value: "¥300 / 時間"
+      - label: "請求"
+        value: "月末締め翌月請求"
+      - label: "支払方法"
+        value: "請求書払い・銀行振込"
+    cta:
+      label: "導入について相談する"
+      kind: "link"
+      href: "https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link"
+      external: true

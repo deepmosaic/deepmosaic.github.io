@@ -32,6 +32,11 @@ jobs:
       - name: Install JS deps
         run: npm ci
 
+      # 料金計算の回帰テスト (TICKET-SITE-20)。`_data/plans.yml` の実データを読むので、
+      # 料金カードの表示と ROI 計算機が食い違ったまま公開されるのを止められる。
+      - name: Test
+        run: npm test
+
       - name: Build front-end assets (Vite)
         run: npm run build
 

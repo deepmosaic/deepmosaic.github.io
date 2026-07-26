@@ -1,6 +1,6 @@
 ---
 layout: default
-title: モザイク作業を、最終確認だけに
+title: モザイク作業を最終確認だけに
 description: AIが動画内の対象を自動検出し、モザイク処理を自動化するWindows向けデスクトップアプリ。処理はすべてお使いのPC内で完結し、映像は外部に送信しません。Adobe Premiere Pro連携に対応。
 schemas:
   - software-application
@@ -32,7 +32,6 @@ schemas:
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64bit)</span>
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}無料で{{ free_plan.included_hours }}時間分まで利用可能</span>
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}クレジットカード不要</span>
-      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}セットアップ後はオフラインで動作</span>
     </div>
 
     <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
@@ -118,7 +117,7 @@ schemas:
             <td class="p-4 font-bold text-ink-body">設定を変えた再作業</td>
             <td class="p-4">都度やり直し</td>
             <td class="p-4">再依頼・再納品</td>
-            <td class="p-4 bg-accent/5">何度でも実行できる（有料プランは無制限）</td>
+            <td class="p-4 bg-accent/5">同じ素材なら何度でもやり直せる</td>
           </tr>
           <tr class="border-b border-hair">
             <td class="p-4 font-bold text-ink-body">検出漏れの確認</td>
@@ -149,16 +148,26 @@ schemas:
 <section id="roi" class="border-y border-hair bg-surface-alt py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
     {% include section-title.html kicker="CALCULATOR" title="作業量から費用を試算します" sub="月間の本数と尺を入力すると、消費時間・適合プラン・現状コストとの差額を試算します。" %}
+    {%- comment -%}
+      料金カードと同じ `public: true` で絞る。絞らないと非公開プラン
+      (グランドファザリング枠など) が計算機だけに現れ、カードと食い違う。
+    {%- endcomment -%}
+    {%- assign roi_plans = site.data.plans.tiers | where: "public", true -%}
     <div data-island="roi"
-         data-plans='{{ site.data.plans.tiers | jsonify }}'
+         data-plans='{{ roi_plans | jsonify }}'
          data-default-cost="{{ S.roi.default_cost_per_video }}"
          data-manual-multiplier="{{ S.roi.manual_work_multiplier }}"></div>
+    {%- comment -%}
+      JS 無効時のフォールバック。数値は Liquid で組まず**確定値を直接書く**
+      (プランを増やしたときに index 参照 `tiers[1]` が別プランを指す事故を防ぐ)。
+      月 12 時間 = Light 2,980 + 7h × 800 = 8,580 / Pro は 40 時間込みなので 9,800 固定。
+    {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
         試算にはブラウザの JavaScript が必要です。
-        月 6 本 × 2 時間（月 12 時間）の場合、有料プランは月額
-        {{ site.data.plans.currency_symbol }}{{ site.data.plans.tiers[1].price_display }}（{{ site.data.plans.tax_note }}）の固定で、
-        本数が増えても追加費用はかかりません。
+        月 6 本 × 2 時間（月 12 時間）の場合、Light は月額 ¥8,580（月 5 時間込み + 超過 7 時間 × ¥800）、
+        Pro は月 40 時間込みのため月額 ¥9,800 の固定です（いずれも{{ site.data.plans.tax_note }}）。
+        プランごとの込み時間と超過単価は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>に掲載しています。
       </div>
     </noscript>
     <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
@@ -175,7 +184,7 @@ schemas:
 <!-- RELIABILITY -->
 <section class="py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="RELIABILITY" title="検出結果は、すべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更、検出が途切れた箇所へのジャンプに対応しています。" %}
+    {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更、検出が途切れた箇所へのジャンプに対応しています。" %}
     <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
         <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ。プレイヤー上に検出枠が重なり、右側にモザイク設定パネルが開いている" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
@@ -209,7 +218,7 @@ schemas:
 <!-- MOSAIC -->
 <section class="border-y border-hair bg-surface-alt py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="MOSAIC" title="粒度と隠蔽率を、設定で固定できる" sub="対象物のサイズに連動した自動調整と、Adobe Premiere Pro と同方式のブロック分割数指定。提出先ごとの規定値に合わせて調整できます。" %}
+    {% include section-title.html kicker="MOSAIC" title="粒度と隠蔽率を設定で固定できる" sub="対象物のサイズに連動した自動調整と、Adobe Premiere Pro と同方式のブロック分割数指定。提出先ごとの規定値に合わせて調整できます。" %}
     <div data-island="tabs">
       <div role="tablist" aria-label="モザイク設定" class="flex gap-1 border-b border-hair">
         <button type="button" role="tab" id="tab-scope" aria-controls="panel-scope" aria-selected="true" class="tab tab-active">適用範囲</button>
@@ -239,7 +248,7 @@ schemas:
     {% include section-title.html kicker="PRIVACY" title="映像は外部に送信されません" sub="送信するデータの内容と、ネットワークを切断した状態での動作手順を公開しています。ご自身で確かめられます。" %}
     {% include disclosure-table.html %}
     <div class="mt-5 card p-6">
-      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">オフラインで動くことを、ご自身で確認できます</h3></div>
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">オフラインで動くことをご自身で確認できます</h3></div>
       <ol class="ml-5 list-decimal text-[14px] leading-[2] text-ink-2 marker:text-ink-4">
         {%- for step in site.data.disclosure.offline_steps %}
         <li>{{ step }}</li>
@@ -254,7 +263,7 @@ schemas:
   <div class="mx-auto w-[92%] max-w-[1120px]">
     <div class="grid items-center gap-10 lg:grid-cols-2">
       <div>
-        {% include section-title.html kicker="INTEGRATION" title="Adobe Premiere Pro へ、ワンクリックでインポート" sub="AI 検出したモザイク情報を Premiere Pro のプロジェクトへ自動でインポート。一からモザイク処理することなく、使い慣れた編集環境で最終調整だけを行えます。" align="left" %}
+        {% include section-title.html kicker="INTEGRATION" title="Adobe Premiere Pro へワンクリックでインポート" sub="AI 検出したモザイク情報を Premiere Pro のプロジェクトへ自動でインポート。一からモザイク処理することなく、使い慣れた編集環境で最終調整だけを行えます。" align="left" %}
         <ul class="-mt-6 flex flex-col gap-2.5">
           <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>動画カードのメニューから直接送信</span></li>
           <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>プラグインのセットアップも自動で案内</span></li>
@@ -276,14 +285,16 @@ schemas:
 </section>
 
 {%- comment -%}
-  PRICING。現行 2 プランのみ。新プラン (Light/Enterprise) は課金実装の完了後
-  (TICKET-SITE-20) に出す —— アプリが「無制限」を売っている状態で 3 プランを
-  出すと特商法・景表法の実害になる。
+  PRICING (TICKET-SITE-20)。新デザイン準拠の 3 プラン + Free 帯。
+  金額・込み時間・仕様行の出所は `_data/plans.yml` の 1 箇所だけ。
+
+  上限時間・超過課金はアプリ側で未強制なので、その事実は `plans.yml` の
+  `rollout_note` が料金カード直下に出す (カード内には書かない)。
 {%- endcomment -%}
 <!-- PRICING -->
 <section class="py-24">
-  <div class="mx-auto w-[92%] max-w-[900px]">
-    {% include section-title.html kicker="PRICING" title="シンプルな料金プラン" sub="まずは無料で。気に入ったら7日間の無料トライアル付きの有料プランへ。" %}
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="PRICING" title="作業量に合わせて選べる3プラン" sub="有料プランのお申し込みは、アプリをインストールしてログインした後、アプリ内のプラン管理からお手続きいただきます。" %}
     {% include pricing-cards.html %}
     <p class="mt-6 text-center text-[13.5px] text-ink-2">
       詳細は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください。

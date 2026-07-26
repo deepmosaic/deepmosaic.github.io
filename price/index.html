@@ -1,61 +1,64 @@
 ---
 layout: default
 title: 料金
-description: Deepmosaicの料金プラン。無料で6時間分の動画インポートがご利用いただけます。有料プランは月額9,800円（税別）でインポート無制限、7日間の無料トライアル付き。
+description: Deepmosaicの料金プラン。Light 月額2,980円 / Pro 月額9,800円 / Enterprise 1シート月額8,000円（いずれも税別）。上限時間と超過単価を明記しています。無料プランは累計6時間分まで、クレジットカード不要。
 schemas:
   - software-application
+  - breadcrumb
 ---
 
 {% include header.html %}
 
-<section class="pt-[72px] pb-24">
-  <div class="mx-auto w-[92%] max-w-[880px]">
-    {% include section-title.html kicker="PRICING" title="シンプルな料金プラン" sub="まずは無料で。気に入ったら7日間の無料トライアル付きの有料プランへ。" %}
+{%- comment -%}
+  TICKET-SITE-20: 料金カードは `_includes/pricing-cards.html` に一本化した
+  (移行前はトップとこのページで markup が完全重複しており、片方だけ更新される構造だった)。
 
-    <div class="grid items-stretch gap-[22px] sm:grid-cols-2">
-
-      <!-- Free -->
-      <div class="flex flex-col rounded-[14px] border border-edge bg-panel p-[32px_28px] px-7 py-8">
-        <h3 class="text-xl font-bold text-ink">Free</h3>
-        <p class="mt-2 min-h-[44px] text-[13.5px] leading-[1.8] text-ink-2">6時間分までの動画インポートが可能なお試しプラン</p>
-        <div class="mt-5 mb-1 flex items-baseline gap-1.5">
-          <span class="text-[40px] font-bold tracking-[-0.02em] text-ink">¥0</span>
-          <span class="text-[13px] text-ink-3">1ユーザー</span>
-        </div>
-        <div class="mt-[18px] mb-[22px]">
-          <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-secondary w-full">{% include icon.html name="Download" class="h-4 w-4" %}無料でダウンロード</a>
-        </div>
-        <ul class="flex flex-col gap-[11px] border-t border-edge pt-5 text-[13.5px] leading-[1.7] text-[#c8c8c8]">
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}全ての機能を利用可能</li>
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}支払い登録不要</li>
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}無料分終了後も新規インポート以外は利用可能</li>
-        </ul>
-      </div>
-
-      <!-- Pro (featured) -->
-      <div class="relative flex flex-col rounded-[14px] border border-accent bg-panel-2 px-7 py-8" style="box-shadow:0 0 60px rgba(79,139,232,.14)">
-        <span class="absolute -top-[13px] left-7 rounded-full bg-accent px-3 py-1 text-xs font-bold text-white">7日間無料トライアル</span>
-        <h3 class="text-xl font-bold text-ink">Pro</h3>
-        <p class="mt-2 min-h-[44px] text-[13.5px] leading-[1.8] text-ink-2">利用無制限のプラン</p>
-        <div class="mt-5 mb-1 flex items-baseline gap-1.5">
-          <span class="text-[40px] font-bold tracking-[-0.02em] text-ink">¥9,800</span>
-          <span class="text-[13px] text-ink-3">/ 1ユーザー・月（税別）</span>
-        </div>
-        <div class="mt-[18px] mb-[22px]">
-          <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-primary w-full">{% include icon.html name="Zap" class="h-4 w-4" %}トライアルを開始</a>
-        </div>
-        <ul class="flex flex-col gap-[11px] border-t border-edge pt-5 text-[13.5px] leading-[1.7] text-[#c8c8c8]">
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}動画インポート無制限</li>
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}7日間無料トライアル。トライアル終了後から請求開始</li>
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}支払いは月額料金のみ（クレジットカード対応）</li>
-          <li class="flex items-start gap-2.5">{% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}いつでも解約可能・違約金なし</li>
-        </ul>
-      </div>
-
-    </div>
-
-    <p class="mt-7 text-center text-[13px] text-ink-4">ご不明な点は<a href="/docs" class="text-accent-soft hover:underline">ドキュメント</a>または<a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline">問い合わせフォーム</a>からご連絡ください。</p>
+  h1 は `section-title.html` (h2 を吐く) ではなくページ側に直接置く。
+  移行前はこのページに h1 が無く、見出し階層が h2 から始まっていた。
+{%- endcomment -%}
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="パンくず" class="mb-5 text-[13px] text-ink-4">
+      <a href="/" class="hover:text-accent-soft">ホーム</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">料金</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">料金</h1>
+    <p class="mt-4 max-w-[680px] text-[15.5px] leading-[1.95] text-ink-2">
+      有料プランのお申し込みは、アプリをインストールしてログインした後、アプリ内のプラン管理からお手続きいただきます。
+      手順は<a href="/docs#plan" class="text-accent-soft hover:underline">ドキュメントの「プランの変更」</a>をご覧ください。
+    </p>
   </div>
 </section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include pricing-cards.html grandfather=true %}
+
+    {%- comment -%}
+      時間の計測ルールは **`/docs/#usage` が唯一の出所**。新デザインはこのページに
+      計測ルール表を持っていたが、その内容 (再処理の非計上 / 月額キャップ /
+      インポート前の金額提示 / 決済失敗時の猶予) は大半がアプリ側で未実装のため
+      ここには移植しない。実装済みの計測仕様だけを docs から参照させる。
+    {%- endcomment -%}
+    <div class="mt-10 card p-6">
+      <h2 class="text-[17px] font-bold text-ink">時間の計測について</h2>
+      <ul class="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-[1.9] text-ink-2">
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>計測の単位は、検出が完了した動画の再生時間です。</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>検出が完了したときに加算されます。エンコード（書き出し）は加算対象ではありません。</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>ライセンスサーバーへ送信するのは使用量（動画の秒数）とファイルのハッシュ値のみで、ファイル名・映像・検出結果の座標は送信しません。</span></li>
+      </ul>
+      <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+        詳細は<a href="/docs#usage" class="text-accent-soft hover:underline">ドキュメントの「使用時間の計測」</a>をご覧ください。
+      </p>
+    </div>
+
+    <p class="mt-7 text-center text-[13px] text-ink-4">
+      ご不明な点は<a href="/docs" class="text-accent-soft hover:underline">ドキュメント</a>または<a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline">問い合わせフォーム</a>からご連絡ください。
+    </p>
+  </div>
+</section>
+
+{% include cta-download.html secondary_href="/docs" secondary_label="ドキュメントを見る" %}
 
 {% include footer.html %}

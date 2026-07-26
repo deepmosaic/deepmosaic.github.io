@@ -10,11 +10,25 @@
   //
   // 見出しと注記はアイランドの外 (Jekyll 側) に置いてあるので、JS が無効でも
   // 「何の計算機か」は読める。数値部分だけがここで動く。
+  //
+  // 金額の計算そのものは `src/lib/pricing.js` (DOM 非依存の純関数) に置き、
+  // `node --test src/lib/pricing.test.js` で `_data/plans.yml` の実データに対して
+  // 回帰を固定している (TICKET-SITE-20)。ここでは表示だけを担う。
+  import {
+    cheapestPlan,
+    formatYen,
+    planBreakdown,
+    suggestEnterpriseOver,
+  } from '../lib/pricing.js';
+
   let { plans = '[]', defaultCost = '24000', manualMultiplier = '4' } = $props();
 
-  /** @type {{code:string,name:string,price:number,included_hours:number|null,included_basis:string,overage_per_hour:number|null}[]} */
+  /** @type {import('../lib/pricing.js').Tier[]} */
   const tiers = JSON.parse(plans).filter((p) => p.price > 0);
   const MANUAL_X = Number(manualMultiplier) || 4;
+
+  /** Pro の込み時間。これを超えたら Enterprise の検討を促す (デザイン準拠)。 */
+  const SUGGEST_ENTERPRISE_OVER = suggestEnterpriseOver(tiers);
 
   let videos = $state(6);
   let lengthH = $state(2);
@@ -23,23 +37,15 @@
   // 月間の消費時間
   const hoursPerMonth = $derived(videos * lengthH);
 
-  /** そのプランを 1 ヶ月使ったときの総額 (基本料 + 超過)。 */
-  function monthlyCost(tier, hours) {
-    if (tier.included_basis === 'unlimited' || tier.included_hours === null) return tier.price;
-    const over = Math.max(0, hours - tier.included_hours);
-    if (over === 0) return tier.price;
-    // 超過不可のプランは対象外 (計算上は非常に大きな値にして選ばれないようにする)
-    if (!tier.overage_per_hour) return Number.POSITIVE_INFINITY;
-    return tier.price + over * tier.overage_per_hour;
-  }
-
-  const options = $derived(
-    tiers
-      .map((t) => ({ tier: t, cost: monthlyCost(t, hoursPerMonth) }))
-      .filter((o) => Number.isFinite(o.cost))
-      .sort((a, b) => a.cost - b.cost),
+  const best = $derived(cheapestPlan(tiers, hoursPerMonth));
+  const breakdown = $derived(best ? planBreakdown(best.tier, hoursPerMonth) : '');
+  // 込み時間の最大 (Pro) を超えていて、かつシート共有型が選ばれていないときだけ促す
+  const suggestEnterprise = $derived(
+    best !== null &&
+      best.tier.included_basis !== 'pooled' &&
+      SUGGEST_ENTERPRISE_OVER > 0 &&
+      hoursPerMonth > SUGGEST_ENTERPRISE_OVER,
   );
-  const best = $derived(options[0] ?? null);
 
   const currentYearly = $derived(videos * costPerVideo * 12);
   const dmYearly = $derived(best ? best.cost * 12 : 0);
@@ -50,7 +56,7 @@
   // Jekyll 側の注記で明示している)。
   const manualHours = $derived(hoursPerMonth * MANUAL_X);
 
-  const yen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
+  const yen = formatYen;
   const hours = (n) => (Number.isInteger(n) ? n : n.toFixed(1)) + ' 時間';
 </script>
 
@@ -106,6 +112,14 @@
         <dd class="mt-0.5 text-[18px] font-bold text-hi-ink">
           {#if best}{best.tier.name}<span class="ml-1.5 font-mono text-[13px] font-normal text-hi-ink-2">{yen(best.cost)} / 月</span>{:else}—{/if}
         </dd>
+        {#if breakdown}
+          <p class="mt-1 text-[12px] leading-[1.8] text-hi-ink-3">{breakdown}</p>
+        {/if}
+        {#if suggestEnterprise}
+          <p class="mt-1.5 text-[12px] leading-[1.8] text-hi-ink-3">
+            月 {SUGGEST_ENTERPRISE_OVER} 時間を超える運用は複数人での利用が想定されるため、Enterprise もご検討ください。
+          </p>
+        {/if}
       </div>
       <div class="border-t border-hi-edge pt-4">
         <dt class="text-[12.5px] text-hi-ink-3">現状の年間コスト</dt>

@@ -1,4 +1,14 @@
-<a class="btn-primary{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
+{%- comment -%}
+DL ボタン (DL URL の単一管理点)。
+
+params:
+  label    (任意) 文言。既定「無料でダウンロード」
+  size     (任意) "large" で `btn-lg`
+  full     (任意) 真値で幅 100%
+  variant  (任意) "secondary" で副ボタン配色 (TICKET-SITE-20: 料金カードの非推奨プラン用)
+  note     (任意) ボタン下の補足文
+{%- endcomment -%}
+<a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
    href="{{ site.data.lang.ja.app_download_link }}">
   {% include icon.html name="Download" class="h-5 w-5" %}
   {% if include.label %}{{ include.label }}{% else %}無料でダウンロード{% endif %}

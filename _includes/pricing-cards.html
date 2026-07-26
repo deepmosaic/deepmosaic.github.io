@@ -1,72 +1,114 @@
 {%- comment -%}
-料金プランカード (TICKET-SITE-04)。
+料金プランカード (TICKET-SITE-04 → TICKET-SITE-20)。
 
 トップの PRICING 節と `/price/` の両方で使う (移行前は完全重複していた)。
-金額・込み時間・特典はすべて `_data/plans.yml` から取る — Claude Design の成果物は
+金額・込み時間・仕様行はすべて `_data/plans.yml` から取る — Claude Design の成果物は
 料金カードの markup と計算ロジックの 2 箇所にハードコードしており、必ず片方だけ
 更新されて破綻する構造だった。
 
-`public: false` のプランは表示しない (将来の非公開プラン / グランドファザリング枠用)。
-`included_basis` が `unlimited` のときは時間表記を「無制限」にする。
+レイアウトは新デザイン準拠で **有料 3 プランをカードで並べ、Free はその下の横帯**にする
+(4 枚並べるとカードが細くなり仕様行が読めない)。振り分けは `plans.yml` の `display`。
+
+`public: false` のプランは表示しない (グランドファザリング枠 / 非公開プラン用)。
+
+params:
+  grandfather  (任意) 真値で既存 Pro (無制限) 据え置きの注記を出す (`/price/` のみ)
 {%- endcomment -%}
 {%- assign visible = site.data.plans.tiers | where: "public", true -%}
-{%- assign cols = visible | size -%}
-<div class="grid gap-5 {% if cols == 2 %}md:grid-cols-2{% elsif cols == 3 %}md:grid-cols-3{% else %}md:grid-cols-2 lg:grid-cols-4{% endif %}">
-  {%- for plan in visible %}
-  <div class="{% if plan.featured %}plan-card-featured{% else %}plan-card{% endif %} flex flex-col">
+{%- assign cards = visible | where: "display", "card" -%}
+{%- assign strips = visible | where: "display", "strip" -%}
+{%- assign card_count = cards | size -%}
 
-    {%- if plan.trial_days > 0 %}
-    <div class="mb-3"><span class="badge-accent">{{ plan.trial_days }}日間無料トライアル</span></div>
+<div class="grid items-stretch gap-5 {% if card_count == 3 %}md:grid-cols-3{% elsif card_count == 2 %}md:grid-cols-2{% else %}md:grid-cols-2 lg:grid-cols-4{% endif %}">
+  {%- for plan in cards %}
+  {%- comment -%}
+    featured カードは `card-hi` と同じグラデーション背景なので、地の文が沈まないよう
+    専用の hi-* トークンに切り替える (色は CSS variables 側が SSOT)。
+  {%- endcomment -%}
+  {%- if plan.featured -%}
+    {%- assign kicker_cls = "text-accent-soft" -%}
+    {%- assign body_cls = "text-hi-ink-2" -%}
+    {%- assign key_cls = "text-hi-ink-3" -%}
+    {%- assign val_cls = "text-hi-ink" -%}
+    {%- assign rule_cls = "border-hi-edge" -%}
+  {%- else -%}
+    {%- assign kicker_cls = "text-ink-4" -%}
+    {%- assign body_cls = "text-ink-2" -%}
+    {%- assign key_cls = "text-ink-4" -%}
+    {%- assign val_cls = "text-ink-body" -%}
+    {%- assign rule_cls = "border-hair" -%}
+  {%- endif -%}
+  <div class="relative flex flex-col {% if plan.featured %}plan-card-featured{% else %}plan-card{% endif %}">
+
+    {%- comment -%} カード左上のバッジ。文言は plans.yml の `badge`。 {%- endcomment -%}
+    {%- if plan.badge %}
+    <span class="absolute -top-[11px] left-6 badge-accent">{{ plan.badge }}</span>
     {%- endif %}
 
-    <h3 class="text-lg font-bold text-ink">{{ plan.name }}</h3>
-    <p class="mt-1.5 text-[13.5px] leading-[1.8] text-ink-4">{{ plan.summary }}</p>
+    {%- comment -%}
+      プラン名は見出し要素で出す (スクリーンリーダーの見出しナビゲーションから
+      Light / Pro / Enterprise が消えないようにする)。見た目はデザインのキッカー。
+    {%- endcomment -%}
+    <h3 class="mb-3.5 text-[13px] font-bold tracking-[0.1em] {{ kicker_cls }}">{{ plan.name | upcase }}</h3>
 
-    <div class="mt-5 flex items-baseline gap-1.5">
+    <div class="flex flex-wrap items-baseline gap-x-1.5">
       {%- comment -%}
         Liquid に桁区切りフィルタは無い。無理に組むと読めなくなるので
         表示形は `price_display` としてデータ側に持たせている。
       {%- endcomment -%}
-      <span class="text-[34px] font-bold tracking-[-0.02em] text-ink">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
-      {%- if plan.price > 0 %}
-      <span class="text-[13px] text-ink-4">/ 1ユーザー・月（{{ site.data.plans.tax_note }}）</span>
-      {%- else %}
-      <span class="text-[13px] text-ink-4">/ 1ユーザー</span>
-      {%- endif %}
+      <span class="text-[36px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
+      <span class="text-[13px] {{ key_cls }}">{{ plan.price_unit }}（{{ site.data.plans.tax_note }}）</span>
     </div>
 
-    <div class="mt-4 border-t border-hair pt-4">
-      <div class="text-[13px] text-ink-4">動画インポート</div>
-      <div class="mt-1 text-[15px] font-bold text-ink">
-        {%- if plan.included_basis == 'unlimited' -%}
-          無制限
-        {%- elsif plan.included_basis == 'cumulative' -%}
-          累計 {{ plan.included_hours }} 時間分
-        {%- else -%}
-          月 {{ plan.included_hours }} 時間
-        {%- endif -%}
+    <p class="mt-3.5 text-[13.5px] leading-[1.9] {{ body_cls }}">{{ plan.summary }}</p>
+
+    <dl class="mt-[22px] flex flex-col gap-3 border-t {{ rule_cls }} pt-[22px] text-[13.5px]">
+      {%- for s in plan.specs %}
+      <div class="flex justify-between gap-4">
+        <dt class="shrink-0 {{ key_cls }}">{{ s.label }}</dt>
+        <dd class="text-right {{ val_cls }}">{{ s.value }}</dd>
       </div>
-      {%- if plan.overage_per_hour %}
-      <div class="mt-1 text-[12.5px] text-ink-4">超過分は {{ site.data.plans.currency_symbol }}{{ plan.overage_per_hour }}/時間</div>
-      {%- endif %}
-    </div>
-
-    <ul class="mt-4 flex flex-1 flex-col gap-2.5">
-      {%- for b in plan.bullets %}
-      <li class="flex gap-2 text-[13.5px] leading-[1.8] text-ink-2">
-        {% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}<span>{{ b }}</span>
-      </li>
       {%- endfor %}
-    </ul>
+    </dl>
 
-    <div class="mt-6">
-      {%- if plan.cta.kind == 'download' %}
-      {% include download-button.html label=plan.cta.label full=true %}
+    {%- if plan.note %}
+    <p class="mt-4 text-[12.5px] leading-[1.85] {{ key_cls }}">{{ plan.note }}</p>
+    {%- endif %}
+
+    <div class="mt-auto pt-6">
+      {%- if plan.cta.kind == "download" %}
+      {% include download-button.html label=plan.cta.label full=true variant=plan.cta.variant %}
       {%- else %}
-      <a href="{{ plan.cta.href }}" class="btn-secondary w-full">{{ plan.cta.label }}</a>
+      <a href="{{ plan.cta.href }}" class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+        {{ plan.cta.label }}{% if plan.cta.external %}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}{% endif %}
+      </a>
       {%- endif %}
     </div>
 
   </div>
   {%- endfor %}
 </div>
+
+{%- comment -%} Free は横帯。カード 4 枚並べより仕様行が読める。 {%- endcomment -%}
+{%- for plan in strips %}
+<div class="card mt-5 flex flex-wrap items-center gap-x-6 gap-y-4 px-6 py-5">
+  {%- comment -%}
+    ラベルと説明は行を分ける (1 行に流すと折り返しでぶら下がりインデントになる)。
+  {%- endcomment -%}
+  <div class="flex-[1_1_320px]">
+    <h3 class="text-[14px] font-bold text-ink">{{ plan.name }}（{{ site.data.plans.currency_symbol }}{{ plan.price_display }}）</h3>
+    <p class="mt-1 text-[13.5px] leading-[1.9] text-ink-4">{{ plan.bullets | join: " ／ " }}</p>
+  </div>
+  {% include download-button.html label=plan.cta.label variant="secondary" %}
+</div>
+{%- endfor %}
+
+{%- if site.data.plans.rollout_note != "" %}
+<p class="mt-5 rounded-lg border-l-[3px] border-warning bg-panel px-5 py-4 text-[13px] leading-[1.95] text-ink-2">
+  {{ site.data.plans.rollout_note }}
+</p>
+{%- endif %}
+
+{%- if include.grandfather %}
+<p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">{{ site.data.plans.grandfather_note }}</p>
+{%- endif %}

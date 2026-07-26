@@ -66,12 +66,16 @@ schemas:
       <section id="license" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">ログインとライセンス</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-          <p>アプリの利用にはログインが必要です。無料で6時間分までの動画インポートがご利用いただけます。有料プランは7日間の無料トライアル付きで、利用制限なくお使いいただけます。支払いはクレジットカードに対応しています。</p>
+          {%- comment -%}
+            TICKET-SITE-20: 有料プランの枠は `/price/` を唯一の出所にする。
+            ここに時間数を書くと料金改定で必ず片方だけ古くなる。
+          {%- endcomment -%}
+          <p>アプリの利用にはログインが必要です。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。支払いはクレジットカードに対応しています。</p>
           <ul>
-            <li>無料: 6時間分までの動画インポート</li>
-            <li>トライアル: 7日間無料</li>
-            <li>有料プラン: 利用無制限</li>
+            <li>無料: 累計6時間分までの動画インポート（クレジットカードの登録は不要）</li>
+            <li>有料プラン: 込み時間と超過単価は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください</li>
           </ul>
+          <p>上限時間と超過課金の適用は順次開始します。適用が始まるまでは、有料プランの動画インポートに上限はありません。</p>
         </div>
       </section>
 
@@ -429,7 +433,7 @@ schemas:
           <ul>
             <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
             <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません</li>
-            <li><strong>有料プランは無制限</strong>: 上限がないため、設定を変えて何度でも検出をやり直せます</li>
+            <li><strong>上限の適用</strong>: 上限時間と超過単価の適用は順次開始します。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>）</li>
             <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください</li>
           </ul>
         </div>

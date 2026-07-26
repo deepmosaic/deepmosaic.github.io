@@ -5,7 +5,8 @@
   "description": "Front-end build (Tailwind CSS v4 + Svelte 5 islands) for the Jekyll site",
   "scripts": {
     "build": "vite build",
-    "dev": "vite build --watch"
+    "dev": "vite build --watch",
+    "test": "node --test src/lib/*.test.js"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.2.0",

@@ -7,6 +7,10 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
 価格は `_data/plans.yml` から `AggregateOffer` として組む。移行前は `"price": "0"` と
 「無料で6時間分」という説明文がハードコードされており、料金改定で必ず腐る構造だった。
 
+`highPrice` は **1 ユーザー / 1 シートあたりの最高額** (Pro の 9,800)。Enterprise は
+1 シート 8,000 円 × 最低 3 シートなので実際の最低契約額は 24,000 円だが、
+`AggregateOffer` は単価の範囲を示すものなので単価で揃える。
+
 `operatingSystem` は macOS 版リリース時に更新する (TICKET-MAC-405)。
 {%- endcomment -%}
 {%- assign public_plans = site.data.plans.tiers | where: "public", true -%}
