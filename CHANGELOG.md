@@ -33,7 +33,7 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 - [ ] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
 - [x] TICKET-SITE-14: 未参照アセット削除 (`assets/img/docs/` 22MB / `assets/videos/` 14MB)
 - [x] TICKET-SITE-15: SEO 配管 (sitemap 復活 / robots.txt / meta_desc 誤記 / front matter title)
-- [ ] TICKET-SITE-16: `/docs/` 差分マージ (`#review` `#usage` 追加、既存アンカーID は不変)
+- [x] TICKET-SITE-16: `/docs/` 差分マージ (`#review` `#usage` 追加、既存アンカーID は不変)
 
 ### ヒーローコピーの確定
 
@@ -144,6 +144,33 @@ SoftwareApplication が出ていないこと**、**seo-tag の痕跡が無いこ
 検証: 一時ページをビルドして kv-row 8 / kv-alt 3 (zebra=false が効いている) /
 FAQ details 9 / 開示リスト 11 / プランカード 2 / `¥9,800` の桁区切り /
 `align=left` / **新 include に生ヘックスなし** を機械確認。
+
+### TICKET-SITE-16 の記録 — /docs/ 差分マージ
+
+**丸ごと差し替えず、差分だけをマージした。** Claude Design の成果物の docs は
+全アンカーを改名しており (`#about`→`#doc-intro` 等 19 本すべて)、さらに 2026-07-25 に
+追加したばかりの `#detect-options` 節 (スクショ 3 枚) を持っていない。改名の利得はゼロで、
+損失は既存の被リンク・アプリ内ヘルプからのディープリンクの全損。
+
+- **既存 18 アンカー ID は 1 つも変えていない** (before/after を機械比較して確認)
+- 追加は `#review` (検出漏れの確認) と `#usage` (使用時間の計測) の 2 本のみ
+- `detectable-objects.png` を `#detect` 配下の `<details>` へ移設。**alt も一緒に移した** ——
+  画像だけ外して alt がトップに残ると、決済審査・法人稟議・将来の広告出稿という
+  移設の目的 (施策④-5) を達成できない
+- `#spec` は動作環境の要点だけ残し、実測値・対応フォーマット・macOS 版の状況は
+  新設した `/spec/` へ誘導する形にした (二重管理をやめる)
+
+**未実装機能を書かないこと** を両新設節で徹底した:
+
+- `#review` は「確認支援ビュー」(低信頼区間の自動抽出) が未実装なので、
+  実装済みの道具だけを列挙 (欠落フレームジャンプ / タイムライン / 信頼度しきい値 /
+  安全マージン / 手動追加・削除)
+- `#usage` は **現行の計測ルールをそのまま書いた**。「同一ファイルの再インポートは非計上」
+  「月次リセット」は課金基盤 (TICKET-BILL 群) の出荷前に書くと虚偽記載になる
+
+トラブルシューティングへの `data-island="accordion"` 付与は **見送った**。
+既存マークアップが `<ul>` で、`Accordion.svelte` は `<details>` 前提のため、
+付けても無効な島になるだけだから。
 
 ### TICKET-SITE-11 / 12 / 14 / 15 の記録
 

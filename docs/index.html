@@ -27,9 +27,11 @@ schemas:
         <li><a href="#edit-toolbar" class="block border-l-2 border-transparent py-1.5 pl-7 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">編集ツールバー</a></li>
         <li><a href="#edit-mosaic" class="block border-l-2 border-transparent py-1.5 pl-7 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">モザイク設定パネル</a></li>
         <li><a href="#edit-encode" class="block border-l-2 border-transparent py-1.5 pl-7 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">エンコード（書き出し）</a></li>
+        <li><a href="#review" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">検出漏れの確認</a></li>
         <li><a href="#premiere" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">Premiere Pro 連携</a></li>
         <li><a href="#update" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">アップデート</a></li>
         <li><a href="#uninstall" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">アンインストール</a></li>
+        <li><a href="#usage" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">使用時間の計測</a></li>
         <li><a href="#spec" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">動作環境</a></li>
         <li><a href="#trouble" class="block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft -ml-px">トラブルシューティング</a></li>
       </ul>
@@ -171,9 +173,21 @@ schemas:
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
           <p><a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
           <figure class="my-4">
-            <img src="/assets/img/screenshots/detect.png" alt="検出進捗画面（4段階ステッパー + 進捗バー）" class="w-full rounded-[10px] border border-edge">
+            <img src="/assets/img/screenshots/detect.png" alt="検出進捗画面（4段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
             <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（4段階ステッパー + 進捗バー）</figcaption>
           </figure>
+          {%- comment -%}
+            TICKET-SITE-16: 検出対象の図はトップから外してここへ移した (施策④-5)。
+            alt も一緒に移している —— 画像だけ外して alt がトップに残ると、
+            決済審査・法人稟議・将来の広告出稿という移設の目的を達成できない。
+          {%- endcomment -%}
+          <details class="my-4 rounded-[10px] border border-edge bg-panel-2">
+            <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">対応する検出対象を見る</summary>
+            <div class="px-4 pb-4">
+              <img src="/assets/img/detectable-objects.png" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" loading="lazy" decoding="async" class="w-[min(420px,100%)] rounded-[10px] border border-edge">
+              <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">検出対象は「局部」「男性の顔」「女性の顔」の 3 種類で、<a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF を切り替えられます。</p>
+            </div>
+          </details>
         </div>
       </section>
 
@@ -359,6 +373,25 @@ schemas:
         </div>
       </section>
 
+      {%- comment -%}
+        TICKET-SITE-16: 「確認支援ビュー」(低信頼区間の自動抽出) は未実装。
+        実装済みの道具だけを書く。実装したらここを書き換える。
+      {%- endcomment -%}
+      <section id="review" class="scroll-mt-24">
+        <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">検出漏れの確認</h2>
+        <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+          <p>AI の検出は完璧ではありません。書き出す前に、次の道具で確認と修正を行ってください。<strong>最終的な確認と表現に関する責任は制作者に帰属します。</strong></p>
+          <ul>
+            <li><strong>欠落フレームへジャンプ</strong>: <code>[</code> と <code>]</code> で、検出が途切れたフレームへ前後移動します。前後に検出があるのに間が抜けている「中抜け」を追うのに使います</li>
+            <li><strong>タイムラインで俯瞰する</strong>: クラス別・追跡 ID 別に検出区間が帯で表示されます。同じ ID の帯が途切れていれば、そこが追跡の切れ目です</li>
+            <li><strong>信頼度しきい値</strong>: 低い信頼度の検出を一旦隠して整理し、しきい値を下げて拾い直す、という使い方ができます</li>
+            <li><strong>安全マージン</strong>: 「サイズ（bbox拡張率）」で検出枠を 0.5〜2 倍に調整できます。ギリギリを狙わない運用を選べます</li>
+            <li><strong>手動で追加・削除</strong>: 検出されなかった箇所は <code>1</code>（1フレーム）/ <code>2</code>（以降ずっと）で枠を追加できます。誤検出は右クリックから削除できます</li>
+          </ul>
+          <p>AI が苦手なケース（極端な逆光、激しいブレ、部分的な遮蔽、学習データに乏しい構図、アニメーション・3DCG）は<a href="/#privacy" class="text-accent-soft hover:underline">トップページ</a>に公開しています。該当する素材では確認を厚めに行ってください。</p>
+        </div>
+      </section>
+
       <section id="premiere" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">Premiere Pro 連携</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
@@ -385,6 +418,23 @@ schemas:
         </div>
       </section>
 
+      {%- comment -%}
+        TICKET-SITE-16: **現行の実装をそのまま書く。**
+        「同一ファイルの再インポートは非計上」「月次リセット」は課金基盤 (TICKET-BILL 群) が
+        出荷されてからでないと虚偽記載になる。実装が出たらここを書き換える。
+      {%- endcomment -%}
+      <section id="usage" class="scroll-mt-24">
+        <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">使用時間の計測</h2>
+        <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+          <ul>
+            <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
+            <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません</li>
+            <li><strong>有料プランは無制限</strong>: 上限がないため、設定を変えて何度でも検出をやり直せます</li>
+            <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください</li>
+          </ul>
+        </div>
+      </section>
+
       <section id="spec" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">動作環境</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
@@ -394,6 +444,7 @@ schemas:
             <li>GPU: NVIDIA CUDA対応GPU + 最新ドライバ。NVENCエンコードにはドライバ570以上</li>
             <li>インターネット環境: 初回セットアップのモデルダウンロード、ライセンス認証に必要</li>
           </ul>
+          <p>GPU 別の処理速度の実測値、対応フォーマットの一覧、macOS 版の状況は<a href="/spec" class="text-accent-soft hover:underline">動作環境ページ</a>にまとめています。</p>
         </div>
       </section>
 
