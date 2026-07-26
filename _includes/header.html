@@ -12,6 +12,7 @@
       <a href="/" class="rounded-md px-3 py-1.5 text-sm {% if u == '/' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ホーム</a>
       <a href="/price" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/price' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">料金</a>
       <a href="/docs" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/docs' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ドキュメント</a>
+      <a href="/spec" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/spec' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">動作環境</a>
     </nav>
 
     <div class="flex-1"></div>
@@ -24,12 +25,13 @@
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>
           <a href="/price" class="px-2 py-1 text-ink-2 hover:text-ink">料金</a>
           <a href="/docs" class="px-2 py-1 text-ink-2 hover:text-ink">ドキュメント</a>
+          <a href="/spec" class="px-2 py-1 text-ink-2 hover:text-ink">動作環境</a>
         </nav>
       </noscript>
     </div>

@@ -1,0 +1,98 @@
+---
+layout: default
+title: 動作環境
+description: Deepmosaicの動作環境。対応OS・必要メモリ・GPU要件と、本番環境の実測にもとづく処理速度の目安、対応する読み込み・書き出しフォーマット。
+schemas:
+  - software-application
+  - breadcrumb
+---
+
+{%- assign SPEC = site.data.spec -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[880px]">
+    <nav aria-label="パンくず" class="mb-5 text-[13px] text-ink-4">
+      <a href="/" class="hover:text-accent-soft">ホーム</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">動作環境</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">動作環境</h1>
+    <p class="mt-4 max-w-[640px] text-[15.5px] leading-[1.95] text-ink-2">
+      ダウンロード前にご確認ください。検出速度は GPU の性能と素材の解像度に大きく依存します。
+    </p>
+  </div>
+</section>
+
+<section class="pb-16">
+  <div class="mx-auto flex w-[92%] max-w-[880px] flex-col gap-12">
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Monitor" class="h-5 w-5 shrink-0 text-accent" %}Windows
+      </h2>
+      {% include kv-table.html rows=SPEC.windows label_width="180px" %}
+    </div>
+
+    {%- comment -%}
+      処理速度は本番テレメトリの実測 (TICKET-SITE-08)。Claude Design の成果物は
+      「RTX40以降 = 25fps 以上」等と書いていたが実測より大幅に過大だったため置き換えた。
+    {%- endcomment -%}
+    <div>
+      <h2 class="mb-2 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Activity" class="h-5 w-5 shrink-0 text-accent" %}GPU と処理速度の目安
+      </h2>
+      <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-2">{{ SPEC.performance_note }}</p>
+      {% include kv-table.html rows=SPEC.performance label_width="280px" %}
+      <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ SPEC.performance_footnote }}</p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="RefreshCw" class="h-5 w-5 shrink-0 text-accent" %}ネットワーク
+      </h2>
+      {% include kv-table.html rows=SPEC.network label_width="220px" %}
+      <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">
+        送信するデータの一覧は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください。
+      </p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="FileOutput" class="h-5 w-5 shrink-0 text-accent" %}対応フォーマット
+      </h2>
+      {% include kv-table.html rows=SPEC.formats label_width="140px" %}
+    </div>
+
+    {%- comment -%}
+      macOS は「開発中」の事実だけを書く。**ダウンロードボタンも先行登録フォームも置かない** —
+      存在しない製品への導線は施策④-4 (誇大表示の回避) に真っ向から反する。
+    {%- endcomment -%}
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Laptop" class="h-5 w-5 shrink-0 text-ink-3" %}macOS
+        <span class="badge-done">{{ SPEC.macos.status }}</span>
+      </h2>
+      <div class="card p-6">
+        <p class="text-[14px] leading-[2] text-ink-2">{{ SPEC.macos.note }}</p>
+        <div class="mt-5">
+          {% include kv-table.html rows=SPEC.macos.planned label_width="200px" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-hi p-7 text-center">
+      <h2 class="text-[18px] font-bold text-hi-ink">GPU の認識状況はアプリの設定画面で確認できます</h2>
+      <p class="mx-auto mt-3 max-w-[560px] text-[14px] leading-[1.95] text-hi-ink-2">
+        インストール後、検出オプション画面に使用中の GPU と推論モデルが表示されます。
+        GPU が認識されない場合は<a href="/docs#trouble" class="text-accent-bright hover:underline">トラブルシューティング</a>をご覧ください。
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{% include cta-download.html title="動作環境を満たしていれば、すぐに始められます" secondary_href="/docs" secondary_label="ドキュメントを見る" %}
+
+{% include footer.html %}

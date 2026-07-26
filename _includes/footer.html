@@ -6,7 +6,16 @@
         <img src="/assets/img/app-icon-128.png" alt="" width="128" height="128" class="h-8 w-8">
         <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
       </div>
-      <p class="text-[13px] leading-[1.9] text-ink-4">AIによる動画モザイク処理の自動化。<br>Deepmosaic合同会社</p>
+      {%- comment -%}
+        施策④-5: 会社住所・代表者名を問い合わせ導線にも出す。特商法ページだけでは
+        見られないため、法人稟議・決済審査での信頼度に直結する。
+      {%- endcomment -%}
+      <p class="text-[13px] leading-[1.9] text-ink-4">
+        AIによる動画モザイク処理の自動化。<br>
+        <span class="text-ink-3">Deepmosaic合同会社</span><br>
+        〒142-0063 東京都品川区荏原1-9-6-201<br>
+        <a href="mailto:contact@deepmosaic.co.jp" class="hover:text-accent-soft">contact@deepmosaic.co.jp</a>
+      </p>
     </div>
 
     <div class="flex flex-wrap gap-14">
@@ -15,6 +24,7 @@
         <ul class="flex flex-col gap-2.5 text-[13.5px]">
           <li><a href="/price" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.price }}</a></li>
           <li><a href="/docs" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.document }}</a></li>
+          <li><a href="/spec" class="text-ink-2 hover:text-accent-soft">動作環境</a></li>
           <li><a href="{{ site.data.lang.ja.app_download_link }}" download class="text-ink-2 hover:text-accent-soft">ダウンロード</a></li>
         </ul>
       </div>

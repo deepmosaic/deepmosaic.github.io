@@ -28,11 +28,11 @@ URL が変わらず、施策③ の中核である SEO が構造的に成立し�
 - [x] TICKET-SITE-08: 実測値の取得 (`detection_runs` から算出)
 - [x] TICKET-SITE-09: `RoiCalculator.svelte` アイランド (React 廃止)
 - [x] TICKET-SITE-10: トップ後半 (RELIABILITY / STANDARDS / PRIVACY / WORKFLOW / DISCLOSURE / FAQ / CTA)
-- [ ] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
-- [ ] TICKET-SITE-12: フッター再構成 + 全未接続リンク接続 + `price/index.html:54` の切れた導線修正
+- [x] TICKET-SITE-11: `/spec/` 新設 (Mac は「開発中」表記のみ、DL ボタンなし)
+- [x] TICKET-SITE-12: フッター再構成 + 全未接続リンク接続 + `price/index.html:54` の切れた導線修正
 - [ ] TICKET-SITE-13: 画像最適化 (WebP / width,height / loading / srcset)
-- [ ] TICKET-SITE-14: 未参照アセット削除 (`assets/img/docs/` 22MB / `assets/videos/` 14MB)
-- [ ] TICKET-SITE-15: SEO 配管 (sitemap 復活 / robots.txt / meta_desc 誤記 / front matter title)
+- [x] TICKET-SITE-14: 未参照アセット削除 (`assets/img/docs/` 22MB / `assets/videos/` 14MB)
+- [x] TICKET-SITE-15: SEO 配管 (sitemap 復活 / robots.txt / meta_desc 誤記 / front matter title)
 - [ ] TICKET-SITE-16: `/docs/` 差分マージ (`#review` `#usage` 追加、既存アンカーID は不変)
 
 ### ヒーローコピーの確定
@@ -144,6 +144,44 @@ SoftwareApplication が出ていないこと**、**seo-tag の痕跡が無いこ
 検証: 一時ページをビルドして kv-row 8 / kv-alt 3 (zebra=false が効いている) /
 FAQ details 9 / 開示リスト 11 / プランカード 2 / `¥9,800` の桁区切り /
 `align=left` / **新 include に生ヘックスなし** を機械確認。
+
+### TICKET-SITE-11 / 12 / 14 / 15 の記録
+
+**`/spec/` 新設** — 動作環境ページ。GPU と処理速度の表は **本番テレメトリの実測値**
+(`_data/spec.yml`)。Claude Design の成果物は「RTX40以降 = 25fps 以上」等と書いていたが
+実測より大幅に過大だったため置き換えた。macOS は **「開発中」の事実だけ**を書き、
+ダウンロードボタンも先行登録フォームも置かない (存在しない製品への導線は施策④-4 に反する)。
+
+**導線の整備** — ヘッダーのデスクトップナビ / モバイルドロワー / `<noscript>` の 3 経路すべてに
+「動作環境」を追加。フッターに製品リンクと **会社住所・連絡先** を追加した (施策④-5:
+特商法ページだけでは見られないため、法人稟議・決済審査での信頼度に直結する)。
+`price/index.html` の「問い合わせフォーム」がリンクになっていなかった導線切れも修正。
+
+**未参照アセットの削除** — `assets/` が **52MB → 9.7MB (42.5MB 削減)**。
+
+| 削除 | サイズ |
+|---|---|
+| `assets/img/docs/` (旧サイト時代の手順画像 151 枚) | 22MB |
+| `assets/videos/` (mp4 3 本) | 14MB |
+| `assets/others/` (PDF 3 本) | 6.2MB |
+
+⚠️ 判定方法に注意: ファイル名 (`1.png` 等) での grep は**部分一致で誤検出する**
+(151 件中 53 件が「参照あり」と出た)。**パス接頭辞 (`assets/img/docs`) で判定**したところ、
+参照は CHANGELOG.md と CLAUDE.md のみで、ページからの参照はゼロだった。
+削除後にビルド出力の **ローカルアセット参照 228 件を全数検査してリンク切れ 0 件**を確認。
+
+**SEO 配管**
+
+- 手書き `sitemap.xml` / `assets/sitemap.xml` / `assets/img/sitemap.xml` を削除。
+  **ルートに手書き sitemap があると `jekyll-sitemap` は生成をスキップする**ため、
+  7 URL・`lastmod` 2026-02-11 固定の嘘 sitemap だけが配信されていた。削除して
+  プラグインを有効化し、9 ページ + 動的 `lastmod` になった
+- `robots.txt` を新規作成。⚠️ `_config.yml` の `defaults` が全ページに `layout: default` を
+  当てるため、**`layout: null` を明示しないと robots.txt が HTML になる** (実際に踏んだ)
+- `404.html` に `sitemap: false` を追加
+- `_data/lang/ja.json` の `meta_desc` を修正。「Adobe **After Effects** へインポート」という
+  **誤記** (実装は Premiere Pro 連携) を直し、検索結果に直接出る露骨表現も
+  決済審査・法人稟議を考えて言い換えた (施策④-5)
 
 ### TICKET-SITE-06 / 07 / 09 / 10 の記録 — トップページ刷新
 
