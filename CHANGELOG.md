@@ -1,5 +1,30 @@
 # CHANGELOG
 
+## 2026-08-02 (5) - Change: 未使用分の翌月繰越を撤去
+
+**繰越は不要と判断したので、サイトから表示と計算ロジックを消した。** 対象は Light の
+「未使用分は翌月繰越（最大 10 時間）」だけ (Pro / Enterprise は元から繰越なし)。
+Supabase `plan_catalog.carryover_max_minutes` は **sandbox / live とも 0 に更新済み**で、
+非ゼロが 0 件であることを検証クエリで確認してある。
+
+- `_data/plans.yml` — Light の `carryover_hours` を 10 → null (**キーは残す**)。
+  `specs` から「未使用分 | 翌月繰越（最大 10 時間）」の行を削除。
+  ヘッダの「上限時間・繰越はまだ強制されていない」から繰越を外す
+- `src/lib/pricing.js` — `Tier` の typedef から `carryover_hours` を削除。
+  `planBreakdown` の繰越行を撤去
+- `src/lib/pricing.test.js` — 内訳文の期待値を `'月 5 時間込み'` に更新し、
+  **繰越が復活していないことの回帰テスト**を追加 (従量課金の回帰固定と同じ趣旨)
+
+**⚠️ DB の列は落としていない。** 出荷済み v2.1.0 の Rust は `carryover_max_minutes: i32` を
+非 Option で受けているため、列を物理削除すると `GET /plan-catalog` のパースが失敗して
+**プランカタログ全体が組み込みフォールバックに倒れる**。従量課金の撤去と同じく
+「値を無効化し、列は残置してコメントで廃止を明記」の方針を取る。
+新しい Rust から `carryover_max_minutes` フィールドを外すのは安全 (serde は未知フィールドを既定で無視する)。
+
+`index.html` / `price/index.html` / `docs/index.html` / `_data/faq.yml` には元から繰越の記述が
+無いことを grep で確認済み。ROI 計算機の推奨プラン・金額は変わらない
+(Light は月 5 時間で候補外になる境界が繰越と無関係なため)。
+
 ## 2026-08-02 (4) - Change: 「粒度と隠蔽率を設定で固定できる」を「柔軟な編集機能」へ
 
 トップページの 2 箇所（TRUST BAR の 2 列目の h2、MOSAIC セクションのタイトル）。

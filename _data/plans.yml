@@ -14,7 +14,7 @@
 #    金額を書き戻さないこと (実在しない料金の広告になる)。
 #
 # ⚠️ アプリ側の課金実装 (front の TICKET-BILL 群) は Phase 0 のみ完了しており、
-#    **上限時間・繰越はまだ強制されていない**。この事実は `rollout_note` の 1 行で
+#    **上限時間はまだ強制されていない**。この事実は `rollout_note` の 1 行で
 #    開示する。上限の適用開始後に `rollout_note: ""` とすれば注記だけが消え、
 #    他は 1 文字も変えなくてよい。
 #
@@ -93,8 +93,10 @@ tiers:
     included_hours: 5
     included_basis: "monthly"
     overage_per_hour: null # 従量課金は廃止 (旧 ¥800 / 時間)
-    # 未使用分の翌月繰越の上限 (時間)。null なら繰越なし
-    carryover_hours: 10
+    # 未使用分の翌月繰越の上限 (時間)。**繰越は廃止 (2026-08-02)。全プラン null**。
+    # Supabase `plan_catalog.carryover_max_minutes` は sandbox / live とも 0 に更新済み
+    # (出荷済みアプリのパース互換のため列自体は残置)。時間を書き戻さないこと
+    carryover_hours: null
     trial_days: 0
     featured: false
     public: true
@@ -102,8 +104,6 @@ tiers:
     specs:
       - label: "込み時間"
         value: "月 5 時間"
-      - label: "未使用分"
-        value: "翌月繰越（最大 10 時間）"
       - label: "同時起動"
         value: "1 台"
     cta:

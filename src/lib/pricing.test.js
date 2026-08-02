@@ -155,7 +155,6 @@ test('計算に使う全フィールドが読めている (取りこぼしの検
 test('料金と込み時間が新デザインの確定値と一致する', () => {
   assert.equal(byCode('light').price, 2980);
   assert.equal(byCode('light').included_hours, 5);
-  assert.equal(byCode('light').carryover_hours, 10);
 
   assert.equal(byCode('pro').price, 9800);
   assert.equal(byCode('pro').included_hours, 40);
@@ -202,6 +201,21 @@ test('従量課金が復活していないこと (回帰固定)', () => {
   }
   for (const tier of paid) {
     assert.ok(!planBreakdown(tier, 12).includes('超過'), `${tier.code}: 内訳文に超過が出ている`);
+  }
+});
+
+test('未使用分の翌月繰越が復活していないこと (回帰固定)', () => {
+  // 繰越はサイト・アプリともに撤去した。Supabase `plan_catalog.carryover_max_minutes` は
+  // sandbox / live とも 0 に更新済み (出荷済みアプリのパース互換のため列だけ残置) なので、
+  // ここが緑でなくなったら本番と広告表示が食い違う。
+  for (const tier of TIERS) {
+    assert.ok(
+      tier.carryover_hours === null || tier.carryover_hours === undefined,
+      `${tier.code}: carryover_hours が復活している`,
+    );
+  }
+  for (const tier of paid) {
+    assert.ok(!planBreakdown(tier, 12).includes('繰越'), `${tier.code}: 内訳文に繰越が出ている`);
   }
 });
 
@@ -267,10 +281,7 @@ test('込み時間ちょうどでは下位プランを選ぶ (境界の丸め事
 });
 
 test('内訳文がプランごとの条件をデータから組み立てる', () => {
-  assert.equal(
-    planBreakdown(byCode('light'), 12),
-    '月 5 時間込み ・ 未使用分は翌月繰越（最大 10 時間）',
-  );
+  assert.equal(planBreakdown(byCode('light'), 12), '月 5 時間込み');
   assert.equal(planBreakdown(byCode('pro'), 12), '月 40 時間込み');
   assert.equal(planBreakdown(byCode('enterprise'), 12), '3 シート（120 時間をプール共有）');
   // プールを超えるとシート数が増え、内訳もそれに追従する

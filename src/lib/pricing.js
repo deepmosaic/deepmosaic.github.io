@@ -21,7 +21,6 @@
  * @property {number|null} included_hours     pooled では 1 シートあたりの時間
  * @property {string}      included_basis
  * @property {number}      [min_seats]        pooled の最低シート数
- * @property {number|null} [carryover_hours]  未使用分の翌月繰越上限
  * @property {number}      [trial_days]
  */
 
@@ -111,7 +110,6 @@ export function planBreakdown(tier, hours) {
   } else {
     parts.push(`月 ${tier.included_hours} 時間込み`);
   }
-  if (tier.carryover_hours) parts.push(`未使用分は翌月繰越（最大 ${tier.carryover_hours} 時間）`);
   if (tier.trial_days > 0) parts.push(`${tier.trial_days} 日間無料トライアルあり`);
   return parts.join(' ・ ');
 }
