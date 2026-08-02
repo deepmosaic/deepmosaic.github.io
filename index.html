@@ -81,9 +81,22 @@ schemas:
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Lock" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">映像を外部送信しない完全ローカル処理</h2></div>
       <p class="text-[13.5px] leading-[1.95] text-ink-2">送信するもの／しないものを一覧で開示しています。ネットワークを切断した状態でも検出・編集・書き出しが動作します。</p>
     </div>
+    {%- comment -%}
+      2 列目は「モザイクの見た目をどこまで細かく決められるか」、3 列目は「AI の検出結果を
+      どう直せるか」。**役割を分けてあるので、どちらかに寄せないこと。**
+
+      見出しを「粒度と隠蔽率を設定で固定できる」から「柔軟な編集機能」に変えた際、
+      本文が「粒度が一定に保たれます」のままで**見出しと逆を向いていた**ため、
+      設定できる項目そのものを並べる形に書き直した。あわせてアイコンも
+      `Ruler` (定規 = 固定のメタファー) から `Grid3x3` (モザイクの粒) に変更。
+
+      「カット内・同一 ID 内で粒度が一定」という事実は MOSAIC 節のタブ
+      (`_data/mosaic.yml` の `controls`) が引き続き説明しているので、ここから
+      外しても情報は落ちない。
+    {%- endcomment -%}
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
-      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Ruler" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">柔軟な編集機能</h2></div>
-      <p class="text-[13.5px] leading-[1.95] text-ink-2">対象物のサイズに連動した自動調整と、Premiere Pro と同方式のブロック分割数指定。カット内・同一 ID 内で粒度が一定に保たれます。</p>
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Grid3x3" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">柔軟な編集機能</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">モザイク／ぼかしの切替、粒度、検出枠の拡張率、ふちのなじませを調整できます。設定は全体・クラス別・追跡 ID 別・シーン別の 4 段階で上書きできます。</p>
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ListChecks" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">確認と修正の道具が揃っている</h2></div>
