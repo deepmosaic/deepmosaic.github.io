@@ -21,6 +21,11 @@ schemas:
 <section class="relative overflow-hidden pt-[88px] pb-24">
   <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-[-260px] h-[600px] w-[900px] -translate-x-1/2" style="background:radial-gradient(ellipse at center,rgba(79,139,232,.16),transparent 65%)"></div>
   <div class="relative mx-auto w-[92%] max-w-[1120px] text-center">
+    {%- comment -%}
+      TICKET-SITE-26: h1 の直前に置く方向確定ライン。h1 はブランドコピーとして
+      温存し、「何をするソフトか」はこの 1 行が担う (詳細は _data/site.yml)。
+    {%- endcomment -%}
+    <div class="kicker mb-3.5">{{ S.hero.kicker }}</div>
     <h1 class="mx-auto max-w-[820px] text-[clamp(38px,5.4vw,60px)] font-bold leading-[1.25] tracking-[-0.02em] text-ink">{{ S.hero.headline_lead }}<br><span class="text-accent">{{ S.hero.headline_accent }}</span></h1>
     <p class="mx-auto mt-[22px] max-w-[660px] text-[17px] leading-[2] text-ink-2">{{ S.hero.sub }}</p>
 
@@ -33,6 +38,12 @@ schemas:
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}無料で{{ free_plan.included_hours }}時間分まで利用可能</span>
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}クレジットカード不要</span>
     </div>
+    {%- comment -%}
+      TICKET-SITE-28: ダウンロードボタン直下 = 誤認したユーザーが最後に読む場所。
+      **上の ✓ 付き利点行には混ぜない** — 利点リストに否定文が並ぶと読み手が
+      引っかかる。✓ なしの独立行にして「事実の但し書き」として読ませる。
+    {%- endcomment -%}
+    <p class="mx-auto mt-3 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4">{{ site.data.entity.not_removal_note }}</p>
 
     <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
       <img src="/assets/img/screenshots/edit-player.webp" alt="Deepmosaic Desktop の編集画面。検出枠がオーバーレイ表示され、下部にタイムラインが並ぶ" width="1256" height="898" fetchpriority="high" decoding="async" class="block w-full">
@@ -59,6 +70,8 @@ schemas:
     </div>
   </div>
 </section>
+
+{% include what-is.html %}
 
 {%- comment -%}
   STATS (TICKET-SITE-07)。検証できる事実だけを出す。
@@ -99,7 +112,7 @@ schemas:
             <td class="p-4 font-bold text-ink-body">作業の進め方</td>
             <td class="p-4">全編を目視して対象を追う</td>
             <td class="p-4">発注 → 納品待ち → 検収</td>
-            <td class="p-4 bg-accent/5">AI が全編を検出・追跡。確認と修正だけを行う</td>
+            <td class="p-4 bg-accent/5">AI が全編を検出・追跡してモザイクをかける。人は確認と修正だけ</td>
           </tr>
           <tr class="border-b border-hair bg-row-alt">
             <td class="p-4 font-bold text-ink-body">処理中の拘束</td>
@@ -319,7 +332,7 @@ schemas:
   FAQ。表示と FAQPage JSON-LD を _data/faq.yml から生成するので両者が食い違わない。
 {%- endcomment -%}
 <!-- FAQ -->
-<section class="py-24">
+<section id="faq" class="scroll-mt-20 py-24">
   <div class="mx-auto w-[92%] max-w-[760px]">
     {% include section-title.html kicker="FAQ" title="よくある質問" %}
     {% include faq.html %}

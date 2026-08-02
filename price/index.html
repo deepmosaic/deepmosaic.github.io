@@ -24,7 +24,13 @@ schemas:
       <span class="text-ink-3">料金</span>
     </nav>
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">料金</h1>
+    {%- comment -%}
+      TICKET-SITE-28: 先頭の 1 文は製品カテゴリの宣言。移行前このページには
+      「モザイク」の語が 1 度も出てこず、「deepmosaic 料金」で直接ランディング
+      した人に製品が何をするのか伝わらなかった。出所は _data/entity.yml。
+    {%- endcomment -%}
     <p class="mt-4 max-w-[680px] text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.entity.one_liner }}
       有料プランのお申し込みは、アプリをインストールしてログインした後、アプリ内のプラン管理からお手続きいただきます。
       手順は<a href="/docs#plan" class="text-accent-soft hover:underline">ドキュメントの「プランの変更」</a>をご覧ください。
     </p>

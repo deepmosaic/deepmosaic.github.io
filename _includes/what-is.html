@@ -1,0 +1,51 @@
+{%- comment -%}
+「Deepmosaic とは」ブロック (TICKET-SITE-26)。トップの TRUST BAR 直後に置く。
+
+解決する問題: 「モザイクを *除去* するソフト」という誤認で DL するユーザーが
+後を絶たない。原因はサイトに誤誘導する文言があることではなく、**方向を明示して
+いる箇所が無い**こと。トップページには製品定義文が 1 文も無く、h1 も「モザイク
+作業を」で方向を含まない。
+
+ここでは hero の定義文を**繰り返さず**、できること / できないことの列挙に専念する
+(同じ文字列が 2 回出るのは人間にとって冗長)。表・箇条書き・対比は LLM が最も
+抽出しやすい形式で、「できないこと」を独立した見出し付きリストにすることで
+「モザイク除去はできるか」という質問に**回答可能な塊**が本文中に生まれる。
+
+⚠️ 「除去」という語はここでは使わない。打ち消しコピー自体が「モザイク 除去」
+   クエリとの関連度を上げる逆効果を持つため、その語は /mosaic-removal/ に
+   封じ込める (_data/entity.yml の語彙ポリシーを参照)。本文は「取り除く」。
+
+⚠️ 英語は 1 行だけ置く。英語ページ (/en/) は作らない。llms.txt だけでは
+   2026 年時点で AI からの取得率が低すぎるため、HTML 本文にも 1 行必要という判断。
+
+データは `_data/entity.yml` から。ここに直書きすると JSON-LD / llms.txt /
+/mosaic-removal/ と食い違い、訂正として機能しなくなる。
+{%- endcomment -%}
+{%- assign E = site.data.entity -%}
+<section id="what-is-deepmosaic" class="scroll-mt-20 border-b border-hair py-24">
+  <div class="mx-auto w-[92%] max-w-[900px]">
+    {% include section-title.html kicker="WHAT IT IS" title="Deepmosaic とは" sub="モザイクを「かける」ためのソフトです。すでに入っているモザイクを取り除くためのものではありません。" %}
+
+    <div class="grid gap-5 md:grid-cols-2">
+      <div class="card p-6">
+        <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="CheckCircle2" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">できること</h3></div>
+        <ul class="flex flex-col gap-3">
+          {%- for c in E.can %}
+          <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>{{ c.ja }}</span></li>
+          {%- endfor %}
+        </ul>
+      </div>
+      <div class="card p-6">
+        <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="X" class="h-[18px] w-[18px] shrink-0 text-danger" %}<h3 class="text-[15px] font-bold text-ink">できないこと</h3></div>
+        <ul class="flex flex-col gap-3">
+          {%- for c in E.cannot %}
+          <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="X" class="mt-1 h-4 w-4 shrink-0 text-danger" %}<span>{{ c.ja }}</span></li>
+          {%- endfor %}
+        </ul>
+      </div>
+    </div>
+
+    <p class="mt-6 text-[12.5px] leading-[1.9] text-ink-4">{{ E.name_origin.ja }}</p>
+    <p lang="en" class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ E.definition.en }}</p>
+  </div>
+</section>

@@ -33,5 +33,12 @@ params:
       {%- endif %}
     </div>
     <p class="mt-4 text-[13px] text-ink-4">Windows 10 / 11（64bit）</p>
+    {%- comment -%}
+      TICKET-SITE-28: 製品の方向を DL ボタンの直下に置く。この include は
+      トップ末尾 / /price/ / /spec/ の 3 箇所で展開されるので、**ここ 1 箇所で
+      3 つの DL ボタンを塞げる**。文面の出所は _data/entity.yml。
+      「除去」ではなく「取り除く」を使う理由は同ファイルの語彙ポリシーを参照。
+    {%- endcomment -%}
+    <p class="mx-auto mt-1.5 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4">{{ site.data.entity.not_removal_note }}</p>
   </div>
 </section>

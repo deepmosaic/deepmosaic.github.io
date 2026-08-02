@@ -1,0 +1,114 @@
+# 製品エンティティ定義の単一真実源 (TICKET-SITE-25)
+#
+# 解決する問題: 「Deepmosaic はモザイクを *除去* するソフト」という誤認が続き、
+# 誤ってダウンロードするユーザーが後を絶たない。原因は「誤誘導する文言がある」
+# ことではなく「**方向を明示している箇所が無い**」こと。サイト内の主要動詞は
+# 「モザイク処理」「モザイク作業」で、日本語としてかける／外すの両方向を指す。
+#
+# 訂正文はトップ本文 / JSON-LD の disambiguatingDescription / llms.txt /
+# FAQ / /mosaic-removal/ の 5 面に出す必要があるが、**文面が食い違うと訂正として
+# 機能しない**。ここを唯一の出所にする。
+#
+# ⚠️ 否定は必ず「何をするソフトか」を先に書いてから添える。
+#    「モザイク除去はできません」だけを独立させると、文脈を失った断片が引用された
+#    ときに「Deepmosaic + モザイク除去」という共起だけが残る。
+#
+# ⚠️ 語彙ポリシー: 「除去」という語を置く面と置かない面を厳密に分ける。
+#    打ち消しコピー自体が「モザイク 除去」クエリとの関連度を上げる逆効果を持つため。
+#      置かない → <title> / H1 / kicker / トップ本文 (「取り除く」で言い換える)
+#      置く     → トップの meta description (ランキング要因ではない) /
+#                 _data/faq.yml の質問文 1 件 / /mosaic-removal/ / JSON-LD / llms.txt
+#    このファイルでは `disambiguation` と `definition` だけが「除去」を含む。
+#    `not_removal_note` と `cannot` は本文用なので「取り除く」を使う。
+#
+# ⚠️ `cannot` に書けるのは **事実として提供していない機能** だけ。「今後も提供する
+#    予定はありません」と言い切るので、方針が変わるならここと _data/faq.yml の
+#    両方を直すこと。
+#
+# ⚠️ 英語 (`en`) は llms.txt / JSON-LD / 「Deepmosaic とは」の 1 行だけで使う。
+#    英語ページ (/en/) は作らない (hreflang 設計と翻訳の維持コストが目的に見合わない)。
+
+name: "Deepmosaic"
+product_name: "Deepmosaic Desktop"
+alternate_names:
+  - "Deepmosaic Desktop"
+  - "DeepMosaic"
+  - "ディープモザイク"
+
+# ── 製品定義 ───────────────────────────────────────────────────────────
+# 「主語 → 動作 → 対象 → カテゴリ」で 1 文目が自己完結し、否定を独立した 2 文目に
+# する形を採用。**どこで切られても誤認が生じない**のがこの構造の目的で、
+# 1 文目だけ抜き出されても製品が確定し、2 文目だけ抜き出されても主語が残る。
+definition:
+  ja: "Deepmosaic は、動画に映った対象（局部・顔）を AI が自動検出し、その領域にモザイクをかける Windows デスクトップアプリケーションです。モザイクを除去・復元する機能はありません。"
+  en: "Deepmosaic is a Windows desktop application that uses AI object detection to find genitalia and faces in a video and apply mosaic (pixelation) censoring to them. It does not remove, decensor, or reconstruct existing mosaics."
+
+# JSON-LD の disambiguatingDescription 用。日英を 1 文字列に連結して使う
+# (LLM は言語をまたいで読むので、分けるより取りこぼしが少ない)。
+disambiguation:
+  ja: "Deepmosaic はモザイクを付加（追加）するソフトウェアです。モザイクの除去・解除・復元はできません。"
+  en: "Deepmosaic ADDS mosaic censoring to video. It is NOT a mosaic remover, decensor, uncensor, or de-pixelation tool."
+
+# ── 短い言い回し (本文用・「除去」を使わない) ──────────────────────────
+# one_liner: /price/ と /spec/ のリード文の先頭に置く 1 文。両ページとも現状
+#            「モザイク」の語が 1 度も出てこないため、直接ランディングした人に
+#            製品が何をするのか伝わらない。
+# not_removal_note: ヒーロー CTA 直下と cta-download.html の注記行。
+#            cta-download は トップ末尾 / /price/ / /spec/ の 3 箇所で展開されるので、
+#            この 1 文で 3 つの DL ボタンを一括で塞げる。
+# ⚠️ HTML は入れない。llms.txt からも参照するのでプレーンテキストで保つ。
+one_liner: "Deepmosaic は、動画内の対象を AI が検出してモザイクをかける Windows 向けデスクトップアプリです。"
+not_removal_note: "モザイクをかける（付加する）ためのソフトです。すでに入っているモザイクを取り除く機能はありません。"
+
+# ── できること / できないこと ──────────────────────────────────────────
+# トップの「Deepmosaic とは」/ /mosaic-removal/ の対比表 / llms.txt /
+# JSON-LD の featureList が **この 2 つの配列**を参照する。
+# 表・箇条書き・対比は LLM が最も抽出しやすい形式。
+can:
+  - ja: "動画内の局部・男性顔・女性顔を AI が自動検出し、フレーム間で追跡する"
+    en: "Automatically detect genitalia and faces in video with AI and track them across frames"
+  - ja: "検出した領域にモザイク（ブロック状）またはぼかしをかける"
+    en: "Apply mosaic (pixelation) or Gaussian blur to the detected regions"
+  - ja: "粒度・不透明度・ふちのなじませ・検出枠の拡張率を設定で固定する"
+    en: "Fix the granularity, opacity, edge feathering and box expansion ratio in settings"
+  - ja: "検出結果を人が確認・修正する（検出枠の追加・削除・移動、信頼度によるフィルタ）"
+    en: "Review and correct the detections by hand (add / delete / move boxes, filter by confidence)"
+  - ja: "モザイクを焼き込んだ動画を書き出す（MP4 / MOV / WebM / MKV / AVI、NVENC 対応）"
+    en: "Export a video with the mosaic burned in (MP4 / MOV / WebM / MKV / AVI, NVENC supported)"
+  - ja: "検出したモザイク情報を Adobe Premiere Pro のプロジェクトへインポートする"
+    en: "Import the detected mosaic data into an Adobe Premiere Pro project"
+  - ja: "映像を外部に送信せず、すべてお使いの PC 内で処理する"
+    en: "Process everything locally on the user's own PC without uploading the video"
+
+cannot:
+  - ja: "すでにモザイクがかかった映像から、モザイクを取り除くこと"
+    en: "Removing or decensoring mosaics from already-censored footage"
+  - ja: "モザイクの下にある元の映像を復元・推定すること"
+    en: "Reconstructing or inferring the original pixels hidden behind a mosaic"
+  - ja: "顔の入れ替え（deepfake）や、人物の生成"
+    en: "Face swapping (deepfake) or generating people"
+  - ja: "審査・検閲基準への適合を保証すること"
+    en: "Guaranteeing that the output will pass any review board"
+
+# 「deep〜」で始まる名前が deepfake / 復元系ツールと実際に混同されているので、
+# 由来を明示して切り離す。
+name_origin:
+  ja: "名称は Deep Learning（ディープラーニング）と Mosaic（モザイク）に由来し、「ディープラーニングでモザイクをかける」という意味です。deepfake や復元系の技術とは関係ありません。"
+  en: "The name comes from Deep Learning + Mosaic, meaning \"applying mosaic with deep learning\". It is unrelated to deepfake or restoration technology."
+
+# ── 誤認の理由 (/mosaic-removal/ で使う) ───────────────────────────────
+confusion_reasons:
+  - "製品名に「mosaic」を含むため、名称の似たツールと同じ種類のソフトだと受け取られやすいこと"
+  - "日本語の「モザイク処理」が、モザイクを「かける」と「外す」の両方向を指す語であること"
+
+# ── 分類 (JSON-LD 用) ─────────────────────────────────────────────────
+# operatingSystem は macOS 版リリース時に更新する (TICKET-MAC-405)。
+# software_requirements は _data/spec.yml の windows と食い違わせないこと。
+os: "Windows 10, Windows 11"
+category: "MultimediaApplication"
+subcategory: "Video Editing Software"
+software_requirements: "Windows 10 / 11（64 ビット）、メモリ 8GB 以上（16GB 推奨）、NVIDIA CUDA 対応 GPU を推奨、Microsoft Edge WebView2、ストレージ約 10GB"
+# JSON-LD の keywords。**方向を含む語だけ**で構成する (削除した keywords メタは
+# 「モザイク編集ソフト」など方向が曖昧な語ばかりで、目的に逆行していた)。
+keywords: "動画 モザイク 自動, 顔 モザイク 自動, モザイク 加工 ソフト, モザイク 焼き込み, Adobe Premiere Pro 連携"
+screenshot: "/assets/img/screenshots/edit-player.webp"

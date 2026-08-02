@@ -19,7 +19,13 @@ schemas:
       <span class="text-ink-3">動作環境</span>
     </nav>
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">動作環境</h1>
+    {%- comment -%}
+      TICKET-SITE-28: 先頭の 1 文は製品カテゴリの宣言。このページは自ら
+      「ダウンロード前にご確認ください」と宣言している導線上の関門なので、
+      製品の方向を置く場所として最も自然。出所は _data/entity.yml。
+    {%- endcomment -%}
     <p class="mt-4 max-w-[640px] text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.entity.one_liner }}
       ダウンロード前にご確認ください。検出速度は GPU の性能と素材の解像度に大きく依存します。
     </p>
   </div>
