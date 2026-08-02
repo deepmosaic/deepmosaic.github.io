@@ -136,7 +136,6 @@ test('計算に使う全フィールドが読めている (取りこぼしの検
     'price',
     'included_hours',
     'included_basis',
-    'overage_per_hour',
     'trial_days',
     'featured',
     'public',
@@ -156,16 +155,14 @@ test('計算に使う全フィールドが読めている (取りこぼしの検
 test('料金と込み時間が新デザインの確定値と一致する', () => {
   assert.equal(byCode('light').price, 2980);
   assert.equal(byCode('light').included_hours, 5);
-  assert.equal(byCode('light').overage_per_hour, 800);
   assert.equal(byCode('light').carryover_hours, 10);
 
   assert.equal(byCode('pro').price, 9800);
   assert.equal(byCode('pro').included_hours, 40);
-  assert.equal(byCode('pro').overage_per_hour, 500);
 
   assert.equal(byCode('enterprise').price, 8000);
   assert.equal(byCode('enterprise').included_hours, 40);
-  assert.equal(byCode('enterprise').overage_per_hour, 300);
+  // 最低 3 シート = 24,000 円。これは Pro×2 の成立条件でもあるので下げない
   assert.equal(byCode('enterprise').min_seats, 3);
 
   // Free はアプリの FREE_USAGE_LIMIT_SECONDS = 6h と一致させる
@@ -185,13 +182,30 @@ test('込み時間の内側では基本料だけ', () => {
   assert.equal(monthlyCost(byCode('pro'), 40), 9800);
 });
 
-test('込み時間を 1 時間超えると超過単価が 1 時間分だけ乗る', () => {
-  assert.equal(monthlyCost(byCode('light'), 6), 2980 + 800);
-  assert.equal(monthlyCost(byCode('pro'), 41), 9800 + 500);
+test('込み時間ちょうどまでは基本料、1 時間でも超えたら候補外', () => {
+  // 従量課金は廃止したので、込み時間を金銭で超える手段は無い
+  assert.equal(monthlyCost(byCode('light'), 5), 2980);
+  assert.equal(monthlyCost(byCode('light'), 6), Number.POSITIVE_INFINITY);
+  assert.equal(monthlyCost(byCode('pro'), 40), 9800);
+  assert.equal(monthlyCost(byCode('pro'), 41), Number.POSITIVE_INFINITY);
 });
 
-test('超過不可のプランは選択肢から外れる', () => {
-  // Free は overage_per_hour: null。込み時間を超えたら候補にならない
+test('従量課金が復活していないこと (回帰固定)', () => {
+  // 超過単価をデータに書き戻すと計算機が「使った分だけ課金」に逆戻りする。
+  // Stripe の従量 price は archive 済み・メーターも停止済みなので、
+  // ここが緑でなくなったら本番と広告表示が食い違う。
+  for (const tier of TIERS) {
+    assert.ok(
+      tier.overage_per_hour === null || tier.overage_per_hour === undefined,
+      `${tier.code}: overage_per_hour が復活している`,
+    );
+  }
+  for (const tier of paid) {
+    assert.ok(!planBreakdown(tier, 12).includes('超過'), `${tier.code}: 内訳文に超過が出ている`);
+  }
+});
+
+test('Free は込み時間を超えたら候補にならない', () => {
   assert.equal(monthlyCost(byCode('free'), 6), 0);
   assert.equal(monthlyCost(byCode('free'), 7), Number.POSITIVE_INFINITY);
 });
@@ -212,73 +226,55 @@ test('Enterprise は最低シート数を下回らない', () => {
   assert.equal(monthlyCost(ent, 12), 8000 * 3);
 });
 
-test('プールを超えた分はまず超過単価で払う (シートを機械的に足さない)', () => {
-  // 旧実装は seats = ceil(hours / 40) だったため超過単価 ¥300 が一度も使われず、
-  // 120h → 121h で月額が ¥8,000 跳んでいた (カードの「超過単価」表記と矛盾)。
+test('プールを超えたらシートを足す (超過課金は廃止したので他に手段が無い)', () => {
   const ent = byCode('enterprise');
-  assert.deepEqual(bestSeatPlan(ent, 121), { seats: 3, cost: 24000 + 300 });
-  assert.deepEqual(bestSeatPlan(ent, 130), { seats: 3, cost: 24000 + 10 * 300 });
+  // 3 シート = 120 時間。1 時間でも超えたら 4 シート目が要る
+  assert.deepEqual(bestSeatPlan(ent, 121), { seats: 4, cost: 32000 });
+  assert.deepEqual(bestSeatPlan(ent, 160), { seats: 4, cost: 32000 });
+  assert.deepEqual(bestSeatPlan(ent, 161), { seats: 5, cost: 40000 });
 });
 
-test('超過が 1 シート分の単価を上回るとシートを足す方が安くなる', () => {
-  // 1 シート ¥8,000 で 40 時間。超過 ¥300/時間 なので損益分岐は 8000/300 = 26.67 時間。
-  const ent = byCode('enterprise');
-  // 120 + 26 = 146h → 3 シート + 26h 超過 = 31,800 < 4 シート 32,000
-  assert.deepEqual(bestSeatPlan(ent, 146), { seats: 3, cost: 24000 + 26 * 300 });
-  // 120 + 27 = 147h → 3 シート + 27h 超過 = 32,100 > 4 シート 32,000
-  assert.deepEqual(bestSeatPlan(ent, 147), { seats: 4, cost: 32000 });
-  // 同額 (146.667h) のときは少ないシート数を返す
-  assert.equal(bestSeatPlan(ent, 120 + 8000 / 300).seats, 3);
-});
-
-test('月 12 時間 (既定値) の適合プランは Light ¥8,580', () => {
+test('月 12 時間 (既定値) の適合プランは Pro (月額 9,800 円)', () => {
   // トップの ROI 計算機の既定 = 月 6 本 × 2 時間。noscript の記載と一致させる。
+  // 従量課金の廃止で Light (月 5 時間) は 12 時間を賄えず候補から外れる。
   const best = cheapestPlan(paid, 12);
-  assert.equal(best.tier.code, 'light');
-  assert.equal(best.cost, 2980 + 7 * 800); // 8,580
-  assert.equal(best.cost, 8580);
+  assert.equal(best.tier.code, 'pro');
+  assert.equal(best.cost, 9800);
 });
 
-test('既定値の年間削減額が ¥1,625,040 になる', () => {
-  // 月 6 本 × 1 本 ¥24,000 の現状コストとの差額。刷新前の設計判断の固定値。
+test('既定値の年間削減額が 1,610,400 円になる', () => {
+  // 月 6 本 × 1 本 24,000 円の現状コストとの差額。
   const currentYearly = 6 * 24000 * 12;
   const dmYearly = cheapestPlan(paid, 12).cost * 12;
-  assert.equal(currentYearly - dmYearly, 1625040);
+  assert.equal(currentYearly - dmYearly, 1610400);
 });
 
 test('作業量が増えると Light → Pro → Enterprise に切り替わる', () => {
-  //  5h: Light 2,980 / Pro 9,800            → Light
+  // 切替点は「込み時間」で決まる (超過単価が無くなったため)
+  //   5h: Light 2,980                             → Light
   assert.equal(cheapestPlan(paid, 5).tier.code, 'light');
-  // 14h: Light 2,980+7,200=10,180 / Pro 9,800 → Pro
-  assert.equal(cheapestPlan(paid, 14).tier.code, 'pro');
-  // 60h: Pro 9,800+10,000=19,800 / Ent 24,000 → まだ Pro
-  assert.equal(cheapestPlan(paid, 60).tier.code, 'pro');
-  // 80h: Pro 9,800+20,000=29,800 / Ent 24,000 → Enterprise
-  assert.equal(cheapestPlan(paid, 80).tier.code, 'enterprise');
+  //   6h: Light は 5 時間までで候補外 / Pro 9,800  → Pro
+  assert.equal(cheapestPlan(paid, 6).tier.code, 'pro');
+  //  40h: Pro 9,800 (込み時間ちょうど)             → Pro
+  assert.equal(cheapestPlan(paid, 40).tier.code, 'pro');
+  //  41h: Pro は候補外 / Ent 3 シート 24,000       → Enterprise
+  assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
 });
 
-test('Light と Pro が同額になる境界では plans.yml の順 (Light) を選ぶ', () => {
-  // 2980 + (h-5)*800 = 9800 → h = 13.525
-  const h = 13.525;
-  assert.equal(monthlyCost(byCode('light'), h), monthlyCost(byCode('pro'), h));
-  assert.equal(cheapestPlan(paid, h).tier.code, 'light');
+test('込み時間ちょうどでは下位プランを選ぶ (境界の丸め事故を防ぐ)', () => {
+  assert.equal(cheapestPlan(paid, 5).tier.code, 'light');
+  assert.equal(cheapestPlan(paid, 5.000001).tier.code, 'pro');
 });
 
 test('内訳文がプランごとの条件をデータから組み立てる', () => {
   assert.equal(
     planBreakdown(byCode('light'), 12),
-    '月 5 時間込み ・ 超過 ¥800 / 時間 ・ 未使用分は翌月繰越（最大 10 時間）',
+    '月 5 時間込み ・ 未使用分は翌月繰越（最大 10 時間）',
   );
-  assert.equal(planBreakdown(byCode('pro'), 12), '月 40 時間込み ・ 超過 ¥500 / 時間');
-  assert.equal(
-    planBreakdown(byCode('enterprise'), 12),
-    '3 シート（120 時間をプール共有） ・ 超過 ¥300 / 時間',
-  );
-  // シートを足したほうが安いケースでは内訳のシート数も追従する
-  assert.equal(
-    planBreakdown(byCode('enterprise'), 147),
-    '4 シート（160 時間をプール共有） ・ 超過 ¥300 / 時間',
-  );
+  assert.equal(planBreakdown(byCode('pro'), 12), '月 40 時間込み');
+  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 シート（120 時間をプール共有）');
+  // プールを超えるとシート数が増え、内訳もそれに追従する
+  assert.equal(planBreakdown(byCode('enterprise'), 147), '4 シート（160 時間をプール共有）');
 });
 
 test('Enterprise の検討を促す閾値は Pro の込み時間', () => {
@@ -307,7 +303,7 @@ test('/price/ の meta description が plans.yml の金額と一致している'
 });
 
 test('金額は日本語ロケールの桁区切りで出す', () => {
-  assert.equal(formatYen(8580), '¥8,580');
-  assert.equal(formatYen(1625040), '¥1,625,040');
+  assert.equal(formatYen(9800), '¥9,800');
+  assert.equal(formatYen(1610400), '¥1,610,400');
   assert.equal(formatYen(0), '¥0');
 });

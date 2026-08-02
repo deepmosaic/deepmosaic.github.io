@@ -74,7 +74,7 @@ llms.txt (TICKET-SITE-33)。
 
 ## 料金と動作環境 / Pricing and system requirements
 
-- [料金 / Pricing]({{ U }}/price/): 3 プランと超過単価 / three plans and overage rates
+- [料金 / Pricing]({{ U }}/price/): 3 プランと込み時間 / three plans and included hours
 - [動作環境 / System requirements]({{ U }}/spec/): 対応 OS・GPU 要件・実測の処理速度・対応フォーマット / OS, GPU, measured throughput, supported formats
 
 ## 全文 / Full text

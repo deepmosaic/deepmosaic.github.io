@@ -75,7 +75,7 @@ schemas:
       <p class="text-[13.5px] leading-[1.95] text-ink-2">送信するもの／しないものを一覧で開示しています。ネットワークを切断した状態でも検出・編集・書き出しが動作します。</p>
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
-      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Ruler" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">粒度と隠蔽率を設定で固定できる</h2></div>
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Ruler" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">柔軟な編集機能</h2></div>
       <p class="text-[13.5px] leading-[1.95] text-ink-2">対象物のサイズに連動した自動調整と、Premiere Pro と同方式のブロック分割数指定。カット内・同一 ID 内で粒度が一定に保たれます。</p>
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
@@ -187,14 +187,15 @@ schemas:
     {%- comment -%}
       JS 無効時のフォールバック。数値は Liquid で組まず**確定値を直接書く**
       (プランを増やしたときに index 参照 `tiers[1]` が別プランを指す事故を防ぐ)。
-      月 12 時間 = Light 2,980 + 7h × 800 = 8,580 / Pro は 40 時間込みなので 9,800 固定。
+      月 12 時間は Pro の込み時間 (月 40 時間) に収まるので 9,800 固定。
+      超過料金は廃止したので「込み時間 + 超過分」で足し上げる試算は書かない。
     {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
         試算にはブラウザの JavaScript が必要です。
-        月 6 本 × 2 時間（月 12 時間）の場合、Light は月額 ¥8,580（月 5 時間込み + 超過 7 時間 × ¥800）、
-        Pro は月 40 時間込みのため月額 ¥9,800 の固定です（いずれも{{ site.data.plans.tax_note }}）。
-        プランごとの込み時間と超過単価は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>に掲載しています。
+        月 6 本 × 2 時間（月 12 時間）の場合、月 40 時間込みの Pro に収まるため月額 ¥9,800 の固定です（{{ site.data.plans.tax_note }}）。
+        1 時間あたりに直すと約 ¥817、込み時間の 40 時間まで使えば ¥245 / 時間まで下がります。
+        プランごとの込み時間は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>に掲載しています。
       </div>
     </noscript>
     <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
@@ -251,7 +252,7 @@ schemas:
 <!-- MOSAIC -->
 <section class="border-y border-hair bg-surface-alt py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="MOSAIC" title="粒度と隠蔽率を設定で固定できる" sub="対象物のサイズに連動した自動調整と、Adobe Premiere Pro と同方式のブロック分割数指定。提出先ごとの規定値に合わせて調整できます。" %}
+    {% include section-title.html kicker="MOSAIC" title="柔軟な編集機能" sub="対象物のサイズに連動した自動調整と、Adobe Premiere Pro と同方式のブロック分割数指定。提出先ごとの規定値に合わせて調整できます。" %}
     <div data-island="tabs">
       <div role="tablist" aria-label="モザイク設定" class="flex gap-1 border-b border-hair">
         <button type="button" role="tab" id="tab-scope" aria-controls="panel-scope" aria-selected="true" class="tab tab-active">適用範囲</button>
@@ -326,8 +327,9 @@ schemas:
   PRICING (TICKET-SITE-20)。新デザイン準拠の 3 プラン + Free 帯。
   金額・込み時間・仕様行の出所は `_data/plans.yml` の 1 箇所だけ。
 
-  上限時間・超過課金はアプリ側で未強制なので、その事実は `plans.yml` の
-  `rollout_note` が料金カード直下に出す (カード内には書かない)。
+  超過課金は廃止済み (Stripe の従量 price / メーターも停止)。上限時間はアプリ側で
+  未強制なので、その事実と今後の告知は `plans.yml` の `rollout_note` が料金カード
+  直下に出す (カード内には書かない)。
 {%- endcomment -%}
 <!-- PRICING -->
 <section class="py-24">

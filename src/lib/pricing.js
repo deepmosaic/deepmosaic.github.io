@@ -20,7 +20,6 @@
  * @property {number}      price              1 ユーザー / 1 シートあたりの月額
  * @property {number|null} included_hours     pooled では 1 シートあたりの時間
  * @property {string}      included_basis
- * @property {number|null} overage_per_hour   null は超過不可
  * @property {number}      [min_seats]        pooled の最低シート数
  * @property {number|null} [carryover_hours]  未使用分の翌月繰越上限
  * @property {number}      [trial_days]
@@ -32,22 +31,12 @@ export const formatYen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
 /**
  * シート共有型プランを最も安く使えるシート数と、そのときの月額。
  *
- * **シート数は「作業時間」ではなく「同時に使う人数」で決まる**ので、時間から
- * `ceil(hours / included_hours)` で機械的に決めてはいけない。プールを超えた分は
- * 超過単価で払えるため、
+ * **従量課金 (超過課金) は廃止したので、プールを超えた分を金銭で払う選択肢は無い。**
+ * したがって必要シート数は「プールが消費時間を賄える最小のシート数」で一意に決まる
+ * (`min_seats` を下限とする)。
  *
- *   - 少ないシート + 超過課金
- *   - 多いシート + 超過なし
- *
- * のどちらが安いかは超過単価と 1 シート単価の比で変わる (このプランなら
- * ¥300/時間 × 40 時間 = ¥12,000 > ¥8,000 なので、40 時間ぶん超えるならシートを
- * 足したほうが安い)。よって `min_seats` から「超過ゼロになるシート数」までを
- * 全部試して最小を採る。
- *
- * 旧実装は `ceil(hours / included_hours)` でシート数を決めていたため
- * `seats * included_hours >= hours` が常に成立し、**超過単価が一度も使われず**
- * プール境界 (3 シート = 120 時間) の 1 時間超えで月額が ¥8,000 跳ぶ計算になっていた
- * (カードに「超過単価 ¥300 / 時間」と書いているのに使われない矛盾)。
+ * なお **シート数は本来「同時に使う人数」で決まる**ので、ここで時間から求めた値は
+ * 「時間だけを見た場合の下限」である。実際の見積もりでは人数のほうが支配的になりうる。
  *
  * @param {Tier} tier
  * @param {number} hours 月間の消費時間
@@ -57,28 +46,21 @@ export function bestSeatPlan(tier, hours) {
   const perSeat = tier.included_hours || 1;
   const minSeats = Math.max(1, tier.min_seats ?? 1);
   const h = Math.max(0, hours);
-  // 超過ゼロにできるシート数 (これ以上増やしても基本料が増えるだけ)
-  const maxSeats = Math.max(minSeats, Math.ceil(h / perSeat));
-
-  let bestSeats = minSeats;
-  let bestCost = Number.POSITIVE_INFINITY;
-  for (let seats = minSeats; seats <= maxSeats; seats += 1) {
-    const over = Math.max(0, h - seats * perSeat);
-    if (over > 0 && !tier.overage_per_hour) continue; // 超過不可なら候補外
-    const cost = tier.price * seats + over * (tier.overage_per_hour ?? 0);
-    if (cost < bestCost) {
-      bestCost = cost;
-      bestSeats = seats;
-    }
-  }
-  return { seats: bestSeats, cost: bestCost };
+  // プールが消費時間を賄える最小シート数。min_seats を下回らせない
+  const seats = Math.max(minSeats, Math.ceil(h / perSeat));
+  return { seats, cost: tier.price * seats };
 }
 
 /**
- * そのプランを 1 ヶ月使ったときの総額 (基本料 + 超過)。
+ * そのプランを 1 ヶ月使ったときの月額。
  *
- * 超過が発生するのに超過単価が無いプランは選択肢から外したいので
- * `Number.POSITIVE_INFINITY` を返す (呼び出し側が `Number.isFinite` で弾く)。
+ * **従量課金は廃止したので、込み時間を超えたら金銭で埋める手段が無い。** 込み時間を
+ * 超えるプランは選択肢から外すため `Number.POSITIVE_INFINITY` を返す
+ * (呼び出し側が `Number.isFinite` で弾く)。
+ *
+ * NOTE: 代替となる「同じプランを複数本契約する方式」(Light ×3 / Pro ×2) は**未実装**の
+ * ため、ここでは 1 契約のみを前提にする。実装後は Pro 40 時間超の見積もりが
+ * Enterprise ではなく Pro×2 (¥19,600) になるので、この関数を更新すること。
  *
  * @param {Tier} tier
  * @param {number} hours
@@ -90,10 +72,8 @@ export function monthlyCost(tier, hours) {
 
   if (tier.included_basis === 'pooled') return bestSeatPlan(tier, hours).cost;
 
-  const over = Math.max(0, hours - tier.included_hours);
-  if (over === 0) return tier.price;
-  if (!tier.overage_per_hour) return Number.POSITIVE_INFINITY;
-  return tier.price + over * tier.overage_per_hour;
+  if (hours > tier.included_hours) return Number.POSITIVE_INFINITY;
+  return tier.price;
 }
 
 /**
@@ -131,7 +111,6 @@ export function planBreakdown(tier, hours) {
   } else {
     parts.push(`月 ${tier.included_hours} 時間込み`);
   }
-  if (tier.overage_per_hour) parts.push(`超過 ${formatYen(tier.overage_per_hour)} / 時間`);
   if (tier.carryover_hours) parts.push(`未使用分は翌月繰越（最大 ${tier.carryover_hours} 時間）`);
   if (tier.trial_days > 0) parts.push(`${tier.trial_days} 日間無料トライアルあり`);
   return parts.join(' ・ ');
