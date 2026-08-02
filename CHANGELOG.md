@@ -1,5 +1,43 @@
 # CHANGELOG
 
+## 2026-08-02 (8) - Feature: ヒーロー画像をモザイク適用済みに差し替え (TICKET-SITE-35)
+
+**誤認対策で唯一やり残していた項目。** 移行前のヒーロー（LCP 要素・ページ最大面積）は
+`edit-player.webp` で、素の映像に検出枠が重なっただけの絵だった。「AI が顔を見つけた。
+映像は素のまま」という画が最上部にあると、「Deepmosaic はモザイクを *除去* するソフト」
+という誤認を訂正するどころか強化してしまう。**文言だけの対策には天井がある**ため、
+絵そのものを差し替えた。
+
+- `assets/img/screenshots/edit-player-mosaic.webp` を追加（1256×898 / 40KB）。
+  front の撮影ハーネスが `edit-player.png` と同アングルでモザイク適用プレビューを
+  ON にして撮ったもの
+- `index.html` — ヒーローの `src` を差し替え、alt を暫定版（「枠の内側にモザイクを
+  かける」）から確定版（「モザイクがかかった状態をプレビュー」）へ
+- `docs/index.html` は **bbox 版のまま据え置き**。「プレイヤーとタイムライン」節は
+  検出枠そのものの説明なので bbox 版が正しい。用途が違うので 2 枚持つ
+
+寸法が旧画像と同一（1256×898）なので `width` / `height` の変更は不要だった（CLS 影響なし）。
+
+### ⚠️ `scripts/optimize-images.mjs` を素で流すと巻き添えが出る
+
+CLAUDE.md は「スクショをコピーしたら必ず `node scripts/optimize-images.mjs --apply` を
+通すこと」と書いているが、**このスクリプトは `assets/img` と
+`assets/img/screenshots` の PNG を全部変換して元 PNG を削除する**。今回そのまま流したら、
+目的のスクショ 1 枚に加えて**既存の PNG 13 枚が WebP 化され、PNG が消えた**。
+
+とくに `assets/img/logo-font.png` は `_includes/schema/organization.html` の
+Organization ロゴ URL として参照されているため、消すと JSON-LD のロゴが 404 になる。
+巻き添え分は `git checkout -- assets/img/` で戻した。
+
+**1 枚だけ変換したいときはスクリプトを使わず ffmpeg を直接叩くこと:**
+
+```
+ffmpeg -i assets/img/screenshots/<name>.png -c:v libwebp -quality 82 \
+       -compression_level 6 assets/img/screenshots/<name>.webp
+```
+
+（スクリプト側に「対象を絞る引数」を足すのが本筋。未対応）
+
 ## 2026-08-02 (7) - Change: Pro の実効単価「¥245 / 時間」の表記を削除
 
 込み時間 40 時間を**使い切った場合**の単価で、実際にそこまで使うユーザーは限られる。

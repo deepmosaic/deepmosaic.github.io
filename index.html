@@ -54,13 +54,20 @@ schemas:
 
     <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
       {%- comment -%}
-        TICKET-SITE-34: LCP 要素。旧 alt は「検出枠がオーバーレイ表示され」だけで、
-        枠が何のための枠なのかが書かれていなかった。「枠の内側にモザイクをかける」と
-        書くことで、素の映像が写っている事実と矛盾させずに方向を伝える。
-        画像自体をモザイク適用済みに差し替えたら alt も確定版に更新すること
-        (TICKET-SITE-35)。
+        TICKET-SITE-35: LCP 要素かつページ最大面積。**ここには必ずモザイクが写っている
+        画像を置くこと。**
+
+        移行前は `edit-player.webp` (素の映像 + 検出枠のみ) だった。「AI が顔を見つけた。
+        映像は素のまま」という絵が最上部にあると、「Deepmosaic はモザイクを *除去* する
+        ソフト」という誤認を訂正するどころか強化してしまう。文言だけの対策には天井が
+        あるので、絵そのものを差し替えた。
+
+        `edit-player-mosaic.webp` は front の撮影ハーネスが
+        `edit-player.png` と同アングルでモザイク適用プレビューを ON にして撮ったもの。
+        bbox 版 (`edit-player.webp`) は docs の「プレイヤーとタイムライン」節が
+        検出枠そのものの説明なのでそちらで使い続ける。用途が違うので 2 枚ある。
       {%- endcomment -%}
-      <img src="/assets/img/screenshots/edit-player.webp" alt="Deepmosaic Desktop の編集画面。AI が検出した対象を枠で囲んでおり、この枠の内側にモザイクをかける。下部は検出区間のタイムライン" width="1256" height="898" fetchpriority="high" decoding="async" class="block w-full">
+      <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="Deepmosaic Desktop の編集画面。AI が検出した顔にモザイクがかかった状態をプレビューしており、下部に検出区間のタイムラインが並ぶ" width="1256" height="898" fetchpriority="high" decoding="async" class="block w-full">
     </div>
   </div>
 </section>
