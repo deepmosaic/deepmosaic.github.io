@@ -35,6 +35,13 @@ jobs:
       # 料金計算の回帰テスト (TICKET-SITE-20)。`_data/plans.yml` の実データを読むので、
       # 料金カードの表示と ROI 計算機が食い違ったまま公開されるのを止められる。
       - name: Test
+        env:
+          # ライブ検査 (`src/lib/plan-catalog.test.js` の「本番の plan_catalog と一致している」)
+          # に鍵を渡す。**無ければテスト側は skip する**ので、未登録でも CI は緑のまま。
+          #
+          # 突き合わせ自体は後段の `Verify build output` が本命で、ここは二重化。
+          # 鍵を渡さないと SKIP がログに残り続け「まだ有効になっていない」と誤読される。
+          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
         run: npm test
 
       - name: Build front-end assets (Vite)
