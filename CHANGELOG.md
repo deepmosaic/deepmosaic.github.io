@@ -30,9 +30,9 @@ AI Overviews）の双方に、製品の **方向**（モザイクを付加する
 
 ### Phase 3 — 機械が読む面
 
-- [ ] TICKET-SITE-31: head の是正（`seo_title` 導入 / title サフィックス / meta robots / keywords・hreflang 削除）
-- [ ] TICKET-SITE-32: JSON-LD 強化（`@id` / `disambiguatingDescription` / `featureList`）
-- [ ] TICKET-SITE-33: `llms.txt` / `llms-full.txt` 新設 + `robots.txt` に方針を明文化
+- [x] TICKET-SITE-31: head の是正（`seo_title` 導入 / title サフィックス / meta robots / keywords・hreflang 削除 / 404 の description）
+- [x] TICKET-SITE-32: JSON-LD 強化（`@id` / `disambiguatingDescription` / `featureList`）
+- [x] TICKET-SITE-33: `llms.txt` / `llms-full.txt` 新設 + `robots.txt` に方針を明文化 + `assets/robots.txt` 削除
 
 ### Phase 4 — 画像
 
@@ -181,6 +181,101 @@ TICKET-SITE-01 で追加が必要だった）。
 
 同じ設定をトップの MOSAIC タブでも説明しているため、`_data/mosaic.yml` の
 「濃さ」も「不透明度」に統一した。
+
+### TICKET-SITE-31 の記録 — head
+
+**`seo_title` の分離**: `title` はパンくず JSON-LD と可視パンくずが使うので、SEO 用の
+文字列と兼用できない。`seo_title` があればそれを丸ごと使い、無ければ
+`title｜<共通サフィックス>` を組む（従来動作の後方互換）。
+
+共通サフィックスを「Deepmosaic - AI動画モザイク処理ソフト」→
+「Deepmosaic - 動画にモザイクをかけるAIソフト」に変更。移行前のトップは全角約 34 文字で、
+**切り詰められたうえ方向が不明**という二重の欠陥だった。ビルド後の全 11 ページの
+`<title>` を全角換算で測って 30 文字以内に収めてある（最長は `/spec/` の 26.5）。
+
+**削除したもの**:
+
+- `keywords` メタと `_data/lang/ja.json` の `keywords_seo` — Google は 2009 年に無視を
+  公言、Bing はスパム材料になりうると明言。加えて元の値は「モザイク編集ソフト」
+  「AI モザイク処理」など**方向を含まない語**ばかりで、目的に逆行していた。方向を
+  絞った語は JSON-LD の `keywords`（`_data/entity.yml`）へ移した
+- `hreflang`（ja / x-default の 2 行）— 別言語版が実在せず、同一 URL への自己参照は
+  Google に無視されるノイズ。英語版を出すときに実在の代替 URL を伴って復活させる
+
+**追加したもの**: `max-snippet:-1, max-image-preview:large, max-video-preview:-1`
+（AI Overviews は検索インデックスのスニペットを使うので、上限が外れると引用余地が広がる）、
+`twitter:title` / `twitter:description` / `og:image:alt` / `twitter:image:alt`、
+`page.og_image` の受け皿（将来「モザイク適用前 → 適用後」の OG 画像を出すため）。
+
+⚠️ **`noarchive` / `nocache` は追加しないこと。** Microsoft はこの 2 つを Bing Chat /
+Copilot での生成 AI 利用の可否として扱っており、入れた瞬間に Copilot から消える。
+`_layouts/default.html` と `robots.txt` の両方にこの注意を書いてある。
+
+`_data/lang/ja.json` の `meta_desc` も第 1 文を「モザイク処理を AI で自動化する」から
+「対象を AI が自動検出してモザイクをかける」に差し替えた。この値は JSON-LD の
+`description` に入る。
+
+### TICKET-SITE-32 の記録 — JSON-LD
+
+`@id` を付けたのが構造上いちばん効く。この include は `/` `/price/` `/spec/` の
+3 ページで展開されるが、`@id` が無いと **匿名ノードが 3 つ**できてクローラは同じアプリだと
+判断できない。ID を固定すると 3 ページの記述が 1 エンティティにマージされ、
+`publisher` から Organization の `@id` を参照してグラフが繋がる。
+
+`disambiguatingDescription` は schema.org の Thing プロパティで、定義が「似た項目と
+区別するための短い説明」。**今回の課題への直球**。日英を連結して入れている
+（LLM は言語をまたいで読むので分けるより取りこぼしが少ない）。
+`description`（マーケ用要約）とは schema.org の定義どおり役割を分け、片方に寄せていない。
+
+⚠️ ただし `disambiguatingDescription` は Google のリッチリザルトには**使われない**
+（効果不明）。JSON-LD を読む LLM に対する低コストな保険という位置づけで、これで誤認が
+直ると考えないこと。
+
+**意図的に入れなかったもの**:
+
+- `aggregateRating` — レビュー実体が無い。捏造は Google のスパムポリシー違反であり、
+  「検証できる数値だけを出す」（`_data/site.yml`）の原則にも反する
+- `softwareVersion` — DL URL が `/download/latest/windows` 固定で単一真実源が無く、
+  ハードコードすると必ず腐る
+- `Product` との多重型 — Google の商品リッチリザルトは `aggregateRating` を要求するので
+  表示面は増えず、Search Console に警告が積むだけ
+- `WebSite` + `SearchAction` — サイト内検索が無いので、動作しない URL テンプレートを
+  宣言することになる（虚偽の構造化データ）
+
+`sameAs` は `https://github.com/deepmosaic` のみ。API で Organization の実在を確認済み
+（このリポジトリのホスト元）。**`x.com/deepmosaic` は生存を確認する手段が無かったので
+入れていない** — head の `twitter:site` は `@deepmosaic` を宣言しているので、
+目視確認できたら `_includes/schema/organization.html` に追加すること。
+
+ビルド出力の JSON-LD 19 ブロック全てを `JSON.parse` に通して構文エラーゼロを確認した。
+
+### TICKET-SITE-33 の記録 — `llms.txt` / `robots.txt`
+
+**`llms.txt` / `llms-full.txt`**: どちらも front matter の `layout: null` が必須
+（`_config.yml` の `defaults` が `layout: default` を当てるため。TICKET-SITE-15 で
+robots.txt が HTML 化した事故と同じ原因）。`.txt` は kramdown の `markdown_ext` に
+含まれないので Markdown 変換はされず、`_config.yml` の変更も不要。
+
+`llms-full.txt` は **`_data/*.yml` の射影だけで組む**。ページ本文は Tailwind クラス入りの
+HTML で忠実な Markdown 化ができず、手書きすれば `_data` と二重管理になって必ず腐る。
+`_data` の値には表示用の `<br>` と実体参照 `&gt;` が混ざっているので、
+`replace: '<br>' → strip_html → 実体参照のデコード` の順で通している
+（`strip_html` は実体参照をデコードしないため、これを忘れると `&gt;` が残る。実際に残った）。
+
+⚠️ **`llms.txt` の実効性は「効果不明」。** 2026 年の計測では llms.txt ファイルの大半が
+AI から 1 度もリクエストされておらず、Google は「Search には不要」と明記、OpenAI の
+クローラ文書は言及していない。維持コストがほぼゼロなので置く、という位置づけ。
+**誤認訂正の主戦場は TICKET-SITE-24（Cloudflare の遮断解除）と HTML 本文。**
+
+**`robots.txt` はディレクティブを変更していない**（`User-agent: * / Allow: /` のまま）。
+個別ボットの明示 `Allow` ブロックを**あえて書いていない**のは、robots.txt が
+「最も限定的にマッチした User-agent グループ 1 つだけ」を適用し、名前付きグループが
+`*` を**置き換える**ため。個別ブロックを書くと、将来 `*` に Disallow を足したときに
+明示したボットだけがすり抜ける。全部 Allow の現状では機能差がゼロなので、事故の種だけが
+残る。方針と各ボットの分類（回答用 / 学習用）はコメントに記録した。
+
+`assets/robots.txt`（`User-Agent: * / Disallow:` だけの残骸）を削除。robots.txt は
+オリジン直下でしか読まれないので誰にも読まれておらず、将来「どっちが正か」を迷わせるだけだった。
 
 ## 2026-07-26 (2) - Fix: 刷新後のレビュー指摘の反映 + 料金プランをデザイン準拠へ
 

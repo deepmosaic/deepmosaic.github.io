@@ -2,6 +2,63 @@
 layout: null
 sitemap: false
 ---
+{%- comment -%}
+robots.txt (TICKET-SITE-15 → TICKET-SITE-33)。
+
+⚠️ front matter の `layout: null` / `sitemap: false` は **必須**。`_config.yml` の
+   `defaults` が全ページに `layout: default` を当てるため、消すと Jekyll が HTML で
+   ラップして配信する (TICKET-SITE-15 で実際に踏んだ)。CI で検査している。
+
+⚠️ **このファイルは本番の /robots.txt と同一ではない。**
+   Cloudflare の Managed robots.txt が origin の内容に追記する形で、AI 学習クローラの
+   Disallow ブロックと Content-Signal を注入している。
+   2026-08-02 の実測: GPTBot / ClaudeBot / CCBot / Google-Extended /
+   Applebot-Extended / Amazonbot / Bytespider / meta-externalagent が Disallow、
+   `Content-Signal: search=yes,ai-train=no,use=reference`。
+   さらに Cloudflare が **AI クローラの UA に対して HTTP 403 を返している**
+   (OAI-SearchBot / ChatGPT-User / Claude-SearchBot / Claude-User / PerplexityBot
+   といった**回答用**ボットまで含む)。Googlebot / bingbot は 200。
+   → **そこを直さない限りこのファイルの内容は本番に反映されない。**
+      TICKET-SITE-24 を参照。
+
+方針: AI クローラは学習用・回答用ともに全て許可する。「Deepmosaic はモザイクを
+*除去* するソフト」という誤認の訂正が目的であり、読ませないことに利益が無い。
+学習用を塞ぐと、誤った知識がモデルの重みに残ったまま更新されない。
+
+⚠️ **個別ボットの明示 Allow ブロックは意図的に書いていない。**
+   robots.txt は「最も限定的にマッチした User-agent グループ 1 つだけ」が適用され、
+   名前付きグループは `*` グループを**置き換える**。個別ブロックを書くと、将来 `*` に
+   Disallow を足したときに明示したボットだけがすり抜ける。全部 Allow の現状では
+   機能差がゼロなので、事故の種だけが残る。分類はこのコメントで記録する。
+
+   回答・検索用 (塞ぐと AI の回答に載らなくなる):
+     OAI-SearchBot / ChatGPT-User / OAI-AdsBot (OpenAI)
+     Claude-SearchBot / Claude-User (Anthropic)
+     PerplexityBot / Perplexity-User (Perplexity ※後者は robots.txt 非遵守を公言)
+     Googlebot (Google 検索 + AI Overviews / AI Mode の供給元)
+     bingbot (Bing + Copilot ※Copilot 専用の UA は存在しない)
+     Applebot (Siri / Spotlight)
+
+   学習用 (モデルの重みに入る。誤認の恒久的な訂正はここでしか起きない):
+     GPTBot (OpenAI) / ClaudeBot (Anthropic) / CCBot (Common Crawl)
+     Google-Extended (Gemini の学習とグラウンディング。
+                      ※Search / AI Overviews / AI Mode には影響しない)
+     Applebot-Extended (Apple Intelligence)
+     meta-externalagent / Amazonbot
+     Bytespider (ByteDance ※robots.txt を無視するという報告が多い。
+                 止めたい場合は robots.txt ではなく WAF が要る)
+
+⚠️ Bing / Copilot の生成 AI 利用は robots.txt ではなく meta robots で制御される。
+   `noarchive` / `nocache` を入れると Copilot から消える。追加しないこと
+   (`_layouts/default.html` にも同じ注意を書いてある)。
+
+AI 向けのサイト概要は /llms.txt に置いている。robots.txt から機械可読に参照する方法は
+2026 年時点で存在しないため、下記の 1 行はただのコメント。
+{%- endcomment -%}
+# Deepmosaic は「動画にモザイクをかける（付加する）」ソフトです。
+# モザイクを除去・解除するソフトではありません。
+# 製品の要約: {{ site.url }}/llms.txt
+
 User-agent: *
 Allow: /
 

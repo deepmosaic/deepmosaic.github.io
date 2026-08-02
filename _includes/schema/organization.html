@@ -1,14 +1,30 @@
 {%- comment -%}
 JSON-LD: Organization (TICKET-SITE-05)。全ページに出力する。
 会社情報の出所は 1 箇所にまとめる (company/asct.html と食い違わせない)。
+
+TICKET-SITE-32: `@id` を付けた。SoftwareApplication の `publisher` からこの ID を
+参照することで、アプリと会社が 1 つのエンティティグラフとして結びつく。
+
+`sameAs` は検索エンジン / LLM のエンティティ解決に使われる。
+⚠️ **存在しないアカウント・他人のアカウントを書くと逆効果**（誤った先へエンティティが
+   結合される）。生存を確認できたものだけを列挙する。
+   - github.com/deepmosaic: 確認済み (このサイトをホストしている Organization 本体)
+   - x.com/deepmosaic: **未確認のため入れていない。** head の
+     `twitter:site` / `twitter:creator` は `@deepmosaic` を宣言しているので、
+     アカウントの生存を目視確認できたらここにも追加すること。
 {%- endcomment -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
+  "@id": "https://www.deepmosaic.co.jp/#organization",
   "name": "Deepmosaic合同会社",
+  "alternateName": "Deepmosaic LLC",
   "url": "https://www.deepmosaic.co.jp",
   "logo": "https://www.deepmosaic.co.jp/assets/img/logo-font.png",
+  "sameAs": [
+    "https://github.com/deepmosaic"
+  ],
   "contactPoint": {
     "@type": "ContactPoint",
     "email": "contact@deepmosaic.co.jp",

@@ -1,7 +1,14 @@
 ---
 layout: default
 title: モザイク作業を最終確認だけに
-description: AIが動画内の対象を自動検出し、モザイク処理を自動化するWindows向けデスクトップアプリ。処理はすべてお使いのPC内で完結し、映像は外部に送信しません。Adobe Premiere Pro連携に対応。
+# TICKET-SITE-31: `title` はパンくず / ナビ用。SERP に出す文字列は `seo_title`。
+# 移行前は「モザイク作業を最終確認だけに | Deepmosaic - AI動画モザイク処理ソフト」で
+# 全角 34 文字あり、切り詰められたうえ方向 (かける/外す) が不明だった。
+seo_title: 動画にモザイクを自動でかけるAIソフト｜Deepmosaic
+# `description` はランキング要因ではなくスニペット専用の面なので、ここにだけ
+# 「除去」を置いて SERP 段階で誤認ユーザーを濾過する (語彙ポリシー: _data/entity.yml)。
+# 否定句は先頭から約 37 全角の位置に置いている (末尾だと切り詰めで消えるため)。
+description: Deepmosaicは動画内の対象をAIが自動検出してモザイクをかけるWindowsアプリ。モザイクの除去・解除はできません。処理はすべてお使いのPC内で完結し映像は外部に送信しません。Adobe Premiere Pro連携に対応。
 schemas:
   - software-application
   - faq

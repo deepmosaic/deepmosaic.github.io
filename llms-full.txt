@@ -1,0 +1,167 @@
+---
+layout: null
+sitemap: false
+---
+{%- comment -%}
+llms-full.txt (TICKET-SITE-33)。
+
+⚠️ **`_data/*.yml` の射影だけで組む。ページ本文を手で写さない。**
+   ページ本体は Tailwind クラス入りの HTML で忠実な Markdown 化ができず、手書きすると
+   `_data` と二重管理になって必ず腐る (リポジトリの単一真実源の原則に反する)。
+   ここに書きたい情報が `_data` に無いなら、まず `_data` に足すこと。
+
+⚠️ `_data` の値には表示用の HTML (`<br>` `<strong>`) と実体参照 (`&gt;`) が混ざっている。
+   プレーンテキストにするため
+   `replace: '<br>' → strip_html → 実体参照のデコード` の順で必ず通すこと。
+     - `<br>` の置換を strip_html より先にしないと、区切られた語が連結される
+     - `strip_html` は実体参照をデコードしないので、別途 `&gt;` `&lt;` `&amp;` を戻す
+       (`&amp;` を最後にするのは `&amp;gt;` を二重デコードしないため)
+   CI (TICKET-SITE-36) が残留を検査している。
+
+⚠️ `layout: null` は必須 (理由は llms.txt のコメントを参照)。
+
+llms-full.txt は llms.txt 仕様の一部ではなく慣習。実効性は llms.txt 以下 (効果不明)。
+**生成物なので維持コストがゼロだから置いている**、という位置づけ。
+{%- endcomment -%}
+{%- assign E = site.data.entity -%}
+{%- assign U = site.url -%}
+{%- assign SP = site.data.spec -%}
+{%- assign D = site.data.disclosure -%}
+{%- assign M = site.data.mosaic -%}
+# {{ E.name }} — 完全版 / Full reference
+
+> {{ E.definition.ja }}
+> {{ E.definition.en }}
+
+生成日 / Generated: {{ site.time | date: '%Y-%m-%d' }} — 出典 / Source: {{ U }}
+
+## 1. 製品の定義 / Product definition
+
+{{ E.disambiguation.ja }}
+
+{{ E.disambiguation.en }}
+
+### できること / What it does
+{% for c in E.can %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+### できないこと / What it does NOT do
+{% for c in E.cannot %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+### 名前の由来 / Name origin
+
+{{ E.name_origin.ja }}
+
+{{ E.name_origin.en }}
+
+### 混同されやすい理由 / Why it gets confused
+{% for r in E.confusion_reasons %}
+- {{ r }}
+{%- endfor %}
+
+## 2. モザイクの設定 / Mosaic settings
+
+適用範囲 / Scope of application:
+{% for s in M.scopes %}
+- {{ s.key }}: {{ s.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+{{ M.priority_note | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+
+設定項目 / Controls:
+{% for c in M.controls %}
+- {{ c.key }}: {{ c.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+{{ M.note | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+
+## 3. 動作環境 / System requirements
+
+Windows:
+{% for r in SP.windows %}
+- {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
+
+処理速度の実測値 / Measured throughput: {{ SP.performance_note }}
+{% for r in SP.performance %}
+- {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+{{ SP.performance_footnote }}
+
+対応フォーマット / Supported formats:
+{% for r in SP.formats %}
+- {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+通信 / Network:
+{% for r in SP.network %}
+- {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+
+## 4. 料金 / Pricing
+
+通貨 / Currency: {{ site.data.plans.currency }}（{{ site.data.plans.tax_note }}）
+{% for t in site.data.plans.tiers %}{% if t.public %}
+### {{ t.name }} — {{ site.data.plans.currency_symbol }}{{ t.price_display }}
+
+{{ t.summary }}
+{%- for s in t.specs %}
+- {{ s.label }}: {{ s.value | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+{%- for b in t.bullets %}
+- {{ b | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- endfor %}
+{% endif %}{% endfor %}
+{{ site.data.plans.rollout_note }}
+
+{{ site.data.plans.grandfather_note }}
+
+## 5. 通信内容の開示 / Data transmission disclosure
+
+送信するもの / Sent:
+{% for i in D.network.sent %}
+- {{ i.item }}{% if i.note %}（{{ i.note }}）{% endif %}
+{%- endfor %}
+
+送信しないもの / Never sent:
+{% for i in D.network.not_sent %}
+- {{ i.item }}{% if i.note %}（{{ i.note }}）{% endif %}
+{%- endfor %}
+
+オフラインでの検証手順 / How to verify offline:
+{% for s in D.offline_steps %}
+1. {{ s }}
+{%- endfor %}
+
+## 6. 制限事項 / Limitations
+
+{{ D.responsibility }}
+
+検出精度が落ちやすいケース / Cases where accuracy drops:
+{% for w in D.weaknesses %}
+- {{ w.key }}: {{ w.val }}
+{%- endfor %}
+
+{{ D.accuracy_note }}
+
+## 7. よくある質問 / FAQ
+{% for item in site.data.faq %}
+### Q. {{ item.q }}
+
+A. {{ item.a | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{% endfor %}
+## 8. リンク / Links
+
+- Home: {{ U }}/
+- About mosaic removal: {{ U }}/mosaic-removal/
+- Documentation: {{ U }}/docs/
+- Pricing: {{ U }}/price/
+- System requirements: {{ U }}/spec/
+- Company: {{ U }}/company/about
+- llms.txt: {{ U }}/llms.txt

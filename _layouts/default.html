@@ -15,16 +15,45 @@ TICKET-SITE-05: description をページ単位にした。移行前は全ペー�
 という規約が守られていない状態)。各ページの front matter に `description:` を書く。
 {%- endcomment -%}
 {%- assign page_desc = page.description | default: site.data.lang.ja.meta_desc -%}
-<title>{{ page.title }} | Deepmosaic - AI動画モザイク処理ソフト</title>
-<meta name="description" content="{{ page_desc }}">
-<meta name='keywords' content="{{ site.data.lang.ja.keywords_seo }}">
-{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% endif %}
+{%- comment -%}
+TICKET-SITE-31: `title` はパンくず JSON-LD (`schema/breadcrumb.html`) と可視パンくずが
+使うので、SEO 用の文字列と兼用できない。`seo_title` を別キーとして導入し、あれば
+それを丸ごと使い、無ければ `title` + 共通サフィックスを組む (従来動作の後方互換)。
 
-<!-- Canonical & Hreflang -->
+⚠️ Google JP の切り詰めは全角 30 文字前後。サフィックスだけで約 21.5 全角あるので、
+   `title` が長いページは必ず `seo_title` を書くこと。移行前のトップは
+   「モザイク作業を最終確認だけに | Deepmosaic - AI動画モザイク処理ソフト」= 約 34 全角で、
+   **切り詰められたうえ方向が不明**という二重の欠陥だった。
+{%- endcomment -%}
+{%- capture default_title -%}{{ page.title }}｜{{ site.data.site.seo.brand_suffix }}{%- endcapture -%}
+{%- assign seo_title = page.seo_title | default: default_title -%}
+<title>{{ seo_title | escape }}</title>
+<meta name="description" content="{{ page_desc | escape }}">
+{%- comment -%}
+TICKET-SITE-31: keywords メタは削除した。Google は 2009 年に無視を公言し、Bing は
+「スパム判定の材料になりうる」と明言している。加えて元の値 (`keywords_seo`) は
+「モザイク編集ソフト」「AI モザイク処理」など**方向を含まない語**で構成されており、
+誤認識の是正という目的に逆行していた。方向を絞ったキーワードは JSON-LD の
+`keywords` (`_data/entity.yml` の `keywords`) に移した。
+
+`max-snippet:-1` はスニペット長の上限を外すディレクティブ。Google の AI Overviews /
+AI Mode は検索インデックスのスニペットを使うため、上限が外れると引用できる範囲が広がる。
+
+⚠️ **`noarchive` / `nocache` は絶対に追加しないこと。** Microsoft はこの 2 つを
+   Bing Chat / Copilot での生成 AI 利用の可否として扱っており、入れた瞬間に
+   Copilot から消える。robots.txt では制御できない層。
+{%- endcomment -%}
+{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">{% endif %}
+
+{%- comment -%}
+TICKET-SITE-31: hreflang (ja / x-default) を削除した。hreflang は**別言語版が実在する
+とき**に相互参照するためのもので、単一言語サイトで同一 URL を 2 本自己参照しても
+Google は無視する (ノイズ)。言語は <html lang> と og:locale が伝える。
+英語版を出すときに、実在する代替 URL を伴った形で復活させること。
+{%- endcomment -%}
+<!-- Canonical -->
 {% assign canonical_path = page.url | replace: 'index.html', '' %}
 <link rel="canonical" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
-<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
-<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
 
 <!-- Bing Web Master -->
 <meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
@@ -62,24 +91,46 @@ TICKET-SITE-05: description をページ単位にした。移行前は全ペー�
   gtag('config', 'G-6EKGBQ8QWS');
 </script>
 
+{%- comment -%}
+TICKET-SITE-31: `og:image` をページ上書き可能にした (`page.og_image`)。将来
+「モザイク適用前 → 適用後」の OG 画像を作れば、SNS / AI のプレビューでの誤認識に
+最も効くので受け皿を先に用意している。既定は `_data/site.yml` の `seo.og_image`。
+
+`og:type` は全ページ website のまま**据え置く**。Google はランキングに使わず、
+X / LINE / Slack / Discord は og:type と無関係に summary_large_image を描画するため、
+article へ分けても得るものが無い。
+
+`og:image:alt` / `twitter:image:alt` は移行前に出ていなかった。スクリーンリーダーが
+読む唯一の画像説明であり、文言に方向語を入れられるので誤認識の是正にも効く。
+{%- endcomment -%}
+{%- assign og_image = page.og_image | default: site.data.site.seo.og_image -%}
 <!-- Open Graph -->
 <meta property="og:type" content="website" />
-<meta property="og:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+<meta property="og:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:title" content="{{ page.title }} | Deepmosaic" />
-<meta property="og:description" content="{{ page_desc }}" />
+<meta property="og:image:alt" content="{{ site.data.site.seo.og_image_alt | escape }}" />
+<meta property="og:title" content="{{ seo_title | escape }}" />
+<meta property="og:description" content="{{ page_desc | escape }}" />
 <meta property="og:url" content="https://www.deepmosaic.co.jp{{ canonical_path }}" />
 <meta property="og:site_name" content="Deepmosaic" />
 <meta property="og:locale" content="{{ site.data.lang.ja.og_lang }}" />
 <meta property="fb:app_id" content="360882787795999" />
 
+{%- comment -%}
+TICKET-SITE-31: X は twitter:title / twitter:description が無ければ og:* に
+フォールバックするので移行前も壊れてはいなかったが、フォールバック仕様に依存しない
+形で明示する。
+{%- endcomment -%}
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@deepmosaic">
 <meta name="twitter:domain" content="www.deepmosaic.co.jp" />
 <meta name="twitter:creator" content="@deepmosaic">
-<meta name="twitter:image" content="https://www.deepmosaic.co.jp/assets/img/main_logo_og_1200x630.jpg" />
+<meta name="twitter:title" content="{{ seo_title | escape }}">
+<meta name="twitter:description" content="{{ page_desc | escape }}">
+<meta name="twitter:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
+<meta name="twitter:image:alt" content="{{ site.data.site.seo.og_image_alt | escape }}" />
 
 {%- comment -%}
 TICKET-SITE-05: 構造化データを `_includes/schema/*` に分離し、ページの front matter の

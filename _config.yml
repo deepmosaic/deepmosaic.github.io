@@ -1,6 +1,8 @@
 # Site settings
 title: Deepmosaic
-description: "AIで動画のモザイク処理を自動化するデスクトップアプリケーション"
+# TICKET-SITE-31: 「モザイク処理」は日本語として方向 (かける/外す) を含まないため、
+# 「かける」で確定させた。この値は jekyll-feed の feed.xml に出る。
+description: "動画に映った対象をAIが自動検出してモザイクをかけるWindows向けデスクトップアプリケーション"
 url: "https://www.deepmosaic.co.jp"
 baseurl: ""
 lang: ja

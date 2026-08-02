@@ -12,18 +12,56 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
 `AggregateOffer` は単価の範囲を示すものなので単価で揃える。
 
 `operatingSystem` は macOS 版リリース時に更新する (TICKET-MAC-405)。
+
+── TICKET-SITE-32: 誤認訂正のためのプロパティを追加 ────────────────────
+
+`@id` — この include は `/` `/price/` `/spec/` の 3 ページで展開されるが、`@id` が
+無いと **匿名ノードが 3 つ**できてクローラは同じアプリだと判断できない。ID を固定すると
+3 ページの記述が 1 エンティティにマージされる。
+
+`disambiguatingDescription` — schema.org の Thing プロパティで、定義が「似た項目と
+区別するための短い説明」。**「モザイクを除去するソフトだと誤認される」という課題への
+直球**で、このファイルで最も重要な 1 行。日英を連結して入れる (LLM は言語をまたいで
+読むので、分けるより取りこぼしが少ない)。
+
+⚠️ **期待値は下げておくこと。** `disambiguatingDescription` は Google のリッチリザルトに
+   使われない (効果不明)。JSON-LD を読む LLM に対する低コストな保険という位置づけで
+   あって、これで誤認が直ると考えないこと。主戦場は HTML 本文と Cloudflare の
+   クローラ許可 (TICKET-SITE-24)。
+
+⚠️ `description` は従来どおり `meta_desc` (マーケ用の要約) を使い、
+   `disambiguatingDescription` (曖昧性解消) と役割を分ける。schema.org の定義どおりの
+   使い分けなので、片方に寄せない。
+
+⚠️ 文面は `_data/entity.yml` を唯一の出所にする。ここに直書きするとトップページ本文・
+   llms.txt と食い違い、訂正として機能しなくなる。
+
+**意図的に入れていないもの:**
+  - `aggregateRating` — レビュー実体が無い。捏造は Google のスパムポリシー違反であり、
+    「検証できる数値だけを出す」(`_data/site.yml`) の原則にも反する
+  - `softwareVersion` — DL URL が `/download/latest/windows` 固定で単一真実源が無く、
+    ハードコードすると必ず腐る (plans.yml のハードコードを潰したのと同じ理由)
+  - `Product` との多重型 — Google の商品リッチリザルトは `aggregateRating` を要求する
+    ため表示面は増えず、Search Console に警告が積むだけ
 {%- endcomment -%}
+{%- assign E = site.data.entity -%}
 {%- assign public_plans = site.data.plans.tiers | where: "public", true -%}
 {%- assign sorted = public_plans | sort: "price" -%}
 {%- assign low = sorted | first -%}
 {%- assign high = sorted | last -%}
+{%- capture disambig -%}{{ E.disambiguation.ja }} {{ E.disambiguation.en }}{%- endcapture -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  "name": "Deepmosaic Desktop",
-  "operatingSystem": "Windows 10, Windows 11",
-  "applicationCategory": "MultimediaApplication",
+  "@id": "https://www.deepmosaic.co.jp/#software",
+  "name": {{ E.product_name | jsonify }},
+  "alternateName": {{ E.alternate_names | jsonify }},
+  "operatingSystem": {{ E.os | jsonify }},
+  "applicationCategory": {{ E.category | jsonify }},
+  "applicationSubCategory": {{ E.subcategory | jsonify }},
+  "softwareRequirements": {{ E.software_requirements | jsonify }},
+  "inLanguage": "ja",
   "offers": {
     "@type": "AggregateOffer",
     "priceCurrency": {{ site.data.plans.currency | jsonify }},
@@ -32,6 +70,16 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
     "offerCount": {{ public_plans | size }}
   },
   "description": {{ site.data.lang.ja.meta_desc | jsonify }},
+  "disambiguatingDescription": {{ disambig | strip | jsonify }},
+  "featureList": {{ E.can | map: "ja" | jsonify }},
+  "keywords": {{ E.keywords | jsonify }},
+  "screenshot": {{ E.screenshot | prepend: "https://www.deepmosaic.co.jp" | jsonify }},
+  "softwareHelp": {
+    "@type": "WebPage",
+    "url": "https://www.deepmosaic.co.jp/docs/"
+  },
+  "downloadUrl": {{ site.data.lang.ja.app_download_link | jsonify }},
+  "publisher": { "@id": "https://www.deepmosaic.co.jp/#organization" },
   "url": "https://www.deepmosaic.co.jp"
 }
 </script>

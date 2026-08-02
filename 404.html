@@ -1,16 +1,25 @@
 ---
 layout: default
-title: Page Not Found
+title: ページが見つかりません
+seo_title: ページが見つかりません（404）｜Deepmosaic
+description: お探しのページは見つかりませんでした。Deepmosaicのトップページ、ドキュメント、料金ページからお探しください。
 noindex: true
 sitemap: false
 ---
 
+{%- comment -%}
+  TICKET-SITE-31: `description` を追加した。移行前はこのページだけ `description` が
+  無く、CLAUDE.md の「全ページに layout / title / description を必ず指定 (SEO)」に
+  唯一違反していた (noindex なので SEO 上の実害は無いが、規約の穴を残すと次の
+  ページ追加で再発する)。あわせて本文の英文を日本語化した。
+{%- endcomment -%}
 {% include header.html %}
 
 <section class="mx-auto max-w-2xl px-4 py-24 text-center">
     <h1 class="text-4xl font-bold text-ink">404 Not Found</h1>
-    <h4 class="text-lg text-ink-3 mt-4">This is not the web page you are looking for.<br><a href="/">Go back to the top page.</a></h4>
-    <img class="mx-auto max-w-full h-auto mt-8" src="/assets/img/ufo_ushi.webp" alt="UFOと牛のイラスト">
+    <p class="mt-4 text-lg text-ink-3">お探しのページは見つかりませんでした。</p>
+    <p class="mt-2 text-[14px] text-ink-3"><a href="/" class="text-accent-soft hover:underline">トップページ</a>・<a href="/docs" class="text-accent-soft hover:underline">ドキュメント</a>・<a href="/price" class="text-accent-soft hover:underline">料金</a>からお探しください。</p>
+    <img class="mx-auto max-w-full h-auto mt-8" src="/assets/img/ufo_ushi.webp" alt="UFOと牛のイラスト" width="636" height="592" loading="lazy" decoding="async">
 </section>
 
 {% include footer.html %}

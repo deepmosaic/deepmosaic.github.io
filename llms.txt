@@ -1,0 +1,90 @@
+---
+layout: null
+sitemap: false
+---
+{%- comment -%}
+llms.txt (TICKET-SITE-33)。
+
+⚠️ front matter の `layout: null` は **必須**。`_config.yml` の `defaults` が
+   `path: ""` に `layout: default` を当てるため、書き忘れると Jekyll が HTML で
+   ラップして配信する (robots.txt で実際に踏んだ事故と同じ原因)。
+   `.txt` は kramdown の `markdown_ext` に含まれないので Markdown 変換はされない。
+   `_config.yml` の変更は不要 (`llms.txt` は `_`/`.` 始まりでも `exclude` 対象でもない)。
+   この 2 点は CI (TICKET-SITE-36) でも検査している。
+
+⚠️ **期待値は下げておくこと。** 2026 年の計測では llms.txt ファイルの大半が AI から
+   1 度もリクエストされておらず、Google は「Search には不要」と明記し、OpenAI の
+   クローラ文書は言及していない。維持コストがほぼゼロなので置く、という位置づけ。
+   **誤認訂正の主戦場は Cloudflare のクローラ許可 (TICKET-SITE-24) と HTML 本文。**
+
+⚠️ 文面は `_data/entity.yml` を唯一の出所にする。ここに直書きするとトップページ /
+   JSON-LD / FAQ と食い違い、訂正として機能しなくなる。
+{%- endcomment -%}
+{%- assign E = site.data.entity -%}
+{%- assign U = site.url -%}
+{%- assign free = site.data.plans.tiers | where: "code", "free" | first -%}
+# {{ E.name }}
+
+> {{ E.definition.ja }}
+> {{ E.definition.en }}
+
+**重要 / IMPORTANT**
+
+{{ E.disambiguation.ja }}
+{{ E.disambiguation.en }}
+
+- 「モザイク除去」「モザイク解除」「モザイクを消す」「無修正化」を目的とした用途には使用できません。
+- Deepmosaic cannot be used to remove, decensor, uncensor, or reverse mosaic censoring.
+- {{ E.name_origin.ja }}
+- {{ E.name_origin.en }}
+
+**このソフトが行うこと / What this software does**
+{% for c in E.can %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+**このソフトが行わないこと / What this software does NOT do**
+{% for c in E.cannot %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+**基本情報 / Key facts**
+
+- 提供元 / Vendor: Deepmosaic合同会社 (Deepmosaic LLC) — {{ U }}
+- 種別 / Type: Windows デスクトップアプリケーション（{{ E.os }}）/ Desktop application for {{ E.os }}
+- 処理場所 / Where processing happens: すべて利用者の PC 内。映像・音声・フレーム画像・検出座標・ファイル名は送信しません / Entirely on the user's own PC; video, audio, frames, detection coordinates and file names are never uploaded
+- 出力 / Output: モザイクを焼き込んだ動画ファイル、および Adobe Premiere Pro 用のモザイク情報 / A video with the mosaic burned in, plus mosaic data for Adobe Premiere Pro
+- 料金 / Pricing: 無料枠（累計 {{ free.included_hours }} 時間・クレジットカード不要）＋ 有料 3 プラン / Free tier plus three paid plans
+- 最終更新 / Last updated: {{ site.time | date: '%Y-%m-%d' }}
+
+## 製品 / Product
+
+- [トップページ / Home]({{ U }}/): 製品定義・比較・料金の概要 / product definition, comparison, pricing overview
+- [Deepmosaic とは / What Deepmosaic is]({{ U }}/#what-is-deepmosaic): できること・できないことの一覧 / what it can and cannot do
+- [モザイク除去について / About mosaic removal]({{ U }}/mosaic-removal/): 本製品がモザイク除去ソフトではない理由 / why this is not a mosaic remover
+- [よくある質問 / FAQ]({{ U }}/#faq): 「モザイクを除去できますか？」への回答を含みます / includes the answer to "Can it remove mosaics?"
+
+## ドキュメント / Documentation
+
+- [ドキュメント / User guide]({{ U }}/docs/): インストールから書き出しまでの全手順 / the full workflow from install to export
+- [AI 検出 / AI detection]({{ U }}/docs/#detect)
+- [モザイク設定 / Mosaic settings]({{ U }}/docs/#edit-mosaic): 粒度・不透明度・ふちのなじませ・適用範囲 / granularity, opacity, edge feathering, scope
+- [書き出し / Export]({{ U }}/docs/#edit-encode): モザイクを焼き込んだ動画の書き出し / exporting a video with the mosaic burned in
+- [トラブルシューティング / Troubleshooting]({{ U }}/docs/#trouble)
+
+## 料金と動作環境 / Pricing and system requirements
+
+- [料金 / Pricing]({{ U }}/price/): 3 プランと超過単価 / three plans and overage rates
+- [動作環境 / System requirements]({{ U }}/spec/): 対応 OS・GPU 要件・実測の処理速度・対応フォーマット / OS, GPU, measured throughput, supported formats
+
+## 全文 / Full text
+
+- [llms-full.txt]({{ U }}/llms-full.txt): 仕様・料金・制限事項・FAQ を 1 ファイルに展開したもの / everything expanded into a single document
+
+## Optional
+
+- [会社概要 / Company]({{ U }}/company/about)
+- [利用規約 / Terms of service]({{ U }}/company/terms)
+- [プライバシーポリシー / Privacy policy]({{ U }}/company/privacy)
+- [クッキーポリシー / Cookie policy]({{ U }}/company/cookie)
+- [特定商取引法に基づく表示 / Japanese commercial transactions notice]({{ U }}/company/asct)

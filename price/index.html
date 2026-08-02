@@ -1,7 +1,11 @@
 ---
 layout: default
 title: 料金
-description: Deepmosaicの料金プラン。Light 月額2,980円 / Pro 月額9,800円 / Enterprise 1シート月額8,000円（いずれも税別）。上限時間と超過単価を明記しています。無料プランは累計6時間分まで、クレジットカード不要。
+# TICKET-SITE-31: 先頭に製品カテゴリを足した。`title` が「料金」と短いので
+# 既定サフィックス (全角 24.5 文字) で収まる。`seo_title` は不要。
+# ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理に
+#    なる唯一の箇所。料金を変えたらここも直すこと。
+description: 動画にモザイクをかける作業を自動化するDeepmosaicの料金プラン。Light 月額2,980円 / Pro 月額9,800円 / Enterprise 1シート月額8,000円（いずれも税別）。上限時間と超過単価を明記しています。無料プランは累計6時間分まで、クレジットカード不要。
 schemas:
   - software-application
   - breadcrumb
