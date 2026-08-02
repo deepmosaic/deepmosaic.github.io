@@ -77,13 +77,18 @@ schemas:
           {%- comment -%}
             TICKET-SITE-20: 有料プランの枠は `/price/` を唯一の出所にする。
             ここに時間数を書くと料金改定で必ず片方だけ古くなる。
+
+            TICKET-SITE-CONTRACT-SSOT: 契約本数も同じ理由でページに直書きしない。
+            文の組み立ては `_includes/contract-limits.html`、数値の出所は
+            `_data/plans.yml` の `max_contracts` だけ (同じ文が下の「使用時間の計測」
+            にもあるため、直書きすると片方だけ古くなる)。
           {%- endcomment -%}
           <p>アプリの利用にはログインが必要です。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。支払いはクレジットカードに対応しています。</p>
           <ul>
             <li>無料: 累計6時間分までの動画インポート（クレジットカードの登録は不要）</li>
             <li>有料プラン: プランごとの込み時間は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください</li>
           </ul>
-          <p>上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（Light は最大 3 契約、Pro は最大 2 契約）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは、有料プランの動画インポートに上限はありません。</p>
+          <p>上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは、有料プランの動画インポートに上限はありません。</p>
         </div>
       </section>
 
@@ -445,9 +450,14 @@ schemas:
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">使用時間の計測</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
           <ul>
+            {%- comment -%}
+              TICKET-SITE-CONTRACT-SSOT: 契約本数は `_includes/contract-limits.html`
+              経由で `_data/plans.yml` の `max_contracts` から組み立てる。
+              上の「ログインとライセンス」と同じ文なので直書きしない。
+            {%- endcomment -%}
             <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
             <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません</li>
-            <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（Light は最大 3 契約、Pro は最大 2 契約）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>）</li>
+            <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>）</li>
             <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください</li>
           </ul>
         </div>

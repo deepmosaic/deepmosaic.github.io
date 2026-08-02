@@ -10,6 +10,11 @@ JSON-LD: FAQPage (TICKET-SITE-05)。
 あるのは Product/Offer・BreadcrumbList・Article の 3 つ。
 
 文字列は `jsonify` でエスケープする (引用符・改行を含んでも壊れない)。
+
+回答文は表示本体と同じ `_includes/faq-answer.html` を通してから `jsonify` する
+(TICKET-SITE-CONTRACT-SSOT)。`_data/faq.yml` は Liquid を通らないためプラン条件の
+実数はプレースホルダで書かれているが、**その差し込みをここにも書くと表示側と
+二重管理になる**ので、置換ロジックは共通の include だけが持つ。
 {%- endcomment -%}
 <script type="application/ld+json">
 {
@@ -17,12 +22,13 @@ JSON-LD: FAQPage (TICKET-SITE-05)。
   "@type": "FAQPage",
   "mainEntity": [
     {%- for item in site.data.faq %}
+    {%- capture answer -%}{% include faq-answer.html a=item.a %}{%- endcapture %}
     {
       "@type": "Question",
       "name": {{ item.q | jsonify }},
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": {{ item.a | jsonify }}
+        "text": {{ answer | jsonify }}
       }
     }{% unless forloop.last %},{% endunless %}
     {%- endfor %}

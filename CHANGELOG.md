@@ -1,5 +1,107 @@
 # CHANGELOG
 
+## 2026-08-02 (9) - Feature: `_data/plans.yml` と Supabase `plan_catalog` の乖離を CI が検知する (TICKET-SITE-CONTRACT-SSOT / 案B)
+
+契約本数の上限 (`max_contracts`) / 込み時間 / 月額の **真の SSOT は Supabase の
+`plan_catalog`**。静的サイトは Supabase を読めないので `_data/plans.yml` に写しを置いて
+いる。写しである以上いつか必ず乖離し、乖離したまま公開すると **実在しない契約条件を
+広告する**ことになる。人手のレビューに頼らず機械で気付けるようにした。
+
+同じバッチの案C（サイト内に散っていた `max_contracts` の手書き 5 箇所を
+`_data/plans.yml` の 1 箇所へ集約）と対になる。**C で重複を 1 点に絞り、B でその 1 点を
+機械監視する** — 重複を最小化してから守る、という順序。
+
+### 追加・変更したファイル
+
+- `scripts/check-plan-catalog.mjs` — Worker の `GET /plan-catalog?livemode=true` を叩いて
+  `_data/plans.yml` と突き合わせる CLI
+- `src/lib/plan-catalog.js` — 突き合わせの純ロジック + fetch ラッパ。**例外を投げず**
+  `status` で失敗種別を返す（呼び出し側が「落とす / 素通しする」を判断できるように）
+- `src/lib/plan-catalog.test.js` — 上記の回帰テスト。`npm test` の glob
+  (`node --test src/lib/*.test.js`) に自動で乗るので `package.json` は変更なし
+- `src/lib/plans-yml.js` — plans.yml の極小パーサ。**`pricing.test.js` の中にあったものを
+  切り出した**。読み手を 2 つ持つと「片方だけ直して片方が古い」が起き、このチケットが
+  潰そうとしている構図そのものになるため。`pricing.test.js` は import に置き換え
+  （`assert.ok` → `throw new Error` に変えただけで、検出する記法も文面も同じ）
+- `.github/workflows/jekyll.yml` — 既存の `Verify build output` ステップの末尾で
+  `node scripts/check-plan-catalog.mjs || fail=1` を呼ぶ。**新規ステップを足さず既存に
+  寄せた**のは、ずれを検知しても他の検査結果をまとめて出してから終わらせるため
+  （`fail` 変数に集約する既存の作法をそのまま使う）
+- `_data/plans.yml` — `max_contracts` のキー凡例に、突き合わせを行うスクリプト名と
+  「到達できないときは素通しする」という方針を追記（コメントのみ・値は変更なし）
+
+### ⚠️ デプロイを外部サービスの可用性に人質に取らせない
+
+終了コードの方針:
+
+| 状況 | 挙動 |
+|---|---|
+| シークレット未設定 | `::warning::` → **exit 0** |
+| ネットワーク断 / タイムアウト（10 秒） | `::warning::` → **exit 0** |
+| 5xx | `::warning::` → **exit 0** |
+| 401 / 403（鍵が無効・失効） | `::warning::` → **exit 0**（監視が効いていないと分かる文面にする） |
+| sandbox が返った / 0 件 / 形が違う | `::warning::` → **exit 0** |
+| catalog に列が無い | `::warning::` → その項目だけ飛ばして続行 |
+| **取得に成功して値が食い違った** | `::error::` → **exit 1** |
+
+Supabase や Worker が落ちている間サイトを更新できない、という状態は作らない。
+**落とすのは「取得できて、食い違ったとき」だけ。**
+
+### 突き合わせる項目と単位
+
+| `_data/plans.yml` | `plan_catalog` |
+|---|---|
+| `included_hours` × 60 | `included_minutes`（シート課金は `included_minutes_per_seat`） |
+| `price` | `monthly_price_jpy` |
+| `max_contracts` | `max_contracts` |
+| `min_seats` | `min_seats` |
+
+**比較は「分」で行う。** 時間に割ってから比べると割り切れない値で浮動小数の誤差が入り、
+一致しているのに落ちる／逆に見逃す。
+
+**合計時間（Light 15h / Pro 80h）は突き合わせない。** `included_hours × max_contracts` の
+導出値でどこにも手書きされていないため、元の 2 つが合っていれば必ず合う。
+
+サイトに載っているのに catalog に無いプランは **落とす**（申し込めないプランの広告）。
+逆に catalog にあってサイトに無いプランは **落とさない** — `pro_legacy_unlimited` の
+ような `is_public=false` の枠があるため。`is_public=true` のときだけ warning を出す。
+
+### シークレットは未登録（要対応）
+
+`gh secret list` で確認したところ `deepmosaic/deepmosaic.github.io` にリポジトリ
+シークレットは 1 件も無い。**`SUPABASE_PROXY_API_KEY` を登録するまでこの検査は毎回
+skip される**（CI は緑のまま＝デプロイは止まらないが、乖離も検知できない）。
+登録して初めて監視が効く。値は Worker `deepmosaic-supabase-proxy` の `PROXY_API_KEY`。
+
+### 採らなかった案
+
+**案A（ビルド時に catalog を取得して `_data/` を生成）** — 却下。サイトのデプロイが
+Supabase の可用性に縛られる。フォールバック値を置けば回避できるが、**それはまさに
+今潰そうとしている重複そのもの**で自己矛盾する。加えてビルド結果が実行時刻に依存し、
+再現性が失われる。
+
+**案B 単独** — 不十分。ドリフトは検知できるが **サイト内の重複 5 箇所はそのまま残る**。
+1 箇所直して 4 箇所忘れる事故は CI が赤くなるまで気付けず、直す手間も 5 倍のまま。
+
+**案C 単独** — 不十分。サイト内の重複は消えるが、**Supabase とサイトの乖離**
+（いちばん恐れている「実在しない条件を広告する」事故）を検知できない。
+
+### 検証（ローカル）
+
+実鍵を使わずにスタブサーバ（`127.0.0.1:8791`、live の `plan_catalog_seed.sql` と同じ行を
+返す）を立て、ダミーの `SUPABASE_PROXY_API_KEY` と `PLAN_CATALOG_URL` の上書きで
+全分岐を通した。`PLAN_CATALOG_URL` は **このローカル検証専用**で CI では設定しない。
+
+- 一致 → exit 0 ／ `max_contracts` をずらす → exit 1 ／ 込み時間をずらす → exit 1
+- 401 / 503 / 到達不能 / sandbox / 0 件 / 列なし → いずれも `::warning::` で exit 0
+- `_data/plans.yml` の Light を `max_contracts: 3` → `4` に改ざんして CLI と `npm test`
+  の両方が落ちることを確認し、md5 照合で元に戻した
+- 鍵なしで CI の `Verify build output` ステップ全体を再現 → exit 0（緑のまま）
+- スタブが一致しないときは同ステップが exit 1 になることも確認
+
+なお **MODE=ok（live seed どおりの値）で一致した**ので、現在の `_data/plans.yml` が
+本番 `plan_catalog` と揃っていること自体もこの検証で裏が取れている。
+
 ## 2026-08-02 (8) - Feature: ヒーロー画像をモザイク適用済みに差し替え (TICKET-SITE-35)
 
 **誤認対策で唯一やり残していた項目。** 移行前のヒーロー（LCP 要素・ページ最大面積）は

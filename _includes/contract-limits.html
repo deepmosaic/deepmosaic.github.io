@@ -1,0 +1,26 @@
+{%- comment -%}
+複数契約の上限を「<プラン名> は最大 N 契約、<プラン名> は最大 N 契約」の形で
+組み立てる (TICKET-SITE-CONTRACT-SSOT)。実数はこのファイルにも書かない。
+
+数値を持つのは `_data/plans.yml` の `max_contracts` **だけ** (真の SSOT は Supabase
+`plan_catalog.max_contracts`。plans.yml はサイト用の写しで CI が突き合わせる)。
+`docs/index.html` の 2 箇所が同じ文を出すので、**文の組み立てもここ 1 箇所に置く** ──
+ページ側に直書きすると片方だけ古くなり、実在しない条件を広告することになる。
+
+`max_contracts` が 1 のプラン (Free / Enterprise) と非公開プランは列挙しない。
+プランが増減しても文が自動で追従する。
+
+⚠️ Jekyll の include は呼び出し元とスコープを共有するので、作業変数には `cl_` を
+   前置して衝突を避ける。`cl_emitted` は **必ず先頭で false に戻す** (同一ページで
+   2 回呼ぶため、前回の値が残ると先頭に「、」が出る)。
+{%- endcomment -%}
+{%- assign cl_emitted = false -%}
+{%- assign cl_tiers = site.data.plans.tiers | where: "public", true -%}
+{%- for t in cl_tiers -%}
+{%- assign cl_max = t.max_contracts | default: 1 -%}
+{%- if cl_max > 1 -%}
+{%- if cl_emitted %}、{% endif -%}
+{{ t.name }} は最大 {{ cl_max }} 契約
+{%- assign cl_emitted = true -%}
+{%- endif -%}
+{%- endfor -%}

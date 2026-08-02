@@ -18,12 +18,12 @@
 #    開示する。上限の適用開始後に `rollout_note: ""` とすれば注記だけが消え、
 #    他は 1 文字も変えなくてよい。
 #
-#    枠が足りない場合に同じプランを追加契約できる方式 (Light ×3 / Pro ×2) は
-#    **2026-08-02 に提供開始**。Worker (deepmosaic-auth0-updater) をデプロイ済みで、
-#    Checkout セッションに `adjustable_quantity` が付くため、**出荷済みの v2.1.0 の
-#    アプリからでも Stripe の決済画面上で本数を増やせる**。アプリ内の本数セレクタ
-#    (PlanSelectDialog) は UX 改善であってゲートではないので、アプリの再出荷を
-#    待たずに「できます」と書いてよい。
+#    枠が足りない場合に同じプランを追加契約できる方式 (本数は各 tier の
+#    `max_contracts`) は **2026-08-02 に提供開始**。Worker (deepmosaic-auth0-updater)
+#    をデプロイ済みで、Checkout セッションに `adjustable_quantity` が付くため、
+#    **出荷済みの v2.1.0 のアプリからでも Stripe の決済画面上で本数を増やせる**。
+#    アプリ内の本数セレクタ (PlanSelectDialog) は UX 改善であってゲートではないので、
+#    アプリの再出荷を待たずに「できます」と書いてよい。
 #
 #    「同時起動 1 台」は device_lock で既に強制済みなので注記の対象外。
 #
@@ -56,9 +56,26 @@ grandfather_note: "既存の Pro（無制限）をご利用中のお客様は、
 #   display          card = 3 枚並ぶ料金カード / strip = カード下の横帯 (Free)
 #   included_basis   cumulative = 累計 (Free) / monthly = 月次 / pooled = シート共有
 #   included_hours   included_basis が pooled のときは 1 シートあたりの時間
+#   max_contracts    同じプランを重ねて契約できる本数の上限 (1 = 追加契約なし)。
+#                    ⚠️ **Supabase `plan_catalog.max_contracts` が真の SSOT。ここは
+#                    サイト用の写しで、CI が突き合わせる。** 静的サイトは Supabase を
+#                    読めないため写しを置くしかない。乖離したら CI が落ちる
+#                    (`scripts/check-plan-catalog.mjs`。込み時間 / 月額 / 最低シート数も
+#                    同時に突き合わせる。Supabase に到達できないときは素通しする —
+#                    デプロイを外部サービスの可用性に縛らないため)。
+#                    front の `src/lib/plan/contract-options.ts` は「コードに数値を
+#                    ハードコードしてはならない」と定めており、アプリは catalog から
+#                    本数を引く。**サイト内で本数を書いてよいのはここだけ** —
+#                    料金カードの「追加契約」行 / FAQ / docs は全てこの値から
+#                    Liquid で組み立てる (TICKET-SITE-CONTRACT-SSOT)。
+#                    込み時間の合計は `included_hours × max_contracts` で導出できるので
+#                    **合計時間はどこにも手書きしない**
 #   overage_per_hour 超過 1 時間あたりの単価。**従量課金の廃止により全プラン null**。
 #                    ROI 計算機 (src/lib/pricing.js) が参照するのでキーは残す
-#   specs            カード内の「ラベル | 値」行。デザインのカード仕様をそのまま持つ
+#   specs            カード内の「ラベル | 値」行。デザインのカード仕様をそのまま持つ。
+#                    ⚠️ **「追加契約」行はここに書かない** — `max_contracts` から
+#                    `_includes/pricing-cards.html` が組み立てる (本数と合計時間を
+#                    静的な文字列で持つと、Supabase の改定で必ず古くなるため)
 tiers:
   - code: free
     name: "Free"
@@ -68,6 +85,7 @@ tiers:
     # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 6h と一致
     included_hours: 6
     included_basis: "cumulative"
+    max_contracts: 1 # 無料プランは追加契約の対象外
     overage_per_hour: null # 従量課金なし (無料枠を使い切ったら有料プランへ)
     trial_days: 0
     featured: false
@@ -89,6 +107,7 @@ tiers:
     price_unit: "/ 月"
     included_hours: 5
     included_basis: "monthly"
+    max_contracts: 3
     overage_per_hour: null # 従量課金は廃止 (旧 ¥800 / 時間)
     # 未使用分の翌月繰越の上限 (時間)。**繰越は廃止 (2026-08-02)。全プラン null**。
     # Supabase `plan_catalog.carryover_max_minutes` は sandbox / live とも 0 に更新済み
@@ -101,15 +120,8 @@ tiers:
     specs:
       - label: "込み時間"
         value: "月 5 時間"
-      # ⚠️ **本数の正 (SSOT) は Supabase `plan_catalog.max_contracts`**。
-      #    front の `src/lib/plan/contract-options.ts` は「コードに数値をハードコード
-      #    してはならない」と定めており、アプリは catalog から本数を引く。
-      #    **サイトは静的サイトで catalog を読めないため、ここだけが手動の複製になる。**
-      #    Supabase の `max_contracts` を変えたら必ずここも直すこと
-      #    (現行値: light=3 / pro=2 / enterprise=1 / free=1)。
-      #    込み時間の合計 = included_hours × max_contracts。
-      - label: "追加契約"
-        value: "最大 3 契約（月 15 時間まで）"
+      # 「追加契約」行はここに書かない。`max_contracts` から pricing-cards.html が
+      # 込み時間の直後に差し込む (本数・合計時間の手書きを排除するため)。
       - label: "同時起動"
         value: "1 台"
     cta:
@@ -126,6 +138,7 @@ tiers:
     price_unit: "/ 月"
     included_hours: 40
     included_basis: "monthly"
+    max_contracts: 2
     overage_per_hour: null # 従量課金は廃止 (旧 ¥500 / 時間)
     carryover_hours: null
     # 無料トライアルは設けない。クレジットカードを登録しなければ全員が Free プランとして
@@ -141,9 +154,7 @@ tiers:
     specs:
       - label: "込み時間"
         value: "月 40 時間"
-      # 本数の正は Supabase `plan_catalog.max_contracts` (light の specs のコメントを参照)。
-      - label: "追加契約"
-        value: "最大 2 契約（月 80 時間まで）"
+      # 「追加契約」行は `max_contracts` から自動で入る (light の specs のコメントを参照)。
       - label: "同時起動"
         value: "1 台"
       - label: "解約"
@@ -163,6 +174,8 @@ tiers:
     included_hours: 40
     included_basis: "pooled"
     min_seats: 3
+    # シート単価で自己申込を塞いでいるため複数契約の対象外 (枠はシート数で増やす)
+    max_contracts: 1
     overage_per_hour: null # 従量課金は廃止 (旧 ¥300 / 時間)
     carryover_hours: null
     trial_days: 0

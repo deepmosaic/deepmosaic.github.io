@@ -1,0 +1,32 @@
+{%- comment -%}
+FAQ の回答文にプラン条件の実数を差し込んで出力する (TICKET-SITE-CONTRACT-SSOT)。
+
+`_data/faq.yml` は YAML なので **Liquid を通らない**。回答文に数値を直書きすると
+`_data/plans.yml` の改定で必ず古くなるため、回答側にはプレースホルダを置き、
+実数の差し込みを **この 1 ファイルだけ** で行う。
+
+表示本体 (`_includes/faq.html`) と FAQPage JSON-LD (`_includes/schema/faq.html`) の
+**両方がここを通す**。置換をそれぞれに書くと、それ自体が新しい二重管理になる。
+
+数値の出所は `_data/plans.yml` の `max_contracts` / `included_hours` だけ (真の SSOT は
+Supabase `plan_catalog`。plans.yml はサイト用の写しで CI が突き合わせる)。
+合計時間は `included_hours × max_contracts` で導出し、**どこにも手書きしない**。
+
+⚠️ プレースホルダの区切りに二重波括弧を使わないこと。Liquid のトークナイザは
+   タグを `{{...}}` の**最短一致**で切り出すため、`replace:` の引数に二重波括弧を
+   書くと引数の途中でタグが終端したと解釈されて壊れる。`%%NAME%%` はその衝突が無い。
+
+params:
+  a  回答文 (プレースホルダを含んでよい)
+
+プレースホルダ (すべて任意 — 含まれていなければ何も起きない):
+  %%LIGHT_MAX%%    Light の最大契約数
+  %%LIGHT_TOTAL%%  Light を上限まで契約したときの月間合計時間
+  %%PRO_MAX%%      Pro の最大契約数
+  %%PRO_TOTAL%%    Pro を上限まで契約したときの月間合計時間
+{%- endcomment -%}
+{%- assign fa_light = site.data.plans.tiers | where: "code", "light" | first -%}
+{%- assign fa_pro = site.data.plans.tiers | where: "code", "pro" | first -%}
+{%- assign fa_light_total = fa_light.included_hours | times: fa_light.max_contracts -%}
+{%- assign fa_pro_total = fa_pro.included_hours | times: fa_pro.max_contracts -%}
+{{- include.a | replace: "%%LIGHT_MAX%%", fa_light.max_contracts | replace: "%%LIGHT_TOTAL%%", fa_light_total | replace: "%%PRO_MAX%%", fa_pro.max_contracts | replace: "%%PRO_TOTAL%%", fa_pro_total -}}

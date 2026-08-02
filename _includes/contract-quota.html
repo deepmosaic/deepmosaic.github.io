@@ -1,0 +1,23 @@
+{%- comment -%}
+1 プランぶんの追加契約枠を「最大 N 契約（月 M 時間まで）」の形で組み立てる
+(TICKET-SITE-CONTRACT-SSOT)。実数はこのファイルにも書かない。
+
+料金カード (`_includes/pricing-cards.html`) と `llms-full.txt` の両方がこれを使う。
+`_data/plans.yml` の `specs` に文字列で持たせない理由は、本数と合計時間
+(= `included_hours × max_contracts`) を静的な文字列にすると Supabase
+`plan_catalog.max_contracts` の改定で必ず片方だけ古くなり、**実在しない条件を
+広告する**ことになるため。
+
+`max_contracts` が 1 以下のプラン (Free / Enterprise) では **何も出力しない**。
+呼び出し側は出力の有無で行を出すかを判断してよい。
+
+⚠️ Jekyll の include は呼び出し元とスコープを共有するので作業変数に `cq_` を前置する。
+
+params:
+  plan  `site.data.plans.tiers` の要素
+{%- endcomment -%}
+{%- assign cq_max = include.plan.max_contracts | default: 1 -%}
+{%- if cq_max > 1 -%}
+{%- assign cq_hours = include.plan.included_hours | times: cq_max -%}
+最大 {{ cq_max }} 契約（月 {{ cq_hours }} 時間まで）
+{%- endif -%}

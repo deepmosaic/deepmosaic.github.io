@@ -21,11 +21,40 @@
  * @property {number|null} included_hours     pooled では 1 シートあたりの時間
  * @property {string}      included_basis
  * @property {number}      [min_seats]        pooled の最低シート数
+ * @property {number}      [max_contracts]    同一プランを何本まで契約できるか (既定 1)
  * @property {number}      [trial_days]
  */
 
 /** `¥1,234` 形式。 */
 export const formatYen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
+
+/**
+ * 同一プランの契約可能本数。
+ *
+ * **0 や欠落を 0 に倒すと「1 本も契約できない」になる**ので必ず 1 以上に丸める。
+ * 上限の真の SSOT は Supabase `plan_catalog.max_contracts` で、`_data/plans.yml` は
+ * その写し (乖離は CI の `scripts/check-plan-catalog.mjs` が検知する)。
+ *
+ * @param {Tier} tier
+ * @returns {number}
+ */
+export function contractLimit(tier) {
+  const n = Number(tier.max_contracts);
+  return Number.isFinite(n) && n >= 1 ? Math.floor(n) : 1;
+}
+
+/**
+ * 込み時間を賄うのに必要な契約本数。上限を超えるなら null (そのプランでは賄えない)。
+ *
+ * @param {Tier} tier
+ * @param {number} hours
+ * @returns {number|null}
+ */
+export function contractsNeeded(tier, hours) {
+  if (!tier.included_hours) return null;
+  const need = Math.max(1, Math.ceil(hours / tier.included_hours));
+  return need <= contractLimit(tier) ? need : null;
+}
 
 /**
  * シート共有型プランを最も安く使えるシート数と、そのときの月額。
@@ -57,9 +86,12 @@ export function bestSeatPlan(tier, hours) {
  * 超えるプランは選択肢から外すため `Number.POSITIVE_INFINITY` を返す
  * (呼び出し側が `Number.isFinite` で弾く)。
  *
- * NOTE: 代替となる「同じプランを複数本契約する方式」(Light ×3 / Pro ×2) は**未実装**の
- * ため、ここでは 1 契約のみを前提にする。実装後は Pro 40 時間超の見積もりが
- * Enterprise ではなく Pro×2 (¥19,600) になるので、この関数を更新すること。
+ * **同じプランを複数本契約できる** (Light ×3 / Pro ×2)。込み時間を超えたら
+ * 本数を積んで賄い、上限本数でも足りなければそのプランは候補から外す。
+ * 本数を増やしても単価は変わらない (割引なし) ので費用は本数に比例する。
+ *
+ * 上限本数は `plan_catalog.max_contracts` が真の SSOT。ここでは `_data/plans.yml` の
+ * 写しを読むだけで、**数値をこのファイルに書かない**。
  *
  * @param {Tier} tier
  * @param {number} hours
@@ -71,8 +103,9 @@ export function monthlyCost(tier, hours) {
 
   if (tier.included_basis === 'pooled') return bestSeatPlan(tier, hours).cost;
 
-  if (hours > tier.included_hours) return Number.POSITIVE_INFINITY;
-  return tier.price;
+  const contracts = contractsNeeded(tier, hours);
+  if (contracts === null) return Number.POSITIVE_INFINITY;
+  return tier.price * contracts;
 }
 
 /**
@@ -108,7 +141,12 @@ export function planBreakdown(tier, hours) {
   } else if (tier.included_basis === 'unlimited' || tier.included_hours === null) {
     parts.push('無制限');
   } else {
-    parts.push(`月 ${tier.included_hours} 時間込み`);
+    const contracts = contractsNeeded(tier, hours) ?? 1;
+    parts.push(
+      contracts > 1
+        ? `${contracts} 契約（月 ${tier.included_hours * contracts} 時間込み）`
+        : `月 ${tier.included_hours} 時間込み`,
+    );
   }
   if (tier.trial_days > 0) parts.push(`${tier.trial_days} 日間無料トライアルあり`);
   return parts.join(' ・ ');

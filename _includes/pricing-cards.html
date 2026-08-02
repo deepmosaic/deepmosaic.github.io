@@ -62,12 +62,29 @@ params:
 
     <p class="mt-3.5 text-[13.5px] leading-[1.9] {{ body_cls }}">{{ plan.summary }}</p>
 
+    {%- comment -%}
+      「追加契約」行は `plans.yml` の `specs` に文字列で持たせず、`max_contracts` から
+      組み立てる (値の生成は `_includes/contract-quota.html`。`llms-full.txt` と共用)。
+      本数と合計時間を静的な文字列にすると Supabase `plan_catalog.max_contracts` の
+      改定で必ず片方だけ古くなり、**実在しない条件を広告する**ことになるため。
+
+      1 契約のみのプラン (Free / Enterprise) では quota が空になるので行を出さない。
+      込み時間の直後に置くのはこの行がその倍数を示すからで、`specs` の先頭は必ず
+      「込み時間」である前提に立つ。
+    {%- endcomment -%}
+    {%- capture contract_quota %}{% include contract-quota.html plan=plan %}{% endcapture -%}
     <dl class="mt-[22px] flex flex-col gap-3 border-t {{ rule_cls }} pt-[22px] text-[13.5px]">
       {%- for s in plan.specs %}
       <div class="flex justify-between gap-4">
         <dt class="shrink-0 {{ key_cls }}">{{ s.label }}</dt>
         <dd class="text-right {{ val_cls }}">{{ s.value }}</dd>
       </div>
+      {%- if forloop.first and contract_quota != "" %}
+      <div class="flex justify-between gap-4">
+        <dt class="shrink-0 {{ key_cls }}">追加契約</dt>
+        <dd class="text-right {{ val_cls }}">{{ contract_quota }}</dd>
+      </div>
+      {%- endif %}
       {%- endfor %}
     </dl>
 

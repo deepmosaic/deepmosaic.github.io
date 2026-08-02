@@ -66,7 +66,22 @@ jobs:
       # 2) 誤認訂正の文言が消えていないこと。「Deepmosaic はモザイクを *除去* する
       #    ソフト」という誤認の是正 (TICKET-SITE-24〜36) が、後のコピー変更で
       #    無言で巻き戻るのを防ぐ。
+      #
+      # 3) 料金データが Supabase `plan_catalog` とずれていないこと
+      #    (TICKET-SITE-CONTRACT-SSOT / 案B)。契約本数の上限・込み時間・月額の
+      #    **真の SSOT は Supabase**。静的サイトは Supabase を読めないので
+      #    `_data/plans.yml` に写しを置いており、乖離すると**実在しない契約条件を
+      #    広告する**。人手のレビューに頼らず機械で気付く。
+      #
+      #    ⚠️ **デプロイを Supabase / Worker の可用性に人質に取らせない。**
+      #    シークレット未設定・ネットワーク断・5xx・鍵が無効のときは `::warning::` を
+      #    出して素通しする (`scripts/check-plan-catalog.mjs` が exit 0)。落ちるのは
+      #    「取得に成功して値が食い違ったとき」だけ。`|| fail=1` で受けているのは、
+      #    ずれを検知しても他の検査結果をまとめて出してから終わらせるため。
       - name: Verify build output
+        env:
+          # 未登録なら空文字が渡り、スクリプト側が skip する (CI は緑のまま)
+          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
         run: |
           set -euo pipefail
           fail=0
@@ -92,6 +107,16 @@ jobs:
             || { echo "::error::JSON-LD の disambiguatingDescription が消えている"; fail=1; }
           [ -f _site/mosaic-removal/index.html ] \
             || { echo "::error::/mosaic-removal/ が生成されていない"; fail=1; }
+          # プレースホルダの漏れ (TICKET-SITE-CONTRACT-SSOT)。
+          # `_data/faq.yml` の回答は `%%LIGHT_MAX%%` 等を持ち、置換は `_includes/faq-answer.html`
+          # だけが行う。**この include を通さない消費者が新たに増えると生のまま公開面に出る**
+          # (実際この作業中に llms-full.txt が一度踏んでいる)。しかも FAQ は FAQPage の
+          # JSON-LD として検索結果にも出るので、目視レビューでは間に合わない。
+          if grep -rl '%%[A-Z_]\{1,\}%%' _site >/dev/null 2>&1; then
+            echo "::error::置換されていないプレースホルダが出力に残っている — _includes/faq-answer.html を通していない箇所がある"
+            grep -rn '%%[A-Z_]\{1,\}%%' _site | head -20
+            fail=1
+          fi
           # 表示 FAQ と FAQPage JSON-LD の件数一致 (同一データ源なので必ず一致するはず)
           # `set -euo pipefail` 下では grep が 0 件で exit 1 を返し、pipefail 経由で
           # **代入コマンドごとスクリプトが落ちる**。落ちてほしいのは事実だが、それだと
@@ -114,6 +139,8 @@ jobs:
           # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
           grep -q 'download/latest/windows?' _site/index.html \
             && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
+          # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
+          node scripts/check-plan-catalog.mjs || fail=1
           exit $fail
 
       - name: Upload artifact

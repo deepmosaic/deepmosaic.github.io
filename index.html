@@ -194,13 +194,14 @@ schemas:
     {%- comment -%}
       JS 無効時のフォールバック。数値は Liquid で組まず**確定値を直接書く**
       (プランを増やしたときに index 参照 `tiers[1]` が別プランを指す事故を防ぐ)。
-      月 12 時間は Pro の込み時間 (月 40 時間) に収まるので 9,800 固定。
+      **JS 版 (pricing.js の cheapestPlan) と同じ結論を書くこと。** 月 12 時間は
+      Light×3 (15 時間 / 8,940) が Pro (9,800) より安いので Light×3 が適合する。
       超過料金は廃止したので「込み時間 + 超過分」で足し上げる試算は書かない。
     {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
         試算にはブラウザの JavaScript が必要です。
-        月 6 本 × 2 時間（月 12 時間）の場合、月 40 時間込みの Pro に収まるため月額 ¥9,800 の固定です（{{ site.data.plans.tax_note }}）。
+        月 6 本 × 2 時間（月 12 時間）の場合、Light を 3 契約（月 15 時間）で月額 ¥8,940 の固定です（{{ site.data.plans.tax_note }}）。
         プランごとの込み時間は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>に掲載しています。
       </div>
     </noscript>

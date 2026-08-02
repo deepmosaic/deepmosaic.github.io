@@ -111,8 +111,18 @@ macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
 ### {{ t.name }} — {{ site.data.plans.currency_symbol }}{{ t.price_display }}
 
 {{ t.summary }}
+{%- comment -%}
+  「追加契約」は `specs` に無い。本数と合計時間の手書きを排除するため
+  `max_contracts` から組み立てている (料金カードと同じ `contract-quota.html`)。
+  1 契約のみのプランでは空になるので行ごと出さない (TICKET-SITE-CONTRACT-SSOT)。
+  料金カードと並び順を揃えるため「込み時間」(= specs の先頭) の直後に差し込む。
+{%- endcomment -%}
+{%- capture quota %}{% include contract-quota.html plan=t %}{% endcapture -%}
 {%- for s in t.specs %}
 - {{ s.label }}: {{ s.value | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+{%- if forloop.first and quota != "" %}
+- 追加契約: {{ quota }}
+{%- endif %}
 {%- endfor %}
 {%- for b in t.bullets %}
 - {{ b | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
@@ -151,10 +161,17 @@ macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
 {{ D.accuracy_note }}
 
 ## 7. よくある質問 / FAQ
-{% for item in site.data.faq %}
+{% comment %}
+  回答文は表示 / JSON-LD と同じ `faq-answer.html` を通す。`_data/faq.yml` は Liquid を
+  通らないためプラン条件の実数はプレースホルダで書かれており、素通しすると
+  `%%LIGHT_MAX%%` がそのまま LLM 向けの本文に出る (TICKET-SITE-CONTRACT-SSOT)。
+
+  ⚠️ capture はここ (ループ先頭・改行を挟まない位置) で行う。`### Q.` と `A.` の
+     あいだの空行を消すと Q と A が 1 行に連結される。
+{% endcomment %}{% for item in site.data.faq %}{% capture answer %}{% include faq-answer.html a=item.a %}{% endcapture %}
 ### Q. {{ item.q }}
 
-A. {{ item.a | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
+A. {{ answer | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
 {% endfor %}
 ## 8. リンク / Links
 

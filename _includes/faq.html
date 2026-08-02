@@ -9,6 +9,10 @@ FAQ アコーディオン (TICKET-SITE-04)。
 開閉インジケータが `+` 固定 (開いても変わらない) で開状態の強調も無く、
 現行のほうが優れているため。
 
+回答文は **`_includes/faq-answer.html` を必ず通す**。`_data/faq.yml` は Liquid を
+通らないため、プラン条件の実数はプレースホルダで書かれており、その差し込みは
+JSON-LD 側と共通の 1 ファイルに置いてある (TICKET-SITE-CONTRACT-SSOT)。
+
 params:
   items   (任意) 表示する項目。既定は site.data.faq 全件
 {%- endcomment -%}
@@ -17,7 +21,7 @@ params:
   {%- for item in faq_items %}
   <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">
     <summary class="flex cursor-pointer list-none items-center gap-3 px-[18px] py-4 text-[15px] font-semibold text-ink">{% include icon.html name="HelpCircle" class="h-[18px] w-[18px] shrink-0 text-accent" %}<span class="flex-1">{{ item.q }}</span>{% include icon.html name="ChevronDown" class="h-[18px] w-[18px] shrink-0 text-ink-4 group-open:hidden" %}{% include icon.html name="ChevronUp" class="hidden h-[18px] w-[18px] shrink-0 text-ink-4 group-open:block" %}</summary>
-    <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">{{ item.a }}</p>
+    <p class="px-[18px] pb-4 pl-12 text-[14.5px] leading-[2] text-ink-2">{% include faq-answer.html a=item.a %}</p>
   </details>
   {%- endfor %}
 </div>

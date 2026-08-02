@@ -15,101 +15,19 @@ import { dirname, join } from 'node:path';
 import {
   bestSeatPlan,
   cheapestPlan,
+  contractLimit,
+  contractsNeeded,
   formatYen,
   monthlyCost,
   planBreakdown,
   suggestEnterpriseOver,
 } from './pricing.js';
+// plans.yml の極小パーサは `plans-yml.js` に切り出した (TICKET-SITE-CONTRACT-SSOT)。
+// Supabase `plan_catalog` との突き合わせ (`scripts/check-plan-catalog.mjs`) も
+// 同じ読み手を使う — パーサを 2 つ持つと「片方だけ直して片方が古い」が起きる。
+import { loadTiers } from './plans-yml.js';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const PLANS_YML = join(HERE, '..', '..', '_data', 'plans.yml');
-
-/**
- * plans.yml の `tiers:` を読む極小パーサ。
- *
- * YAML ライブラリを devDependency に足さないための割り切り。対応するのは
- * このファイルが実際に使っている形 (2 階層のスカラーと `- label:` の配列) だけ。
- *
- * **非対応の記法に当たったら黙って読み飛ばさず `assert.fail` で落とす。** 静かに
- * `undefined` を返すと「テストは通るが計算は間違っている」状態になり、この
- * テストの存在意義が消えるため。具体的には以下を検出する:
- *
- *   - ブロックスカラー (`summary: |` / `>`)
- *   - 暗黙 null (`overage_per_hour:` のように値を書かない形)
- *     → 次の行のインデントを見て「ネストブロックの開始」と区別する
- */
-function loadTiers() {
-  const lines = readFileSync(PLANS_YML, 'utf8').split(/\r?\n/);
-  const start = lines.findIndex((l) => l === 'tiers:');
-  assert.ok(start >= 0, 'plans.yml に tiers: が無い');
-
-  const tiers = [];
-  let current = null;
-
-  /** 次の非空・非コメント行を返す (ネスト判定のための先読み)。 */
-  const nextMeaningful = (from) => {
-    for (let j = from; j < lines.length; j += 1) {
-      const t = lines[j].trim();
-      if (t !== '' && !t.startsWith('#')) return lines[j];
-    }
-    return null;
-  };
-
-  for (let i = start + 1; i < lines.length; i += 1) {
-    const line = lines[i];
-    if (line.trim() === '' || line.trim().startsWith('#')) continue;
-
-    const item = line.match(/^ {2}- (\w+): (.*)$/);
-    if (item) {
-      current = {};
-      tiers.push(current);
-      current[item[1]] = parseScalar(item[2]);
-      continue;
-    }
-
-    const pair = line.match(/^ {4}(\w+):(.*)$/);
-    if (pair) {
-      const [, key, rest] = pair;
-      const value = rest.replace(/\s+#.*$/, '').trim();
-
-      assert.ok(
-        !/^[|>]/.test(value),
-        `plans.yml: ${key} がブロックスカラー (${value}) だが、このパーサは非対応。` +
-          ' plans.yml を 1 行スカラーに戻すか、パーサを拡張すること。',
-      );
-
-      if (value === '') {
-        // 値が空 → ネストブロックの開始か、暗黙 null か。次行のインデントで判定する。
-        const next = nextMeaningful(i + 1);
-        const startsNestedBlock = next !== null && /^ {6}|^ {4}- /.test(next);
-        assert.ok(
-          startsNestedBlock,
-          `plans.yml: ${key} が暗黙 null (値なし) になっている。` +
-            ' このパーサは読み取れないので `null` と明示すること。',
-        );
-        continue; // specs / bullets / cta のネストは計算に不要なので読み飛ばす
-      }
-
-      current[key] = parseScalar(value);
-      continue;
-    }
-
-    // ネストの中身 (6 スペース以上 / 4 スペースの配列要素) は無視
-    if (/^ {6}/.test(line) || /^ {4}- /.test(line)) continue;
-    // tiers: ブロックの外に出た
-    if (!/^ /.test(line)) break;
-  }
-  return tiers;
-}
-
-function parseScalar(raw) {
-  const v = raw.replace(/\s+#.*$/, '').trim();
-  if (v === 'null') return null;
-  if (v === 'true') return true;
-  if (v === 'false') return false;
-  if (/^-?\d+$/.test(v)) return Number(v);
-  return v.replace(/^"(.*)"$/, '$1');
-}
 
 const TIERS = loadTiers();
 const paid = TIERS.filter((t) => t.price > 0);
@@ -181,12 +99,37 @@ test('込み時間の内側では基本料だけ', () => {
   assert.equal(monthlyCost(byCode('pro'), 40), 9800);
 });
 
-test('込み時間ちょうどまでは基本料、1 時間でも超えたら候補外', () => {
-  // 従量課金は廃止したので、込み時間を金銭で超える手段は無い
-  assert.equal(monthlyCost(byCode('light'), 5), 2980);
-  assert.equal(monthlyCost(byCode('light'), 6), Number.POSITIVE_INFINITY);
-  assert.equal(monthlyCost(byCode('pro'), 40), 9800);
-  assert.equal(monthlyCost(byCode('pro'), 41), Number.POSITIVE_INFINITY);
+test('込み時間を超えたら契約を積む。上限本数でも足りなければ候補外', () => {
+  // 従量課金は廃止済み。超過は金銭ではなく「同じプランをもう 1 本」で賄う。
+  // 本数を増やしても単価は変わらない (割引なし) ので費用は本数に比例する。
+  assert.equal(monthlyCost(byCode('light'), 5), 2980); // 1 本
+  assert.equal(monthlyCost(byCode('light'), 6), 5960); // 2 本
+  assert.equal(monthlyCost(byCode('light'), 15), 8940); // 3 本 (上限)
+  assert.equal(monthlyCost(byCode('light'), 16), Number.POSITIVE_INFINITY); // 上限超え
+  assert.equal(monthlyCost(byCode('pro'), 40), 9800); // 1 本
+  assert.equal(monthlyCost(byCode('pro'), 41), 19600); // 2 本 (上限)
+  assert.equal(monthlyCost(byCode('pro'), 81), Number.POSITIVE_INFINITY); // 上限超え
+});
+
+test('契約本数の上限はデータから読む (コードに数値を持たない)', () => {
+  // 真の SSOT は Supabase `plan_catalog.max_contracts`。_data/plans.yml はその写しで、
+  // 乖離は CI (scripts/check-plan-catalog.mjs) が検知する。
+  assert.equal(contractLimit(byCode('light')), 3);
+  assert.equal(contractLimit(byCode('pro')), 2);
+  // 欠落・0・負値は 1 に丸める (0 に倒れると「1 本も契約できない」になる)
+  assert.equal(contractLimit({}), 1);
+  assert.equal(contractLimit({ max_contracts: 0 }), 1);
+  assert.equal(contractLimit({ max_contracts: -3 }), 1);
+});
+
+test('必要契約本数は切り上げ、上限を超えたら null', () => {
+  assert.equal(contractsNeeded(byCode('light'), 0), 1);
+  assert.equal(contractsNeeded(byCode('light'), 5), 1);
+  assert.equal(contractsNeeded(byCode('light'), 5.1), 2);
+  assert.equal(contractsNeeded(byCode('light'), 15), 3);
+  assert.equal(contractsNeeded(byCode('light'), 15.1), null);
+  assert.equal(contractsNeeded(byCode('pro'), 80), 2);
+  assert.equal(contractsNeeded(byCode('pro'), 80.1), null);
 });
 
 test('従量課金が復活していないこと (回帰固定)', () => {
@@ -248,41 +191,47 @@ test('プールを超えたらシートを足す (超過課金は廃止したの
   assert.deepEqual(bestSeatPlan(ent, 161), { seats: 5, cost: 40000 });
 });
 
-test('月 12 時間 (既定値) の適合プランは Pro (月額 9,800 円)', () => {
+test('月 12 時間 (既定値) の適合プランは Light×3 (月額 8,940 円)', () => {
   // トップの ROI 計算機の既定 = 月 6 本 × 2 時間。noscript の記載と一致させる。
-  // 従量課金の廃止で Light (月 5 時間) は 12 時間を賄えず候補から外れる。
+  // 複数契約により Light×3 (15 時間 / 8,940 円) が Pro (9,800 円) より安い。
   const best = cheapestPlan(paid, 12);
-  assert.equal(best.tier.code, 'pro');
-  assert.equal(best.cost, 9800);
+  assert.equal(best.tier.code, 'light');
+  assert.equal(best.cost, 8940);
 });
 
-test('既定値の年間削減額が 1,610,400 円になる', () => {
+test('既定値の年間削減額が 1,620,720 円になる', () => {
   // 月 6 本 × 1 本 24,000 円の現状コストとの差額。
   const currentYearly = 6 * 24000 * 12;
   const dmYearly = cheapestPlan(paid, 12).cost * 12;
-  assert.equal(currentYearly - dmYearly, 1610400);
+  assert.equal(currentYearly - dmYearly, 1620720);
 });
 
 test('作業量が増えると Light → Pro → Enterprise に切り替わる', () => {
-  // 切替点は「込み時間」で決まる (超過単価が無くなったため)
-  //   5h: Light 2,980                             → Light
+  // 切替点は「込み時間 × 契約本数」で決まる (超過単価は廃止済み)
+  //   5h: Light×1 2,980                            → Light
   assert.equal(cheapestPlan(paid, 5).tier.code, 'light');
-  //   6h: Light は 5 時間までで候補外 / Pro 9,800  → Pro
-  assert.equal(cheapestPlan(paid, 6).tier.code, 'pro');
-  //  40h: Pro 9,800 (込み時間ちょうど)             → Pro
-  assert.equal(cheapestPlan(paid, 40).tier.code, 'pro');
-  //  41h: Pro は候補外 / Ent 3 シート 24,000       → Enterprise
-  assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
+  //  15h: Light×3 8,940 < Pro 9,800                → まだ Light
+  assert.equal(cheapestPlan(paid, 15).tier.code, 'light');
+  //  16h: Light は 3 本でも 15h までで候補外        → Pro
+  assert.equal(cheapestPlan(paid, 16).tier.code, 'pro');
+  //  80h: Pro×2 19,600 < Ent 3 シート 24,000       → まだ Pro
+  assert.equal(cheapestPlan(paid, 80).tier.code, 'pro');
+  //  81h: Pro は 2 本でも 80h までで候補外          → Enterprise
+  assert.equal(cheapestPlan(paid, 81).tier.code, 'enterprise');
 });
 
-test('込み時間ちょうどでは下位プランを選ぶ (境界の丸め事故を防ぐ)', () => {
-  assert.equal(cheapestPlan(paid, 5).tier.code, 'light');
-  assert.equal(cheapestPlan(paid, 5.000001).tier.code, 'pro');
+test('込み時間ちょうどでは本数を増やさない (境界の丸め事故を防ぐ)', () => {
+  assert.equal(monthlyCost(byCode('light'), 5), 2980);
+  assert.equal(monthlyCost(byCode('light'), 5.000001), 5960);
+  assert.equal(monthlyCost(byCode('pro'), 40), 9800);
+  assert.equal(monthlyCost(byCode('pro'), 40.000001), 19600);
 });
 
 test('内訳文がプランごとの条件をデータから組み立てる', () => {
-  assert.equal(planBreakdown(byCode('light'), 12), '月 5 時間込み');
   assert.equal(planBreakdown(byCode('pro'), 12), '月 40 時間込み');
+  // 複数契約が必要な時間数では本数と合計時間を出す
+  assert.equal(planBreakdown(byCode('light'), 12), '3 契約（月 15 時間込み）');
+  assert.equal(planBreakdown(byCode('pro'), 41), '2 契約（月 80 時間込み）');
   assert.equal(planBreakdown(byCode('enterprise'), 12), '3 シート（120 時間をプール共有）');
   // プールを超えるとシート数が増え、内訳もそれに追従する
   assert.equal(planBreakdown(byCode('enterprise'), 147), '4 シート（160 時間をプール共有）');
