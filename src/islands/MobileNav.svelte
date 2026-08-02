@@ -2,7 +2,13 @@
   // Renders the mobile hamburger + slide-in drawer from a JSON `data-links`
   // list (server-rendered by Jekyll with localized labels). The desktop nav and
   // a <noscript> fallback live in the header markup, so no-JS still navigates.
-  let { links = '[]', edge = 'right' } = $props();
+  // `dlAttr` は流入経路 (TICKET-SITE-37)。`src/main.js` が **mount より前**に
+  // `data-dl-attr` へ書き込むので、Svelte のスケジューリングに依存せず受け取れる。
+  // ここで href を組むのは、このドロワーのリンクだけが**クライアント側で後から
+  // 生える**ため。読み込み時に `a[data-dl]` を書き換える経路では拾えない。
+  import { decorateDownloadUrl, parseStoredAttribution } from '../lib/attribution.js';
+
+  let { links = '[]', edge = 'right', dlAttr = '' } = $props();
 
   const items = $derived.by(() => {
     try {
@@ -11,6 +17,13 @@
       return [];
     }
   });
+
+  // 保存済みの値は外部入力として扱う (由来は着地 URL のクエリ)。parse 側が再検証する
+  const attribution = $derived(parseStoredAttribution(dlAttr));
+
+  /** DL 項目だけ href に流入経路を載せる。それ以外のリンクには一切付けない */
+  const hrefOf = (item) =>
+    item.dl ? decorateDownloadUrl(new URL(item.href, location.href).toString(), attribution) : item.href;
 
   let open = $state(false);
   let panelEl = $state();
@@ -85,8 +98,9 @@
       {#each items as item}
         <li>
           <a
-            href={item.href}
+            href={hrefOf(item)}
             download={!!item.download}
+            data-dl={item.dl || undefined}
             target={item.target || undefined}
             rel={item.target ? 'noopener noreferrer' : undefined}
             class="block rounded px-3 py-3 text-lg hover:bg-edge"

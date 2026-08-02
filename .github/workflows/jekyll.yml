@@ -93,10 +93,27 @@ jobs:
           [ -f _site/mosaic-removal/index.html ] \
             || { echo "::error::/mosaic-removal/ が生成されていない"; fail=1; }
           # 表示 FAQ と FAQPage JSON-LD の件数一致 (同一データ源なので必ず一致するはず)
-          d=$(grep -o '<details' _site/index.html | wc -l)
-          q=$(grep -o '"@type": "Question"' _site/index.html | wc -l)
+          # `set -euo pipefail` 下では grep が 0 件で exit 1 を返し、pipefail 経由で
+          # **代入コマンドごとスクリプトが落ちる**。落ちてほしいのは事実だが、それだと
+          # 「何がどう消えたか」の診断が出ないまま生の shell エラーになる。`|| true` で
+          # 件数を受け取り、判定とメッセージはこちらで出す。
+          d=$(grep -o '<details' _site/index.html | wc -l || true)
+          q=$(grep -o '"@type": "Question"' _site/index.html | wc -l || true)
           [ "$d" -eq "$q" ] \
             || { echo "::error::FAQ の表示件数 ($d) と FAQPage JSON-LD の件数 ($q) が食い違っている"; fail=1; }
+          # DL 計測 (TICKET-SITE-37)。`data-dl` が付いていない DL リンクは計測から漏れる。
+          # クリックできる <a> の数と data-dl の数が一致するはず — 差分は
+          # JSON-LD の downloadUrl と data-links (Svelte が描画する分) だけ。
+          for p in index.html price/index.html spec/index.html; do
+            a=$(grep -o 'data-dl="' "_site/$p" | wc -l || true)
+            [ "$a" -gt 0 ] \
+              || { echo "::error::_site/$p の DL ボタンから data-dl が消えている — 計測が止まる"; fail=1; }
+          done
+          grep -q 'data-dl' _site/assets/dist/app.js \
+            || { echo "::error::バンドルから DL 計測の配線が消えている"; fail=1; }
+          # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
+          grep -q 'download/latest/windows?' _site/index.html \
+            && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
           exit $fail
 
       - name: Upload artifact

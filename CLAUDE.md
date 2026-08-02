@@ -74,6 +74,12 @@ npm run build && bundle exec jekyll build
 - 動画は `assets/videos/` に配置
 - **スタイルは Tailwind CSS v4**。デザイントークン/移植した独自スタイルは `src/app.css` の `@theme` / `@layer components`、それ以外は markup に Tailwind ユーティリティを直書き。Materialize.css は撤去済み。
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
+- **DL 計測の目印は `data-dl` 属性** (TICKET-SITE-37)。`src/main.js` の `initDownloadTracking()` が
+  `a[data-dl]` **だけ**を見て href に `utm_*` / `ref` を載せ、GA4 の `file_download` を送る。
+  **DL ボタンを増やしたら `data-dl` を必ず付ける**（付け忘れると計測から静かに漏れる。CI が
+  ページ単位で存在をチェックする）。値は GA4 の `link_id` になるので置き場所ごとに変える。
+  純ロジックは `src/lib/attribution.js`（DOM に触らない。`node --test` で検証）。
+  **素の href にクエリを焼き込まないこと** — 全訪問者とクローラに同じ utm が配られる。
 - 新クラス追加時は Tailwind の `@source`（`src/app.css`）が対象 HTML を走査していること。新ディレクトリの HTML は `@source` に追加。
 - Front matter: 全ページに `layout` / `title` / `description` を必ず指定 (SEO)
   - `title` はパンくず JSON-LD とナビが使う。SERP 用の文字列は `seo_title` に書く

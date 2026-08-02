@@ -18,14 +18,14 @@
     <div class="flex-1"></div>
 
     <!-- Desktop download CTA -->
-    <a href="{{ site.data.lang.ja.app_download_link }}" download class="btn-primary hidden md:inline-flex">
+    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex">
       {% include icon.html name="Download" class="h-4 w-4" %}無料でダウンロード
     </a>
 
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>

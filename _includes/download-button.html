@@ -7,8 +7,13 @@ params:
   full     (任意) 真値で幅 100%
   variant  (任意) "secondary" で副ボタン配色 (TICKET-SITE-20: 料金カードの非推奨プラン用)
   note     (任意) ボタン下の補足文
+  dl       (任意) 計測用のボタン識別子 (TICKET-SITE-37)。既定 "cta"。
+           **`data-dl` が DL 計測の目印。** これが無い <a> は計測の対象外になる
+           (`src/main.js` の initDownloadTracking が `a[data-dl]` だけを見る)。
+           GA4 の `link_id` になるので、置き場所ごとに違う値にする
 {%- endcomment -%}
 <a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
+   data-dl="{{ include.dl | default: 'cta' }}"
    href="{{ site.data.lang.ja.app_download_link }}">
   {% include icon.html name="Download" class="h-5 w-5" %}
   {% if include.label %}{{ include.label }}{% else %}無料でダウンロード{% endif %}
