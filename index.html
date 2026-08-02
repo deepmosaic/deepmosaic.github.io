@@ -53,7 +53,14 @@ schemas:
     <p class="mx-auto mt-3 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4">{{ site.data.entity.not_removal_note }}</p>
 
     <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
-      <img src="/assets/img/screenshots/edit-player.webp" alt="Deepmosaic Desktop の編集画面。検出枠がオーバーレイ表示され、下部にタイムラインが並ぶ" width="1256" height="898" fetchpriority="high" decoding="async" class="block w-full">
+      {%- comment -%}
+        TICKET-SITE-34: LCP 要素。旧 alt は「検出枠がオーバーレイ表示され」だけで、
+        枠が何のための枠なのかが書かれていなかった。「枠の内側にモザイクをかける」と
+        書くことで、素の映像が写っている事実と矛盾させずに方向を伝える。
+        画像自体をモザイク適用済みに差し替えたら alt も確定版に更新すること
+        (TICKET-SITE-35)。
+      {%- endcomment -%}
+      <img src="/assets/img/screenshots/edit-player.webp" alt="Deepmosaic Desktop の編集画面。AI が検出した対象を枠で囲んでおり、この枠の内側にモザイクをかける。下部は検出区間のタイムライン" width="1256" height="898" fetchpriority="high" decoding="async" class="block w-full">
     </div>
   </div>
 </section>
@@ -207,7 +214,13 @@ schemas:
     {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更、検出が途切れた箇所へのジャンプに対応しています。" %}
     <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
-        <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ。プレイヤー上に検出枠が重なり、右側にモザイク設定パネルが開いている" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+        {%- comment -%}
+          TICKET-SITE-34: 旧 alt「右側にモザイク設定パネルが開いている」は**実画像と
+          一致していなかった**（パネルは開いていない）。事実に合わせるついでに
+          「枠の内側にモザイクをかける」という枠の意味を書き、素の映像が写っている
+          事実と矛盾させずに方向を伝える。
+        {%- endcomment -%}
+        <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ。プレイヤー上に AI の検出枠が重なり、下部のタイムラインに検出クラス別の区間が並ぶ。この枠の内側にモザイクをかける" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
       </div>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <div class="card p-5">
@@ -256,7 +269,7 @@ schemas:
       </div>
     </div>
     <div class="mt-8 overflow-hidden rounded-xl border border-edge">
-      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。適用範囲タブと粒度・不透明度などの設定項目が並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。かけるモザイクの種類（モザイク／ぼかし）・粒度・不透明度・エッジぼかしを指定する画面" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
     </div>
   </div>
 </section>
@@ -292,7 +305,12 @@ schemas:
         </ul>
       </div>
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
-        <img src="/assets/img/pr_image.webp" alt="Premiere Pro のタイムラインにモザイク情報がインポートされた状態" width="1593" height="1332" loading="lazy" decoding="async" class="block w-full">
+        {%- comment -%}
+          TICKET-SITE-34: **トップページで唯一モザイクが実写されている画像**なので、
+          alt にもそう書く。画像検索・スクリーンリーダー・AI クローラのいずれにも
+          「付加する側」であることを伝えられる数少ない面。
+        {%- endcomment -%}
+        <img src="/assets/img/pr_image.webp" alt="Adobe Premiere Pro のプログラムモニタ。Deepmosaic から取り込んだモザイク情報で、映っている 2 人の顔にモザイクがかかっている" width="1593" height="1332" loading="lazy" decoding="async" class="block w-full">
       </div>
     </div>
 

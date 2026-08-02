@@ -36,12 +36,12 @@ AI Overviews）の双方に、製品の **方向**（モザイクを付加する
 
 ### Phase 4 — 画像
 
-- [ ] TICKET-SITE-34: 画像 alt を方向が伝わる文面へ（+ `index.html:190` の alt 不一致を修正）
-- [ ] TICKET-SITE-35: ヒーロー画像をモザイク適用済みのキャプチャへ差し替え
+- [x] TICKET-SITE-34: 画像 alt を方向が伝わる文面へ（+ alt と実画像の不一致・`company/about.html` の欠陥を修正）
+- [ ] TICKET-SITE-35: ヒーロー画像をモザイク適用済みのキャプチャへ差し替え（front の撮影ハーネスは対応済み・撮影は未実施）
 
 ### Phase 5 — 回帰防止
 
-- [ ] TICKET-SITE-36: CI に素通しファイルの HTML 化検知と主要文言のガードを追加
+- [x] TICKET-SITE-36: CI に素通しファイルの HTML 化検知と主要文言のガードを追加 + CLAUDE.md 更新
 
 ---
 
@@ -276,6 +276,64 @@ AI から 1 度もリクエストされておらず、Google は「Search には
 
 `assets/robots.txt`（`User-Agent: * / Disallow:` だけの残骸）を削除。robots.txt は
 オリジン直下でしか読まれないので誰にも読まれておらず、将来「どっちが正か」を迷わせるだけだった。
+
+### TICKET-SITE-34 の記録 — 画像 alt
+
+**事実と異なる alt は書かない**方針で、実画像を 1 枚ずつ開いて確認してから書き直した。
+
+- `pr_image.webp`（`index.html`）— **トップで唯一モザイクが実写されている画像**
+  （Premiere Pro のプログラムモニタで 2 人の顔にモザイク）。alt にもそう書いた。
+  画像検索・スクリーンリーダー・AI クローラのいずれにも「付加する側」を伝えられる面
+- `edit-overview.webp` — 旧 alt「右側にモザイク設定パネルが開いている」は**実画像と
+  一致していなかった**（パネルは開いていない）。既存バグの修正を兼ねる
+- ヒーローの `edit-player.webp` — 素の映像＋検出枠しか写っていないので、
+  「枠の内側にモザイクをかける」と**枠の意味**を書いた。事実と矛盾させずに方向を伝える
+  暫定案で、TICKET-SITE-35 の画像差し替え後に確定版へ更新する
+
+あわせて `company/about.html` で見つかった既存の不具合を 3 点直した:
+
+1. `<img src="bcu30.webp" width="200px">` に `alt` が無く、`width` の値に単位が付いていた
+   （HTML の width 属性は整数のみでブラウザは無視する）。実寸 468x912 を入れ、
+   表示サイズは inline style で指定して CLS を防いだ
+2. 2 本の `target="_blank"` に `rel="noopener noreferrer"` が無かった
+   （CLAUDE.md の security-reviewer 観点に挙がっている項目）
+3. 「創業メンバー」節が**空の `<img >` と空の `<p></p>` だけ**で、公開ページに画像の
+   破損アイコンが出ていた。中身が無いので節ごと削除した。付随して Materialize 時代の
+   `row` / `col s2` グリッドクラスも消えた（Materialize は撤去済みでスタイルが
+   当たっていなかった）
+
+### TICKET-SITE-36 の記録 — CI ガード
+
+`Build with Jekyll` に `--strict_front_matter` を足し、その後に `Verify build output` を
+追加した。検査するのは 2 系統:
+
+1. **素通しファイルの HTML 化検知** — `_config.yml` の `defaults` が全ページに
+   `layout: default` を当てるため、`layout: null` を落とすと robots.txt / llms.txt /
+   llms-full.txt が HTML でラップされる。**ビルドは成功するので、検査しないと無言で壊れる。**
+   TICKET-SITE-15 で実際に踏んでいる
+2. **誤認訂正の文言が消えていないこと** — トップの方向文言 / 注記 /
+   `disambiguatingDescription` / `/mosaic-removal/` の存在 / FAQ の表示件数と
+   FAQPage JSON-LD の件数一致
+
+`CLAUDE.md` も更新した。**ゲート検証コマンドとして書かれていた
+`--strict_variables` は Jekyll 4.4 の CLI に存在せず、実行すると invalid option で落ちる**
+（＝これまで誰も実行できていなかった）。`_config.yml` の Liquid オプションとして
+有効化することはできるが、`page.noindex` / `page.schemas` / `page.seo_title` など
+**未定義キーの分岐を全て例外にする**ため、このサイトの設計とは両立しない。
+ゲートは `--strict_front_matter` のみに修正した。
+
+### 積み残し
+
+- **TICKET-SITE-24（Cloudflare の遮断解除）が未了の間、AI 向けの施策は 1 つも効かない。**
+  `llms.txt` も JSON-LD も 403 で読まれない
+- TICKET-SITE-35 のヒーロー画像差し替えは、front の撮影ハーネス側の対応
+  （`edit-player-mosaic.png` の追加）まで完了。撮影の実行は未実施
+- `docs/index.html` の画像 8 枚に `width` / `height` が無い（既存。CLS の観点で
+  CLAUDE.md の規約に反しているが、今回の誤認是正とは独立したトピックなので分離した）
+- `_data/lang/en.json` は旧 deepmosaic.xyz 時代の残骸で参照ゼロ。
+  `_data/lang/ja.json` にも未参照キーが多数残っている
+- `_includes/schema/organization.html` の `sameAs` に `x.com/deepmosaic` を入れていない
+  （生存を確認する手段が無かった）。目視確認できたら追加すること
 
 ## 2026-07-26 (2) - Fix: 刷新後のレビュー指摘の反映 + 料金プランをデザイン準拠へ
 

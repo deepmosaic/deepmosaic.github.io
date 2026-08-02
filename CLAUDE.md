@@ -50,8 +50,10 @@ npm run build && bundle exec jekyll build
 | `company/` | 企業情報ページ |
 | `price/` | 価格ページ |
 | `index.html` / `404.html` | トップページ / 404 |
+| `mosaic-removal.html` | `/mosaic-removal/`。「モザイク除去」誤認の封じ込めページ |
 | `CNAME` | カスタムドメイン |
 | `BingSiteAuth.xml` / `sitemap.xml` / `robots.txt` | SEO |
+| `llms.txt` / `llms-full.txt` | AI 向けのサイト概要 (`layout: null` 必須) |
 
 ### i18n
 
@@ -74,6 +76,26 @@ npm run build && bundle exec jekyll build
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
 - 新クラス追加時は Tailwind の `@source`（`src/app.css`）が対象 HTML を走査していること。新ディレクトリの HTML は `@source` に追加。
 - Front matter: 全ページに `layout` / `title` / `description` を必ず指定 (SEO)
+  - `title` はパンくず JSON-LD とナビが使う。SERP 用の文字列は `seo_title` に書く
+    (無ければ `title｜<共通サフィックス>` が自動で組まれる)。**全角 30 文字以内**に収めること
+- **製品説明の文言は `_data/entity.yml` が単一真実源** (TICKET-SITE-25)。トップの
+  「Deepmosaic とは」/ JSON-LD の `disambiguatingDescription` / `llms.txt` /
+  `/mosaic-removal/` / `/price/` `/spec/` のリード文が全てここを参照する。
+  ページ側に直書きすると訂正として機能しなくなる
+- **語彙ポリシー**: 「モザイクを *除去* するアプリ」という誤認が続いているため、
+  製品説明では**方向を含む動詞**を使う。「モザイク処理」「モザイク作業」は日本語として
+  かける／外すの両方向を指すので、単独では使わない (「モザイクをかける」「焼き込む」)。
+  「除去」という語を置いてよいのは以下だけ:
+  - トップの `meta description` (ランキング要因ではなくスニペット専用)
+  - `_data/faq.yml` の質問文 1 件 (ユーザーが検索窓に打つ語との一致)
+  - `/mosaic-removal/` (封じ込めシンク)
+  - JSON-LD の `disambiguatingDescription` / `llms.txt`
+
+  `<title>` / `h1` / kicker / 本文には置かない。打ち消しコピー自体が「モザイク 除去」
+  クエリとの関連度を上げ、**より多くの誤認流入を呼び込む逆効果**を持つため。
+  詳細は CHANGELOG の 2026-08-02 エントリを参照
+- ⚠️ `<meta name="robots">` に **`noarchive` / `nocache` を追加しない**。Bing は
+  これを Copilot での生成 AI 利用の可否として扱うため、入れると Copilot から消える
 
 ## Dependencies
 
@@ -110,7 +132,21 @@ npm run build && bundle exec jekyll build
 
 #### Jekyll ビルド (構文チェック)
 ```bash
-bundle exec jekyll build --strict_front_matter --strict_variables
+npm run build && bundle exec jekyll build --strict_front_matter
+```
+
+> ⚠️ **`--strict_variables` は使えない** (TICKET-SITE-31 で判明)。Jekyll 4.4 の CLI に
+> そのフラグは存在せず、付けると `invalid option` で落ちる。`_config.yml` の
+> `liquid.strict_variables` として有効化することはできるが、`page.noindex` /
+> `page.schemas` / `page.seo_title` など**未定義キーの分岐を全て例外にする**ため、
+> このサイトの設計とは両立しない。ゲートは `--strict_front_matter` のみ。
+
+#### ビルド出力の回帰チェック
+CI (`.github/workflows/jekyll.yml` の `Verify build output`) が実施する。ローカルで
+同じことを確認したいときは、素通しファイルが HTML 化していないかを見るのが要点。
+
+```bash
+head -1 _site/llms.txt _site/robots.txt _site/llms-full.txt   # <!doctype が出たら NG
 ```
 
 #### リンクチェック (オプション)
@@ -128,10 +164,14 @@ sleep 3 && curl -s http://localhost:4000/ | grep -q "<html"
 
 #### code-reviewer 観点
 - [ ] 全ページに front matter (`layout` / `title` / `description`) があるか
+- [ ] `<title>` が全角 30 文字以内か (超えるなら `seo_title` を書く)
 - [ ] Liquid 構文エラーがないか (`{{ }}` / `{% %}`)
 - [ ] i18n 文字列を `_data/lang/` 経由で参照しているか (ハードコード禁止)
+- [ ] 製品説明の文言を `_data/entity.yml` 経由で参照しているか (直書き禁止)
+- [ ] 「モザイク処理」を方向を明示せずに単独で使っていないか (語彙ポリシー)
 - [ ] レスポンシブ (モバイル) でレイアウトが崩れていないか
-- [ ] 画像に `alt` 属性があるか
+- [ ] 画像に `alt` 属性と `width` / `height` があるか。**alt が実画像の内容と一致するか**
+      (TICKET-SITE-34 で「設定パネルが開いている」と書きながら開いていない alt が見つかった)
 
 #### security-reviewer 観点
 - [ ] 外部 JS / iframe を読み込む場合 SRI / CSP を考慮しているか

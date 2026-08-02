@@ -51,9 +51,53 @@ jobs:
         uses: actions/configure-pages@v6
 
       - name: Build with Jekyll
-        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        run: bundle exec jekyll build --strict_front_matter --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
+
+      # TICKET-SITE-36: ビルド出力に対する回帰ガード。
+      #
+      # 1) 素通しファイル (robots.txt / llms.txt / llms-full.txt) の HTML 化検知。
+      #    `_config.yml` の defaults が全ページに `layout: default` を当てるため、
+      #    front matter の `layout: null` を落とすと Jekyll がこれらを HTML でラップして
+      #    配信する。TICKET-SITE-15 で robots.txt が実際にこれを踏んでいる。
+      #    ビルドは成功するので、検査しないと無言で壊れる類のバグ。
+      #
+      # 2) 誤認訂正の文言が消えていないこと。「Deepmosaic はモザイクを *除去* する
+      #    ソフト」という誤認の是正 (TICKET-SITE-24〜36) が、後のコピー変更で
+      #    無言で巻き戻るのを防ぐ。
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in robots.txt llms.txt llms-full.txt; do
+            if [ ! -f "_site/$f" ]; then
+              echo "::error::_site/$f が生成されていない"; fail=1; continue
+            fi
+            if head -c 400 "_site/$f" | grep -qiE '<!doctype|<html'; then
+              echo "::error::_site/$f が HTML でラップされている — front matter の layout: null を確認すること"; fail=1
+            fi
+          done
+          head -1 _site/llms.txt | grep -q '^# Deepmosaic' \
+            || { echo "::error::llms.txt の H1 が失われている"; fail=1; }
+          grep -q '^Sitemap: ' _site/robots.txt \
+            || { echo "::error::robots.txt の Sitemap 行が失われている"; fail=1; }
+          grep -qE '<br>|<strong>|&gt;|&lt;' _site/llms-full.txt \
+            && { echo "::error::llms-full.txt に HTML / 実体参照が残っている — strip_html と実体参照デコードの順序を確認すること"; fail=1; } || true
+          grep -q 'モザイクをかける' _site/index.html \
+            || { echo "::error::トップページから製品の方向を示す文言が消えている"; fail=1; }
+          grep -q '取り除く機能はありません' _site/index.html \
+            || { echo "::error::トップページから誤認訂正の注記が消えている"; fail=1; }
+          grep -q 'disambiguatingDescription' _site/index.html \
+            || { echo "::error::JSON-LD の disambiguatingDescription が消えている"; fail=1; }
+          [ -f _site/mosaic-removal/index.html ] \
+            || { echo "::error::/mosaic-removal/ が生成されていない"; fail=1; }
+          # 表示 FAQ と FAQPage JSON-LD の件数一致 (同一データ源なので必ず一致するはず)
+          d=$(grep -o '<details' _site/index.html | wc -l)
+          q=$(grep -o '"@type": "Question"' _site/index.html | wc -l)
+          [ "$d" -eq "$q" ] \
+            || { echo "::error::FAQ の表示件数 ($d) と FAQPage JSON-LD の件数 ($q) が食い違っている"; fail=1; }
+          exit $fail
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

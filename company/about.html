@@ -67,26 +67,27 @@ description: Deepmosaic合同会社の会社概要。所在地・設立・資本
         </tbody>
     </table>
 
+    {%- comment -%}
+      TICKET-SITE-34: この節にあった既存の不具合を 3 点直した。
+        1. `<img src="bcu30.webp" width="200px">` に `alt` が無く、`width` の値に
+           単位が付いていた (HTML の width 属性は整数のみ。ブラウザは無視する)。
+           実寸を入れて CLS を防ぐ
+        2. `target="_blank"` に `rel="noopener noreferrer"` が無かった
+           (CLAUDE.md の security-reviewer 観点)
+        3. 「創業メンバー」節が **空の `<img >` と空の `<p></p>` だけ**で、公開ページに
+           画像の破損アイコンが出ていた。中身が無いので節ごと削除した。
+           付随して Materialize 時代の `row` / `col s2` グリッドクラスも消えた
+           (Materialize は撤去済みでスタイルが当たっていなかった)
+    {%- endcomment -%}
     <h2 class="rc-company-chapter">代表実績</h2>
     <p>
-      <a href="http://tech.nikkeibp.co.jp/it/atcl/news/17/020503100/" target="_blank">ランサーズが「マルチ商法チェッカー」を無償で公開、検知率は99％</a>
+      <a href="http://tech.nikkeibp.co.jp/it/atcl/news/17/020503100/" target="_blank" rel="noopener noreferrer">ランサーズが「マルチ商法チェッカー」を無償で公開、検知率は99％</a>
     </p>
     <p>
-      <a href="https://bcu30.jp/2018/" target="_blank">
-      <img src="/assets/img/bcu30.webp" width="200px">
+      <a href="https://bcu30.jp/2018/" target="_blank" rel="noopener noreferrer">
+      <img src="/assets/img/bcu30.webp" alt="BCU30 2018 選出" width="468" height="912" loading="lazy" decoding="async" style="width:200px;height:auto">
       </a>
     </p>
-
-
-    <h2 class="rc-company-chapter">創業メンバー</h2>
-    <div class="row">
-        <div class="col s2">
-            <img >
-        </div>
-        <div class="col s10">
-            <p></p>
-        </div>
-    </div>
     -->
   </div>
 </section>
