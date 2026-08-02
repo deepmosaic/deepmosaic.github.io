@@ -14,7 +14,7 @@ AI Overviews）の双方に、製品の **方向**（モザイクを付加する
 
 ### Phase 0 — 遮断の解除
 
-- [ ] TICKET-SITE-24: Cloudflare の AI クローラ遮断と Managed robots.txt を解除（運用作業・コミットなし）
+- [x] TICKET-SITE-24: Cloudflare の AI クローラ遮断と Managed robots.txt を解除（運用作業・リポジトリ変更なし）
 
 ### Phase 1 — 単一真実源
 
@@ -44,6 +44,50 @@ AI Overviews）の双方に、製品の **方向**（モザイクを付加する
 - [x] TICKET-SITE-36: CI に素通しファイルの HTML 化検知と主要文言のガードを追加 + CLAUDE.md 更新
 
 ---
+
+### TICKET-SITE-24 の記録 — Cloudflare（2026-08-02 実施・リポジトリ変更なし）
+
+**この対応の中で唯一「確実に効く」施策**だったので、まず実測から入った。UA を変えて
+本番に GET したところ、GPTBot / ClaudeBot / CCBot / OAI-SearchBot / Claude-SearchBot /
+PerplexityBot / ChatGPT-User / Amazonbot / meta-externalagent が**すべて 403**、
+Googlebot / bingbot だけが 200 という状態だった。
+
+原因は Cloudflare 側の **2 つの独立した設定**で、片方だけ切っても解決しなかった。
+
+1. **AI Crawl Control → シグナル →「管理された robots.txt」がオン**
+   origin の robots.txt に `Content-Signal: search=yes,ai-train=no,use=reference` と
+   Amazonbot / Applebot-Extended / Bytespider / CCBot / ClaudeBot /
+   CloudflareBrowserRenderingCrawler / Google-Extended / GPTBot / meta-externalagent の
+   `Disallow: /` を注入していた。→ **オフにした**
+2. **セキュリティ → 設定 →「AI ボットをブロック（9月15日に廃止予定）」が
+   「すべてのページでブロック」** ← **403 の実体はこちら**
+   Cloudflare 管理ルールが AI ボットの UA に 403 を返していた。
+   → **「ブロックしない（クローラーを許可する）」に変更して保存**
+
+新しい「AI ボット ポリシー」（検索 / エージェント / トレーニング）は 3 つとも
+最初から「許可」だったが、2026-09-15 までは**レガシー設定のほうが有効**なので、
+新ポリシー側を見ているだけでは原因にたどり着けない。
+
+AI Crawl Control のクローラ一覧では 15 件が個別ブロック状態
+（ClaudeBot / GPTBot / CCBot / Claude-User / Amazonbot / Bytespider /
+meta-externalagent / PetalBot / Anchor Browser / Arquivo / FacebookBot /
+Google-CloudVertexBot / Novellum / TikTok Spider / Timpibot）だったが、
+**個別トグルは `disabled` で操作できなかった**。上記 2 つを解除したところ
+32 件すべてが自動的に解除された。個別トグルはレガシー設定の従属表示だったと考えられる。
+
+**当初の診断の訂正**: 「ChatGPT / Claude / Perplexity はサイトを一度も読めていない」と
+書いたが、これは言い過ぎだった。ダッシュボードの実績値では Claude-SearchBot 許可 14 /
+ChatGPT-User 許可 3 / Applebot 許可 3 と、**回答系のボットは部分的に通っていた**。
+完全に 0 件だったのは **学習系（ClaudeBot / GPTBot / CCBot は許可済み 0）**。
+curl での 403 は、検証されていない IP から UA を詐称したために管理ルールに
+捕まったもので、正規 IP の検証済みボットとは挙動が異なっていた。
+
+解除後の実測: 上記 14 UA すべてが 200。`/robots.txt` から `Content-Signal` と
+`Disallow` が消えたことも確認。
+
+⚠️ Bytespider / PetalBot / TikTok Spider / Anchor Browser / Novellum / Timpibot は
+**誤認訂正には寄与しない**（これらの回答に Deepmosaic が出てくることはまず無い）。
+帯域が気になるなら AI Crawl Control で個別に再ブロックしてよい。
 
 ### 語彙ポリシー（この対応の中核となる判断）
 
@@ -324,8 +368,11 @@ AI から 1 度もリクエストされておらず、Google は「Search には
 
 ### 積み残し
 
-- **TICKET-SITE-24（Cloudflare の遮断解除）が未了の間、AI 向けの施策は 1 つも効かない。**
-  `llms.txt` も JSON-LD も 403 で読まれない
+- ⚠️ **本番にデプロイされているのは刷新前のサイト。** 2026-08-02 時点で `master` は
+  origin より 15 コミット先行しており、`/spec/` `/mosaic-removal/` `/llms.txt` は
+  すべて 404、トップの `<title>` も「AIで動画編集を一段上のレベルに」のまま。
+  **AI クローラの遮断は解除できたが、今クロールされるのは古いサイト。**
+  push するまでこの対応の効果は出ない
 - TICKET-SITE-35 のヒーロー画像差し替えは、front の撮影ハーネス側の対応
   （`edit-player-mosaic.png` の追加）まで完了。撮影の実行は未実施
 - `docs/index.html` の画像 8 枚に `width` / `height` が無い（既存。CLS の観点で
