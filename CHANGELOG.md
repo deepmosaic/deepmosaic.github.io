@@ -1,5 +1,38 @@
 # CHANGELOG
 
+## 2026-08-02 (6) - Change: 複数契約を「準備中」から提供開始の表記へ + 最大契約数を明示
+
+**「準備中です」は実態と合わなくなっていたので外した。** 判断の根拠は
+`worker-auth0-updater/src/checkout.ts` が Checkout セッションに
+`adjustable_quantity[enabled]=true` / `maximum = 上限 - 既存契約数` を付けていること。
+Worker をデプロイした時点で、**出荷済み v2.1.0 のアプリからでも Stripe の決済画面上で
+本数を増やせる**。アプリ内の本数セレクタ（`PlanSelectDialog`）は UX 改善であって
+ゲートではないため、アプリの再出荷を待つ必要がなかった。
+
+⚠️ **ただし注記そのものは残す。**「上限時間の適用は順次開始します」の部分は生きている
+（上限時間はアプリ側でまだ強制されていない）。注記を空にできるのは上限の適用開始後。
+
+- `_data/plans.yml` — `rollout_note` を提供開始の文面へ。アプリ
+  `PlanSelectDialog.svelte` の注記と**一字一句同じ**にしてある
+- `_data/faq.yml` — 「上限時間を超えたら」の回答から「準備中」を外し、本数を明記。
+  この回答は FAQPage の JSON-LD として検索結果にも出る
+- `docs/index.html` — 同じ文面が **2 箇所にハードコード**されていたので両方差し替え
+  （`plans.yml` を参照しておらず、片方だけ直すと食い違う構造）
+- `_data/plans.yml` — Light / Pro の `specs` に「追加契約」行を追加
+  （Light: 最大 3 契約・月 15 時間まで / Pro: 最大 2 契約・月 80 時間まで）
+
+### ⚠️ 最大契約数はここが「二重管理」になる
+
+**本数の正 (SSOT) は Supabase `plan_catalog.max_contracts`。** front の
+`src/lib/plan/contract-options.ts` は「**コードに数値をハードコードしてはならない**」と
+明記しており、アプリは catalog から本数を引いている。しかし**サイトは静的サイトで
+Supabase を読めないため、`_data/plans.yml` と `_data/faq.yml` だけが手動の複製になる**。
+
+Supabase の `max_contracts` を変更したら、必ずこの 2 ファイルも直すこと。
+現行値は light=3 / pro=2 / enterprise=1 / free=1
+（`docs/supabase/plan_catalog_seed.sql`）。Enterprise はシート単価で自己申込を
+塞いでいるため複数契約の対象外。
+
 ## 2026-08-02 (5) - Change: 未使用分の翌月繰越を撤去
 
 **繰越は不要と判断したので、サイトから表示と計算ロジックを消した。** 対象は Light の
