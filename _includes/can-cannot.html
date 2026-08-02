@@ -1,0 +1,33 @@
+{%- comment -%}
+できること / できないこと の 2 カラム対比 (TICKET-SITE-29)。
+
+トップの「Deepmosaic とは」(`what-is.html`) と `/mosaic-removal/` の 2 箇所で使う。
+どちらも `_data/entity.yml` の `can` / `cannot` を出すので、markup をここに抽出して
+文面と見た目の両方の二重管理を防ぐ。
+
+表・箇条書き・対比は LLM が最も抽出しやすい形式。「できないこと」を独立した
+見出し付きリストにすることで、「モザイク除去はできるか」という質問に対して
+**回答可能な塊**が本文中に生まれる。
+
+⚠️ `cannot` の文面に「除去」は入れない。本文では「取り除く」を使う
+   (_data/entity.yml の語彙ポリシーを参照)。
+{%- endcomment -%}
+{%- assign E = site.data.entity -%}
+<div class="grid gap-5 md:grid-cols-2">
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="CheckCircle2" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">できること</h3></div>
+    <ul class="flex flex-col gap-3">
+      {%- for c in E.can %}
+      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>{{ c.ja }}</span></li>
+      {%- endfor %}
+    </ul>
+  </div>
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="X" class="h-[18px] w-[18px] shrink-0 text-danger" %}<h3 class="text-[15px] font-bold text-ink">できないこと</h3></div>
+    <ul class="flex flex-col gap-3">
+      {%- for c in E.cannot %}
+      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="X" class="mt-1 h-4 w-4 shrink-0 text-danger" %}<span>{{ c.ja }}</span></li>
+      {%- endfor %}
+    </ul>
+  </div>
+</div>

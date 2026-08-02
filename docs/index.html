@@ -44,7 +44,12 @@ schemas:
       <section id="about" class="scroll-mt-24">
         <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">はじめに</h2>
         <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-          <p>Deepmosaicは、AI（ディープラーニング）による物体検出で動画のモザイク処理を自動化するWindowsデスクトップアプリケーションです。動画の読み込みからAI検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでをアプリ内で完結できます。</p>
+          {%- comment -%}
+            TICKET-SITE-30: サイト内で最も定義に近い一文。前半の「モザイク処理を
+            自動化する」は日本語として方向を含まないため、方向が確定する 2 文目を
+            足した。docs は AI クローラが本文として引きやすいページでもある。
+          {%- endcomment -%}
+          <p>Deepmosaicは、AI（ディープラーニング）による物体検出で動画のモザイク処理を自動化するWindowsデスクトップアプリケーションです。動画の読み込みからAI検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでをアプリ内で完結できます。<b>本ソフトウェアはモザイクを「かける」ためのものであり、すでにモザイクがかかった映像からモザイクを取り除いたり、元の映像を復元したりする機能はありません。</b></p>
         </div>
       </section>
 
@@ -308,7 +313,13 @@ schemas:
             </div>
             <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
               <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">不透明度</div>
-              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク/ぼかしの濃さ（0〜100%）。下げると元の映像が透けます</div>
+              {%- comment -%}
+                TICKET-SITE-30: 旧文面は「下げると元の映像が透けます」。意味は
+                正しいが、**単独で抜粋されると「モザイクを透かせる機能」と誤読され得る**
+                サイト内で唯一の表現だった。意味を保ったまま「隠蔽が弱くなる」に
+                言い換え、既存の確定語彙 (隠蔽率) に寄せた。
+              {%- endcomment -%}
+              <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク/ぼかしをどれだけ強く合成するか（0〜100%）。既定の 100% で対象を完全に覆います。値を下げるほど隠蔽が弱くなるため、通常は 100% のまま使います</div>
             </div>
             <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
               <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">エッジぼかし</div>

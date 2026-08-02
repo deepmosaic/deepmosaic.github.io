@@ -1,0 +1,102 @@
+---
+layout: default
+title: モザイク除去について
+seo_title: Deepmosaicはモザイク除去ソフトではありません
+description: Deepmosaicは動画にモザイクを「かける（付加する）」ためのソフトです。モザイクの除去・解除・復元や、無修正化を目的とした機能は搭載していません。名前の似たツールとお間違えのないようご注意ください。
+permalink: /mosaic-removal/
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  「モザイク除去」封じ込めページ (TICKET-SITE-29)。
+
+  役割: サイト内で「除去」という語を **この 1 URL に集中させる**シンク。
+  トップの <title> / h1 / 本文を「除去」で汚さずに、誤認したユーザーを
+  SERP 段階と着地段階の 2 回濾過する。
+
+  ⚠️ `noindex` を付けないこと。付けたらインターセプトが成立しない。
+     SERP のタイトルに「モザイク除去ソフトではありません」と出て、
+     クリック前に自己判定させるのがこのページの主目的。
+
+  ⚠️ **他社ツールへのリンクは絶対に張らない。** 「除去したい人はこちらへ」と
+     親切心で外部リンクを張ると、無修正化クラスタへトピック関連性を渡してしまい
+     封じ込め設計が崩壊する。「当社では提供していません」で止める。
+
+  ⚠️ ダウンロードボタン (`cta-download.html`) も置かない。誤認して来た人を
+     DL へ誘導するのはこのページの目的に反する。導線は /docs/ / /price/ /
+     トップへの内部リンクに留める。
+
+  ⚠️ リポジトリ直下に置いているのは意図的。`src/app.css` の
+     `@source "../*.html"` が直下の .html を既に走査しているため、
+     新ディレクトリを作る場合に必要な `@source` 追加が要らない
+     (`/spec/` 新設時は TICKET-SITE-01 で追加が必要だった)。
+
+  文面の出所は `_data/entity.yml`。トップ本文 / JSON-LD / llms.txt と
+  食い違わせないこと。
+{%- endcomment -%}
+{%- assign E = site.data.entity -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[880px]">
+    <nav aria-label="パンくず" class="mb-5 text-[13px] text-ink-4">
+      <a href="/" class="hover:text-accent-soft">ホーム</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">モザイク除去について</span>
+    </nav>
+    <h1 class="text-[clamp(28px,3.6vw,40px)] font-bold leading-[1.35] tracking-[-0.02em] text-ink">Deepmosaicはモザイクを<span class="text-accent">「かける」</span>ソフトです</h1>
+    <p class="mt-5 max-w-[680px] text-[15.5px] leading-[1.95] text-ink-2">{{ E.definition.ja }}</p>
+    <p lang="en" class="mt-3 max-w-[680px] text-[13.5px] leading-[1.9] text-ink-4">{{ E.disambiguation.en }}</p>
+  </div>
+</section>
+
+<section class="pb-16">
+  <div class="mx-auto flex w-[92%] max-w-[880px] flex-col gap-14">
+
+    <div>
+      <h2 class="mb-6 text-[21px] font-bold text-ink">できること / できないこと</h2>
+      {% include can-cannot.html %}
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">なぜ混同されるのですか</h2>
+      <p class="mb-5 max-w-[680px] text-[14.5px] leading-[2] text-ink-2">主な理由は 2 つあると考えています。</p>
+      <ul class="flex flex-col gap-3">
+        {%- for reason in E.confusion_reasons %}
+        <li class="flex gap-2.5 text-[14px] leading-[1.95] text-ink-2">{% include icon.html name="HelpCircle" class="mt-1 h-4 w-4 shrink-0 text-ink-4" %}<span>{{ reason }}</span></li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-5 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ E.name_origin.ja }}</p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">モザイクの除去をお探しの方へ</h2>
+      <div class="rounded-lg border-l-[3px] border-warning bg-panel p-5 text-[14px] leading-[2] text-ink-body">
+        当社はモザイクの除去・解除・復元を行う製品やサービスを提供しておらず、その用途に関するお問い合わせもお受けしていません。
+        Deepmosaic をインストールしても、すでにモザイクがかかっている映像を元に戻すことはできません。
+        お探しの機能とは目的が正反対のソフトウェアですので、ダウンロードの前にご確認ください。
+      </div>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">Deepmosaicが解決すること</h2>
+      <p class="max-w-[680px] text-[14.5px] leading-[2] text-ink-2">
+        モザイクをかける作業は、全編を目視して対象を追い続ける必要があるため、尺に比例して時間がかかります。
+        Deepmosaic は AI が全編で対象を検出・追跡してモザイクをかけ、人が行う作業を検出結果の確認と修正だけに減らします。
+        映像は外部に送信せず、すべてお使いの PC 内で処理します。
+      </p>
+      <ul class="mt-6 flex flex-col gap-2.5 text-[14px]">
+        <li><a href="/" class="text-accent-soft hover:underline">製品の概要とできること</a></li>
+        <li><a href="/docs" class="text-accent-soft hover:underline">使い方（インストールから書き出しまで）</a></li>
+        <li><a href="/spec" class="text-accent-soft hover:underline">動作環境</a></li>
+        <li><a href="/price" class="text-accent-soft hover:underline">料金</a></li>
+        <li><a href="/#faq" class="text-accent-soft hover:underline">よくある質問</a></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+{% include footer.html %}

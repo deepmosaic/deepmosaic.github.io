@@ -19,6 +19,11 @@
           <li><a href="/price" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.price }}</a></li>
           <li><a href="/docs" class="text-ink-2 hover:text-accent-soft">{{ site.data.lang.ja.document }}</a></li>
           <li><a href="/spec" class="text-ink-2 hover:text-accent-soft">動作環境</a></li>
+          {%- comment -%}
+            TICKET-SITE-29: 全ページからリンクグラフ上で到達できるようにする。
+            誤認したユーザーがどのページから入っても辿り着ける必要がある。
+          {%- endcomment -%}
+          <li><a href="/mosaic-removal/" class="text-ink-2 hover:text-accent-soft">モザイク除去について</a></li>
           <li><a href="{{ site.data.lang.ja.app_download_link }}" download class="text-ink-2 hover:text-accent-soft">ダウンロード</a></li>
         </ul>
       </div>
