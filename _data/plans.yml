@@ -47,9 +47,11 @@ tax_note: "税別"
 #    `rollout_note: ""` にすれば注記だけが消え、他は 1 文字も変えなくてよい。
 rollout_note: "上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（本数の上限はプランごとに異なります）。現在ご利用中のお客様の条件は変わりません。"
 
-# 既存 Pro (無制限) の据え置き。新デザインの注記 (`.dc.html` L691) をそのまま採用する。
-# front 側の `from_legacy_plan_name` が全有料文字列を無制限に倒す設計と対応している。
-grandfather_note: "既存の Pro（無制限）をご利用中のお客様は、そのまま無制限で継続してご利用いただけます（据え置き）。上限時間の適用は新規のお申し込みのみです。"
+# 既存 Pro (無制限) 据え置きの注記 (`grandfather_note`) は削除した。
+# 出す先だった `_includes/pricing-cards.html` の `grandfather` パラメータと
+# `/price/` 側の受け渡しも同時に撤去してある。復活させるなら 3 箇所とも戻すこと。
+# なお front 側の `from_legacy_plan_name` (既存の有料文字列を無制限に倒す実装) は
+# **そのまま生きている**。消したのは告知だけで、据え置きの挙動ではない。
 
 # プラン定義。
 #
@@ -159,7 +161,9 @@ tiers:
         value: "1 台"
       - label: "解約"
         value: "いつでも可能・違約金なし"
-    note: "上限に達しても進行中の処理は停止しません。超過料金は発生しません。"
+    # `note` (「上限に達しても進行中の処理は停止しません。超過料金は発生しません。」) は
+    # 削除した。同じ内容は `rollout_note` がカード下に出しており重複していた。
+    # `_includes/pricing-cards.html` の `{% if plan.note %}` は汎用の仕組みとして残す。
     cta:
       label: "ダウンロードして申し込む"
       kind: "download"
@@ -169,22 +173,26 @@ tiers:
     display: card
     price: 8000
     price_display: "8,000"
-    price_unit: "/ シート・月"
-    # pooled: シート数 × included_hours をチームで共有する
+    # ⚠️ **表示上の呼称は「アカウント」で統一する** (2026-08-02)。
+    #    内部キーは `min_seats` のまま据え置く — Supabase `plan_catalog.min_seats` の
+    #    **列名と対応**しており、CI (`scripts/check-plan-catalog.mjs`) が同名で突き合わせる。
+    #    キーを変えると突き合わせが壊れる。**変えるのは人が読む文字列だけ。**
+    price_unit: "/ アカウント・月"
+    # pooled: アカウント数 × included_hours をチームで共有する
     included_hours: 40
     included_basis: "pooled"
     min_seats: 3
-    # シート単価で自己申込を塞いでいるため複数契約の対象外 (枠はシート数で増やす)
+    # アカウント単価で自己申込を塞いでいるため複数契約の対象外 (枠はアカウント数で増やす)
     max_contracts: 1
     overage_per_hour: null # 従量課金は廃止 (旧 ¥300 / 時間)
     carryover_hours: null
     trial_days: 0
     featured: false
     public: true
-    summary: "メーカー・ポストプロダクション向け。最低 3 シート（¥24,000〜）。"
+    summary: "メーカー・ポストプロダクション向け。最低 3 アカウント（¥24,000〜）。"
     specs:
       - label: "込み時間"
-        value: "シート数 × 40 時間をプール共有"
+        value: "アカウント数 × 40 時間をプール共有"
       - label: "請求"
         value: "月末締め翌月請求"
       - label: "支払方法"

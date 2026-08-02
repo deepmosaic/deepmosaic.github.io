@@ -11,8 +11,10 @@
 
 `public: false` のプランは表示しない (グランドファザリング枠 / 非公開プラン用)。
 
-params:
-  grandfather  (任意) 真値で既存 Pro (無制限) 据え置きの注記を出す (`/price/` のみ)
+params: なし
+
+`grandfather` パラメータ (既存 Pro 無制限の据え置き注記) は 2026-08-02 に撤去した。
+`_data/plans.yml` の `grandfather_note` と `/price/` 側の受け渡しも同時に削除してある。
 {%- endcomment -%}
 {%- assign visible = site.data.plans.tiers | where: "public", true -%}
 {%- assign cards = visible | where: "display", "card" -%}
@@ -124,8 +126,4 @@ params:
 <p class="mt-5 rounded-lg border-l-[3px] border-warning bg-panel px-5 py-4 text-[13px] leading-[1.95] text-ink-2">
   {{ site.data.plans.rollout_note }}
 </p>
-{%- endif %}
-
-{%- if include.grandfather %}
-<p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">{{ site.data.plans.grandfather_note }}</p>
 {%- endif %}

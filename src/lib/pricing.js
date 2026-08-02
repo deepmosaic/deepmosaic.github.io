@@ -135,7 +135,10 @@ export function planBreakdown(tier, hours) {
   const parts = [];
   if (tier.included_basis === 'pooled') {
     const { seats } = bestSeatPlan(tier, hours);
-    parts.push(`${seats} シート（${seats * tier.included_hours} 時間をプール共有）`);
+    // 表示上の呼称は「アカウント」で統一する (2026-08-02)。内部の識別子 (`seats` /
+    // `min_seats` / `bestSeatPlan`) は Supabase `plan_catalog.min_seats` の列名と
+    // 対応しているので **変えない** — 変えるのは人が読む文字列だけ。
+    parts.push(`${seats} アカウント（${seats * tier.included_hours} 時間をプール共有）`);
   } else if (tier.included_basis === 'cumulative') {
     parts.push(`累計 ${tier.included_hours} 時間`);
   } else if (tier.included_basis === 'unlimited' || tier.included_hours === null) {

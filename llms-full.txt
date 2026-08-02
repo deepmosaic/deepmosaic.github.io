@@ -130,8 +130,6 @@ macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
 {% endif %}{% endfor %}
 {{ site.data.plans.rollout_note }}
 
-{{ site.data.plans.grandfather_note }}
-
 ## 5. 通信内容の開示 / Data transmission disclosure
 
 送信するもの / Sent:

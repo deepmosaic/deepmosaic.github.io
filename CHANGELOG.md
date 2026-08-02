@@ -1,5 +1,45 @@
 # CHANGELOG
 
+## 2026-08-02 (9) - Change: 注記 2 件の削除 + 「シート」→「アカウント」
+
+### 削除した注記 2 件
+
+- **既存 Pro（無制限）据え置きの注記** — `_data/plans.yml` の `grandfather_note`。
+  出し先だった `_includes/pricing-cards.html` の `grandfather` パラメータ、
+  `/price/` 側の受け渡し（`{% include pricing-cards.html grandfather=true %}`）、
+  `llms-full.txt` の出力行も**同時に撤去**した。データだけ消すと配管が死んで残る。
+  ⚠️ front の `from_legacy_plan_name`（既存の有料文字列を無制限に倒す実装）は
+  **そのまま生きている**。消したのは告知であって据え置きの挙動ではない
+- **Pro カードの `note`**（「上限に達しても進行中の処理は停止しません。超過料金は
+  発生しません。」）— 同じ内容を `rollout_note` がカード下に出しており重複していた。
+  `pricing-cards.html` の `{% if plan.note %}` は汎用の仕組みとして残す
+
+### 「シート」→「アカウント」
+
+**変えたのは人が読む文字列だけ。内部の識別子は据え置く。**
+
+| 変更 | 箇所 |
+|---|---|
+| `price_unit` | `/ シート・月` → `/ アカウント・月` |
+| Enterprise の `summary` | 最低 3 シート → 最低 3 アカウント |
+| Enterprise の specs | シート数 × 40 時間 → アカウント数 × 40 時間 |
+| `/price/` の `description` | Enterprise 1シート → 1アカウント |
+| ROI 計算機の内訳文 (`pricing.js`) | `3 シート（120 時間をプール共有）` → `3 アカウント（…）` |
+| `pricing.test.js` | 上記に対応する期待値 2 件 |
+
+⚠️ **`min_seats` / `seats` / `bestSeatPlan` といった識別子は変更していない。**
+`min_seats` は Supabase `plan_catalog.min_seats` の**列名と対応**しており、
+CI（`scripts/check-plan-catalog.mjs`）が同名で突き合わせる。キーを変えると
+突き合わせが壊れる。`_data/plans.yml` と `src/lib/pricing.js` の該当箇所に
+その旨のコメントを入れた。
+
+`src/lib/plan-catalog.js` のエラーメッセージ（「最低シート数が食い違っている」）も
+そのまま。これは CI の開発者向け出力で、ユーザーには見えない。
+
+検証: npm test 71 passed / 0 failed（skip 1 は `SUPABASE_PROXY_API_KEY` 未設定時の
+ライブ検査で意図的）。ビルド出力に削除した 2 文の残存ゼロ、ユーザーに見える面の
+「シート」の残存ゼロ（`assets/dist/app.js` も含めて 0 件）。
+
 ## 2026-08-02 (9) - Feature: `_data/plans.yml` と Supabase `plan_catalog` の乖離を CI が検知する (TICKET-SITE-CONTRACT-SSOT / 案B)
 
 契約本数の上限 (`max_contracts`) / 込み時間 / 月額の **真の SSOT は Supabase の

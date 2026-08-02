@@ -5,7 +5,7 @@ title: 料金
 # 既定サフィックス (全角 24.5 文字) で収まる。`seo_title` は不要。
 # ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理に
 #    なる唯一の箇所。料金を変えたらここも直すこと。
-description: 動画にモザイクをかける作業を自動化するDeepmosaicの料金プラン。Light 月額2,980円 / Pro 月額9,800円 / Enterprise 1シート月額8,000円（いずれも税別）。込み時間を明記しており、超過料金は発生しません。無料プランは累計6時間分まで、クレジットカード不要。
+description: 動画にモザイクをかける作業を自動化するDeepmosaicの料金プラン。Light 月額2,980円 / Pro 月額9,800円 / Enterprise 1アカウント月額8,000円（いずれも税別）。込み時間を明記しており、超過料金は発生しません。無料プランは累計6時間分まで、クレジットカード不要。
 schemas:
   - software-application
   - breadcrumb
@@ -43,7 +43,7 @@ schemas:
 
 <section class="pb-20">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include pricing-cards.html grandfather=true %}
+    {% include pricing-cards.html %}
 
     {%- comment -%}
       時間の計測ルールは **`/docs/#usage` が唯一の出所**。新デザインはこのページに

@@ -232,9 +232,10 @@ test('内訳文がプランごとの条件をデータから組み立てる', ()
   // 複数契約が必要な時間数では本数と合計時間を出す
   assert.equal(planBreakdown(byCode('light'), 12), '3 契約（月 15 時間込み）');
   assert.equal(planBreakdown(byCode('pro'), 41), '2 契約（月 80 時間込み）');
-  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 シート（120 時間をプール共有）');
-  // プールを超えるとシート数が増え、内訳もそれに追従する
-  assert.equal(planBreakdown(byCode('enterprise'), 147), '4 シート（160 時間をプール共有）');
+  // 表示上の呼称は「アカウント」(内部の識別子は Supabase の列名に合わせて seats のまま)
+  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 アカウント（120 時間をプール共有）');
+  // プールを超えるとアカウント数が増え、内訳もそれに追従する
+  assert.equal(planBreakdown(byCode('enterprise'), 147), '4 アカウント（160 時間をプール共有）');
 });
 
 test('Enterprise の検討を促す閾値は Pro の込み時間', () => {
