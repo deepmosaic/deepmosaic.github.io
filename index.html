@@ -348,8 +348,9 @@ schemas:
   金額・込み時間・仕様行の出所は `_data/plans.yml` の 1 箇所だけ。
 
   超過課金は廃止済み (Stripe の従量 price / メーターも停止)。上限時間はアプリ側で
-  未強制なので、その事実と今後の告知は `plans.yml` の `rollout_note` が料金カード
-  直下に出す (カード内には書かない)。
+  未強制で、その開示は FAQ (「上限に達したらどうなりますか」) と `/docs/#plan`。
+  料金カード直下に出していた `plans.yml` の `rollout_note` は同じ内容の 3 つ目の
+  複製だったので 2026-08-08 に空にした (カード内にも書かない)。
 {%- endcomment -%}
 <!-- PRICING -->
 <section class="py-24">
