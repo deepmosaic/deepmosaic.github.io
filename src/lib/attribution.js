@@ -127,12 +127,73 @@ export function attributionFromLanding({ search, referrer, origin }) {
  * first-touch を採らないのは、`utm_*` の業界標準が last 上書きだから。
  * referrer だけ first にすると 2 つの思想が混ざる。
  *
+ * **T-007 で保存先を sessionStorage から localStorage (30 日) へ広げたが、
+ * 採用規則はここも含めて一切変えていない。** 変えたのは「どれだけ覚えているか」で
+ * あって「どの接点を採るか」ではない。first-touch が要るなら別項目として持つこと
+ * (T-008 の `dm_attr_first`)。片方の項目だけ first にすると上記の混在が起きる。
+ *
  * @param {object|null} stored
  * @param {object|null} landing
  * @returns {object|null}
  */
 export function mergeAttribution(stored, landing) {
   return landing ?? stored ?? null;
+}
+
+// ── 保存層 (T-007) ──────────────────────────────────────────────────────────
+//
+// 以前は sessionStorage に素の record を入れていたため、**タブを閉じた時点で流入元が
+// 消えていた**。「Google で見つけて後日ダウンロード」が全部 direct になる。
+// localStorage へ広げるが、永続に残すのは筋が悪いので有効期限を持たせる。
+//
+// **`serializeAttribution` / `parseStoredAttribution` は触らない。**
+// あちらは `data-dl-attr` 属性のワイヤ形式で、`MobileNav.svelte` が使っている。
+
+/** 保存した流入元を覚えておく期間。 */
+export const ATTR_TTL_MS = 30 * 86_400_000;
+
+/**
+ * 保存用のエンベロープに包む。`now` は引数で受ける (この module は純関数だけ)。
+ *
+ * @param {object|null} record
+ * @param {number} now エポック ms
+ * @returns {string} 保存する文字列。record が null なら空文字
+ */
+export function serializeStored(record, now) {
+  if (record === null) return '';
+  return JSON.stringify({
+    v: 2,
+    exp: now + ATTR_TTL_MS,
+    a: { s: record.s, m: record.m, c: record.c, r: record.r },
+  });
+}
+
+/**
+ * 保存されていた文字列を読む。**期限切れは `null`。**
+ *
+ * v1 (エンベロープ無しの素の record) も受理する — T-007 のリリースをまたいだ
+ * セッションの流入元を落とさないため。中身は `parseStoredAttribution` が
+ * 全項目を再検証するので、どちらの形でも「外部入力として扱う」性質は変わらない。
+ *
+ * @param {string|null|undefined} json
+ * @param {number} now エポック ms
+ * @returns {object|null}
+ */
+export function parseStoredEnvelope(json, now) {
+  if (typeof json !== 'string' || json === '') return null;
+  let raw;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return null;
+  }
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  // v1: 素の record ({s,m,c,r})。エンベロープが無いので期限も無い
+  if (raw.a === undefined) return parseStoredAttribution(json);
+  if (typeof raw.exp !== 'number' || !Number.isFinite(raw.exp)) return null;
+  // **`<=` で切る。** 境界ちょうどを「まだ有効」にすると期限の定義が曖昧になる
+  if (raw.exp <= now) return null;
+  return parseStoredAttribution(JSON.stringify(raw.a));
 }
 
 /** sessionStorage へ入れる形。キーは短く保つ (容量ではなく、開発者ツールで読みやすい) */

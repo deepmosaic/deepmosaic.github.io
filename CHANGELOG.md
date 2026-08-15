@@ -1,5 +1,42 @@
 # CHANGELOG
 
+## 2026-08-15 - Change: 流入元の保持を sessionStorage から localStorage 30 日へ (T-007)
+
+チケット一覧と背景は `dashboard/CHANGELOG.md` の「流入経路の是正 / device 重複 /
+Windows 10 初回離脱 (T-001〜T-010)」に集約。
+
+### 何が問題だったか
+
+流入元を **sessionStorage に置いていたのでタブを閉じた時点で消えていた**。
+「Google で見つけて、後日ダウンロードする」経路が全部 direct として記録される。
+ダッシュボード側の実測でも、ダウンロード 129 件のうち 25 件が「参照元なし」だった。
+
+### 変更
+
+- `src/lib/attribution.js`: 保存層のエンベロープ `serializeStored` /
+  `parseStoredEnvelope` を新設 (`ATTR_TTL_MS = 30 日`)。`now` は引数で受けるので
+  この module は純関数のまま
+- `src/main.js`: 読み書きを localStorage へ。読みは **1 リリースだけ sessionStorage に
+  フォールバック**して、リリースをまたいだセッションの流入元を落とさない
+- **`mergeAttribution` の last non-direct 方針は変えていない。** あのコメントの主張は
+  「どの接点を採るか」であって「どれだけ覚えているか」ではなく、TTL 延長とは衝突しない。
+  誤読防止の注記を追記した (first-touch が要るなら別項目で持つ = T-008)
+- `serializeAttribution` / `parseStoredAttribution` は**無変更**。あれは `data-dl-attr` の
+  ワイヤ形式で `MobileNav.svelte` が受ける側にいる (保存層とは別物)
+- 期限切れの判定は `exp <= now`。`exp` が無い / 数値でないエンベロープは信用しない
+  (開発者ツールで `exp` を消せば無期限、という抜け道を作らない)
+- `company/cookie.html`: ローカルストレージの節を追加 (用途・保存内容・30 日・削除方法)
+- テスト 9 件を追加。既存 70 件は**無変更で通る** (`mergeAttribution` を触っていない証拠)
+
+### 限界 (言い切らないこと)
+
+- **Safari の ITP はスクリプトが書いた localStorage を 7 日で削除する。** 30 日が効くのは
+  Chrome / Edge / Firefox だけ
+- JS 無効・バンドル読み込み失敗時は従来どおり `?ref=` が付かない。
+  **`<head>` にインラインの最小計測を置く案は採らなかった** — sanitize を含む同じ処理を
+  2 箇所に持つことになり、それは T-002 で直したばかりの不具合 (同じ規則の二重実装が
+  片方だけずれる) と同じ形になる。素の href に焼き込める静的な値は T-008 の `dm=0` で扱う
+
 ## 2026-08-08 - Change: 料金カード直下の告知を削除 + `/price/` リード文を全幅に
 
 ### `rollout_note` を空にした

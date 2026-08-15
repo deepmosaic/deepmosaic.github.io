@@ -49,23 +49,42 @@ import {
   decorateDownloadUrl,
   ga4FileDownloadParams,
   mergeAttribution,
-  parseStoredAttribution,
+  parseStoredEnvelope,
+  // `data-dl-attr` のワイヤ形式。**保存層 (エンベロープ) とは別物**で、
+  // MobileNav.svelte が `parseStoredAttribution` で受ける側にいる (T-007 で無変更)
   serializeAttribution,
+  serializeStored,
 } from './lib/attribution.js';
 
 const ATTR_KEY = 'dm_attr';
 
-// sessionStorage は Safari のプライベートモード等で throw する。握って続行する
+// T-007: 保存先を sessionStorage から localStorage (30 日) へ広げた。
+// 以前は**タブを閉じた時点で流入元が消えていた**ので、「Google で見つけて後日
+// ダウンロード」が全部 direct になっていた。
+//
+// **Safari の ITP はスクリプトが書いた localStorage を 7 日で削除する。**
+// 30 日が効くのは Chrome / Edge / Firefox だけ。「30 日保持」と言い切らないこと。
+//
+// storage は Safari のプライベートモード等で throw する。握って続行する
 function readStored() {
+  const now = Date.now();
   try {
-    return parseStoredAttribution(sessionStorage.getItem(ATTR_KEY));
+    const fresh = parseStoredEnvelope(localStorage.getItem(ATTR_KEY), now);
+    if (fresh !== null) return fresh;
+  } catch {
+    /* localStorage が使えない環境。下の sessionStorage へ落ちる */
+  }
+  // T-007 のリリースをまたいだセッションを落とさないための移行読み。
+  // **1 リリースで外してよい** (sessionStorage はタブを閉じれば消えるため)
+  try {
+    return parseStoredEnvelope(sessionStorage.getItem(ATTR_KEY), now);
   } catch {
     return null;
   }
 }
 function writeStored(record) {
   try {
-    sessionStorage.setItem(ATTR_KEY, serializeAttribution(record));
+    localStorage.setItem(ATTR_KEY, serializeStored(record, Date.now()));
   } catch {
     /* 保存できなくてもこのページ内の装飾は効く */
   }

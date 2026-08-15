@@ -10,14 +10,17 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
 import {
+  ATTR_TTL_MS,
   attributionFromLanding,
   decorateDownloadUrl,
   externalReferrerOrigin,
   ga4FileDownloadParams,
   mergeAttribution,
   parseStoredAttribution,
+  parseStoredEnvelope,
   sanitizeParam,
   serializeAttribution,
+  serializeStored,
 } from './attribution.js';
 
 const SITE = 'https://www.deepmosaic.co.jp';
@@ -234,4 +237,64 @@ test('ga4FileDownloadParams は欠けた値でも落ちない', () => {
   assert.equal(p.link_text, '', 'text 無し');
   assert.equal(p.link_id, '', 'id 無し');
   assert.equal(p.file_name, 'not a url', 'パースできなければ href をそのまま');
+});
+
+// ── 保存層のエンベロープ (T-007) ────────────────────────────────────────────
+//
+// 以前は sessionStorage に素の record を入れていたため、タブを閉じた時点で流入元が
+// 消えていた (「Google で見つけて後日ダウンロード」が全部 direct になる)。
+// localStorage へ広げるが永続に残すのは筋が悪いので有効期限を持たせる。
+
+const REC = { s: 'google', m: null, c: null, r: 'https://www.google.com' };
+const T0 = 1_700_000_000_000;
+
+test('保存期間は 30 日', () => {
+  // 「30 日」は cookie.html の記載と対になっている。変えるなら両方直すこと
+  assert.equal(ATTR_TTL_MS, 30 * 86_400_000);
+});
+
+test('serializeStored / parseStoredEnvelope は往復する', () => {
+  const json = serializeStored(REC, T0);
+  const back = parseStoredEnvelope(json, T0 + 1000);
+  assert.deepEqual(back, REC);
+});
+
+test('期限切れは null (境界ちょうども切る)', () => {
+  const json = serializeStored(REC, T0);
+  assert.notEqual(parseStoredEnvelope(json, T0 + ATTR_TTL_MS - 1), null, '期限内は残る');
+  assert.equal(parseStoredEnvelope(json, T0 + ATTR_TTL_MS), null, '境界ちょうどは切る');
+  assert.equal(parseStoredEnvelope(json, T0 + ATTR_TTL_MS + 1), null, '期限後は切る');
+});
+
+// T-007 のリリースをまたいだセッションの流入元を落とさない。
+// **1 リリースで外してよい** (sessionStorage はタブを閉じれば消えるため)
+test('エンベロープ無しの旧形式も読める', () => {
+  const v1 = serializeAttribution(REC);
+  assert.deepEqual(parseStoredEnvelope(v1, T0), REC);
+});
+
+test('壊れた保存値は null (握りつぶして続行する)', () => {
+  for (const bad of ['', '{', 'null', '[]', '"x"', undefined, null, '{"v":2,"a":{}}']) {
+    assert.equal(parseStoredEnvelope(bad, T0), null, JSON.stringify(bad));
+  }
+});
+
+// **exp が無い / 数値でないエンベロープは信用しない。** 開発者ツールで
+// exp を消せば無期限になる、という抜け道を作らない
+test('exp が壊れているエンベロープは null', () => {
+  for (const exp of ['9999999999999', null, undefined, NaN, Infinity]) {
+    const json = JSON.stringify({ v: 2, exp, a: REC });
+    assert.equal(parseStoredEnvelope(json, T0), null, String(exp));
+  }
+});
+
+// 保存値も外部入力。中身は parseStoredAttribution が全項目を再検証する
+test('エンベロープの中身も再検証される', () => {
+  const json = JSON.stringify({ v: 2, exp: T0 + 1000, a: { s: '<script>', m: null, c: null, r: null } });
+  assert.equal(parseStoredEnvelope(json, T0), null, '使えない文字は落ちて record が空になる');
+});
+
+test('record が null なら空文字を保存する', () => {
+  assert.equal(serializeStored(null, T0), '');
+  assert.equal(parseStoredEnvelope('', T0), null);
 });
