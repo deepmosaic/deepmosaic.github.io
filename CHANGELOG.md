@@ -1,5 +1,33 @@
 # CHANGELOG
 
+## 2026-08-15 - Fix: Free 上限 6h→5h をサイトにも反映する (T-013 のサイト側)
+
+**公開サイトが「累計 6 時間」と案内し続けていたのに、サーバーは既に 5 時間で止めていた。**
+T-013 (front 側のチケット) が Supabase の `plan_catalog.included_minutes` を 360→300 に
+適用済みで、サイトの `_data/plans.yml` だけが取り残されていた。
+
+**このためサイトのデプロイが全て止まっていた。** CI の `plan-catalog.test.js` が本番 Supabase と
+突き合わせて落ちるため (`free: 込み時間が食い違っている — サイト 360 分 / Supabase 300 分`)、
+T-007 / T-008 の変更も公開されていなかった。**このテストはローカルでは skip される**
+(本番へアクセスできないため) ので、手元では気づけない。
+
+- [x] `_data/plans.yml`: `included_hours: 6` → `5`。コメントに Supabase が正である旨と
+      CI で突き合わせている旨を明記
+- [x] `_data/plans.yml` の bullet / `_data/faq.yml` / `price/index.html` の meta description の
+      「6 時間」を 5 時間に。**未ログインの 3 時間も併記**した — アプリ側は
+      `ANONYMOUS_USAGE_LIMIT_SECONDS` = 3h / `FREE_USAGE_LIMIT_SECONDS` = 5h で、
+      ダウンロード後そのまま 3 時間使え、無料登録で 5 時間に増える
+- [x] `docs/index.html`: 数値を直書きしていたので `_data/plans.yml` から引くよう変更
+      (同ファイル内の「契約本数を直書きしない」方針と揃えた)。あわせて
+      **「アプリの利用にはログインが必要です」を実態に合わせて修正** — 未ログインでも
+      3 時間使えるので、この一文は誤りだった
+- [x] `src/lib/pricing.test.js`: 6h 固定の期待値 2 件を修正。片方は**データから読む**形にして
+      次の改定で落ちないようにした
+- [x] 本番の `plan_catalog` (livemode) と `_data/plans.yml` を全プラン突き合わせて一致を確認
+      (free 5h / light 5h / pro 40h / enterprise 40h)
+
+`_includes/cta-download.html` は元から `free_plan.included_hours` を参照していたので自動追従。
+
 ## 2026-08-15 - Change: 初回接触 (first-touch) と計測実行マーカーを送る (T-008)
 
 保存していた流入元は **last non-direct** (`mergeAttribution`)。「最後にどこから来たか」は

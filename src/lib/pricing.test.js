@@ -82,8 +82,10 @@ test('料金と込み時間が新デザインの確定値と一致する', () =>
   // 最低 3 シート = 24,000 円。これは Pro×2 の成立条件でもあるので下げない
   assert.equal(byCode('enterprise').min_seats, 3);
 
-  // Free はアプリの FREE_USAGE_LIMIT_SECONDS = 6h と一致させる
-  assert.equal(byCode('free').included_hours, 6);
+  // Free はアプリの FREE_USAGE_LIMIT_SECONDS = 5h と一致させる (T-013 で 6h→5h)。
+  // **Supabase の `plan_catalog.included_minutes` が正**で、CI の
+  // `plan-catalog.test.js` が本番と突き合わせる (ローカルでは skip)
+  assert.equal(byCode('free').included_hours, 5);
 });
 
 test('無料トライアルはどのプランにも設けない', () => {
@@ -163,8 +165,11 @@ test('未使用分の翌月繰越が復活していないこと (回帰固定)',
 });
 
 test('Free は込み時間を超えたら候補にならない', () => {
-  assert.equal(monthlyCost(byCode('free'), 6), 0);
-  assert.equal(monthlyCost(byCode('free'), 7), Number.POSITIVE_INFINITY);
+  // 境界は込み時間ちょうど (T-013 で 5h)。**データから読む** — ここに数値を直書きすると
+  // 料金改定のたびに片方だけ古くなる
+  const free = byCode('free');
+  assert.equal(monthlyCost(free, free.included_hours), 0);
+  assert.equal(monthlyCost(free, free.included_hours + 1), Number.POSITIVE_INFINITY);
 });
 
 test('無制限プラン (旧 Pro の据え置き枠) は時間に関係なく基本料', () => {

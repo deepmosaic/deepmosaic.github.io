@@ -83,9 +83,17 @@ schemas:
             `_data/plans.yml` の `max_contracts` だけ (同じ文が下の「使用時間の計測」
             にもあるため、直書きすると片方だけ古くなる)。
           {%- endcomment -%}
-          <p>アプリの利用にはログインが必要です。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。支払いはクレジットカードに対応しています。</p>
+          {%- comment -%}
+            T-013: 無料枠の時間数もページに直書きしない。出所は `_data/plans.yml` の
+            `included_hours` だけ (Supabase の `plan_catalog.included_minutes` が正で、
+            CI の `plan-catalog.test.js` が突き合わせる)。6h→5h の改定で
+            ここだけ 6 時間のまま取り残されていた。
+            未ログインの 3 時間は front の `auth/env.rs::ANONYMOUS_USAGE_LIMIT_SECONDS`。
+          {%- endcomment -%}
+          {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+          <p>ダウンロードしてすぐ、ログインなしで累計3時間分までお試しいただけます。無料のアカウント登録で累計{{ free_plan.included_hours }}時間分までに増えます。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。支払いはクレジットカードに対応しています。</p>
           <ul>
-            <li>無料: 累計6時間分までの動画インポート（クレジットカードの登録は不要）</li>
+            <li>無料: 累計{{ free_plan.included_hours }}時間分までの動画インポート（登録なしは3時間／クレジットカードの登録は不要）</li>
             <li>有料プラン: プランごとの込み時間は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください</li>
           </ul>
           <p>上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは、有料プランの動画インポートに上限はありません。</p>

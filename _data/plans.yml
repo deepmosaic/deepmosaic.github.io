@@ -86,8 +86,10 @@ tiers:
     display: strip
     price: 0
     price_display: "0"
-    # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 6h と一致
-    included_hours: 6
+    # 累計 (月次リセットではない)。front `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 5h と一致
+    # (T-013 で 6h→5h)。**Supabase の `plan_catalog.included_minutes` が正**で、
+    # `src/lib/plan-catalog.test.js` が CI で突き合わせる (ローカルでは skip される)
+    included_hours: 5
     included_basis: "cumulative"
     max_contracts: 1 # 無料プランは追加契約の対象外
     overage_per_hour: null # 従量課金なし (無料枠を使い切ったら有料プランへ)
@@ -96,7 +98,7 @@ tiers:
     public: true
     summary: "まずは無料で試せます"
     bullets:
-      - "累計 6 時間分の動画インポート"
+      - "累計 5 時間分の動画インポート（登録なしは 3 時間）"
       - "クレジットカードの登録は不要"
       - "無料分の終了後も既存プロジェクトの編集・書き出しは継続できます"
     cta:
