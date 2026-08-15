@@ -48,11 +48,14 @@ import {
   attributionFromLanding,
   decorateDownloadUrl,
   ga4FileDownloadParams,
+  firstTouchFromLanding,
   mergeAttribution,
+  parseFirstEnvelope,
   parseStoredEnvelope,
   // `data-dl-attr` のワイヤ形式。**保存層 (エンベロープ) とは別物**で、
   // MobileNav.svelte が `parseStoredAttribution` で受ける側にいる (T-007 で無変更)
   serializeAttribution,
+  serializeFirst,
   serializeStored,
 } from './lib/attribution.js';
 
@@ -90,12 +93,39 @@ function writeStored(record) {
   }
 }
 
-/** `a[data-dl]` の href に流入経路を載せる。冪等 (二度呼んでも増えない)。 */
-function decorateLinks(record, root = document) {
+// T-008: first-touch は**別のキーで別に持つ**。last-touch の record に混ぜると
+// 2 つの思想が混ざる (attribution.js の mergeAttribution の注記)。
+// **一度書いたら上書きしない** — それが first-touch の定義。
+const FIRST_KEY = 'dm_attr_first';
+
+function readFirst() {
+  try {
+    return parseFirstEnvelope(localStorage.getItem(FIRST_KEY), Date.now());
+  } catch {
+    return null;
+  }
+}
+function writeFirstIfAbsent(record) {
   if (record === null) return;
+  try {
+    if (parseFirstEnvelope(localStorage.getItem(FIRST_KEY), Date.now()) !== null) return;
+    localStorage.setItem(FIRST_KEY, serializeFirst(record, Date.now()));
+  } catch {
+    /* 保存できなくてもこのページ内の装飾は効く */
+  }
+}
+
+/**
+ * `a[data-dl]` の href に流入経路を載せる。冪等 (二度呼んでも増えない)。
+ *
+ * **record が null でも呼ぶ。** `dm=1` (計測が走った印) を必ず付けるため —
+ * 「JS が走ったうえで流入元が無かった = 真の直接アクセス」を、
+ * 「JS が走らなかった」と区別できるようにする (T-008)。
+ */
+function decorateLinks(record, first, root = document) {
   root.querySelectorAll('a[data-dl]').forEach((a) => {
     // `a.href` は解決済みの絶対 URL。**クエリ由来の値を href に直接代入しない**
-    a.setAttribute('href', decorateDownloadUrl(a.href, record));
+    a.setAttribute('href', decorateDownloadUrl(a.href, record, first));
   });
 }
 
@@ -110,9 +140,21 @@ function initDownloadTracking() {
   );
   if (record !== null) writeStored(record);
 
+  // **`attributionFromLanding` と違い、流入元が無くても書く。** 直接アクセスが
+  // first-touch であることそのものが事実で、着地ページも残す価値がある
+  writeFirstIfAbsent(
+    firstTouchFromLanding({
+      search: location.search,
+      referrer: document.referrer,
+      origin: location.origin,
+      pathname: location.pathname,
+    })
+  );
+  const first = readFirst();
+
   // 読み込み時に書き換えるのが主。**クリック委譲だけでは中クリック・右クリックの
   // 「リンクのアドレスをコピー」・ステータスバー表示・D&D で utm が全部落ちる。**
-  decorateLinks(record);
+  decorateLinks(record, first);
 
   // クリック側は (1) 後から生えた <a> の取りこぼしの保険 (2) GA4 の送信。
   // capture 相で拾うのは、ナビゲーションが始まる前に href を確定させるため。
@@ -121,8 +163,9 @@ function initDownloadTracking() {
   const onActivate = (e) => {
     const a = e.target instanceof Element ? e.target.closest('a[data-dl]') : null;
     if (a === null) return;
+    // **null でも装飾する** (`dm=1` を必ず付けるため)。T-008
     const current = readStored() ?? record;
-    if (current !== null) a.setAttribute('href', decorateDownloadUrl(a.href, current));
+    a.setAttribute('href', decorateDownloadUrl(a.href, current, readFirst() ?? first));
 
     // `click` と `auxclick` が同一操作で続けて飛ぶ環境があるので重複を潰す。
     // **時刻をバケットに丸めない** — 境界をまたぐと同じ操作が 2 回送られる。
@@ -146,7 +189,9 @@ function initDownloadTracking() {
   document.addEventListener('click', onActivate, true);
   document.addEventListener('auxclick', onActivate, true);
 
-  return record;
+  // MobileNav は Svelte が後から描画するので、値を props (data 属性) で渡す。
+  // last-touch と first-touch は別物なので**別の属性**にする (T-008)
+  return { record, first };
 }
 
 // ---------------------------------------------------------------------------
@@ -174,9 +219,12 @@ function init() {
   initBackToTop();
   // **island のマウントより前**に済ませる。MobileNav が描画する DL リンクへは
   // `data-dl-attr` を props として渡すので、Svelte のスケジューリングに依存しない。
-  const attribution = initDownloadTracking();
+  const { record: attribution, first: firstTouch } = initDownloadTracking();
   document.querySelectorAll('[data-island="mobile-nav"]').forEach((el) => {
     el.dataset.dlAttr = serializeAttribution(attribution);
+    // **`data-dl-first` は保存層のエンベロープごと渡す。** MobileNav 側は
+    // `parseFirstEnvelope` で読むので、そこでも期限と中身が再検証される (T-008)
+    el.dataset.dlFirst = serializeFirst(firstTouch, Date.now());
   });
   mountIslands('[data-island="mobile-nav"]', MobileNav);
   mountIslands('[data-island="accordion"]', Accordion);

@@ -228,28 +228,136 @@ export function parseStoredAttribution(json) {
   return hasAny ? record : null;
 }
 
+// ── 初回接触 (first-touch) と計測実行マーカー (T-008) ────────────────────────
+//
+// 上の `mergeAttribution` は **last non-direct**。「最後にどこから来たか」は分かるが
+// 「そもそもどこで知ったか」が残らない。first-touch は**別のキーで別に持つ** —
+// 同じ record の一部だけ first にすると 2 つの思想が混ざる (mergeAttribution の注記)。
+//
+// `dm=1` (計測が走った印) も同時に運ぶ。これが無いと、ダッシュボード側で
+// 「ブックマークや直打ち (真の直接アクセス)」と「JS が走らず何も取れなかった」を
+// 区別できない (T-002 で「直接アクセス」という語彙を引退させた理由)。
+
+/** first-touch を覚えておく期間。last-touch (30 日) より長く持つ。 */
+export const FIRST_TTL_MS = 180 * 86_400_000;
+
+/**
+ * 着地ページの**パスだけ**を通す。
+ *
+ * クエリと fragment は受け取らない (検索語や個人情報が乗りうる)。
+ * `..` を含むもの、`//` で始まるもの (プロトコル相対 URL に化ける)、
+ * 許可文字以外を含むものは `null`。
+ *
+ * @param {string|null|undefined} raw
+ * @returns {string|null}
+ */
+export function sanitizeLandingPath(raw) {
+  if (typeof raw !== 'string') return null;
+  const p = raw.trim();
+  if (p === '' || !p.startsWith('/')) return null;
+  if (p.startsWith('//')) return null;
+  if (p.includes('..')) return null;
+  if (!/^[A-Za-z0-9._~/-]+$/.test(p)) return null;
+  return p.length > 200 ? p.slice(0, 200) : p;
+}
+
+/**
+ * 着地したページから first-touch を組み立てる。
+ *
+ * **`attributionFromLanding` と違って `null` を返さない。** 流入元が取れない
+ * (＝直接アクセス) 場合も「最初に着いたページ」は残す価値がある。
+ * 直接アクセスが first-touch であることそのものが事実。
+ *
+ * @param {{ search: string, referrer: string, origin: string, pathname: string }} landing
+ * @returns {{s: string|null, r: string|null, lp: string|null}}
+ */
+export function firstTouchFromLanding({ search, referrer, origin, pathname }) {
+  let params;
+  try {
+    params = new URLSearchParams(search ?? '');
+  } catch {
+    params = new URLSearchParams();
+  }
+  return {
+    s: sanitizeParam(params.get('utm_source'), MAX.s),
+    r: externalReferrerOrigin(referrer, origin),
+    lp: sanitizeLandingPath(pathname),
+  };
+}
+
+/** first-touch の保存形。`serializeStored` と同じエンベロープだが TTL が違う。 */
+export function serializeFirst(record, now) {
+  if (record === null) return '';
+  return JSON.stringify({
+    v: 1,
+    exp: now + FIRST_TTL_MS,
+    f: { s: record.s, r: record.r, lp: record.lp },
+  });
+}
+
+/**
+ * first-touch を読む。**中身は外部入力として再検証する。**
+ *
+ * @param {string|null|undefined} json
+ * @param {number} now エポック ms
+ * @returns {{s: string|null, r: string|null, lp: string|null}|null}
+ */
+export function parseFirstEnvelope(json, now) {
+  if (typeof json !== 'string' || json === '') return null;
+  let raw;
+  try {
+    raw = JSON.parse(json);
+  } catch {
+    return null;
+  }
+  if (raw === null || typeof raw !== 'object' || Array.isArray(raw)) return null;
+  if (raw.f === null || typeof raw.f !== 'object' || Array.isArray(raw.f)) return null;
+  if (typeof raw.exp !== 'number' || !Number.isFinite(raw.exp)) return null;
+  if (raw.exp <= now) return null;
+  const record = {
+    s: sanitizeParam(raw.f.s, MAX.s),
+    r: sanitizeParam(raw.f.r, MAX.r),
+    lp: sanitizeLandingPath(raw.f.lp),
+  };
+  const hasAny = record.s !== null || record.r !== null || record.lp !== null;
+  return hasAny ? record : null;
+}
+
 /**
  * DL リンクの href に流入経路を載せる。
  *
  * **base は必ずマークアップ由来の href** (`a.href` の解決済み絶対 URL)。
  * `record` は値としてしか使わない。`set` なので二度呼んでも増えない (冪等)。
  *
+ * **`dm=1` は record が null でも必ず付ける** (T-008)。「計測が走ったのに
+ * 流入元が無かった = 真の直接アクセス」を、「JS が走らなかった」と区別するため。
+ * 逆に `dm=0` を素の href へ焼き込むことはしない — JSON-LD の `downloadUrl` にも
+ * 同じ URL が出るうえ、「付いていない = 不明」で必要な区別は足りる。
+ *
  * @param {string} href
- * @param {object|null} record
+ * @param {object|null} record last-touch
+ * @param {object|null} [first] first-touch
  * @returns {string} 組み立てられなければ `href` をそのまま返す
  */
-export function decorateDownloadUrl(href, record) {
-  if (record === null) return href;
+export function decorateDownloadUrl(href, record, first = null) {
   let url;
   try {
     url = new URL(href);
   } catch {
     return href;
   }
-  if (record.s !== null) url.searchParams.set('utm_source', record.s);
-  if (record.m !== null) url.searchParams.set('utm_medium', record.m);
-  if (record.c !== null) url.searchParams.set('utm_campaign', record.c);
-  if (record.r !== null) url.searchParams.set('ref', record.r);
+  url.searchParams.set('dm', '1');
+  if (record !== null) {
+    if (record.s !== null) url.searchParams.set('utm_source', record.s);
+    if (record.m !== null) url.searchParams.set('utm_medium', record.m);
+    if (record.c !== null) url.searchParams.set('utm_campaign', record.c);
+    if (record.r !== null) url.searchParams.set('ref', record.r);
+  }
+  if (first !== null && first !== undefined) {
+    if (first.s !== null) url.searchParams.set('futm_source', first.s);
+    if (first.r !== null) url.searchParams.set('fref', first.r);
+    if (first.lp !== null) url.searchParams.set('lp', first.lp);
+  }
   return url.toString();
 }
 

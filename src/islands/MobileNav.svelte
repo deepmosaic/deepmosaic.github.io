@@ -6,9 +6,13 @@
   // `data-dl-attr` へ書き込むので、Svelte のスケジューリングに依存せず受け取れる。
   // ここで href を組むのは、このドロワーのリンクだけが**クライアント側で後から
   // 生える**ため。読み込み時に `a[data-dl]` を書き換える経路では拾えない。
-  import { decorateDownloadUrl, parseStoredAttribution } from '../lib/attribution.js';
+  import {
+    decorateDownloadUrl,
+    parseFirstEnvelope,
+    parseStoredAttribution,
+  } from '../lib/attribution.js';
 
-  let { links = '[]', edge = 'right', dlAttr = '' } = $props();
+  let { links = '[]', edge = 'right', dlAttr = '', dlFirst = '' } = $props();
 
   const items = $derived.by(() => {
     try {
@@ -20,10 +24,15 @@
 
   // 保存済みの値は外部入力として扱う (由来は着地 URL のクエリ)。parse 側が再検証する
   const attribution = $derived(parseStoredAttribution(dlAttr));
+  // T-008: first-touch は last-touch と別枠。エンベロープごと渡されるので
+  // 期限と中身の再検証もここで通る
+  const firstTouch = $derived(parseFirstEnvelope(dlFirst, Date.now()));
 
   /** DL 項目だけ href に流入経路を載せる。それ以外のリンクには一切付けない */
   const hrefOf = (item) =>
-    item.dl ? decorateDownloadUrl(new URL(item.href, location.href).toString(), attribution) : item.href;
+    item.dl
+      ? decorateDownloadUrl(new URL(item.href, location.href).toString(), attribution, firstTouch)
+      : item.href;
 
   let open = $state(false);
   let panelEl = $state();

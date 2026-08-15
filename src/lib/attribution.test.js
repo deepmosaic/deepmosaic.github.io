@@ -11,15 +11,20 @@ import assert from 'node:assert/strict';
 
 import {
   ATTR_TTL_MS,
+  FIRST_TTL_MS,
+  firstTouchFromLanding,
   attributionFromLanding,
   decorateDownloadUrl,
   externalReferrerOrigin,
   ga4FileDownloadParams,
   mergeAttribution,
   parseStoredAttribution,
+  parseFirstEnvelope,
   parseStoredEnvelope,
   sanitizeParam,
   serializeAttribution,
+  sanitizeLandingPath,
+  serializeFirst,
   serializeStored,
 } from './attribution.js';
 
@@ -194,8 +199,16 @@ test('decorateDownloadUrl は utm と ref を載せる', () => {
   assert.ok(out.startsWith(DL), 'base は変えない');
 });
 
-test('decorateDownloadUrl は record が null なら 1 文字も変えない', () => {
-  assert.equal(decorateDownloadUrl(DL, null), DL, '流入経路が無ければ素の href のまま');
+// T-008 で契約が変わった。**record が null でも `dm=1` は必ず付ける** —
+// 「JS が走ったうえで流入元が無かった (= 真の直接アクセス)」を
+// 「JS が走らなかった」と区別できるようにするため
+test('decorateDownloadUrl は record が null でも dm=1 だけは付ける', () => {
+  const out = decorateDownloadUrl(DL, null);
+  const q = new URL(out).searchParams;
+  assert.equal(q.get('dm'), '1', '計測が走った印');
+  assert.equal(q.get('utm_source'), null, '流入経路は付けない');
+  assert.equal(q.get('ref'), null, '流入経路は付けない');
+  assert.equal([...q.keys()].length, 1, 'dm 以外は増やさない');
 });
 
 // 二度呼んでも増えない (読み込み時 + クリック時の二重装飾を許すため)
@@ -297,4 +310,101 @@ test('エンベロープの中身も再検証される', () => {
 test('record が null なら空文字を保存する', () => {
   assert.equal(serializeStored(null, T0), '');
   assert.equal(parseStoredEnvelope('', T0), null);
+});
+
+// ── first-touch と計測実行マーカー (T-008) ──────────────────────────────────
+//
+// 既存の record は last non-direct。「最後にどこから来たか」は分かるが
+// 「そもそもどこで知ったか」が残らない。first-touch は別のキーで別に持つ。
+
+test('sanitizeLandingPath はサイト内のパスだけ通す', () => {
+  assert.equal(sanitizeLandingPath('/price/'), '/price/');
+  assert.equal(sanitizeLandingPath('/'), '/');
+  assert.equal(sanitizeLandingPath('/spec/index.html'), '/spec/index.html');
+});
+
+// 検索語や個人情報が乗りうるものを外へ送らない
+test('sanitizeLandingPath はクエリと fragment を弾く', () => {
+  assert.equal(sanitizeLandingPath('/price/?q=secret'), null, 'クエリ付き');
+  assert.equal(sanitizeLandingPath('/price/#section'), null, 'fragment 付き');
+});
+
+// `//evil.com` はプロトコル相対 URL に化ける。`..` は上位への参照
+test('sanitizeLandingPath は相対参照とプロトコル相対を弾く', () => {
+  assert.equal(sanitizeLandingPath('//evil.com/x'), null, 'プロトコル相対');
+  assert.equal(sanitizeLandingPath('/a/../../etc'), null, '.. を含む');
+  assert.equal(sanitizeLandingPath('price/'), null, '先頭が / でない');
+  assert.equal(sanitizeLandingPath('https://evil.com/x'), null, '絶対 URL');
+  assert.equal(sanitizeLandingPath(''), null, '空');
+  assert.equal(sanitizeLandingPath(null), null, 'null');
+  assert.equal(sanitizeLandingPath('/日本語/'), null, '許可文字以外');
+});
+
+test('sanitizeLandingPath は 200 文字で切る', () => {
+  assert.equal(sanitizeLandingPath('/' + 'a'.repeat(500)).length, 200);
+});
+
+// **attributionFromLanding と違って null を返さない。** 直接アクセスが
+// first-touch であることそのものが事実で、着地ページも残す価値がある
+test('firstTouchFromLanding は直接アクセスでも着地ページを残す', () => {
+  const f = firstTouchFromLanding({ search: '', referrer: '', origin: SITE, pathname: '/price/' });
+  assert.deepEqual(f, { s: null, r: null, lp: '/price/' });
+});
+
+test('firstTouchFromLanding は utm_source と外部参照元を拾う', () => {
+  const f = firstTouchFromLanding({
+    search: '?utm_source=hn&utm_medium=social',
+    referrer: 'https://news.ycombinator.com/item?id=1',
+    origin: SITE,
+    pathname: '/',
+  });
+  assert.equal(f.s, 'hn', 'utm_source は拾う');
+  assert.equal(f.r, 'https://news.ycombinator.com', '外部参照元は origin だけ');
+  assert.equal(f.lp, '/', '着地ページ');
+  assert.equal(f.m, undefined, 'medium / campaign は first-touch では持たない');
+});
+
+test('firstTouchFromLanding は自サイト内の回遊を参照元にしない', () => {
+  const f = firstTouchFromLanding({ search: '', referrer: `${SITE}/price`, origin: SITE, pathname: '/spec/' });
+  assert.equal(f.r, null, 'サイト内回遊は流入元ではない');
+});
+
+test('serializeFirst / parseFirstEnvelope は往復する', () => {
+  const f = { s: 'google', r: 'https://www.google.com', lp: '/price/' };
+  assert.deepEqual(parseFirstEnvelope(serializeFirst(f, T0), T0 + 1000), f);
+});
+
+test('first-touch の保持は 180 日 (last-touch より長い)', () => {
+  assert.equal(FIRST_TTL_MS, 180 * 86_400_000);
+  assert.ok(FIRST_TTL_MS > ATTR_TTL_MS, '初回接触の方を長く持つ');
+  const json = serializeFirst({ s: 'x', r: null, lp: null }, T0);
+  assert.equal(parseFirstEnvelope(json, T0 + FIRST_TTL_MS), null, '境界ちょうどは切る');
+});
+
+test('parseFirstEnvelope は壊れた値と改竄を弾く', () => {
+  for (const bad of ['', '{', 'null', '[]', '{"f":{}}', '{"exp":1,"f":null}', '{"f":{"s":"x"}}']) {
+    assert.equal(parseFirstEnvelope(bad, T0), null, JSON.stringify(bad));
+  }
+  // 中身は再検証する (保存後に開発者ツールで書き換えられる)
+  const tampered = JSON.stringify({ v: 1, exp: T0 + 1000, f: { s: '<script>', r: null, lp: '/a/../b' } });
+  assert.equal(parseFirstEnvelope(tampered, T0), null, '全項目が落ちれば record ごと null');
+});
+
+test('decorateDownloadUrl は first-touch を別のキーで載せる', () => {
+  const last = { s: 'twitter', m: 'social', c: null, r: 'https://t.co' };
+  const first = { s: 'google', r: 'https://www.google.com', lp: '/price/' };
+  const q = new URL(decorateDownloadUrl(DL, last, first)).searchParams;
+  assert.equal(q.get('utm_source'), 'twitter', 'last-touch は utm_source');
+  assert.equal(q.get('ref'), 'https://t.co', 'last-touch は ref');
+  assert.equal(q.get('futm_source'), 'google', 'first-touch は futm_source');
+  assert.equal(q.get('fref'), 'https://www.google.com', 'first-touch は fref');
+  assert.equal(q.get('lp'), '/price/', '着地ページ');
+  assert.equal(q.get('dm'), '1', '計測が走った印');
+});
+
+test('decorateDownloadUrl は first-touch 込みでも冪等', () => {
+  const last = { s: 'twitter', m: null, c: null, r: null };
+  const first = { s: 'google', r: null, lp: '/' };
+  const once = decorateDownloadUrl(DL, last, first);
+  assert.equal(decorateDownloadUrl(once, last, first), once, '2 回目で値が増えない');
 });
