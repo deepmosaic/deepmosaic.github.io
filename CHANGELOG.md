@@ -1,5 +1,42 @@
 # CHANGELOG
 
+## 2026-08-15 - Change: 初回接触 (first-touch) と計測実行マーカーを送る (T-008)
+
+保存していた流入元は **last non-direct** (`mergeAttribution`)。「最後にどこから来たか」は
+分かるが「そもそもどこで知ったか」が残らない。ダッシュボードで見たいのは後者なので、
+**別のキーで別に持つ** — 同じ record の一部だけを first にすると 2 つの思想が混ざる。
+
+### 変更
+
+- `src/lib/attribution.js`
+  - `FIRST_TTL_MS` (180 日、last-touch の 30 日より長い) / `firstTouchFromLanding` /
+    `serializeFirst` / `parseFirstEnvelope` / `sanitizeLandingPath` を追加
+  - **`firstTouchFromLanding` は `attributionFromLanding` と違って `null` を返さない。**
+    流入元が取れない (＝直接アクセス) 場合も「最初に着いたページ」は残す価値があり、
+    直接アクセスが first-touch であることそのものが事実
+  - `decorateDownloadUrl(href, record, first)` が `fref` / `futm_source` / `lp` を載せる
+  - **`dm=1` は record が null でも必ず付ける。** これが無いと Worker 側で
+    「JS が走ったうえで流入元が無かった (= 真の直接アクセス)」と「JS が走らなかった」を
+    区別できない
+- `src/main.js`: `dm_attr_first` キー。**一度書いたら上書きしない** (それが first-touch の定義)
+- `src/islands/MobileNav.svelte`: `data-dl-first` でエンベロープごと受け取り、
+  受け側でも期限と中身を再検証する
+- `sanitizeLandingPath`: **パスのみ**。クエリと fragment は受け取らない (検索語や
+  個人情報が乗りうる)。`..` を含むもの、`//` で始まるもの (プロトコル相対 URL に化ける)、
+  許可文字以外は破棄。**Worker 側でも同じ検証をする** — あちらは認証不要で誰でも叩けるため
+
+### `dm=0` を素の href に焼き込まなかった理由
+
+JS 無効時に「計測が走らなかった」と明示できる利点はあるが、DL URL の単一管理点
+(`_data/lang/ja.json`) は JSON-LD の `downloadUrl` にも使われており、構造化データが
+計測用クエリ付きの URL を指すことになる。**「付いていない = 不明」で必要な区別は足りる**
+ので採らなかった (CI の「クエリ焼き込み禁止」ガードもそのまま維持できる)。
+
+### テスト
+
+12 件を追加。`decorateDownloadUrl` の「record が null なら 1 文字も変えない」は契約が
+変わったので、`dm=1` だけが付くことを固定するテストへ書き換えた。
+
 ## 2026-08-15 - Change: 流入元の保持を sessionStorage から localStorage 30 日へ (T-007)
 
 チケット一覧と背景は `dashboard/CHANGELOG.md` の「流入経路の是正 / device 重複 /
