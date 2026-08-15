@@ -34,6 +34,15 @@ params:
     </div>
     <p class="mt-4 text-[13px] text-ink-4">Windows 10 / 11（64bit）</p>
     {%- comment -%}
+      X-707: Web 版の説明行。_data/site.yml の web_app.enabled が false の間は
+      描画しない (公開時の ON 手順もそちらを参照)。この include はトップ末尾 /
+      /price/ / /spec/ の 3 箇所で展開されるので、ここ 1 箇所で 3 ページに出る。
+      `data-dl` は DL ボタンと同じ計測配管 (utm_*/ref の載せ直し + GA4) に乗せる目印。
+    {%- endcomment -%}
+    {%- if site.data.site.web_app.enabled %}
+    <p class="mt-2 text-[13px] text-ink-4">インストール不要の <a href="{{ site.data.site.web_app.url }}" data-dl="cta-webapp" class="text-accent-soft hover:underline">Web 版</a>（Chrome / Edge 対応）もご利用いただけます。動画はサーバーに送信されず、お使いのブラウザ内で処理します。</p>
+    {%- endif %}
+    {%- comment -%}
       TICKET-SITE-28: 製品の方向を DL ボタンの直下に置く。この include は
       トップ末尾 / /price/ / /spec/ の 3 箇所で展開されるので、**ここ 1 箇所で
       3 つの DL ボタンを塞げる**。文面の出所は _data/entity.yml。

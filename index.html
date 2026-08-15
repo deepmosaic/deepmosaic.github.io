@@ -38,6 +38,17 @@ schemas:
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
       <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>
+      {%- comment -%}
+        X-707: Web 版 (app.deepmosaic.co.jp) への導線。公開は全機能完成後に 1 回なので、
+        _data/site.yml の web_app.enabled が false の間は描画しない (ON 手順もそちらを参照)。
+        `data-dl` を付けるのは DL ボタンと同じ計測配管に乗せるため — main.js の
+        initDownloadTracking が utm_*/ref を href に載せ直すので、Web 版側は着地 URL の
+        クエリを読めば worker の /download 計測と同じ形で流入経路を突き合わせられる。
+        `download` 属性は付けない (ファイル DL ではなくページ遷移)。
+      {%- endcomment -%}
+      {%- if site.data.site.web_app.enabled %}
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザで試す（インストール不要）</a>
+      {%- endif %}
       <a href="/docs" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
