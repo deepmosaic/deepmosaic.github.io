@@ -37,16 +37,19 @@ hero:
   # ため、ここが空白だと誤認が訂正されない。
   sub: "動画に映った対象を AI が自動検出し、その範囲にモザイクをかける Windows アプリです。処理はすべてお使いの PC 内で完結し、あなたは検出結果の確認と修正だけを行います。"
 
-# ── Web 版への導線 (X-707) ─────────────────────────────────────────────
-# https://app.deepmosaic.co.jp はブラウザ内で動作する Web 版 (実装中)。
-# 公開は全機能完成後に 1 回で行うため、導線は enabled: false のまま仕込んである。
-# **公開時はこの enabled を true にするだけ** — トップの HERO のボタン
-# (index.html) と DL CTA の説明行 (_includes/cta-download.html: トップ末尾 /
-# /price/ / /spec/ の 3 箇所) が同時に出る。
-# false の間はビルド出力に一切現れない (CI の Verify build output も現状のまま)。
+# ── Web 版への導線 (X-707 / TICKET-SITE-38) ────────────────────────────
+# https://app.deepmosaic.co.jp はブラウザ内で動作する Web 版 (2026-08-15 公開)。
+# enabled: true でトップの HERO のボタン (index.html) と DL CTA の説明行
+# (_includes/cta-download.html: トップ末尾 / /price/ / /spec/ の 3 箇所) が同時に出る。
+# false に戻すとビルド出力から導線だけ即時撤去できる (アプリ本体はそのまま)。
+#
+# TICKET-SITE-38: URL の `?login=1` は Web 版側 (web T-031) の自動ログイン導線 —
+# 未認証ならアプリを経由して即 Auth0 のログイン画面へ、認証済みならそのままアプリへ。
+# `decorateDownloadUrl` (src/lib/attribution.js) は既存クエリを温存して dm/utm を
+# **追記** する契約 (テストで固定済み) なので、この静的クエリと共存する。
 web_app:
   enabled: true
-  url: "https://app.deepmosaic.co.jp"
+  url: "https://app.deepmosaic.co.jp/?login=1"
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
 # 「現状の1本あたりコスト」の既定 ¥24,000 は 時給¥3,000 × 8時間 の試算。
