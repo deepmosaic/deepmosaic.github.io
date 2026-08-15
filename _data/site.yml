@@ -45,7 +45,7 @@ hero:
 # /price/ / /spec/ の 3 箇所) が同時に出る。
 # false の間はビルド出力に一切現れない (CI の Verify build output も現状のまま)。
 web_app:
-  enabled: false
+  enabled: true
   url: "https://app.deepmosaic.co.jp"
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
