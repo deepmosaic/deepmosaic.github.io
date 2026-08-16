@@ -166,6 +166,11 @@ TICKET-SITE-05: 構造化データを `_includes/schema/*` に分離し、ペー
 <link href="https://vjs.zencdn.net/8.23.9/video-js.css" type="text/css" rel="stylesheet" media="screen"/>
 {% endif %}
 
+<!-- Cloudflare Web Analytics (TICKET-SITE-39): zone 全体の自動注入 (RUM) を止めたので手動設置。
+     app.deepmosaic.co.jp (Web 版) には入れない — CSP 違反 + 動画ファイル名入り URL が第三者へ渡る。
+     token は公開値 (Dashboard → Web Analytics → deepmosaic.co.jp → サイトを管理)。 -->
+<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "aedf52894436452180c0ae694b54e87b"}'></script>
+
 </head>
 <body>
 

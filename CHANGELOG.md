@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-16 - Fix: Cloudflare Web Analytics を自動注入から手動スニペットへ (TICKET-SITE-39)
+
+zone `deepmosaic.co.jp` の RUM 自動注入は **サブドメインの `app.deepmosaic.co.jp` (Web 版) にも**
+beacon を差し込み、Web 版の CSP (`script-src 'self'`) 違反としてコンソールに出続けていた
+(web T-048 / T-053)。Web 版は動画ファイル名入りの URL を第三者に渡さない方針で CSP に足さない
+ため、Dashboard の「サイトを管理」で **「JS スニペットのインストールで有効にする」** に切り替え、
+本サイトだけ `_layouts/default.html` の `</head>` 直前に beacon を手動設置した (計測は継続、
+Free プランでは hostname 単位のルール = Web Analytics ルールが使えないための代替)。
+
 ## 2026-08-15 - Feature: 「ブラウザで試す」で即ログイン画面へ (TICKET-SITE-38)
 
 `web_app.url` を `https://app.deepmosaic.co.jp/?login=1` に変更。Web 版側 (web T-031) の
