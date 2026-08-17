@@ -47,8 +47,11 @@ hero:
 # 未認証ならアプリを経由して即 Auth0 のログイン画面へ、認証済みならそのままアプリへ。
 # `decorateDownloadUrl` (src/lib/attribution.js) は既存クエリを温存して dm/utm を
 # **追記** する契約 (テストで固定済み) なので、この静的クエリと共存する。
+#
+# 2026-08-17: 導線を一旦非表示 (enabled: false)。Web 版本体はそのまま公開中で、
+# 再表示は true に戻すだけ。
 web_app:
-  enabled: true
+  enabled: false
   url: "https://app.deepmosaic.co.jp/?login=1"
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
