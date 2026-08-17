@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2026-08-17 - Chore: 「ブラウザで試す」導線を一旦非表示
+
+`_data/site.yml` の `web_app.enabled` を `false` に。トップ HERO の「ブラウザで試す（インストール不要）」
+ボタンと DL CTA の Web 版説明行 (トップ末尾 / /price/ / /spec/) がビルド出力から消える。
+Web 版本体 (app.deepmosaic.co.jp) はそのまま公開中で、再表示はフラグを `true` に戻すだけ。
+
 ## 2026-08-16 - Fix: Cloudflare Web Analytics を自動注入から手動スニペットへ (TICKET-SITE-39)
 
 zone `deepmosaic.co.jp` の RUM 自動注入は **サブドメインの `app.deepmosaic.co.jp` (Web 版) にも**
