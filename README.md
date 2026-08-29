@@ -10,44 +10,112 @@ src/ (Tailwind + Svelte)  ──[Vite]──▶  assets/dist/app.{css,js}  ─�
 
 Vite が Tailwind CSS と Svelte アイランドを `assets/dist/app.css` / `app.js` に出力し、その後 Jekyll がそれらを取り込んでサイトを生成する。**必ず `npm run build` を先に実行してから** Jekyll を動かすこと（先に実行しないとスタイル / JS が反映されず、素の HTML になる）。
 
-## 必要環境
+> **重要**: サイトを配信するのは **Jekyll 側だけ**。Vite の dev server は構成していないため、npm 側単独ではサイトを閲覧できない（`npm run dev` = `vite build --watch` は HTTP エンドポイントを持たないアセット watcher）。閲覧は必ず `bundle exec jekyll serve` 経由。
 
-- **Ruby + Bundler**（Jekyll 用）: https://rubyinstaller.org/downloads/
-- **Node.js 20.19+ もしくは 22+**（Vite / Tailwind / Svelte 用）
+## 前提条件
 
-## セットアップ（初回のみ）
+Windows 11 のクリーン環境からの再現手順。Docker / yarn / pnpm は不要。
 
-```bash
-bundle install   # Ruby gem (Jekyll ほか)
-npm install      # Node (Tailwind v4 / Svelte 5 / Vite)
+| ツール | バージョン | 備考 |
+|---|---|---|
+| Node.js + npm | **20.19+ もしくは 22+**（動作確認: Node v24 / npm 11） | https://nodejs.org/ |
+| Ruby + DevKit | **3.4**（Jekyll 用） | 下記 winget コマンドでインストール |
+| Bundler | Ruby 3.4 に同梱 | 個別インストール不要 |
+| Git | 任意の近年版 | クローンに使用 |
+
+Ruby + DevKit のインストール（PowerShell、動作確認済み）:
+
+```powershell
+winget install RubyInstallerTeam.RubyWithDevKit.3.4 --accept-package-agreements --accept-source-agreements --silent
 ```
 
-## ローカル開発
+- `C:\Ruby34-x64` にインストールされ、ユーザー PATH に追加される。
+- **PATH 反映のため、インストール後は必ず新しいシェルを開き直す**こと（開き直さないと `ruby` / `bundle` が見つからない）。
 
-```bash
-# 1) フロントエンドアセットをビルド（assets/dist/app.css, app.js を生成）
+## セットアップ手順
+
+リポジトリのルートで以下を順に実行する（初回のみ）:
+
+```powershell
+# 1) Ruby gem のインストール（Jekyll 4.4 ほか 41 gem。
+#    native 拡張は同梱の MSYS2 devkit で自動ビルドされる）
+bundle install
+
+# 2) Node 依存のインストール（package-lock.json 通りに再現）
+npm ci
+```
+
+- `npm ci` は `package-lock.json` を使う。**`package-lock.json` はコミット対象**（CI の `npm ci` にも必要）。
+- `assets/dist/` と `node_modules/` は **gitignore**（CI で再生成されるためコミット不要）。
+
+## 環境変数
+
+このリポジトリに `.env` / `.env.example` は**存在しない**。**基本の起動に必須の環境変数も無い**（何も設定せずにビルド・起動できる）。任意で使うものは以下の 2 つのみ:
+
+| 変数 | 秘匿 | 必須 | 用途 | 入手先 |
+|---|---|---|---|---|
+| `SUPABASE_PROXY_API_KEY` | **秘匿** | 任意 | `npm test` 末尾の Supabase `plan_catalog` ライブ照合テスト 1 件を有効化する（未設定なら設計どおり skip）。CI では `scripts/check-plan-catalog.mjs` も使用 | Supabase proxy Worker の X-API-Key。GitHub Actions の secret `SUPABASE_PROXY_API_KEY` と同じ値（リポジトリ管理者から受領） |
+| `PLAN_CATALOG_URL` | 非秘匿 | 任意（**ローカル検証専用**） | `scripts/check-plan-catalog.mjs` の取得先を上書きし、スタブサーバで「値をずらしたら落ちる」ことを確認するために使う。**CI では設定しない** | 自分で立てたスタブの URL |
+
+設定例（PowerShell、現在のシェルのみ有効。実際の値は書き残さないこと）:
+
+```powershell
+$env:SUPABASE_PROXY_API_KEY = "<your-api-key>"
+```
+
+## 起動
+
+```powershell
+# 1) フロントエンドアセットを生成（assets/dist/app.css, app.js。省略不可）
 npm run build
 
-# 2) Jekyll dev server 起動（http://localhost:4000）
-bundle exec jekyll serve
+# 2) Jekyll dev server 起動（port 4000）
+bundle exec jekyll serve --port 4000
 ```
 
-`src/`（Tailwind / Svelte）を編集しながら反復開発する場合は、**別ターミナル**で Vite の watch を回すと保存時に `assets/dist/` が自動再生成される:
+- ブラウザで **http://127.0.0.1:4000/**（= `http://localhost:4000/`）を開く。HTTP 200 でトップページが表示されれば成功（動作確認済み）。
+- 停止は `Ctrl+C`。
+- > **Windows 注意**: `jekyll serve --detach` は `fork()` 未実装のため使えない。`--detach` を付けずに実行すること。
 
-```bash
-npm run dev      # = vite build --watch
+### 反復開発（2 ターミナル構成）
+
+`src/`（Tailwind / Svelte）を編集しながら開発する場合:
+
+```powershell
+# ターミナル 1: サイト配信
+bundle exec jekyll serve --port 4000
+
+# ターミナル 2: Vite watch（保存時に assets/dist/ を自動再生成）
+npm run dev
 ```
 
-- `_layouts` / `_includes` / 各ページ HTML など **Jekyll 側だけ**の編集なら、`bundle exec jekyll serve --livereload` の再生成で足りる。
+- `_layouts` / `_includes` / 各ページ HTML など **Jekyll 側だけ**の編集なら、`bundle exec jekyll serve --livereload` の再生成で足りる（`npm run dev` は不要）。
 - `src/` の **CSS / Svelte を変えたとき**だけ `npm run build`（または `npm run dev` の watch）が必要。
 
-> **Windows 注意**: `jekyll serve --detach` は `fork()` 未実装のため使えない。`--detach` を付けずに実行すること。
+## 動作確認（スモークチェック）
+
+サーバ起動中に別ターミナルで:
+
+```powershell
+(Invoke-WebRequest http://127.0.0.1:4000/ -UseBasicParsing).StatusCode   # => 200
+```
+
+ユニットテスト（ネットワーク不要。`src/lib/*.test.js` を `node --test` で実行）:
+
+```powershell
+npm test
+```
+
+期待結果: **92 件中 91 pass / 1 skip**。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
 
 ## 本番ビルド
 
-```bash
-npm run build && bundle exec jekyll build   # 出力: _site/
+```powershell
+npm run build
+bundle exec jekyll build --strict_front_matter   # 出力: _site/
 ```
+
+> ⚠️ `--strict_variables` という CLI フラグは **Jekyll 4.4 に存在しない**（付けると `invalid option` で落ちる）。ゲートは `--strict_front_matter` のみ（詳細は `CLAUDE.md` 参照）。
 
 ## デプロイ
 
@@ -60,13 +128,27 @@ npm run build && bundle exec jekyll build   # 出力: _site/
 | `src/app.css` | Tailwind v4 エントリ（`@theme` トークン + 移植した独自スタイル） |
 | `src/main.js` | アイランドのマウント + back-to-top / scroll-reveal（素の JS） |
 | `src/islands/*.svelte` | 対話部品（MobileNav / Accordion / Scrollspy / VideoLightbox） |
+| `src/lib/` | 純ロジック + テスト（`npm test` の対象） |
 | `_layouts/` `_includes/` | Jekyll テンプレート / 共通パーツ |
 | `index.html` `docs/` `price/` `company/` `404.html` | 各ページ |
 | `assets/dist/` | Vite 出力（**gitignore** ・CI 再生成） |
 | `assets/` | 画像 / フォント / 動画 / `fonts.css`（自己ホスト Roboto） |
 
-## メモ / トラブルシュート
+## トラブルシューティング
 
-- `assets/dist/` と `node_modules/` は **gitignore**（CI で再生成）。**`package-lock.json` はコミットする**（`npm ci` に必要）。
-- Jekyll のビルド対象にするには、ファイル先頭に front matter（`--- ... ---`。中身が空でも `---` 2 行）が必要。無いと `_site` に出力されない。
-- `bundle exec jekyll serve` で `webrick (LoadError)` が出る場合は `bundle add webrick`、改善しなければ `gem update` を試す。
+- **ページが素の HTML（スタイル / JS 無し）で表示される** → `npm run build` を実行してから Jekyll を起動していない。`assets/dist/app.css` / `app.js` が生成済みか確認。
+- **`npm run dev` を起動したのにブラウザで見られない** → `npm run dev` は HTTP サーバではない（アセット watcher）。閲覧は `bundle exec jekyll serve` で行う。
+- **`ruby` / `bundle` が見つからない** → winget での Ruby インストール後にシェルを開き直していない。新しい PowerShell を開く。
+- **`jekyll serve --detach` が `fork() function is unimplemented` で落ちる** → Windows では `--detach` 不可。付けずに実行。
+- **`jekyll build --strict_variables` が `invalid option` で落ちる** → そのフラグは Jekyll 4.4 CLI に存在しない。`--strict_front_matter` を使う。
+- **ビルド中に Svelte の警告が出る** → `VideoLightbox.svelte` の a11y 警告と `RoiCalculator.svelte` の `state_referenced_locally` 警告はビルド時に毎回出るが、**既知かつ無害**（ビルドは成功する）。
+- **`bundle exec jekyll serve` で `webrick (LoadError)`** → `bundle add webrick`、改善しなければ `gem update` を試す。
+- **ページが `_site/` に出力されない** → ファイル先頭に front matter（`--- ... ---`。中身が空でも `---` 2 行）が必要。無いと Jekyll のビルド対象にならない。
+- **`npm test` で 1 件 skip される** → 正常（`SUPABASE_PROXY_API_KEY` 未設定時の設計どおりの挙動。「環境変数」参照）。
+
+## 任意 / オプション（基本の起動には不要）
+
+- **`SUPABASE_PROXY_API_KEY` の設定** — `npm test` の plan_catalog ライブ照合 1 件が有効になる（92 件全件実行）。未設定でも開発・起動に支障なし。
+- **`node scripts/check-plan-catalog.mjs`** — `_data/plans.yml` と Supabase `plan_catalog` の乖離検査（CI が実行。鍵が無ければスキップして exit 0）。
+- **`bundle exec jekyll serve --livereload`** — Jekyll 側のみの編集時にブラウザ自動リロード。
+- **画像追加時の運用**（WebP 必須・`node scripts/optimize-images.mjs --apply` 等）は `CLAUDE.md` の Conventions を参照。

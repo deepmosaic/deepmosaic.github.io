@@ -1,6 +1,11 @@
 # CHANGELOG
 
-## 2026-08-17 - Chore: 「ブラウザで試す」導線を一旦非表示
+## 2026-08-29 - Docs: README を検証済みの環境構築・起動手順に刷新 (TICKET-SITE-40)
+
+- [x] TICKET-SITE-40: README.md をフレッシュクローンから起動まで再現可能な構成に書き換え
+  - 前提条件 (Ruby 3.4 + DevKit の winget 導入コマンド、導入後は新しいシェルが必要な旨) / セットアップ (`bundle install` + `npm ci`) / 起動 (`npm run build` → `bundle exec jekyll serve --port 4000`。Windows は `--detach` 不可) / 動作確認 (`npm test` 92 件、SUPABASE_PROXY_API_KEY 無しでは 1 件 skip が正常) / 本番ビルド (`--strict_front_matter`。`--strict_variables` は Jekyll 4.4 CLI に存在しない旨明記) / トラブルシューティング / 任意オプション を集約
+  - `npm run dev` は HTTP サーバではなく asset watcher (vite build --watch) であることを明記
+  - 手順は 2026-08-29 の実機検証 (Ruby 新規導入 → bundle install → serve → HTTP 200) に基づく
 
 `_data/site.yml` の `web_app.enabled` を `false` に。トップ HERO の「ブラウザで試す（インストール不要）」
 ボタンと DL CTA の Web 版説明行 (トップ末尾 / /price/ / /spec/) がビルド出力から消える。
