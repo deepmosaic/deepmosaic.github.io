@@ -48,10 +48,11 @@ hero:
 # `decorateDownloadUrl` (src/lib/attribution.js) は既存クエリを温存して dm/utm を
 # **追記** する契約 (テストで固定済み) なので、この静的クエリと共存する。
 #
-# 2026-08-17: 導線を一旦非表示 (enabled: false)。Web 版本体はそのまま公開中で、
-# 再表示は true に戻すだけ。
+# 2026-08-17: 導線を一旦非表示 (enabled: false)。
+# 2026-08-30 (TICKET-SITE-41): 再表示。Web 版は統合キュー / スロット待機 (web T-138〜T-148)
+# を備えた状態で公開再開。非表示に戻すときは false にするだけ。
 web_app:
-  enabled: false
+  enabled: true
   url: "https://app.deepmosaic.co.jp/?login=1"
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────

@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2026-08-30 - Feature: 「ブラウザで試す」(Web 版) 導線を再表示 (TICKET-SITE-41)
+
+- [x] TICKET-SITE-41: `_data/site.yml` の `web_app.enabled` を `true` に戻し、トップ HERO の
+  「ブラウザで試す（インストール不要）」ボタンと DL CTA の Web 版説明行
+  (トップ末尾 / /price/ / /spec/) を再表示
+  - Web 版 (app.deepmosaic.co.jp) は統合キューモーダル / 検出オプションモーダル /
+    同時実行のスロット待機・kind 別並列 (web T-138〜T-148) を備えた状態で導線を再開
+  - URL は従来どおり `?login=1` (TICKET-SITE-38 の即ログイン導線)
+
 ## 2026-08-29 - Docs: README を検証済みの環境構築・起動手順に刷新 (TICKET-SITE-40)
 
 - [x] TICKET-SITE-40: README.md をフレッシュクローンから起動まで再現可能な構成に書き換え
