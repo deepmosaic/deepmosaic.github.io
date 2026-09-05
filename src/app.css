@@ -161,6 +161,28 @@
     color: var(--color-accent-soft);
     border-left-color: var(--color-accent);
   }
+  /* Docs TOC scrollbar (TICKET-SITE-50): the sidebar is capped to the viewport
+     height, so the OS scrollbar (light track, square thumb) showed up on the dark
+     panel. Thin rounded thumb, no track, slightly brighter on hover. Firefox
+     honours the standard properties; Chromium/WebKit use the pseudo-elements. */
+  nav.docs-toc {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-edge-strong) transparent;
+    scrollbar-gutter: stable;
+  }
+  nav.docs-toc::-webkit-scrollbar {
+    width: 6px;
+  }
+  nav.docs-toc::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  nav.docs-toc::-webkit-scrollbar-thumb {
+    background: var(--color-edge-strong);
+    border-radius: 999px;
+  }
+  nav.docs-toc:hover::-webkit-scrollbar-thumb {
+    background: var(--color-ink-4);
+  }
 
   /* Optional scroll reveal (gated by .js so no-JS keeps content visible) */
   .js .animate-on-scroll {
