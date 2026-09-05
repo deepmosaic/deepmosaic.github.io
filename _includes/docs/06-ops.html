@@ -1,0 +1,70 @@
+{%- comment -%}
+docs「運用」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
+節 ID (update / uninstall / usage / spec / trouble) は外部参照の契約。改名しない。
+{%- endcomment -%}
+<section id="update" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">アップデート</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>アプリは起動時に自動で新しいバージョンを確認します。更新がある場合はダイアログが表示され、「今すぐ更新」「あとで」「このバージョンをスキップ」から選択できます。</p>
+  </div>
+</section>
+
+<section id="uninstall" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">アンインストール</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li>Windowsの「設定」→「アプリ」→「インストールされているアプリ」を開きます</li>
+      <li>一覧から「Deepmosaic」を探し、「アンインストール」を選択します（管理者権限は不要です）</li>
+    </ol>
+    <p>アンインストール後も、設定ファイルやダウンロード済みAIモデルはディスク上に残ります。再インストールした場合はこれらがそのまま利用されるため、モデルの再ダウンロードは不要です。</p>
+    <p>なお、検出結果や編集データは各動画のプロジェクトフォルダに保存されているため、必要に応じて個別に削除してください。</p>
+  </div>
+</section>
+
+{%- comment -%}
+  TICKET-SITE-16: **現行の実装をそのまま書く。**
+  「同一ファイルの再インポートは非計上」「月次リセット」は課金基盤 (TICKET-BILL 群) が
+  出荷されてからでないと虚偽記載になる。実装が出たらここを書き換える。
+{%- endcomment -%}
+<section id="usage" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">使用時間の計測</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      {%- comment -%}
+        TICKET-SITE-CONTRACT-SSOT: 契約本数は `_includes/contract-limits.html`
+        経由で `_data/plans.yml` の `max_contracts` から組み立てる。
+        上の「ログインとライセンス」と同じ文なので直書きしない。
+      {%- endcomment -%}
+      <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
+      <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません</li>
+      <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>）</li>
+      <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください</li>
+    </ul>
+  </div>
+</section>
+
+<section id="spec" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">動作環境</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>OS: Microsoft Windows 10, 11（64 ビット）</li>
+      <li>メモリ: 8GB以上（16GB推奨）</li>
+      <li>GPU: NVIDIA CUDA対応GPU + 最新ドライバ。NVENCエンコードにはドライバ570以上</li>
+      <li>インターネット環境: 初回セットアップのモデルダウンロード、ライセンス認証に必要</li>
+    </ul>
+    <p>GPU 別の処理速度の実測値、対応フォーマットの一覧、macOS 版の状況は<a href="/spec" class="text-accent-soft hover:underline">動作環境ページ</a>にまとめています。</p>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">トラブルシューティング</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>起動時にダウンロードが繰り返される場合: 回線を確認のうえアプリを再起動してください。破損したデータのみ自動で再取得されます。</li>
+      <li>検出が極端に遅い場合: GPUが認識されているか、NVIDIAドライバが最新かをご確認ください。GPU不在時はCPUモードで動作し、速度が低下します。</li>
+      <li>検出オプション画面にプレビューが出ない場合: 「動画情報を取得できませんでした」と表示されるときは、ファイルの破損か非対応形式の可能性があります。「ffmpeg / ffprobe が見つかりません」と表示されるときは、アプリを再起動して初回セットアップのダウンロードを完了させてください。</li>
+      <li>フォルダを選んでも「処理できる動画が見つかりませんでした」と出る場合: サブフォルダの中は対象外です。動画が入っているフォルダを直接選び直してください。</li>
+      <li>解決しない場合はアプリ内のフィードバック送信、または問い合わせフォームからご連絡ください。</li>
+    </ul>
+  </div>
+</section>

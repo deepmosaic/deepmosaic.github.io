@@ -372,4 +372,18 @@
     color: var(--color-ink);
     font-weight: 600;
   }
+  /* Inline code / key caps in docs (shortcut keys, menu paths). One rule so
+     bare <code> and <kbd> look the same instead of per-element class soup. */
+  .rich-prose :where(code, kbd) {
+    display: inline-block;
+    padding: 0 0.4em;
+    border: 1px solid var(--color-edge-strong);
+    border-radius: 4px;
+    background: var(--color-hair);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
 }

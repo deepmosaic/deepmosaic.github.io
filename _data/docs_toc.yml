@@ -1,0 +1,39 @@
+# /docs/ の目次 (TICKET-SITE-42)。
+#
+# `_includes/docs-toc-list.html` が描画する。目次と本文の `<section id>` はここで揃える。
+#
+# ⚠️ desktop の既存 ID (about … trouble の 20 個) は **アプリ内ヘルプ / /price/ /
+#    /spec/ / llms.txt が参照する契約** (TICKET-SITE-16)。改名・削除しない。追加のみ。
+desktop:
+  - title: 導入
+    items:
+      - { id: about, label: はじめに }
+      - { id: install, label: インストール }
+      - { id: setup, label: 初回セットアップ }
+  - title: アカウントとプラン
+    items:
+      - { id: license, label: ログインとライセンス }
+      - { id: plan, label: プランの変更 }
+  - title: 読み込みと検出
+    items:
+      - { id: import, label: 動画の読み込み }
+      - { id: detect-options, label: 検出オプション }
+      - { id: detect, label: AI検出 }
+  - title: 編集
+    items:
+      - { id: edit-overview, label: 編集ページ }
+      - { id: edit-player, label: プレイヤーとタイムライン }
+      - { id: edit-toolbar, label: 編集ツールバー }
+      - { id: edit-mosaic, label: モザイク設定パネル }
+  - title: 書き出しと連携
+    items:
+      - { id: edit-encode, label: エンコード（書き出し） }
+      - { id: review, label: 検出漏れの確認 }
+      - { id: premiere, label: Premiere Pro 連携 }
+  - title: 運用
+    items:
+      - { id: update, label: アップデート }
+      - { id: uninstall, label: アンインストール }
+      - { id: usage, label: 使用時間の計測 }
+      - { id: spec, label: 動作環境 }
+      - { id: trouble, label: トラブルシューティング }

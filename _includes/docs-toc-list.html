@@ -1,0 +1,15 @@
+{%- comment -%}
+docs の目次リスト本体 (TICKET-SITE-42)。`toc` には `_data/docs_toc.yml` の `desktop` か `web` を渡す。
+sticky のサイドバー版とモバイルの `<details>` 版で同じ部品を使う (どちらも `.docs-toc` 内に置くこと —
+Scrollspy 島は `.docs-toc` 内のリンクだけを現在位置の表示対象にする)。
+
+  {% include docs-toc-list.html toc=site.data.docs_toc.desktop %}
+{%- endcomment -%}
+{%- for group in include.toc %}
+<div class="mt-3 mb-1 text-[11.5px] font-bold tracking-[.08em] text-ink-4 first:mt-0">{{ group.title }}</div>
+<ul class="border-l border-edge">
+  {%- for item in group.items %}
+  <li><a href="#{{ item.id }}" class="-ml-px block border-l-2 border-transparent py-1.5 pl-3.5 text-[13.5px] text-ink-3 hover:text-accent-soft">{{ item.label }}</a></li>
+  {%- endfor %}
+</ul>
+{%- endfor %}

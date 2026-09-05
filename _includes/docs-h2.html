@@ -1,0 +1,7 @@
+{%- comment -%}
+docs の節見出し (TICKET-SITE-42)。`kicker` は章名 (導入 / 編集 …)、`title` は節名。
+見た目を 1 箇所に寄せるための部品。節の `<section id>` と `.rich-prose` の本文は呼び出し側が書く。
+
+  {% include docs-h2.html kicker="編集" title="モザイク設定パネル" %}
+{%- endcomment -%}
+<h2 class="mt-11 border-b border-hair pb-3 text-[20px] font-bold text-ink">{% if include.kicker %}<span class="mr-2 align-[2px] text-[12.5px] font-bold tracking-[.08em] text-accent">{{ include.kicker }}</span>{% endif %}{{ include.title }}</h2>

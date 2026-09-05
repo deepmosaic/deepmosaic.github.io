@@ -1,0 +1,149 @@
+{%- comment -%}
+docs「編集」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
+節 ID (edit-overview / edit-player / edit-toolbar / edit-mosaic) は外部参照の契約。改名しない。
+{%- endcomment -%}
+<section id="edit-overview" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>編集ページ</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>ホーム画面の動画カードをクリックすると編集ページが開きます。画面は上から「ヘッダー」「動画プレイヤー（編集ツールバー内蔵）」「タイムライン」で構成されます。</p>
+    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ヘッダー左</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="ArrowLeft" class="inline h-3.5 w-3.5 align-[-2px]" %} 戻るボタン、動画タイトル、9桁のプロジェクトIDバッジ（クリックでコピー）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">メタ情報</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">動画の長さ / 総フレーム数 / fps / 解像度 / 追加日</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ヘッダー右</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">フォルダを開く / Premiere Proへインポート / エンコード / エンコードジョブ一覧 の各ボタンと保存状態表示</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">保存状態</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">編集は自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ全体（video-detail）" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ページ全体（video-detail）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-player" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>プレイヤーとタイムライン</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
+    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-toolbar" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>編集ツールバー</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>プレイヤーと再生コントロールの間にあるツールバーに、編集機能が集約されています。</p>
+    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">欠落フレームジャンプ</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出が無いフレームへ前後にジャンプ。対象クラス（全クラス / 局部 / 男性顔 / 女性顔）を選んで絞り込めます。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">[</code> / <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">]</code></div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">bbox追加（1f / ∞）</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">現在のフレーム中央に検出枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">1</code> / <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">2</code></div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">空白のみ再生</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">プレビュー切替（B / M）</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">bbox枠表示とモザイク適用プレビューを切り替えます。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">M</code></div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">モザイク設定</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク設定パネルを開きます（詳細は次章）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">現フレーム初期化</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">現在のフレームの編集をリセットします。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">Ctrl+Z</code></div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">全編集リセット</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">すべての編集を破棄します（確認ダイアログ付き・取り消し不可）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">クラス表示</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">表示する検出クラスをドロップダウンで絞り込みます（例: 局部のみ表示）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">再生速度</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ツールバー</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-mosaic" class="scroll-mt-24">
+  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>モザイク設定パネル</h2>
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>モザイクの見た目を4つの適用範囲（タブ）で設定できます。優先順位は <b>ID別 &gt; クラス別 &gt; シーン別 &gt; 全て</b> で、狭い範囲の設定が優先されます。パネルはドラッグで自由な位置に移動でき、開いたまま編集を続けられます。</p>
+    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">適用範囲タブ</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">全て（グローバル既定）/ クラス別（局部・顔など）/ ID別（追跡された個々の対象）/ シーン別（カット単位）。オーバライド中の範囲には表示が出て、個別にクリアできます</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">信頼度しきい値</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">指定した信頼度以上の検出だけを表示・モザイク対象にします（0〜100%、タブに依らないグローバル設定）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">種類</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク（ブロック状）/ ぼかし（ガウスぼかし）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">サイズ（bbox拡張率）</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出枠を中心から拡大・縮小してモザイク範囲を調整（0.5x〜2x）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">不透明度</div>
+        {%- comment -%}
+          TICKET-SITE-30: 旧文面は「下げると元の映像が透けます」。意味は
+          正しいが、**単独で抜粋されると「モザイクを透かせる機能」と誤読され得る**
+          サイト内で唯一の表現だった。意味を保ったまま「隠蔽が弱くなる」に
+          言い換え、既存の確定語彙 (隠蔽率) に寄せた。
+        {%- endcomment -%}
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク/ぼかしをどれだけ強く合成するか（0〜100%）。既定の 100% で対象を完全に覆います。値を下げるほど隠蔽が弱くなるため、通常は 100% のまま使います</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">エッジぼかし</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク領域のふちをぼかして背景となじませます（0〜64px）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ピクセルサイズ自動</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">対象物のサイズに連動してモザイクの粒を自動計算（既定ON）。カット内・同一ID内で粒度は一定。「細かさ」と最小/最大セル(px)で調整できます</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ブロック分割数</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">自動OFF時、領域を縦横に何分割するかで粗さを固定します（8〜64、Premiere Proと同方式）</div>
+      </div>
+      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
+        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">シャープカラー</div>
+        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">粒の色を領域平均でなく1点サンプリングにします（Premiere ProのSharp Colors相当、既定OFF）</div>
+      </div>
+    </div>
+    <p>各項目は右端の {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで既定値に戻せます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。かけるモザイクの種類・粒度・不透明度を指定する" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">モザイク設定パネル</figcaption>
+    </figure>
+  </div>
+</section>

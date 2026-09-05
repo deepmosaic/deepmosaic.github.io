@@ -7,12 +7,22 @@
   $effect(() => {
     if (!host) return;
     const off = Number(offset) || 80;
+    // Every in-page link gets offset-aware smooth scrolling, but only the TOC
+    // links (inside `.docs-toc`, sidebar + mobile <details>) track the current
+    // section. Body links that happen to point at a section must not be marked
+    // aria-current. Fall back to all links when the page has no `.docs-toc`.
     const links = Array.from(host.querySelectorAll('a[href^="#"]'));
+    const tocLinks = links.filter((l) => l.closest('.docs-toc'));
+    const spied = tocLinks.length ? tocLinks : links;
     const idOf = (link) => decodeURIComponent(link.getAttribute('href').slice(1));
 
     const sections = [];
-    for (const link of links) {
-      const sec = document.getElementById(idOf(link));
+    const seen = new Set();
+    for (const link of spied) {
+      const id = idOf(link);
+      if (seen.has(id)) continue;
+      seen.add(id);
+      const sec = document.getElementById(id);
       if (sec) sections.push(sec);
     }
 
@@ -27,15 +37,32 @@
     };
     links.forEach((l) => l.addEventListener('click', onClick));
 
+    // Keep the active link visible inside a scrollable sidebar (the TOC is
+    // capped to the viewport height). Only the <nav> scrolls; never touch the
+    // window here, or the mobile <details> TOC would yank the page upward.
+    const revealInNav = (link) => {
+      const nav = link.closest('nav.docs-toc');
+      if (!nav || nav.scrollHeight <= nav.clientHeight) return;
+      const r = link.getBoundingClientRect();
+      const n = nav.getBoundingClientRect();
+      if (r.top < n.top || r.bottom > n.bottom) {
+        nav.scrollTop += r.top - n.top - n.height / 2;
+      }
+    };
+
     let current = null;
     const setActive = (id) => {
       if (id === current) return;
       current = id;
-      links.forEach((l) => {
+      spied.forEach((l) => {
         const active = idOf(l) === id;
         l.classList.toggle('active', active);
-        if (active) l.setAttribute('aria-current', 'true');
-        else l.removeAttribute('aria-current');
+        if (active) {
+          l.setAttribute('aria-current', 'true');
+          revealInNav(l);
+        } else {
+          l.removeAttribute('aria-current');
+        }
       });
     };
 

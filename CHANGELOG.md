@@ -1,5 +1,44 @@
 # CHANGELOG
 
+## 2026-09-05 - Feature: /docs/ を全機能網羅に拡充 (TICKET-SITE-42〜48)
+
+アプリ v2.3.6 / Web 版の機能に対して docs が Desktop 版の一部しか載っていなかった
+(21 節・スクリーンショット 9 枚) ため、章立てを再編して全機能を記載する。既存 20 個の
+アンカー ID はアプリ内ヘルプ / `/price/` / `/spec/` / `llms.txt` が参照する契約
+(TICKET-SITE-16) なので維持し、追加のみ行う。スクリーンショットは desktop の
+`scripts/e2e/screenshots.mjs` (desktop T-167) を 4K の非露骨サンプル素材で実走して撮り直す。
+
+- [x] TICKET-SITE-42: docs の骨組み再編 — 本文を `_includes/docs/NN-*.html` へ章ごとに移設
+  (文章・マークアップは変更しない)、節見出しを `_includes/docs-h2.html`、目次を
+  `_data/docs_toc.yml` (単一情報源) + `_includes/docs-toc-list.html` に。章見出し付き・縦スクロール可の
+  目次と、md 未満向けのモバイル目次 (`<details>`) を追加。Scrollspy 島は `.docs-toc` 内のリンクだけを
+  現在位置の表示対象にし、sticky 目次内で現在の項目を自動追従。`<code>`/`<kbd>` の共通スタイル
+- [ ] TICKET-SITE-43: スクリーンショットの撮り直し・追加 — desktop `scripts/e2e/screenshots.mjs`
+  (T-167) を 4K の非露骨サンプル素材で実走し 36 枚を WebP 化 (旧 11 枚を差し替え)
+- [ ] TICKET-SITE-44: 導入〜検出の執筆 — 画面の構成 (`#layout`) / テーマ (`#theme`) / ログイン手順・
+  同時起動 1 台・オフライン時 / プランを選ぶと変更・解約の反映 / アカウントの削除 (`#account`) /
+  お問い合わせ (`#support`) / プロジェクトフォルダとカード操作・選択モード / 一括実行 (`#batch`) /
+  検出画面の操作とミニプレイヤー / キュー (`#queue`)。定義表を `.kv` 部品へ統一 (生ヘックス撤去)、
+  `<img>` 全件に width/height
+- [ ] TICKET-SITE-45: 編集の執筆 — 再生コントロール・検出枠の操作・右クリックメニュー・モザイク除外 /
+  拡大・縮小とパン (`#edit-zoom`) / 検出枠の追加 1f と ∞ (`#edit-bbox`) / シーン (`#edit-scenes`) /
+  モザイク設定の全 10 項目と既定値・最小モザイクの注記・「この設定を既定にする」 / 人物ギャラリー
+  (`#edit-persons`) / キーボードショートカット全表 (`#shortcuts`、desktop `edit-shortcuts.ts` と 1:1)
+- [ ] TICKET-SITE-46: 書き出し〜運用の執筆 — エンコードの全選択肢と前回設定の再利用 / タイムコードの
+  設定 (`#timecode`) / 進捗ウィンドウ (`#encode-progress`) / プロジェクトの書き出しと取り込み
+  (`#project-io`) / Premiere Pro の前提・セットアップ 3 段階・仕組み / 検出漏れの確認の道具を追記 /
+  アップデートの自動確認と手動確認 / データの保存場所 (`#data`) / アンインストールの完全削除 /
+  トラブルシューティングを 6 分類に拡充 / Web 版への案内 (`#web`)。「使用時間の計測」の方針文は原文維持
+- [ ] TICKET-SITE-47: `/docs/web/` (Web 版の使い方) を新設 — 対応ブラウザと要件 (WebCodecs =
+  Chrome / Edge 119+ / Safari 17+、約 1.9GB 上限、mp4 / mov のみ)、始め方、Desktop 版との違いの対応表、
+  実行ウィンドウとキュー、書き出しとダウンロード、データの保存と 7 日での自動削除 (モデルのみ)、
+  プラン、トラブルシューティング。根拠は web `app/docs/desktop-parity.md` と各実装
+- [ ] TICKET-SITE-48: 回帰ガード `scripts/check-docs.mjs` — 契約 ID 20 個 / 目次の ID / ページ内リンク /
+  サイト内と llms.txt からの `/docs/#…` `/docs/web/#…` の深いリンク / `<img>` の実在・alt・width/height
+  (WebP ヘッダから実寸を読んで照合、`--fix-dims` で同期) を CI の `Verify build output` に追加。純ロジック
+  `src/lib/docs-check.js` は `npm test` (11 件)。`llms.txt` の docs リンク一覧に新節と `/docs/web/` を追加、
+  README / CLAUDE.md に docs の構成・検査・スクリーンショット手順を追記
+
 ## 2026-08-30 - Feature: 「ブラウザで試す」(Web 版) 導線を再表示 (TICKET-SITE-41)
 
 - [x] TICKET-SITE-41: `_data/site.yml` の `web_app.enabled` を `true` に戻し、トップ HERO の
