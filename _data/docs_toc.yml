@@ -1,6 +1,7 @@
-# /docs/ の目次 (TICKET-SITE-42)。
+# /docs/ と /docs/web/ の目次 (TICKET-SITE-42)。
 #
-# `_includes/docs-toc-list.html` が描画する。目次と本文の `<section id>` はここで揃える。
+# `_includes/docs-toc-list.html` が描画し、`scripts/check-docs.mjs` が
+# 「目次の ID がページに存在するか」を検査する。目次と本文の ID はここで揃える。
 #
 # ⚠️ desktop の既存 ID (about … trouble の 20 個) は **アプリ内ヘルプ / /price/ /
 #    /spec/ / llms.txt が参照する契約** (TICKET-SITE-16)。改名・削除しない。追加のみ。
@@ -10,30 +11,58 @@ desktop:
       - { id: about, label: はじめに }
       - { id: install, label: インストール }
       - { id: setup, label: 初回セットアップ }
+      - { id: layout, label: 画面の構成 }
+      - { id: theme, label: テーマ }
   - title: アカウントとプラン
     items:
       - { id: license, label: ログインとライセンス }
       - { id: plan, label: プランの変更 }
+      - { id: account, label: アカウントの削除 }
+      - { id: support, label: お問い合わせ }
   - title: 読み込みと検出
     items:
       - { id: import, label: 動画の読み込み }
       - { id: detect-options, label: 検出オプション }
+      - { id: batch, label: 一括実行 }
       - { id: detect, label: AI検出 }
+      - { id: queue, label: キュー }
   - title: 編集
     items:
       - { id: edit-overview, label: 編集ページ }
       - { id: edit-player, label: プレイヤーとタイムライン }
+      - { id: edit-zoom, label: 拡大・縮小とパン }
+      - { id: edit-bbox, label: 検出枠の追加 }
+      - { id: edit-scenes, label: シーン（カット） }
       - { id: edit-toolbar, label: 編集ツールバー }
       - { id: edit-mosaic, label: モザイク設定パネル }
+      - { id: edit-persons, label: 人物ギャラリー }
+      - { id: shortcuts, label: キーボードショートカット }
   - title: 書き出しと連携
     items:
       - { id: edit-encode, label: エンコード（書き出し） }
-      - { id: review, label: 検出漏れの確認 }
+      - { id: timecode, label: タイムコードの設定 }
+      - { id: encode-progress, label: 進捗ウィンドウ }
+      - { id: project-io, label: プロジェクトの書き出しと取り込み }
       - { id: premiere, label: Premiere Pro 連携 }
+      - { id: review, label: 検出漏れの確認 }
   - title: 運用
     items:
       - { id: update, label: アップデート }
+      - { id: data, label: データの保存場所 }
       - { id: uninstall, label: アンインストール }
       - { id: usage, label: 使用時間の計測 }
       - { id: spec, label: 動作環境 }
+      - { id: trouble, label: トラブルシューティング }
+      - { id: web, label: Web 版について }
+web:
+  - title: Web 版
+    items:
+      - { id: about, label: はじめに }
+      - { id: requirements, label: 対応ブラウザと要件 }
+      - { id: start, label: 始め方 }
+      - { id: diff, label: Desktop 版との違い }
+      - { id: run, label: 実行ウィンドウとキュー }
+      - { id: export, label: 書き出しとダウンロード }
+      - { id: storage, label: データの保存と自動削除 }
+      - { id: plan, label: プランと使用時間 }
       - { id: trouble, label: トラブルシューティング }

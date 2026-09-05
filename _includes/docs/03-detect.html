@@ -1,93 +1,179 @@
 {%- comment -%}
-docs「読み込みと検出」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (import / detect-options / detect) は外部参照の契約。改名しない。
+docs 第 3 章「読み込みと検出」(TICKET-SITE-42 で部品化、TICKET-SITE-44 で拡充)。
+節 ID (import / detect-options / detect) は外部参照の契約 (llms.txt が #detect を参照)。改名しない。
+batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.css) を直接使う。
 {%- endcomment -%}
 <section id="import" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">動画の読み込み</h2>
+  {% include docs-h2.html kicker="読み込みと検出" title="動画の読み込み" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>読み込みには3つの方法があります。どの方法でも、読み込むと続けて<a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>画面が開きます。</p>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">動画ファイルを選択</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">メニューの「ファイル」から。ダイアログで動画を1本選びます</div>
+    <p>読み込みには3つの方法があります。どの方法でも、読み込むと続けて<a href="#detect-options">検出オプション</a>画面が開きます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">動画ファイルを選択</div>
+        <div class="kv-val">メニューの「ファイル」から。ダイアログで動画を1本選びます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">動画フォルダを選択</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">フォルダ内の動画をまとめて読み込みます。対象は<b>選んだフォルダの直下のみ</b>（サブフォルダは含みません）で、ファイル名の昇順に最大100件まで。100件を超える場合は先頭100件のみ読み込み、その旨が通知されます</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">動画フォルダを選択</div>
+        <div class="kv-val">フォルダ内の動画をまとめて読み込みます。対象は<b>選んだフォルダの直下のみ</b>（サブフォルダは含みません）で、ファイル名の昇順に最大100件まで。100件を超える場合は先頭100件のみ読み込み、その旨が通知されます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ドラッグ&amp;ドロップ</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">ホーム画面に動画ファイルを直接ドロップします。複数同時にドロップでき、動画以外のファイルは自動的に無視されます</div>
+      <div class="kv-row">
+        <div class="kv-key">ドラッグ&amp;ドロップ</div>
+        <div class="kv-val">ホーム画面に動画ファイルを直接ドロップします。複数同時にドロップでき、動画以外のファイルは自動的に無視されます</div>
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/import-menu.webp" alt="「ファイル」メニューを開いたホーム画面" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/import-menu.webp" alt="「ファイル」メニューを開いたホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">「ファイル」メニュー。画面へのドラッグ&amp;ドロップでも読み込めます。処理結果の保存先は「プロジェクトフォルダを選択」で変更します</figcaption>
     </figure>
     <p><b>対応形式</b>：mp4 / avi / mkv / mov / wmv / flv / webm / ts / m2ts / m4v / mpg / mpeg（拡張子の大文字・小文字は問いません）。フォルダから読み込む際は、拡張子が一致しても映像として読めないファイルは除外され、除外件数が通知されます。</p>
-    <p><b>複数をまとめて読み込んだとき</b>は、1本目が検出オプション画面に表示されます。「開始」を押すと<b>その設定が残り全部に適用され</b>、順番に処理されます。ただし検出範囲の指定だけは1本目のみ有効で、2本目以降は動画全体が対象になります。すでに検出処理が動いているときに読み込んだ場合も待ち行列に加わり、実行中の処理が終わり次第、自動で始まります。</p>
+    <p><b>複数をまとめて読み込んだとき</b>は、1本目が検出オプション画面に表示されます。「開始」を押すと<b>その設定が残り全部に適用され</b>、順番に処理されます。ただし検出範囲の指定だけは1本目のみ有効で、2本目以降は動画全体が対象になります。すでに検出処理が動いているときに読み込んだ場合も待ち行列に加わり、実行中の処理が終わり次第、自動で始まります（<a href="#queue">キュー</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">プロジェクトフォルダ</h3>
+    <p>読み込んだ動画は「プロジェクト」として管理され、検出結果・編集データ・サムネイルは動画ごとのプロジェクトフォルダに保存されます。プロジェクトフォルダの置き場所は初期状態で <code>C:\Users\（ユーザー名）\deepmosaic</code> です（無ければ自動で作成）。メニューの「ファイル ▸ プロジェクトフォルダを選択」で別の場所（外付けドライブなど）に変更でき、変更後に読み込んだ動画は新しい場所に保存されます。</p>
+    <p>ホーム画面には、<b>現在のプロジェクトフォルダにある、ログイン中のアカウントで作成したプロジェクト</b>だけが並びます。別のフォルダに保存されたプロジェクトがある場合は「他のプロジェクトフォルダに N 件の処理済み動画があります」と表示され、「表示する」で一覧に加えられます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/home.webp" alt="ホーム画面（処理済み動画一覧）" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/home.webp" alt="ホーム画面（処理済み動画一覧）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）。ドラッグ&amp;ドロップはこの画面が受け口になります</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">動画カードの操作</h3>
+    <p>カードをクリックすると<a href="#edit-overview">編集ページ</a>が開きます。カード右上の {% include icon.html name="Menu" class="inline h-3.5 w-3.5 align-[-2px]" %} メニューには次の項目があります。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトフォルダを開く</div>
+        <div class="kv-val">この動画のプロジェクトフォルダをエクスプローラーで開きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">PremiereProにインポート</div>
+        <div class="kv-val">検出結果を Adobe Premiere Pro に送ります（<a href="#premiere">Premiere Pro 連携</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトをエクスポート</div>
+        <div class="kv-val">プロジェクトを 1 つの zip にまとめます（<a href="#project-io">プロジェクトの書き出しと取り込み</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">削除</div>
+        <div class="kv-val">プロジェクトフォルダごと削除します（確認あり・取り消し不可）。エンコード中のプロジェクトを削除すると、そのエンコードも中止されます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/home-card-menu.webp" alt="動画カードのメニューを開いたホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">動画カードのメニュー</figcaption>
+    </figure>
+    <p><b>まとめて削除する</b>には、一覧上部の「選択モード」を押してカードをクリックで選び（「すべて選択」も可）、「選択を削除」を押します。確認ダイアログの後、選んだプロジェクトがフォルダごと削除されます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/home-select-mode.webp" alt="選択モードでカードを 1 件選んだホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">選択モード。複数のプロジェクトをまとめて削除できます</figcaption>
     </figure>
   </div>
 </section>
 
 <section id="detect-options" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">検出オプション</h2>
+  {% include docs-h2.html kicker="読み込みと検出" title="検出オプション" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>動画を読み込むと検出オプション画面が開きます。ここで「動画のどの区間を」「何を対象に」検出するかを決めて「開始」を押します。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/detect-options.webp" alt="検出オプション画面" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/detect-options.webp" alt="検出オプション画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">検出オプション画面（プレビュー・検出範囲・検出対象）</figcaption>
     </figure>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">プレビュー</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">いま指定しているフレームの静止画です。スライダーや数値入力を動かすと、その位置の画が表示されるので、範囲の当たりをつけられます</div>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">プレビュー</div>
+        <div class="kv-val">いま指定しているフレームの静止画です。スライダーや数値入力を動かすと、その位置の画が表示されるので、範囲の当たりをつけられます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">検出範囲</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">初期値は動画全体です。スライダーの両端か「開始」「終了」の数値入力でフレーム単位に指定できます。見出しには <span class="font-mono text-[12.5px]">00:00:00 (#0) ~ 00:00:10 (#300)</span> のように時刻とフレーム番号が並びます</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">検出範囲</div>
+        <div class="kv-val">初期値は動画全体です。スライダーの両端か「開始」「終了」の数値入力でフレーム単位に指定できます。見出しには <span class="font-mono text-[12.5px]">00:00:00 (#0) ~ 00:00:10 (#300)</span> のように時刻とフレーム番号が並びます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">範囲を追加</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">離れた複数の区間を指定できます。重なった範囲や連続した範囲は自動で1つにまとめられ、開始と終了が逆でも入れ替えて解釈されます。2つ以上あるときは {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %} で個別に削除でき、すべて削除すると動画全体に戻ります</div>
+      <div class="kv-row">
+        <div class="kv-key">範囲を追加</div>
+        <div class="kv-val">離れた複数の区間を指定できます。重なった範囲や連続した範囲は自動で1つにまとめられ、開始と終了が逆でも入れ替えて解釈されます。2つ以上あるときは {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %} で個別に削除でき、すべて削除すると動画全体に戻ります</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">検出対象</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">「局部」「男性の顔」「女性の顔」から選びます（初期値は3つともON）。ここでの選択は保存され、次回以降の読み込みでも引き継がれます</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">検出対象</div>
+        <div class="kv-val">「局部」「男性の顔」「女性の顔」から選びます（初期値は3つともON）。ここでの選択は保存され、次回以降の読み込みでも引き継がれます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ピクセルサイズ自動</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。検出後に編集ページの<a href="#edit-mosaic" class="text-accent-soft hover:underline">モザイク設定</a>からいつでも変更できます</div>
+      <div class="kv-row">
+        <div class="kv-key">ピクセルサイズ自動</div>
+        <div class="kv-val">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。検出後に編集ページの<a href="#edit-mosaic">モザイク設定</a>からいつでも変更できます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">GPU表示（右上）</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出に使うGPU名です。CUDA対応GPUが認識されていれば高精度モデル、認識されていなければCPU向けの軽量モデルが<b>自動で</b>選ばれます（手動選択はありません）</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">検出後の処理</div>
+        <div class="kv-val">「検出後そのままエンコードまで一括実行する」を ON にすると、検出の完了後に確認なしで書き出しまで進みます（<a href="#batch">一括実行</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">GPU表示（右上）</div>
+        <div class="kv-val">検出に使うGPU名です。CUDA対応GPUが認識されていれば高精度モデル、認識されていなければCPU向けの軽量モデルが<b>自動で</b>選ばれます（手動選択はありません）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">モデルの確認</div>
+        <div class="kv-val">画面を開くとモデルファイルの有無を確認し、不足していれば自動でダウンロードします。確認が終わるまで「開始」は押せません。失敗したときは「再試行」で取り直します</div>
       </div>
     </div>
     <figure class="my-4">
-      <!-- 幅はインラインで指定する。新規の Tailwind ユーティリティ (max-w-[330px] 等) は
-           assets/dist/app.css がキャッシュバスティング無し (max-age=14400) のため、
-           旧 CSS を掴んでいる閲覧者に届かず原寸を大きく超えて描画される。 -->
       <img src="/assets/img/screenshots/detect-options-panel.webp" alt="検出対象とモザイク初期設定"
-           width="316" height="260" style="max-width:316px;width:100%;height:auto;margin:0 auto"
+           width="316" height="366" loading="lazy" decoding="async" style="max-width:316px;width:100%;height:auto;margin:0 auto"
            class="block rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">検出対象とモザイク初期設定</figcaption>
     </figure>
     <p>検出にかかる時間は処理するフレーム数にほぼ比例します。長尺動画のうち一部だけを処理したい場合は、検出範囲を絞ると待ち時間を短縮できます。</p>
-    <p>ライセンスの期限切れや使用量の上限超過があると、この画面でプラン変更を促すダイアログが表示され、検出を開始できません（<a href="#plan" class="text-accent-soft hover:underline">プランの変更</a>を参照）。</p>
+    <p>ライセンスの期限切れや使用量の上限超過があると、この画面でプラン変更を促すダイアログが表示され、検出を開始できません（<a href="#plan">プランの変更</a>を参照）。</p>
+  </div>
+</section>
+
+<section id="batch" class="scroll-mt-24">
+  {% include docs-h2.html kicker="読み込みと検出" title="検出からエンコードまで一括実行" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>検出オプションの「検出後そのままエンコードまで一括実行する」を ON にして「開始」を押すと、検出の完了後に編集ページを開くことなく、モザイクを焼き込んだ動画の書き出しまで自動で進みます。複数の動画をまとめて読み込んだときは全件に適用されます。</p>
+    <ol>
+      <li>「開始」を押すと「一括処理の前にご確認ください」が表示されます。自動検出は 100% ではないこと（対象が小さい・速く動く・一部しか映っていない、暗所・逆光・強いボケ、学習データと傾向が異なるアングルなどでは検出されないことがある）を確認し、「理解しました。一括実行する」を押します</li>
+      <li>続けて<a href="#edit-encode">エンコード設定</a>が開きます。保存先フォルダを選ぶと、ファイル名は元動画名から自動で付き、同名のファイルがある場合は末尾に _2, _3 … が付きます。「開始」で検出が始まります</li>
+      <li>検出が完了すると、そのままエンコードが<a href="#queue">キュー</a>に入り順に書き出されます。進捗はメニューバーの「キュー」から確認できます</li>
+    </ol>
+    <p>一括実行では編集ページで結果を確認する工程を省くため、<b>出力した動画を公開・配布する前に、必ずご自身で全編をご確認ください</b>。モザイクの初期設定は「ピクセルサイズ自動」と、モザイク設定パネルで「この設定を既定にする」を押した内容が使われます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/detect-options-batch.webp" alt="「検出後そのままエンコードまで一括実行する」を ON にした検出オプション画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">一括実行を ON にした検出オプション画面</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/batch-warning.webp" alt="「一括処理の前にご確認ください」の確認ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">一括実行の前に表示される確認</figcaption>
+    </figure>
   </div>
 </section>
 
 <section id="detect" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">AI検出</h2>
+  {% include docs-h2.html kicker="読み込みと検出" title="AI検出" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p><a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
+    <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（4段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（4段階ステッパー + 進捗バー）</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">進捗の見方</div>
+        <div class="kv-val">進捗バーは検出全体の割合です。その下に現在のステップ名、処理中のフレーム数、速度（fps）、「〇〇の残り」（そのステップの残り時間の目安）が並びます。残り時間が出ないステップもあります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">一時停止 / 再開</div>
+        <div class="kv-val">処理を一時停止します。再開すると続きから処理します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">キャンセル</div>
+        <div class="kv-val">「検出を中止しますか？」の確認後に中止します。進行状況は失われます。待機中の動画があるときは「この動画のみ中止」（次の動画へ進む）と「すべて中止」を選べます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">閉じる</div>
+        <div class="kv-val">画面を閉じても検出は続きます。画面右下に小さな進捗表示（ミニプレイヤー）が残り、クリックで検出画面に戻れます。ミニプレイヤーからも一時停止とキャンセルができます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">完了</div>
+        <div class="kv-val">「処理が完了しました」と表示され、ホーム画面にカードが追加されます。<a href="#batch">一括実行</a>のときはエンコードがキューに入ります</div>
+      </div>
+    </div>
+    <p>処理中は待ち時間用のミニゲームが表示されます。遊んでも遊ばなくても処理には影響しません。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/detect-cancel.webp" alt="検出中に「キャンセル」を押したときの確認ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">キャンセルの確認。「いいえ」で処理を続けます</figcaption>
     </figure>
     {%- comment -%}
       TICKET-SITE-16: 検出対象の図はトップから外してここへ移した (施策④-5)。
@@ -98,8 +184,42 @@ docs「読み込みと検出」章 (TICKET-SITE-42 で docs/index.html から移
       <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">対応する検出対象を見る</summary>
       <div class="px-4 pb-4">
         <img src="/assets/img/detectable-objects.webp" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" loading="lazy" decoding="async" class="w-[min(420px,100%)] rounded-[10px] border border-edge">
-        <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">検出対象は「局部」「男性の顔」「女性の顔」の 3 種類で、<a href="#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF を切り替えられます。</p>
+        <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">検出対象は「局部」「男性の顔」「女性の顔」の 3 種類で、<a href="#detect-options">検出オプション</a>で個別に ON / OFF を切り替えられます。</p>
       </div>
     </details>
+  </div>
+</section>
+
+<section id="queue" class="scroll-mt-24">
+  {% include docs-h2.html kicker="読み込みと検出" title="キュー（検出とエンコードの待ち行列）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>検出とエンコードは 1 つの待ち行列（キュー）で管理され、メニューバーの「キュー」から確認・操作できます。ボタンのバッジは実行中と待機中のジョブの合計数です。検出は同時に 1 本ずつ、エンコードも同時に 1 本ずつ処理され、完了すると次のジョブが自動で始まります。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">検出（実行中）</div>
+        <div class="kv-val">ステップ、全体の進捗、速度、残り時間、フレーム数を表示します。「詳細を開く」で検出画面へ、一時停止 / 再開、キャンセルもここから行えます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">検出（待機中）</div>
+        <div class="kv-val">ドラッグ、または「上へ移動」「下へ移動」で順番を入れ替えられます。「キューから削除」で取りやめます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">エンコード</div>
+        <div class="kv-val">実行中の行には速度・残り時間・フレーム数が出ます。並べ替え、「進捗を別ウィンドウで開く」、一時停止 / 再開、キャンセル、完了したジョブの削除ができます（<a href="#encode-progress">進捗ウィンドウ</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Web 版との同時利用</div>
+        <div class="kv-val">同じアカウントで<a href="/docs/web/">Web 版</a>が処理を実行中のときは「Web 版で処理を実行中のため、新しいジョブは完了を待ってから開始されます」と表示され、Desktop 側のジョブは待機します</div>
+      </div>
+    </div>
+    <p>ウィンドウを閉じてもキューは残ります。アプリを終了すると実行中の検出は中止されますが、キューに残ったエンコードは次回起動時に再開できません（改めて編集ページから開始してください）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/queue.webp" alt="キューのモーダル。検出の実行中の行にステップと進捗が表示されている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">キュー（検出の実行中）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/queue-encode.webp" alt="キューのモーダル。エンコードのジョブが並んでいる" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">キュー（エンコードのジョブ）</figcaption>
+    </figure>
   </div>
 </section>

@@ -1,9 +1,11 @@
 {%- comment -%}
-docs「アカウントとプラン」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (license / plan) は外部参照の契約。改名しない。
+docs 第 2 章「アカウントとプラン」(TICKET-SITE-42 で部品化、TICKET-SITE-44 で拡充)。
+節 ID (license / plan) は外部参照の契約 (/price/ が #plan を参照)。改名しない。
+account / support は TICKET-SITE-44 で追加。
 {%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
 <section id="license" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">ログインとライセンス</h2>
+  {% include docs-h2.html kicker="アカウント" title="ログインとライセンス" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     {%- comment -%}
       TICKET-SITE-20: 有料プランの枠は `/price/` を唯一の出所にする。
@@ -11,7 +13,7 @@ docs「アカウントとプラン」章 (TICKET-SITE-42 で docs/index.html か
 
       TICKET-SITE-CONTRACT-SSOT: 契約本数も同じ理由でページに直書きしない。
       文の組み立ては `_includes/contract-limits.html`、数値の出所は
-      `_data/plans.yml` の `max_contracts` だけ (同じ文が下の「使用時間の計測」
+      `_data/plans.yml` の `max_contracts` だけ (同じ文が「使用時間の計測」
       にもあるため、直書きすると片方だけ古くなる)。
     {%- endcomment -%}
     {%- comment -%}
@@ -21,26 +23,99 @@ docs「アカウントとプラン」章 (TICKET-SITE-42 で docs/index.html か
       ここだけ 6 時間のまま取り残されていた。
       未ログインの 3 時間は front の `auth/env.rs::ANONYMOUS_USAGE_LIMIT_SECONDS`。
     {%- endcomment -%}
-    {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
     <p>ダウンロードしてすぐ、ログインなしで累計3時間分までお試しいただけます。無料のアカウント登録で累計{{ free_plan.included_hours }}時間分までに増えます。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。支払いはクレジットカードに対応しています。</p>
     <ul>
       <li>無料: 累計{{ free_plan.included_hours }}時間分までの動画インポート（登録なしは3時間／クレジットカードの登録は不要）</li>
-      <li>有料プラン: プランごとの込み時間は<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください</li>
+      <li>有料プラン: プランごとの込み時間は<a href="/price">料金ページ</a>をご覧ください</li>
     </ul>
     <p>上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは、有料プランの動画インポートに上限はありません。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ログインする</h3>
+    <ol>
+      <li>プロフィールメニュー（右上）の「ログイン」、またはフッターの「ログインで {{ free_plan.included_hours }}時間に増量」を押します</li>
+      <li>ダイアログの「ログイン」を押すとブラウザで認証画面が開きます。アカウントをお持ちでない方は「新規登録」から無料で登録できます（メールアドレスの確認が必要です）</li>
+      <li>ブラウザで認証が完了すると、アプリに自動で戻りログイン状態になります。ブラウザに残っている別のアカウントで入りたいときは「別のアカウントでログイン」を使います</li>
+    </ol>
+    <p>ログイン情報は PC 内に暗号化して保存され、次回以降は自動でログインします。「ログアウト」はプロフィールメニューから行います。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">同時に使える端末は 1 台</h3>
+    <p>同じアカウントで同時に起動できる端末は 1 台です。別の PC でログインすると「他の端末でログイン中です」と表示され、「続行」を選ぶと以前の端末は次回起動時にログアウトされます。PC を買い替えたときも、新しい PC でログインするだけで移行できます（プロジェクトの移動は<a href="#project-io">プロジェクトの書き出しと取り込み</a>を参照）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">オフラインのとき</h3>
+    <p>ログインとプランの確認は起動時にインターネット経由で行い、検出・編集・書き出しは通信なしで動作します。起動時に認証サーバへ接続できない場合は画面上部に「ネットワークに接続できません（ローカル機能は引き続きご利用いただけます）。」などの帯が表示されますが、直前のログイン状態とプランのまま利用を続けられます。帯に「再ログインしてください」と出た場合はプロフィールメニューからログインし直してください。</p>
   </div>
 </section>
 
 <section id="plan" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">プランの変更</h2>
+  {% include docs-h2.html kicker="アカウント" title="プランの変更" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>プランの申し込み・変更は、画面右上のプロフィールメニューから行います。</p>
     <ol>
       <li>アプリにログインし、画面右上のプロフィールアイコンをクリックします</li>
-      <li>メニューからプラン管理を選ぶと、ブラウザで決済ポータルが開きます</li>
+      <li>無料プランのときは「プランを変更する」でプランを選ぶ画面が開きます。有料プランのときは「プラン管理」を選ぶと、ブラウザで決済ポータルが開きます</li>
       <li>ポータル上で有料プランの申し込み、支払い方法（クレジットカード）の変更、解約ができます</li>
       <li>手続き完了後にアプリへ戻ると、ライセンス状態が自動で更新されます</li>
     </ol>
     <p>解約はいつでも可能で、違約金等はありません。解約後も無料分の範囲で引き続きご利用いただけます。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">プランを選ぶ</h3>
+    <p>各プランのカードに月額（税別・税込）、込み時間、同時起動 1 台の条件が並びます。同じプランを複数契約できるプランでは「契約本数」を選べます（{% include contract-limits.html %}）。「このプランにする」を押すとブラウザで決済画面が開き、完了するとアプリに「お支払いが完了しました」と表示されます。Enterprise は「導入について相談する」からお問い合わせください。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/plan-select.webp" alt="「プランを選ぶ」ダイアログ。プランごとの月額・込み時間・契約本数を表示" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">プランを選ぶ画面。金額と込み時間は<a href="/price">料金ページ</a>と同じ内容です</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">変更・解約の反映</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">プランの変更</div>
+        <div class="kv-val">ポータルからアプリに戻ると「プランを 〇〇 に変更しました」と表示されます。反映に時間がかかる場合は「変更内容を反映しています...」のまま待つか、いったん閉じても後で通知されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">解約の予約</div>
+        <div class="kv-val">「サブスクリプションのキャンセルを受け付けました」と表示され、プロフィールメニューに有効期限（〇〇 まで有効）が出ます。期限までは有料プランのまま使え、取り消しもポータルから行えます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">期限切れ</div>
+        <div class="kv-val">期限を過ぎて起動すると「プランの有効期限が切れました」と表示され、無料プランに切り替わります。再度申し込むと元に戻ります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">上限に達したとき</div>
+        <div class="kv-val">検出を開始しようとするとプランの変更（未ログインの場合はログイン）を促すダイアログが表示されます。進行中の検出やエンコードは止まりません</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="account" class="scroll-mt-24">
+  {% include docs-h2.html kicker="アカウント" title="アカウントの削除" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>ログイン中にホーム画面のフッター右側に表示されるアイコンから、アカウントを削除できます。この操作は取り消せません。</p>
+    <ol>
+      <li>有料プランを契約中の場合は、先に「プラン管理」から解約してください（契約が残っていると「有効なプランの契約が残っています」と表示され、削除できません）</li>
+      <li>フッターの「アカウントを削除」アイコンを押し、確認画面で登録メールアドレスを入力します</li>
+      <li>「アカウントを削除しました」と表示され、確認メールが届きます。アプリは未ログイン状態に戻ります</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">削除されるもの</div>
+        <div class="kv-val">ログインアカウント（認証サービス上のユーザー情報）/ サーバー上の利用データ（プロジェクト履歴・端末登録・利用時間の記録）/ このアプリのログイン状態とプラン情報</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">残るもの</div>
+        <div class="kv-val">お使いの PC 上の動画・編集データ（成果物ファイルは削除されません）/ 課金履歴などの法令上保存が必要な記録（個人を特定できない形で保持）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/delete-account.webp" alt="アカウント削除の確認ダイアログ。削除されるものと残るものの一覧、メールアドレスの入力欄" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">アカウント削除の確認画面</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="support" class="scroll-mt-24">
+  {% include docs-h2.html kicker="アカウント" title="お問い合わせ" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>不具合の報告やご質問は、プロフィールメニューの「お問い合わせ」から送信できます（ログインが必要です）。メールアドレスはログイン中のアドレスが自動で入り、本文を入力して「送信」すると「問い合わせを受け付けました。返答までしばらくお待ちください。」と表示されます。返答は登録メールアドレス宛に届きます。</p>
+    <p>不具合のときは、フッターに表示されるバージョン、発生した操作、表示されたメッセージを添えていただくと調査が早く進みます。ログインできない場合は<a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">問い合わせフォーム</a>をご利用ください。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/feedback.webp" alt="お問い合わせダイアログ。ログイン中のメールアドレスと本文の入力欄" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">お問い合わせダイアログ</figcaption>
+    </figure>
   </div>
 </section>

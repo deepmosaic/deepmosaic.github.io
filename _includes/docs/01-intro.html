@@ -1,9 +1,12 @@
 {%- comment -%}
-docs「導入」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (about / install / setup) は外部参照の契約。改名しない。
+docs 第 1 章「導入」(TICKET-SITE-42 で部品化、TICKET-SITE-44 で拡充)。
+節 ID (about / install / setup) は外部参照の契約。改名しない。layout / theme は TICKET-SITE-44 で追加。
+数値 (無料枠の時間・必要容量) は _data/plans.yml / _data/spec.yml から引く (直書き禁止)。
 {%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+{%- assign spec_storage = site.data.spec.windows | where: "key", "ストレージ" | first -%}
 <section id="about" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">はじめに</h2>
+  {% include docs-h2.html kicker="導入" title="はじめに" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     {%- comment -%}
       TICKET-SITE-30: サイト内で最も定義に近い一文。前半の「モザイク処理を
@@ -11,20 +14,154 @@ docs「導入」章 (TICKET-SITE-42 で docs/index.html から移設。文章・
       足した。docs は AI クローラが本文として引きやすいページでもある。
     {%- endcomment -%}
     <p>Deepmosaicは、AI（ディープラーニング）による物体検出で動画のモザイク処理を自動化するWindowsデスクトップアプリケーションです。動画の読み込みからAI検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでをアプリ内で完結できます。<b>本ソフトウェアはモザイクを「かける」ためのものであり、すでにモザイクがかかった映像からモザイクを取り除いたり、元の映像を復元したりする機能はありません。</b></p>
+    <p>このページは Windows 版（Deepmosaic Desktop）の使い方ガイドです。インストール不要でブラウザから使える Web 版については<a href="/docs/web/">Web 版の使い方</a>をご覧ください（<a href="#web">Desktop 版との違い</a>もこのページ末尾にまとめています）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">作業の流れ</h3>
+    <ol>
+      <li><a href="#import">動画を読み込む</a> — ファイル / フォルダ / ドラッグ&amp;ドロップ。読み込んだ動画は「プロジェクト」としてホーム画面に並びます</li>
+      <li><a href="#detect">AI で検出する</a> — 検出範囲と対象（局部 / 男性の顔 / 女性の顔）を決めて開始。処理はバックグラウンドで進み、<a href="#queue">キュー</a>で複数の動画を順に処理できます</li>
+      <li><a href="#edit-overview">編集ページで確認・修正する</a> — 検出枠の追加や削除、モザイクの見た目の調整、検出漏れの確認</li>
+      <li><a href="#edit-encode">書き出す</a> — モザイクを焼き込んだ動画をエンコードします。<a href="#premiere">Premiere Pro へ検出結果を渡す</a>こともできます</li>
+    </ol>
   </div>
 </section>
 
 <section id="install" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">インストール</h2>
+  {% include docs-h2.html kicker="導入" title="インストール" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ダウンロードしたインストーラ（Deepmosaic Setup）を実行してください。管理者権限は不要で、現在のユーザーにインストールされます。動作にはWebView2ランタイムが必要ですが、Windows 10/11には標準搭載されています。</p>
+    <p>ダウンロードしたインストーラ（Deepmosaic Setup）を実行してください。管理者権限は不要で、現在のユーザーにインストールされます。動作にはWebView2ランタイムが必要ですが、Windows 10/11には標準搭載されています（無い環境ではインストーラが自動で導入します）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">対応 OS</div>
+        <div class="kv-val">Windows 10 / 11（64 ビット）。macOS 版は開発中です（<a href="/spec">動作環境</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">インストーラの言語</div>
+        <div class="kv-val">起動時に日本語 / English を選べます。表示言語はアプリ本体には影響しません（アプリは日本語 UI です）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">インストール先</div>
+        <div class="kv-val">現在のユーザーのアプリフォルダ。スタートメニューに「Deepmosaic」が登録されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">アップグレード</div>
+        <div class="kv-val">新しいインストーラを上書き実行するか、アプリ内の<a href="#update">アップデート</a>から更新します。設定や検出結果は引き継がれます</div>
+      </div>
+    </div>
+    <div class="my-5">{% include download-button.html dl="docs-install" note="Windows 10 / 11（64bit）。ダウンロードしてすぐ、ログインなしでお試しいただけます" %}</div>
   </div>
 </section>
 
 <section id="setup" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">初回セットアップ</h2>
+  {% include docs-h2.html kicker="導入" title="初回セットアップ" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>初回起動時、AI検出に必要なモデルデータが自動でダウンロードされます。ダウンロード中は進捗が表示され、完了するまで他の操作はできません。回線速度により数分〜十数分かかる場合があります。</p>
-    <p>ダウンロード完了後、コンポーネントの自己診断が自動で実行されます。問題が検出された場合は該当データのみ自動で再ダウンロードされます。</p>
+    <p>初回起動時、AI検出に必要なモデルデータと検出エンジンが自動でダウンロードされます（{{ spec_storage.val }}）。ダウンロード中は全体の進捗（%）と残り時間が表示され、完了するまで他の操作はできません。回線速度により数分〜十数分かかる場合があります。</p>
+    <p>ダウンロード完了後、コンポーネントの自己診断が自動で実行されます。問題が検出された場合は該当データのみ自動で再ダウンロードされます。「すべてのアセットは最新です。」と表示されたら「続ける」でホーム画面へ進みます。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">セットアップ中にできないこと</h3>
+    <p>ダウンロードと自己診断が終わるまで、メニューは「ファイル ▸ 終了」以外が無効になり、ウィンドウを閉じる操作や画面の再読み込みも抑止されます。途中で終了した場合は、次回起動時に不足分だけを取得して再開します。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">エラーが表示されたとき</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">整合性チェック失敗</div>
+        <div class="kv-val">取得したファイルが壊れています。「再ダウンロード」で該当ファイルだけ取り直します（自動で最大 2 回まで再試行します）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">依存ランタイム不足</div>
+        <div class="kv-val">検出エンジンの動作に必要な Windows のコンポーネントが見つかりません。「サポートフォームを開く」から環境（OS のバージョンなど）を添えてご連絡ください</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">セルフテスト失敗</div>
+        <div class="kv-val">ダウンロードは完了したものの、検出エンジンの動作確認に失敗しました。「リトライ」で再実行し、繰り返す場合はサポートフォームからご連絡ください</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ダウンロードが進まない</div>
+        <div class="kv-val">回線を確認のうえ「リトライ」を押すか、アプリを再起動してください。取得済みのファイルはそのまま使われ、不足分だけを再取得します</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">GPU 高速化の準備（NVIDIA GPU 搭載機のみ）</h3>
+    <p>NVIDIA GPU を認識した場合、セットアップ完了後にバックグラウンドで GPU 用の実行環境（約 1.7 GB）を取得します。画面右下の「GPU 高速化」ウィジェットで進捗を確認でき、「GPU 高速化が有効になりました」と表示されればその後の検出が GPU で実行されます。取得に失敗した場合はメッセージが表示され、次に検出を実行するときに自動で再取得します。取得が終わるまでの検出は CPU で実行されます。</p>
+  </div>
+</section>
+
+<section id="layout" class="scroll-mt-24">
+  {% include docs-h2.html kicker="導入" title="画面の構成" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>ウィンドウは上から「メニューバー」「各画面（ホーム / 検出オプション / 検出 / 編集）」「フッター」で構成されます。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">メニューバー「ファイル」</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">動画ファイルを選択</div>
+        <div class="kv-val">動画を 1 本選んで読み込みます（<a href="#import">動画の読み込み</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">動画フォルダを選択</div>
+        <div class="kv-val">フォルダ直下の動画をまとめて読み込みます。複数の動画をまとめて検出したい場合はこちら</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトフォルダを選択</div>
+        <div class="kv-val">検出結果や編集データの保存先を変更します（<a href="#import">プロジェクトフォルダ</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プロジェクトのインポート</div>
+        <div class="kv-val">エクスポートされたプロジェクト（.zip）を取り込みます（<a href="#project-io">プロジェクトの書き出しと取り込み</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">アップデートを確認</div>
+        <div class="kv-val">本体 / エンジン / モデル・アセットの更新を確認します（<a href="#update">アップデート</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">終了</div>
+        <div class="kv-val">アプリを終了します。実行中の検出は中止されます（エンコードは<a href="#queue">キュー</a>を参照）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">メニューバー「キュー」</h3>
+    <p>検出とエンコードの待ち行列を 1 か所で確認・操作します。実行中と待機中のジョブ数がバッジで表示されます（<a href="#queue">キュー</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">プロフィールメニュー（右上）</h3>
+    <p>アバター（またはユーザー名）をクリックすると開きます。ログイン状態とプラン、ログイン / ログアウト、プランを変更する（無料プランのとき）または プラン管理（有料プランのとき）、お問い合わせ、テーマの切り替えが並びます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/profile-menu.webp" alt="ホーム画面で右上のプロフィールメニューを開いた状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">プロフィールメニュー。プランの変更・お問い合わせ・テーマの切り替えはここから</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">フッター</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">GPU</div>
+        <div class="kv-val">検出に使う GPU 名。認識されていない場合は「なし」と表示され、CPU で処理します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プラン</div>
+        <div class="kv-val">Paid（有料プラン）/ Free / 未ログイン / Limit reached（上限到達）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">残り時間</div>
+        <div class="kv-val">「今月の残り」（有料プラン）または「残りの検出可能時間」（無料）と使用済み割合のバー。同じプランを複数契約している場合は「×N」が付きます。<a href="#usage">使用時間の計測</a>を参照</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ログインで {{ free_plan.included_hours }}時間に増量</div>
+        <div class="kv-val">未ログイン時に表示されるボタン。無料のログインで検出可能時間の上限が 3 時間から {{ free_plan.included_hours }} 時間に増えます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトフォルダ</div>
+        <div class="kv-val">現在の保存先のパス</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">アカウントを削除</div>
+        <div class="kv-val">ログイン中にホーム画面で表示されるアイコン（<a href="#account">アカウントの削除</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">バージョン</div>
+        <div class="kv-val">お使いの Deepmosaic のバージョン（お問い合わせの際にお知らせください）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="theme" class="scroll-mt-24">
+  {% include docs-h2.html kicker="導入" title="テーマ（ライト / ダーク）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>プロフィールメニューの「テーマ」で「OS の設定に従う」「ライトモード」「ダークモード」を切り替えられます。初期値は OS の設定に従います。選択は保存され、次回起動時も同じテーマで表示されます。映像のプレビューや検出枠の色はテーマに関わらず同じです。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/home-light.webp" alt="ライトモードのホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">ライトモードのホーム画面</figcaption>
+    </figure>
   </div>
 </section>
