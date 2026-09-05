@@ -238,12 +238,12 @@ schemas:
 
 {%- comment -%}
   RELIABILITY (施策④-3 の実装済み範囲)。
-  「確認支援ビュー」(低信頼区間の自動抽出) は未実装なので、実装済みの道具だけを書く。
+  T-205: 「確認支援ビュー」は T-187 で出荷済み (T-203 でアノテーションモードに)。詳細は /docs/#review。
 {%- endcomment -%}
 <!-- RELIABILITY -->
 <section class="py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更、検出が途切れた箇所へのジャンプに対応しています。" %}
+    {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更に加え、見直したほうがよい箇所（中抜け・急消失・短い追跡）を自動で拾って 1 件ずつ判断できるアノテーションモードを備えています。" %}
     <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
         {%- comment -%}
