@@ -1,45 +1,179 @@
 {%- comment -%}
-docs「書き出しと連携」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (edit-encode / review / premiere) は外部参照の契約。改名しない。
+docs 第 5 章「書き出しと連携」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡充)。
+節 ID (edit-encode / review / premiere) は外部参照の契約 (llms.txt が #edit-encode を参照)。改名しない。
+timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
 {%- endcomment -%}
 <section id="edit-encode" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>エンコード（書き出し）</h2>
+  {% include docs-h2.html kicker="書き出しと連携" title="エンコード（書き出し）" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ヘッダーの「エンコード」ボタンから書き出し設定を行います。開始するとジョブキューに入り、進捗は専用ウィンドウで確認できます（ヘッダーのジョブ一覧からも参照可能）。</p>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">フォーマット</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">MP4 (H.264 / H.265) / MOV (ProRes 422 / 422 HQ) / WebM (VP9 / AV1) / MKV (H.264 / H.265) / AVI (H.264)</div>
+    <p>編集ページのヘッダーの「エンコード」ボタン（<kbd>Ctrl+Enter</kbd>）から書き出し設定を行います。「開始」を押すとジョブが<a href="#queue">キュー</a>に入り、進捗は<a href="#encode-progress">専用ウィンドウ</a>で確認できます。エンコード開始時に未保存の編集は自動で保存されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">フォーマット</div>
+        <div class="kv-val">MP4 (H.264) / MP4 (H.265 / HEVC) / MOV (ProRes 422) / MOV (ProRes 422 HQ) / WebM (VP9) / WebM (AV1) / MKV (H.264) / MKV (H.265) / AVI (H.264)</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">解像度</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">元動画と同じ / 4K DCI / 4K UHD / QHD / Full HD / HD / SD</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">解像度</div>
+        <div class="kv-val">元動画と同じ / 4K DCI (4096x2160) / 4K UHD (3840x2160) / QHD (2560x1440) / Full HD (1920x1080) / HD (1280x720) / SD (854x480)</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">フレームレート</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">元動画と同じ / 23.976〜60 fps</div>
+      <div class="kv-row">
+        <div class="kv-key">フレームレート</div>
+        <div class="kv-val">元動画と同じ / 23.976（映画）/ 24 / 25（PAL）/ 29.97（NTSC）/ 30 / 50 / 59.94 / 60 fps</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ビットレート</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">自動（品質ベース CRF 18）/ 2〜50 Mbps</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ビットレート</div>
+        <div class="kv-val">自動（品質ベース CRF 18）/ 50 / 20 / 10 / 5 / 2 Mbps</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">タイムコード</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">タイムコードの焼き込みに対応。文字サイズ・位置・色・表示形式を詳細設定できます</div>
+      <div class="kv-row">
+        <div class="kv-key">タイムコード</div>
+        <div class="kv-val">「タイムコードを埋め込む」で映像にタイムコードを焼き込みます。「設定」で文字サイズ・位置・色・表示形式を変更できます（<a href="#timecode">タイムコードの設定</a>）</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">NVENC GPUエンコード</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">NVIDIA GPUによるハードウェアエンコード。ドライバ570未満の場合は警告が表示され、CPU (libx264) で出力されます</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">NVENC GPUエンコード</div>
+        <div class="kv-val">NVIDIA GPUによるハードウェアエンコード。ドライバ570未満の場合は警告が表示され、CPU (libx264) で出力されます。ProRes / VP9 / AV1 など GPU 非対応の形式では使われません</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">保存先</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">元動画と同名（拡張子は選択フォーマット）が既定で入力されます。上書き事故を避けるためフォルダは毎回確認されます</div>
+      <div class="kv-row">
+        <div class="kv-key">保存先</div>
+        <div class="kv-val">元動画と同名（拡張子は選択フォーマット）が既定で入力されます。上書き事故を避けるためフォルダは毎回確認されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">前回の設定</div>
+        <div class="kv-val">フォーマット・解像度・フレームレート・ビットレート・タイムコード・GPU・保存先フォルダは前回の内容が次回の初期値になります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">警告</div>
+        <div class="kv-val">モザイクの対象が 1 つも無い（検出が無い、すべて除外した等）ときは「モザイクが 1 つも適用されません。」と表示されます。書き出し前に<a href="#review">検出漏れの確認</a>を行ってください</div>
       </div>
     </div>
-    <p>エンコード開始時に未保存の編集は自動で保存されます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-encode.webp" alt="エンコード設定ダイアログ" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-encode.webp" alt="エンコード設定ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">エンコード設定ダイアログ</figcaption>
+    </figure>
+    <p>モザイクの粒の大きさは、書き出す解像度に対して自主規制基準（長辺÷100、最小 4px）を下回らないよう自動で調整されます。4K の素材を Full HD で書き出す場合も、出力後の映像でこの基準を満たします。</p>
+  </div>
+</section>
+
+<section id="timecode" class="scroll-mt-24">
+  {% include docs-h2.html kicker="書き出しと連携" title="タイムコードの設定" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>エンコード設定で「タイムコードを埋め込む」を ON にし、隣の「設定」を押すと表示されます。確認用の書き出し（チェック用の素材を関係者に渡すときなど）で、映像のどの位置かを伝えるために使います。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">文字サイズ (px)</div>
+        <div class="kv-val">任意の数値。既定 64px（書き出し解像度の実ピクセル）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">左上 / 上中央 / 右上 / 中央 / 左下 / 下中央 / 右下。既定: 右下</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">色</div>
+        <div class="kv-val">白 / 黒 / 黄 / 緑。既定: 白</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">輪郭線を描画</div>
+        <div class="kv-val">文字に縁取りを付けて、明るい背景でも読めるようにします（既定 ON）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">表示形式</div>
+        <div class="kv-val">HH:MM:SS:フレーム（既定）/ HH:MM:SS / HH:MM:SS.ミリ秒 / フレーム番号</div>
+      </div>
+    </div>
+    <p>設定を有効にすると、編集ページのプレビューと<a href="#encode-progress">進捗ウィンドウ</a>のプレビューにも同じ見た目で表示されます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/encode-timecode.webp" alt="エンコード設定の上に開いたタイムコード設定ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムコードの設定</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="encode-progress" class="scroll-mt-24">
+  {% include docs-h2.html kicker="書き出しと連携" title="エンコードの進捗ウィンドウ" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>エンコードを開始すると、ジョブごとに進捗ウィンドウが別ウィンドウで開きます。閉じてもジョブは続き、<a href="#queue">キュー</a>の「進捗を別ウィンドウで開く」からいつでも開き直せます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">プレビュー</div>
+        <div class="kv-val">エンコード中のフレームが定期的に表示されます（タイムコードを埋め込む設定のときはタイムコード付き）。開始直後は「最初のフレームを抽出中…」、順番待ちのときは「キュー待機中」と表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">進捗</div>
+        <div class="kv-val">進捗率と「フレーム N / M」「速度（fps）」「残り時間」。完了すると「完了 ✓」、中止したときは「キャンセル済」、失敗したときは「失敗」とエラー内容が表示されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">出力情報</div>
+        <div class="kv-val">出力先のパス、フォーマット、解像度</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">一時停止 / 再開</div>
+        <div class="kv-val">エンコードを一時停止します。他の作業で PC の負荷を下げたいときに</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">キャンセル</div>
+        <div class="kv-val">エンコードを中止します（再開はできません）。書きかけのファイルは削除されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">閉じる</div>
+        <div class="kv-val">ウィンドウを閉じるだけで、ジョブは続きます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/encode-progress.webp" alt="エンコードの進捗ウィンドウ。処理中のフレームのプレビューと進捗率・速度・残り時間" width="1080" height="870" loading="lazy" decoding="async" style="max-width:720px;width:100%;height:auto;margin:0 auto" class="block rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">進捗ウィンドウ</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="project-io" class="scroll-mt-24">
+  {% include docs-h2.html kicker="書き出しと連携" title="プロジェクトの書き出しと取り込み" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>プロジェクト（検出結果と編集データ）を 1 つの zip ファイルにまとめて、別の PC や別の担当者に渡せます。検出は自分の PC で行い、確認・修正の作業を他の人に依頼する、といった分担に使えます。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">エクスポート</h3>
+    <p>ホーム画面の動画カードのメニューから「プロジェクトをエクスポート」を選び、保存先を指定します。zip には元動画（プロジェクトフォルダに残っている場合）、検出結果、編集データ、シーン、サムネイル、顔の代表画像が含まれます。元動画が見つからない場合は、その旨が表示されたうえで動画以外が書き出されます。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">インポート</h3>
+    <p>メニューの「ファイル ▸ プロジェクトのインポート」で zip を選びます。取り込んだプロジェクトは現在のプロジェクトフォルダに展開され、ホーム画面に追加されます。</p>
+    <p>同じプロジェクト ID がすでに手元にある場合は「同じプロジェクトが見つかりました」と表示され、次のどちらかを選びます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">編集内容を取り込む</div>
+        <div class="kv-val">手元のプロジェクトはそのまま、編集データだけを zip の内容で置き換えます。置き換え前の編集データは自動でバックアップされます。作業を依頼した相手から戻ってきたプロジェクトを反映するときに使います</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">新しいプロジェクトとして追加</div>
+        <div class="kv-val">新しい ID を割り当てて別のプロジェクトとして追加します。手元のプロジェクトは変わりません</div>
+      </div>
+    </div>
+    <p>取り込み中は進捗（展開 → 登録）が表示されます。エクスポートしたプロジェクトを取り込んだ PC でも、そのまま編集・エンコード・Premiere Pro への送信ができます。</p>
+  </div>
+</section>
+
+<section id="premiere" class="scroll-mt-24">
+  {% include docs-h2.html kicker="書き出しと連携" title="Premiere Pro 連携" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>動画カードのメニュー、または編集ページヘッダーのボタン（<kbd>Ctrl+Shift+P</kbd>）から、検出したモザイク情報をAdobe Premiere Proのプロジェクトへ自動でインポートできます。送信前にPremiere本体・プラグイン・起動状態が自動チェックされ、準備ができていない場合はセットアップ手順が案内されます。Windows 版のみの機能です。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">前提</h3>
+    <ul>
+      <li>Adobe Premiere Pro 25.3 以降がインストールされていること</li>
+      <li>Creative Cloud デスクトップアプリにサインインしていること（プラグインの自動インストールに必要です）</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">初回のセットアップ</h3>
+    <ol>
+      <li>「Premiere Pro へインポート」を押すと、プラグインが未導入の場合は「ダウンロードしてインストール」が表示されます。押すと Deepmosaic 用の Premiere Pro プラグイン（UXP）が取得・インストールされます</li>
+      <li>「プラグインをインストールしました。」と表示されます。Premiere Pro が起動中だった場合は、再起動してから改めて実行してください</li>
+      <li>Premiere Pro が起動していないときは「検出結果を送るには Premiere Pro の起動が必要です。」と表示されるので、「起動して送信」を押します</li>
+    </ol>
+    <p>Creative Cloud のコンポーネントが見つからない場合は「自動インストールに必要な Creative Cloud のコンポーネントが見つかりません」と表示されます。Creative Cloud デスクトップアプリをインストール / 更新するか、「プラグインのフォルダを開く」から手動でインストールしてください。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">送信と結果</h3>
+    <p>送信すると画面右下に「Premiere Pro 連携」ウィジェットが出て、「Premiere Pro で処理中…」→「Premiere Pro へのインポートが完了しました」と進みます。Premiere Pro 側では、開いているプロジェクトのシーケンスに対して次の処理が行われます。</p>
+    <ul>
+      <li>元のクリップを上のビデオトラックに複製し、Premiere Pro 標準の「モザイク」エフェクトと、検出枠に合わせてキーフレームを打った「クロップ」エフェクトを適用します（1 つの検出対象ごとに 1 クリップ）</li>
+      <li>編集ページでの枠の追加・削除・モザイク除外、ピクセルサイズ自動の粒度はそのまま反映されます</li>
+      <li>同時に重なる対象が多い場合はトラックが増えます（最大 15 トラック）</li>
+    </ul>
+    <p>取り込んだ後は、通常の Premiere Pro の編集として位置や粒度を調整できます。送信から一定時間応答が無い場合は「タイムアウト」と表示されるので、Premiere Pro でプラグインのパネルが開いていることを確認してからやり直してください。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/premiere-setup.webp" alt="Premiere Pro へインポートを押したときの案内ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Premiere Pro 連携の案内。準備状況に応じて次の手順が表示されます</figcaption>
     </figure>
   </div>
 </section>
@@ -49,23 +183,19 @@ docs「書き出しと連携」章 (TICKET-SITE-42 で docs/index.html から移
   実装済みの道具だけを書く。実装したらここを書き換える。
 {%- endcomment -%}
 <section id="review" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">検出漏れの確認</h2>
+  {% include docs-h2.html kicker="書き出しと連携" title="検出漏れの確認" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>AI の検出は完璧ではありません。書き出す前に、次の道具で確認と修正を行ってください。<strong>最終的な確認と表現に関する責任は制作者に帰属します。</strong></p>
     <ul>
-      <li><strong>欠落フレームへジャンプ</strong>: <code>[</code> と <code>]</code> で、検出が途切れたフレームへ前後移動します。前後に検出があるのに間が抜けている「中抜け」を追うのに使います</li>
+      <li><strong>欠落フレームへジャンプ</strong>: <kbd>[</kbd> と <kbd>]</kbd> で、検出が途切れたフレームへ前後移動します。前後に検出があるのに間が抜けている「中抜け」を追うのに使います。クラスを絞って（例: 局部のみ）確認できます</li>
+      <li><strong>空白のみ再生</strong>（<kbd>B</kbd>）: 検出の無いフレームだけを続けて再生し、映っているのに枠が無い箇所を探します</li>
+      <li><strong>モザイク適用プレビュー</strong>（<kbd>M</kbd>）: 書き出し結果に近い見た目で通しで確認します。オーバーレイ非表示（<kbd>H</kbd>）で元映像だけを見ることもできます</li>
       <li><strong>タイムラインで俯瞰する</strong>: クラス別・追跡 ID 別に検出区間が帯で表示されます。同じ ID の帯が途切れていれば、そこが追跡の切れ目です</li>
+      <li><strong>人物ギャラリー</strong>（<kbd>P</kbd>）: 顔の検出を人物ごとにまとめて確認し、モザイクの要否を人物単位で決めます</li>
       <li><strong>信頼度しきい値</strong>: 低い信頼度の検出を一旦隠して整理し、しきい値を下げて拾い直す、という使い方ができます</li>
       <li><strong>安全マージン</strong>: 「サイズ（bbox拡張率）」で検出枠を 0.5〜2 倍に調整できます。ギリギリを狙わない運用を選べます</li>
-      <li><strong>手動で追加・削除</strong>: 検出されなかった箇所は <code>1</code>（1フレーム）/ <code>2</code>（以降ずっと）で枠を追加できます。誤検出は右クリックから削除できます</li>
+      <li><strong>手動で追加・削除</strong>: 検出されなかった箇所は <kbd>1</kbd>（1フレーム）/ <kbd>2</kbd>（以降ずっと）で枠を追加できます。誤検出は右クリックから削除できます</li>
     </ul>
-    <p>AI が苦手なケース（極端な逆光、激しいブレ、部分的な遮蔽、学習データに乏しい構図、アニメーション・3DCG）は<a href="/#privacy" class="text-accent-soft hover:underline">トップページ</a>に公開しています。該当する素材では確認を厚めに行ってください。</p>
-  </div>
-</section>
-
-<section id="premiere" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">Premiere Pro 連携</h2>
-  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>動画カードのメニュー、または編集ページヘッダーのボタンから、検出したモザイク情報をAdobe Premiere Proのプロジェクトへ自動でインポートできます。送信前にPremiere本体・プラグイン・起動状態が自動チェックされ、準備ができていない場合はセットアップ手順が案内されます。</p>
+    <p>AI が苦手なケース（極端な逆光、激しいブレ、部分的な遮蔽、学習データに乏しい構図、アニメーション・3DCG）は<a href="/#privacy">トップページ</a>に公開しています。該当する素材では確認を厚めに行ってください。</p>
   </div>
 </section>

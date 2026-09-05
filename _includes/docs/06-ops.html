@@ -1,23 +1,79 @@
 {%- comment -%}
-docs「運用」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (update / uninstall / usage / spec / trouble) は外部参照の契約。改名しない。
+docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡充)。
+節 ID (update / uninstall / usage / spec / trouble) は外部参照の契約
+(/price/ が #usage、/spec/ と llms.txt が #trouble を参照)。改名しない。data / web は TICKET-SITE-46 で追加。
+「使用時間の計測」の方針文 (上限適用は順次開始 …) は事業判断の文言なので原文維持。
 {%- endcomment -%}
 <section id="update" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">アップデート</h2>
+  {% include docs-h2.html kicker="運用" title="アップデート" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>アプリは起動時に自動で新しいバージョンを確認します。更新がある場合はダイアログが表示され、「今すぐ更新」「あとで」「このバージョンをスキップ」から選択できます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">自動確認のタイミング</div>
+        <div class="kv-val">起動直後、その後は 1 時間ごと、およびウィンドウに戻ったとき。検出やエンコードの実行中は完了まで表示を待ちます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">今すぐ更新</div>
+        <div class="kv-val">新しいバージョンをダウンロードして適用し、アプリが自動で再起動します。実行中の処理がある場合は完了後に更新してください</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">あとで</div>
+        <div class="kv-val">このセッションではそれ以上の自動確認を行いません。次回起動時に再度確認します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">このバージョンをスキップ</div>
+        <div class="kv-val">そのバージョンについては通知しなくなります。さらに新しいバージョンが出ると再び通知されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">検出エンジンとモデル</div>
+        <div class="kv-val">本体とは別に配布され、起動時に新しいものがあれば自動で取得・差し替えられます（初回セットアップと同じ仕組み）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">手動で確認する</h3>
+    <p>メニューの「ファイル ▸ アップデートを確認」で、本体 / エンジン / モデル・アセットの 3 つについて「現在」「最新」「状態」が表示されます。「更新があります」のときは「今すぐ更新」（本体）または「モデル・アセットを更新」で適用できます。「再確認」で問い合わせ直します。ネットワークに接続できないときは「ネットワーク接続をご確認のうえ、もう一度お試しください。」と表示されます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/update-check.webp" alt="「アップデートの確認」ダイアログ。本体・エンジン・モデル・アセットの現在と最新のバージョン" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">アップデートの確認</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="data" class="scroll-mt-24">
+  {% include docs-h2.html kicker="運用" title="データの保存場所" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Deepmosaic は映像やその検出結果をサーバーに送りません。すべてお使いの PC の次の場所に保存されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトフォルダ</div>
+        <div class="kv-val">既定 <code>C:\Users\（ユーザー名）\deepmosaic</code>。動画ごとのサブフォルダに検出結果、編集データ、シーン、サムネイル、顔の代表画像が入ります。読み込んだ動画自体はコピーされず元の場所から参照します（<a href="#import">プロジェクトフォルダ</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key"><code>%USERPROFILE%\.deepmosaic</code></div>
+        <div class="kv-val">設定（config.json）、暗号化されたログイン情報、端末 ID、ログ（<code>logs\app.log</code>）。お問い合わせの際にログの添付をお願いすることがあります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><code>%LOCALAPPDATA%\deepmosaic</code></div>
+        <div class="kv-val">検出エンジン、AI モデル、動画処理ツール、GPU 用ランタイム（合計で約 10GB）。初回セットアップとアップデートで自動管理されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">書き出した動画</div>
+        <div class="kv-val">エンコード時に指定した保存先。アプリは管理しません</div>
+      </div>
+    </div>
+    <p>プロジェクトフォルダをクラウド同期フォルダ（OneDrive など）の中に置くと、編集中の自動保存と同期が競合して「保存失敗」になることがあります。ローカルのフォルダをおすすめします。</p>
   </div>
 </section>
 
 <section id="uninstall" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">アンインストール</h2>
+  {% include docs-h2.html kicker="運用" title="アンインストール" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <ol>
       <li>Windowsの「設定」→「アプリ」→「インストールされているアプリ」を開きます</li>
       <li>一覧から「Deepmosaic」を探し、「アンインストール」を選択します（管理者権限は不要です）</li>
     </ol>
-    <p>アンインストール後も、設定ファイルやダウンロード済みAIモデルはディスク上に残ります。再インストールした場合はこれらがそのまま利用されるため、モデルの再ダウンロードは不要です。</p>
-    <p>なお、検出結果や編集データは各動画のプロジェクトフォルダに保存されているため、必要に応じて個別に削除してください。</p>
+    <p>アンインストール後も、設定ファイルやダウンロード済みAIモデルはディスク上に残ります。再インストールした場合はこれらがそのまま利用されるため、モデルの再ダウンロードは不要です。完全に削除したい場合は <code>%LOCALAPPDATA%\deepmosaic</code>（モデル等、約 10GB）と <code>%USERPROFILE%\.deepmosaic</code>（設定とログイン情報）を手動で削除してください。</p>
+    <p>なお、検出結果や編集データは各動画のプロジェクトフォルダに保存されているため、必要に応じて個別に削除してください。アカウント自体を削除したい場合は<a href="#account">アカウントの削除</a>を参照してください。</p>
   </div>
 </section>
 
@@ -27,24 +83,24 @@ docs「運用」章 (TICKET-SITE-42 で docs/index.html から移設。文章・
   出荷されてからでないと虚偽記載になる。実装が出たらここを書き換える。
 {%- endcomment -%}
 <section id="usage" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">使用時間の計測</h2>
+  {% include docs-h2.html kicker="運用" title="使用時間の計測" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <ul>
       {%- comment -%}
         TICKET-SITE-CONTRACT-SSOT: 契約本数は `_includes/contract-limits.html`
         経由で `_data/plans.yml` の `max_contracts` から組み立てる。
-        上の「ログインとライセンス」と同じ文なので直書きしない。
+        「ログインとライセンス」と同じ文なので直書きしない。
       {%- endcomment -%}
       <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
-      <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません</li>
-      <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price" class="text-accent-soft hover:underline">料金ページ</a>）</li>
-      <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy" class="text-accent-soft hover:underline">通信内容の開示</a>をご覧ください</li>
+      <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません。検出範囲を絞った場合も動画全体の長さで数えます</li>
+      <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price">料金ページ</a>）</li>
+      <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy">通信内容の開示</a>をご覧ください</li>
     </ul>
   </div>
 </section>
 
 <section id="spec" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">動作環境</h2>
+  {% include docs-h2.html kicker="運用" title="動作環境" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <ul>
       <li>OS: Microsoft Windows 10, 11（64 ビット）</li>
@@ -52,19 +108,63 @@ docs「運用」章 (TICKET-SITE-42 で docs/index.html から移設。文章・
       <li>GPU: NVIDIA CUDA対応GPU + 最新ドライバ。NVENCエンコードにはドライバ570以上</li>
       <li>インターネット環境: 初回セットアップのモデルダウンロード、ライセンス認証に必要</li>
     </ul>
-    <p>GPU 別の処理速度の実測値、対応フォーマットの一覧、macOS 版の状況は<a href="/spec" class="text-accent-soft hover:underline">動作環境ページ</a>にまとめています。</p>
+    <p>GPU 別の処理速度の実測値、対応フォーマットの一覧、macOS 版の状況は<a href="/spec">動作環境ページ</a>にまとめています。ブラウザ版の要件は<a href="/docs/web/#requirements">Web 版の対応ブラウザと要件</a>を参照してください。</p>
   </div>
 </section>
 
 <section id="trouble" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[21px] font-bold text-ink">トラブルシューティング</h2>
+  {% include docs-h2.html kicker="運用" title="トラブルシューティング" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <h3 class="mt-2 text-[16px] font-bold text-ink">セットアップ</h3>
     <ul>
       <li>起動時にダウンロードが繰り返される場合: 回線を確認のうえアプリを再起動してください。破損したデータのみ自動で再取得されます。</li>
-      <li>検出が極端に遅い場合: GPUが認識されているか、NVIDIAドライバが最新かをご確認ください。GPU不在時はCPUモードで動作し、速度が低下します。</li>
+      <li>「整合性チェック失敗」「セルフテスト失敗」が繰り返される場合: 「再ダウンロード」「リトライ」を試し、改善しなければ<a href="#support">お問い合わせ</a>ください（<a href="#setup">初回セットアップ</a>のエラー一覧）。</li>
+      <li>「GPU 高速化の準備に失敗しました」と出る場合: そのまま検出を実行すると自動で再取得します。CPU でも検出はできますが速度は落ちます。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ログインとプラン</h3>
+    <ul>
+      <li>ブラウザで認証したのにアプリがログイン中のままになる場合: ダイアログの「キャンセル」で一度閉じ、もう一度「ログイン」を押してください。</li>
+      <li>「他の端末でログイン中です」と出る場合: 同時に使える端末は 1 台です。「続行」でこの端末に切り替えられます（<a href="#license">ログインとライセンス</a>）。</li>
+      <li>画面上部にオフラインの帯が出る場合: ローカルの機能はそのまま使えます。「再ログインしてください」と出たときだけ、プロフィールメニューからログインし直してください。</li>
+      <li>プランを変更したのにアプリに反映されない場合: 反映には数十秒かかることがあります。「再確認」またはアプリの再起動で更新されます。</li>
+      <li>残り時間が減らない / 増えない場合: 使用時間は検出が完了したときに加算されます。ログインで無料枠が増えるのはログイン後の起動から反映されます。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">読み込みと検出</h3>
+    <ul>
+      <li>検出が極端に遅い場合: GPUが認識されているか（フッターの GPU 表示）、NVIDIAドライバが最新かをご確認ください。GPU不在時はCPUモードで動作し、速度が低下します。</li>
       <li>検出オプション画面にプレビューが出ない場合: 「動画情報を取得できませんでした」と表示されるときは、ファイルの破損か非対応形式の可能性があります。「ffmpeg / ffprobe が見つかりません」と表示されるときは、アプリを再起動して初回セットアップのダウンロードを完了させてください。</li>
       <li>フォルダを選んでも「処理できる動画が見つかりませんでした」と出る場合: サブフォルダの中は対象外です。動画が入っているフォルダを直接選び直してください。</li>
-      <li>解決しない場合はアプリ内のフィードバック送信、または問い合わせフォームからご連絡ください。</li>
+      <li>「開始」が押せない場合: モデルファイルの確認中です。しばらく待つか、エラー表示のときは「再試行」を押してください。上限に達している場合はプランの変更（未ログインならログイン）が必要です。</li>
+      <li>検出したのにホーム画面に出てこない場合: 現在のプロジェクトフォルダと、ログイン中のアカウントで作成したものだけが表示されます。「他のプロジェクトフォルダに N 件」のバナーから「表示する」を押してください。</li>
     </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">編集</h3>
+    <ul>
+      <li>「詳細データがありません」と出る場合: プロジェクトフォルダが移動・削除されています。元の場所に戻すか、「プロジェクトを削除」で一覧から外して読み込み直してください。</li>
+      <li>「保存失敗」が出る場合: プロジェクトフォルダに書き込めません。ディスクの空き容量、フォルダの権限、クラウド同期の競合をご確認ください（<a href="#data">データの保存場所</a>）。</li>
+      <li>顔の性別が逆に検出されている場合: 枠の右クリックメニュー、または<a href="#edit-persons">人物ギャラリー</a>で修正できます。</li>
+      <li>手動で置いた ∞ の枠が途中で消える場合: ∞ の枠は削除したフレームの手前で終わります。続けたい位置でもう一度 <kbd>2</kbd> で追加してください。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">エンコード</h3>
+    <ul>
+      <li>「GPU エンコードには NVIDIA ドライバ 570 以降が必要です」と出る場合: ドライバを更新するまでは CPU で出力されます（時間はかかりますが結果は同じです）。</li>
+      <li>エンコードが「失敗」になる場合: 保存先の空き容量と権限、出力ファイルを他のアプリで開いていないかをご確認ください。進捗ウィンドウの「失敗」の下にエラー内容が表示されます。</li>
+      <li>「モザイクが 1 つも適用されません。」と出る場合: 検出が無いか、すべてのトラックをモザイク対象から外しています。編集ページで確認してください。</li>
+      <li>進捗ウィンドウを閉じてしまった場合: メニューバーの「キュー」から「進捗を別ウィンドウで開く」で開き直せます。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Premiere Pro 連携</h3>
+    <ul>
+      <li>「Adobe Premiere Pro がこの PC に見つかりませんでした。」と出る場合: Premiere Pro 25.3 以降をインストールしてください。</li>
+      <li>「自動インストールに必要な Creative Cloud のコンポーネントが見つかりません」と出る場合: Creative Cloud デスクトップアプリをインストール / 更新してサインインするか、「プラグインのフォルダを開く」から手動でインストールしてください。</li>
+      <li>送信が「タイムアウト」になる場合: Premiere Pro で Deepmosaic のパネルを開いた状態でやり直してください。プラグインを入れた直後は Premiere Pro の再起動が必要です。</li>
+    </ul>
+    <p>解決しない場合はアプリ内の<a href="#support">お問い合わせ</a>、または<a href="https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link" target="_blank" rel="noopener noreferrer">問い合わせフォーム</a>からご連絡ください。フッターのバージョンと、<code>%USERPROFILE%\.deepmosaic\logs\app.log</code> を添えていただくと調査が早く進みます。</p>
+  </div>
+</section>
+
+<section id="web" class="scroll-mt-24">
+  {% include docs-h2.html kicker="運用" title="Web 版（ブラウザ版）について" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>インストール不要で、Chrome / Edge などのブラウザから同じアカウントで使える Web 版があります。検出・編集・書き出しはすべてブラウザの中で処理され、映像はサーバーに送信されません。検出対象や編集ページの機能は Desktop 版と同じですが、書き出し形式が MP4 (H.264) / WebM (VP9 / AV1) に限られる、扱える動画が約 1.9GB までで実質 mp4 / mov のみ、Premiere Pro 連携やプロジェクトの取り込みが無い、などの違いがあります。</p>
+    <p>使い方と対応ブラウザ、Desktop 版との違いの一覧は<a href="/docs/web/">Web 版の使い方</a>にまとめています。{% if site.data.site.web_app.enabled %}Web 版は <a href="{{ site.data.site.web_app.url }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> から開けます。{% endif %}</p>
   </div>
 </section>
