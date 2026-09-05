@@ -1,0 +1,43 @@
+---
+layout: default
+title: Web 版の使い方
+seo_title: ブラウザ版の使い方｜Deepmosaic Web
+description: Deepmosaic Web 版（ブラウザ版）の使い方。対応ブラウザと要件、始め方、Desktop 版との違い、書き出しとダウンロード、ブラウザ内のデータの保存と自動削除、トラブルシューティング。
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  TICKET-SITE-47: Web 版 (app.deepmosaic.co.jp) の使い方。/docs/ と同じ骨組み
+  (目次データ = `_data/docs_toc.yml` の `web`、本文 = `_includes/docs/web.html`)。
+{%- endcomment -%}
+{% include header.html %}
+
+<section>
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-12 pt-12 pb-24" data-island="scrollspy" data-offset="76">
+    {%- assign docs_toc = site.data.docs_toc.web %}
+
+    <nav aria-label="目次" class="docs-toc sticky top-[84px] hidden max-h-[calc(100vh-6rem)] w-[220px] shrink-0 self-start overflow-y-auto pr-2 md:block">
+      <div class="mb-3 text-xs font-bold tracking-[.1em] text-ink-4">目次</div>
+      {% include docs-toc-list.html toc=docs_toc %}
+      <div class="mt-5 border-t border-hair pt-4 text-[13px]"><a href="/docs/" class="text-ink-3 hover:text-accent-soft">← Desktop 版の使い方</a></div>
+    </nav>
+
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold tracking-[-.01em] text-ink">Web 版の使い方</h1>
+      <p class="mt-1.5 text-[14.5px] text-ink-3">ブラウザで使う Deepmosaic のガイド。操作の詳細は <a href="/docs/" class="text-accent-soft hover:underline">Desktop 版の使い方</a>と共通です</p>
+
+      <details class="docs-toc mt-5 rounded-[10px] border border-edge bg-panel-2 md:hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">目次</summary>
+        <div class="px-4 pb-4">
+          {% include docs-toc-list.html toc=docs_toc %}
+        </div>
+      </details>
+
+      {% include docs/web.html %}
+
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

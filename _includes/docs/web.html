@@ -1,0 +1,201 @@
+{%- comment -%}
+/docs/web/ (Web 版の使い方) の本文 (TICKET-SITE-47)。
+根拠は web リポの実装: app/docs/desktop-parity.md (Desktop との差分の台帳)、
+utils/browser-requirements.ts (必須/推奨)、video/size-guard.ts (約 1.9GB 上限)、
+video/container-sniff.ts (mp4/mov/m4v 以外を拒否)、opfs/gc.ts (7 日でモデル削除、プロジェクトは残す)、
+components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginGate.svelte (ログイン必須)。
+数値 (無料枠) は _data/plans.yml から引く。
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section id="about" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="はじめに" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Web 版は、インストール不要でブラウザから使える Deepmosaic です。動画の読み込みから AI 検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでを、<b>すべてお使いの PC のブラウザの中で</b>処理します。映像・音声・フレーム画像・検出結果がサーバーに送られることはなく、通信するのはログインとプランの確認、AI モデルの取得だけです。</p>
+    <p>アカウントとプラン、無料枠の時間は Desktop 版と共通です。検出対象（局部 / 男性の顔 / 女性の顔）と編集ページの機能も同じなので、操作の詳細は <a href="/docs/">Desktop 版のガイド</a>を参照してください。このページでは Web 版に固有の要件と違いをまとめます。</p>
+    {% if site.data.site.web_app.enabled %}<p>Web 版は <a href="{{ site.data.site.web_app.url }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> から開けます。</p>{% endif %}
+  </div>
+</section>
+
+<section id="requirements" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="対応ブラウザと要件" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>起動時にブラウザの機能を確認し、足りないものがあれば案内が表示されます。必須の機能が無い場合は利用できません。推奨の機能が無い場合は「低速モード」として続行できます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">ブラウザ（必須）</div>
+        <div class="kv-val">WebCodecs に対応したブラウザ: Google Chrome / Microsoft Edge 119 以降、Safari 17 以降。<b>Chrome または Edge の最新版を推奨</b>します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ブラウザ内ストレージ（必須）</div>
+        <div class="kv-val">動画のコピーとモデルをブラウザ内（OPFS）に保存します。プライベート（シークレット）ウィンドウでは利用できません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">HTTPS（必須）</div>
+        <div class="kv-val">https:// で始まる URL から開いてください（通常は自動で満たされます）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">WebGPU（推奨）</div>
+        <div class="kv-val">AI 検出を GPU で実行します。無い場合は CPU（WebAssembly）で動作しますが、数倍〜十数倍の時間がかかります。Chrome / Edge では通常有効です</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">動画のサイズ</div>
+        <div class="kv-val">1 本あたり約 1.9GB まで。超える場合は「ブラウザ版で扱える上限 (約 1.9GB) を超えています。デスクトップ版をご利用ください。」と表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">動画の形式</div>
+        <div class="kv-val">mp4 / mov / m4v（ブラウザが再生できるコーデック、通常は H.264）。MKV / WebM / AVI / WMV / FLV / TS / MPEG は「この形式はブラウザ版では未対応です。mp4 (H.264) に変換してからお試しください。」と表示されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">メモリ</div>
+        <div class="kv-val">長尺・高解像度の動画では多くのメモリを使います。他のタブや重いアプリを閉じてからの実行をおすすめします</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="始め方" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li><b>ログインします。</b>Web 版はログインが必須です。トップページの「ブラウザで試す」から開くとすぐにログイン画面が表示されます。アカウントをお持ちでない方は「新規登録」から無料で作成できます</li>
+      <li><b>初回はモデルを取得します。</b>AI モデルがブラウザ内にダウンロードされます（進捗が表示されます）。2 回目以降はブラウザ内のモデルをそのまま使います</li>
+      <li><b>動画を読み込みます。</b>画面へのドラッグ&amp;ドロップ、またはメニューの「ファイル」から選びます。動画はブラウザ内にコピーされ、ホーム画面にプロジェクトとして並びます</li>
+      <li><b>検出オプションを設定して開始します。</b>検出範囲・検出対象・ピクセルサイズ自動・一括実行は Desktop 版と同じです（<a href="/docs/#detect-options">検出オプション</a>）。検出はフローティングウィンドウで進み、その間も他の操作ができます</li>
+      <li><b>編集して書き出します。</b>編集ページの機能とショートカットは Desktop 版と同じです（<a href="/docs/#edit-overview">編集ページ</a>）。書き出しは<a href="#export">書き出しとダウンロード</a>を参照してください</li>
+    </ol>
+    <p><a href="/docs/#edit-persons">人物ギャラリー</a>を初めて使うときは、顔の識別用モデル（約 249MB）の追加ダウンロードを確認する画面が出ます。回線速度に応じた所要時間の目安が表示され、途中で止めても続きから再開できます。</p>
+  </div>
+</section>
+
+<section id="diff" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="Desktop 版との違い" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">検出</div>
+        <div class="kv-val">同じ（検出対象 3 種、検出範囲、ピクセルサイズ自動、一括実行、シーンの自動判定）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">編集ページ</div>
+        <div class="kv-val">同じ（枠の編集、1f / ∞ の追加、モザイク設定の 4 タブ、シーン、人物ギャラリー、ズーム、ショートカット）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">書き出し形式</div>
+        <div class="kv-val">MP4 (H.264) / WebM (VP9) / WebM (AV1) の 3 種類。H.265・ProRes・MKV・AVI は Desktop 版のみ。ブラウザが対応しない形式を選ぶと MP4 (H.264) に切り替わります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">解像度 / フレームレート / ビットレート</div>
+        <div class="kv-val">解像度は同じ 7 種類。フレームレートは「元動画と同じ」のみ（変換はできません）。ビットレートの「自動」は解像度から決まります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">タイムコード</div>
+        <div class="kv-val">同じ（埋め込みと文字サイズ・位置・色・表示形式の設定）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">GPU エンコード</div>
+        <div class="kv-val">ブラウザが対応している場合に「GPU エンコード」として選べます（NVIDIA ドライバの条件はありません）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">保存先</div>
+        <div class="kv-val">ブラウザの保存ダイアログで指定するか、いったんブラウザ内に保存してからダウンロードします（<a href="#export">書き出しとダウンロード</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro 連携</div>
+        <div class="kv-val">ありません（Desktop 版のみ）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">プロジェクトの書き出しと取り込み</div>
+        <div class="kv-val">zip の書き出し・取り込みは未提供です。代わりに「検出データをダウンロード」で検出結果と編集データを保存できます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">アップデート</div>
+        <div class="kv-val">自動更新の通知はありません。ページを再読み込みすると常に最新版になります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">同時実行</div>
+        <div class="kv-val">1 アカウントにつき検出 1 件・エンコード 1 件まで（検出とエンコードは同時に進められます）。Desktop 版で実行中のジョブとも排他になります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">オフライン</div>
+        <div class="kv-val">ログインの確認に通信が必要なため、オフラインでは「サーバーに接続できません」と表示され利用できません。Desktop 版はセットアップ後にオフラインでも検出・編集・書き出しができます</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="run" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="実行ウィンドウとキュー" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>検出とエンコードの進捗、キューは、画面の上に重なる<b>フローティングウィンドウ</b>で表示されます。ヘッダーをドラッグして移動でき、最小化すると画面右下に小さなチップとして残り、クリックで戻せます。表示中でもホーム画面や編集ページの操作はそのまま行えます。</p>
+    <p>メニューバーの「キュー」で検出とエンコードの待ち行列を確認・操作できます（並べ替え、一時停止、キャンセルは Desktop 版の<a href="/docs/#queue">キュー</a>と同じです）。同じアカウントで別のタブや Desktop 版がジョブを実行中のときは、新しいジョブの開始時に引き継ぐかどうかの確認が表示されます。</p>
+  </div>
+</section>
+
+<section id="export" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="書き出しとダウンロード" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">保存ダイアログで保存</div>
+        <div class="kv-val">Chrome / Edge では、エンコード開始時にブラウザの保存ダイアログで保存先ファイルを指定し、そこへ直接書き出します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ブラウザ内に保存してダウンロード</div>
+        <div class="kv-val">保存ダイアログに対応しないブラウザでは、いったんブラウザ内のプロジェクトに書き出し、完了後の「出力をダウンロード」でファイルとして保存します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">検出データをダウンロード</div>
+        <div class="kv-val">プロジェクトの検出結果と編集データを JSON ファイルとして保存します。Desktop 版のプロジェクトフォルダに置くと、Desktop 版で編集や Premiere Pro への送信を続けられます</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="storage" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="データの保存と自動削除" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>読み込んだ動画のコピー、検出結果、編集データ、ブラウザ内に書き出した動画、AI モデルは、すべてブラウザのサイト専用ストレージに保存されます。サーバーには保存されません。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">AI モデル</div>
+        <div class="kv-val">7 日間使われなかったモデルは自動で削除されます（次回の検出時に再取得します）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プロジェクト</div>
+        <div class="kv-val">自動では削除されません。不要になったらホーム画面から削除してください。ブラウザの容量が足りなくなると読み込みに失敗します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">ブラウザのデータ削除</div>
+        <div class="kv-val">ブラウザの設定で「サイトのデータを削除」すると、プロジェクトとモデルはすべて消えます。残しておきたい成果物は先にダウンロードしてください</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">別のブラウザ / PC</div>
+        <div class="kv-val">ストレージはブラウザごとに独立しています。別の環境で続きの作業をするには、書き出した動画や検出データをダウンロードして移してください</div>
+      </div>
+    </div>
+    <p>初回の読み込み時にブラウザから「ストレージの永続化」の許可を求められることがあります。許可すると、ブラウザが容量不足のときにデータを自動で消しにくくなります。</p>
+  </div>
+</section>
+
+<section id="plan" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="プランと使用時間" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>アカウント、プラン、使用時間は Desktop 版と共通です。無料アカウントでは累計 {{ free_plan.included_hours }} 時間分の動画を検出でき、フッターに残り時間が表示されます。使用時間は検出が完了したときに加算され、エンコードは加算されません。有料プランの込み時間と料金は<a href="/price">料金ページ</a>をご覧ください。</p>
+    <p>プランの申し込み・変更・解約はプロフィールメニューから行います。決済画面は新しいタブで開き、手続きが終わって元のタブに戻ると自動で反映されます。Enterprise はプロフィールメニューの「お問い合わせ」からご相談ください。</p>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="トラブルシューティング" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>「https:// で始まる URL から開いてください。」と出る場合: アドレスバーの URL を https://app.deepmosaic.co.jp/ に直してください。</li>
+      <li>ブラウザの機能が足りないと表示される場合: Chrome / Edge を最新版に更新してください。プライベートウィンドウではストレージが使えないため、通常のウィンドウで開いてください。</li>
+      <li>「サーバーに接続できません」と出る場合: ネットワーク接続を確認し、「再試行」を押してください。</li>
+      <li>検出が極端に遅い場合: WebGPU が無効になっている可能性があります。ブラウザを最新版にし、グラフィックドライバを更新してください。他のタブや重いアプリを閉じるのも効果があります。</li>
+      <li>動画を読み込めない場合: 約 1.9GB を超える動画は Desktop 版をご利用ください。mp4 / mov 以外の形式は mp4 (H.264) に変換してからお試しください。</li>
+      <li>書き出しの保存ダイアログが出ない場合: ブラウザ内に保存されています。完了後に「出力をダウンロード」を押してください。</li>
+      <li>解決しない場合: プロフィールメニューの「お問い合わせ」から、ブラウザの種類とバージョンを添えてご連絡ください。</li>
+    </ul>
+  </div>
+</section>

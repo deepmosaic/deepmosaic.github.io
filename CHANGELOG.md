@@ -29,7 +29,7 @@
   (`#project-io`) / Premiere Pro の前提・セットアップ 3 段階・仕組み / 検出漏れの確認の道具を追記 /
   アップデートの自動確認と手動確認 / データの保存場所 (`#data`) / アンインストールの完全削除 /
   トラブルシューティングを 6 分類に拡充 / Web 版への案内 (`#web`)。「使用時間の計測」の方針文は原文維持
-- [ ] TICKET-SITE-47: `/docs/web/` (Web 版の使い方) を新設 — 対応ブラウザと要件 (WebCodecs =
+- [x] TICKET-SITE-47: `/docs/web/` (Web 版の使い方) を新設 — 対応ブラウザと要件 (WebCodecs =
   Chrome / Edge 119+ / Safari 17+、約 1.9GB 上限、mp4 / mov のみ)、始め方、Desktop 版との違いの対応表、
   実行ウィンドウとキュー、書き出しとダウンロード、データの保存と 7 日での自動削除 (モデルのみ)、
   プラン、トラブルシューティング。根拠は web `app/docs/desktop-parity.md` と各実装
