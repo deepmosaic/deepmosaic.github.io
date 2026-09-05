@@ -1,149 +1,387 @@
 {%- comment -%}
-docs「編集」章 (TICKET-SITE-42 で docs/index.html から移設。文章・マークアップは変更していない)。
-節 ID (edit-overview / edit-player / edit-toolbar / edit-mosaic) は外部参照の契約。改名しない。
+docs 第 4 章「編集」(TICKET-SITE-42 で部品化、TICKET-SITE-45 で拡充)。
+節 ID (edit-overview / edit-player / edit-toolbar / edit-mosaic) は外部参照の契約
+(llms.txt が #edit-mosaic を参照)。改名しない。edit-zoom / edit-bbox / edit-scenes /
+edit-persons / shortcuts は TICKET-SITE-45 で追加。
+ショートカット表は desktop `src/lib/edit-shortcuts.ts` (単一情報源) と 1:1。SAM の行は機能無効のため載せない。
 {%- endcomment -%}
 <section id="edit-overview" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>編集ページ</h2>
+  {% include docs-h2.html kicker="編集" title="編集ページ" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>ホーム画面の動画カードをクリックすると編集ページが開きます。画面は上から「ヘッダー」「動画プレイヤー（編集ツールバー内蔵）」「タイムライン」で構成されます。</p>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ヘッダー左</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="ArrowLeft" class="inline h-3.5 w-3.5 align-[-2px]" %} 戻るボタン、動画タイトル、9桁のプロジェクトIDバッジ（クリックでコピー）</div>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">ヘッダー左</div>
+        <div class="kv-val">{% include icon.html name="ArrowLeft" class="inline h-3.5 w-3.5 align-[-2px]" %} 戻るボタン、動画タイトル、9桁のプロジェクトIDバッジ（クリックでコピー）</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">メタ情報</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">動画の長さ / 総フレーム数 / fps / 解像度 / 追加日</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">メタ情報</div>
+        <div class="kv-val">動画の長さ / 総フレーム数 / fps / 解像度 / 追加日</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ヘッダー右</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">フォルダを開く / Premiere Proへインポート / エンコード / エンコードジョブ一覧 の各ボタンと保存状態表示</div>
+      <div class="kv-row">
+        <div class="kv-key">ヘッダー右</div>
+        <div class="kv-val">フォルダを開く / <a href="#edit-persons">人物ギャラリー</a> / <a href="#premiere">Premiere Pro へインポート</a> / <a href="#edit-encode">エンコード</a> の各ボタンと保存状態表示。エンコードの待ち行列はメニューバーの「<a href="#queue">キュー</a>」で確認します</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">保存状態</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">編集は自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">保存状態</div>
+        <div class="kv-val">編集は操作の約 1 秒後に自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます。エンコードの開始時にも未保存分が保存されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">詳細データがありません</div>
+        <div class="kv-val">検出結果のファイルが見つからないときに表示されます（プロジェクトフォルダの移動や削除など）。この画面の「プロジェクトを削除」で一覧から取り除けます</div>
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ全体（video-detail）" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ページ全体（video-detail）</figcaption>
+      <img src="/assets/img/screenshots/edit-overview.webp" alt="編集ページ全体（ヘッダー・プレイヤー・タイムライン）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ページ全体</figcaption>
     </figure>
   </div>
 </section>
 
 <section id="edit-player" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>プレイヤーとタイムライン</h2>
+  {% include docs-h2.html kicker="編集" title="プレイヤーとタイムライン" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
-    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。</p>
+    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。枠の上のラベルには「クラス名 #ID（先頭 6 桁） 信頼度%」が表示され、手動で追加した枠は「ユーザ」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1256" height="898" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">再生コントロール</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">再生 / コマ送り</div>
+        <div class="kv-val">先頭へ（<kbd>Home</kbd>）/ 1 コマ戻る（<kbd>←</kbd>）/ 再生・一時停止（<kbd>Space</kbd>）/ 1 コマ進む（<kbd>→</kbd>）/ 末尾へ（<kbd>End</kbd>）。<kbd>Shift</kbd> を押しながらの矢印で 10 コマ移動。マウスホイールでもコマ送りできます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">シーク</div>
+        <div class="kv-val">スライダーのドラッグ、タイムラインのクリック / ドラッグ、時刻とフレーム番号（frame N / M）の表示</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">ミュート（<kbd>V</kbd>）</div>
+        <div class="kv-val">プレビューの音声を消します。書き出しには影響しません</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">オーバーレイの表示切替（<kbd>H</kbd>）</div>
+        <div class="kv-val">検出枠・ラベル・ID・確率をすべて隠して映像だけを確認します。編集内容は変わりません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">再生速度</div>
+        <div class="kv-val">ツールバーで 0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択（<kbd>,</kbd> で遅く <kbd>.</kbd> で速く）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-hud-off.webp" alt="検出オーバーレイを非表示にしたプレイヤー" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">オーバーレイ非表示（<kbd>H</kbd>）。映像だけを確認したいときに</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">検出枠の操作</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選択</div>
+        <div class="kv-val">枠をクリックすると太枠と 8 つのハンドルが表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">移動 / サイズ変更</div>
+        <div class="kv-val">枠の内側をドラッグで移動、ハンドルをドラッグでサイズ変更。再生中でもドラッグできます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">削除</div>
+        <div class="kv-val">選択して <kbd>Delete</kbd>、枠をダブルクリック、または右クリックメニューの「この BBox を削除」。削除はそのフレームの枠だけに適用されます（同じ ID の他のフレームは残ります）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">右クリックメニュー</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、「この BBox を削除」。連続 bbox に軌跡があるときは「移動軌跡をクリア」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">モザイク除外の注意表示</div>
+        <div class="kv-val">対象から外したトラックがあると「N トラックをモザイク除外中です」と常時表示されます。「すべてモザイク対象に戻す」で一括で戻せます。除外した箇所は書き出してもモザイクがかかりません</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-context-menu.webp" alt="検出枠を右クリックしたときのメニュー（性別の変更・モザイク対象外・削除）" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">枠の右クリックメニュー</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">タイムライン</h3>
+    <p>上段の目盛りの下に<a href="#edit-scenes">シーン（カット）の帯</a>、その下にクラスごとの行が並びます。各行には検出のある区間が帯で描かれ、行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは <kbd>Ctrl</kbd>+ホイール、または右上の {% include icon.html name="Maximize2" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで最大 16 倍まで拡大できます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-timeline.webp" alt="タイムライン。シーン帯と、クラス行を展開した追跡 ID ごとの行" width="1256" height="183" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムライン（シーン帯とクラス行 → ID 行の展開）</figcaption>
     </figure>
   </div>
 </section>
 
-<section id="edit-toolbar" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>編集ツールバー</h2>
+<section id="edit-zoom" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="拡大・縮小とパン" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>プレイヤーと再生コントロールの間にあるツールバーに、編集機能が集約されています。</p>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">欠落フレームジャンプ</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出が無いフレームへ前後にジャンプ。対象クラス（全クラス / 局部 / 男性顔 / 女性顔）を選んで絞り込めます。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">[</code> / <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">]</code></div>
+    <p>小さな対象の枠を正確に合わせるために、プレイヤーの映像を最大 8 倍まで拡大できます。拡大中も枠の移動・サイズ変更・追加・削除はそのまま行えます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">拡大 / 縮小</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+ホイール（カーソル位置を中心に拡大縮小）、<kbd>+</kbd> / <kbd>-</kbd> キー、またはプレイヤー右上の {% include icon.html name="Maximize2" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン。現在の倍率はボタンの間に表示されます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">bbox追加（1f / ∞）</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">現在のフレーム中央に検出枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">1</code> / <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">2</code></div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">パン（表示位置の移動）</div>
+        <div class="kv-val">中ボタン（ホイール）ドラッグ。拡大中は枠の無い余白の左ドラッグでも動かせます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">空白のみ再生</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">プレビュー切替（B / M）</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">bbox枠表示とモザイク適用プレビューを切り替えます。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">M</code></div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">モザイク設定</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク設定パネルを開きます（詳細は次章）</div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">現フレーム初期化</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">現在のフレームの編集をリセットします。ショートカット: <code class="rounded border border-edge-strong bg-hair px-1.5 py-px font-mono text-[12.5px] text-[#d0d0d0]">Ctrl+Z</code></div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">全編集リセット</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">すべての編集を破棄します（確認ダイアログ付き・取り消し不可）</div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">クラス表示</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">表示する検出クラスをドロップダウンで絞り込みます（例: 局部のみ表示）</div>
-      </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">再生速度</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択</div>
+      <div class="kv-row">
+        <div class="kv-key">リセット</div>
+        <div class="kv-val"><kbd>0</kbd> キー、または「ズームをリセット」ボタンで等倍・中央に戻ります</div>
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-zoom.webp" alt="プレイヤーを拡大した状態。右上に倍率とズームボタン" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">拡大表示。細かい枠合わせに</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-bbox" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="検出枠の追加（1f と ∞）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>検出されなかった箇所には、ツールバーの「1f」「∞」で枠を手動で追加できます。追加した枠は現在のフレームの中央に「ユーザ」クラス（黄）で置かれるので、ドラッグで位置と大きさを合わせます。手動の枠にも<a href="#edit-mosaic">モザイク設定</a>（ID 別を含む）がそのまま適用されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f（<kbd>1</kbd>）</div>
+        <div class="kv-val">このフレームだけに枠を置きます。前後のフレームには影響しません。数フレームだけ検出が抜けた「中抜け」の補修に向いています</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ 連続 bbox（<kbd>2</kbd>）</div>
+        <div class="kv-val">置いたフレームから先のすべてのフレームに同じ位置で枠が続きます。動画の最後まで続けたくないときは、終わらせたいフレームで枠を削除してください（削除したフレームの手前までが有効範囲として確定します）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">連続 bbox を動かす</div>
+        <div class="kv-val">再生しながら ∞ の枠をドラッグすると、その動きが軌跡として記録され、被写体の移動に追従させられます。記録した軌跡は右クリックメニューの「移動軌跡をクリア」で消せます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">取り消し</div>
+        <div class="kv-val">「現在のフレームをリセット」（<kbd>Ctrl+Z</kbd>）は現在のフレームの編集を元に戻します。∞ の枠を削除で終わらせた直後に押すと、まず終端の確定が解除されます</div>
+      </div>
+    </div>
+    <p>枠の追加・移動・削除はすべて自動保存され、<a href="#edit-encode">エンコード</a>と <a href="#premiere">Premiere Pro 連携</a>の両方に反映されます。</p>
+  </div>
+</section>
+
+<section id="edit-scenes" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="シーン（カット）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>検出時に映像のカット（場面の切り替わり）が自動で判定され、タイムラインの上部にシーンの帯として表示されます。シーンは「ピクセルサイズ自動」の粒度を一定に保つ単位であり、<a href="#edit-mosaic">モザイク設定</a>をシーンごとに変える単位でもあります。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">シーンへ移動</div>
+        <div class="kv-val">帯をクリックすると、そのシーンの先頭フレームへジャンプします。帯には番号（#1, #2 …）が表示され、マウスオーバーで区間が確認できます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">分割（<kbd>Ctrl+K</kbd>）</div>
+        <div class="kv-val">タイムライン右上の {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+K</kbd> で、現在のフレームを境にシーンを 2 つに分けます。自動判定が見逃したカットや、同じカット内で設定を変えたい箇所に使います</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">境界の調整</div>
+        <div class="kv-val">帯の境目をドラッグすると、前後のシーンの開始・終了が同時に動きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">削除</div>
+        <div class="kv-val">帯にマウスを乗せると出る ✕（このシーンを削除）で、隣のシーンと結合します</div>
+      </div>
+    </div>
+    <p>シーンの変更は編集データとして保存され、検出結果そのものは変わりません。「全編集リセット」で自動判定の状態に戻ります。</p>
+  </div>
+</section>
+
+<section id="edit-toolbar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="編集ツールバー" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>プレイヤーと再生コントロールの間にあるツールバーに、編集機能が集約されています。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">欠落フレームジャンプ</div>
+        <div class="kv-val">検出が無いフレームへ前後にジャンプ。対象クラス（全クラス / 局部 / 男性顔 / 女性顔）を選んで絞り込めます。ショートカット: <kbd>[</kbd> / <kbd>]</kbd></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">bbox追加（1f / ∞）</div>
+        <div class="kv-val">現在のフレーム中央に検出枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整（<a href="#edit-bbox">検出枠の追加</a>）。ショートカット: <kbd>1</kbd> / <kbd>2</kbd></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">空白のみ再生（<kbd>B</kbd>）</div>
+        <div class="kv-val">検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プレビュー切替（B / M）</div>
+        <div class="kv-val">bbox枠表示とモザイク適用プレビューを切り替えます。モザイク表示では書き出し結果に近い見た目をその場で確認できます。ショートカット: <kbd>M</kbd></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">モザイク設定（<kbd>G</kbd>）</div>
+        <div class="kv-val">モザイク設定パネルを開きます（<a href="#edit-mosaic">次章</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">現在のフレームをリセット</div>
+        <div class="kv-val">現在のフレームの編集（枠の追加・移動・削除）を検出結果の状態に戻します。ショートカット: <kbd>Ctrl+Z</kbd></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">全編集リセット</div>
+        <div class="kv-val">枠の編集・モザイク設定・シーン・人物の統合などすべての編集を破棄します（確認ダイアログ付き・取り消し不可）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">クラス表示（<kbd>C</kbd>）</div>
+        <div class="kv-val">表示する検出クラスをドロップダウンで絞り込みます（例: 局部のみ表示）。表示を消したクラスもモザイクの対象からは外れません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">再生速度</div>
+        <div class="kv-val">0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} ショートカット一覧</div>
+        <div class="kv-val">マウスを乗せると<a href="#shortcuts">キーボードショートカットの凡例</a>が表示されます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" width="711" height="42" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ツールバー</figcaption>
     </figure>
   </div>
 </section>
 
 <section id="edit-mosaic" class="scroll-mt-24">
-  <h2 class="mt-11 border-b border-hair pb-3 text-[18px] font-bold text-ink"><span class="mr-2 align-[2px] text-[13px] font-bold tracking-[.08em] text-accent">編集</span>モザイク設定パネル</h2>
+  {% include docs-h2.html kicker="編集" title="モザイク設定パネル" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>モザイクの見た目を4つの適用範囲（タブ）で設定できます。優先順位は <b>ID別 &gt; クラス別 &gt; シーン別 &gt; 全て</b> で、狭い範囲の設定が優先されます。パネルはドラッグで自由な位置に移動でき、開いたまま編集を続けられます。</p>
-    <div class="my-3.5 overflow-hidden rounded-[10px] border border-edge">
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair first:border-t-0 bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">適用範囲タブ</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">全て（グローバル既定）/ クラス別（局部・顔など）/ ID別（追跡された個々の対象）/ シーン別（カット単位）。オーバライド中の範囲には表示が出て、個別にクリアできます</div>
+    <p>モザイクの見た目を4つの適用範囲（タブ）で設定できます。優先順位は <b>ID別 &gt; クラス別 &gt; シーン別 &gt; 全て</b> で、狭い範囲の設定が優先されます。パネルはヘッダーをドラッグで自由な位置に移動でき、開いたまま編集を続けられます。値を変えると、モザイク適用プレビュー（<kbd>M</kbd>）にその場で反映されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">適用範囲タブ</div>
+        <div class="kv-val">全て（グローバル既定）/ クラス別（局部・顔など）/ ID別（追跡された個々の対象）/ シーン別（カット単位）。ID 別とシーン別では対象をプルダウンで選びます。オーバライド中の範囲には「オーバライド中」と表示され、「クリア」で個別に解除できます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">信頼度しきい値</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">指定した信頼度以上の検出だけを表示・モザイク対象にします（0〜100%、タブに依らないグローバル設定）</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">信頼度しきい値</div>
+        <div class="kv-val">指定した信頼度以上の検出だけを表示・モザイク対象にします（0〜100%、タブに依らないグローバル設定）</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">種類</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク（ブロック状）/ ぼかし（ガウスぼかし）</div>
+      <div class="kv-row">
+        <div class="kv-key">種類</div>
+        <div class="kv-val">モザイク（ブロック状）/ ぼかし（ガウスぼかし）。既定: モザイク</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">サイズ（bbox拡張率）</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">検出枠を中心から拡大・縮小してモザイク範囲を調整（0.5x〜2x）</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">サイズ（bbox拡張率）</div>
+        <div class="kv-val">検出枠を中心から拡大・縮小してモザイク範囲を調整（0.50x〜2.00x）。既定: 1.05x。ギリギリを避けたいときは大きめに</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">不透明度</div>
+      <div class="kv-row">
+        <div class="kv-key">不透明度</div>
         {%- comment -%}
           TICKET-SITE-30: 旧文面は「下げると元の映像が透けます」。意味は
           正しいが、**単独で抜粋されると「モザイクを透かせる機能」と誤読され得る**
           サイト内で唯一の表現だった。意味を保ったまま「隠蔽が弱くなる」に
           言い換え、既存の確定語彙 (隠蔽率) に寄せた。
         {%- endcomment -%}
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク/ぼかしをどれだけ強く合成するか（0〜100%）。既定の 100% で対象を完全に覆います。値を下げるほど隠蔽が弱くなるため、通常は 100% のまま使います</div>
+        <div class="kv-val">モザイク/ぼかしをどれだけ強く合成するか（0〜100%）。既定の 100% で対象を完全に覆います。値を下げるほど隠蔽が弱くなるため、通常は 100% のまま使います</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">エッジぼかし</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">モザイク領域のふちをぼかして背景となじませます（0〜64px）</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">エッジぼかし</div>
+        <div class="kv-val">モザイク領域のふちをぼかして背景となじませます（0〜64px）。既定: 6px。Premiere Pro のフェザーに相当します</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ピクセルサイズ自動</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">対象物のサイズに連動してモザイクの粒を自動計算（既定ON）。カット内・同一ID内で粒度は一定。「細かさ」と最小/最大セル(px)で調整できます</div>
+      <div class="kv-row">
+        <div class="kv-key">ピクセルサイズ自動</div>
+        <div class="kv-val">対象物のサイズに連動してモザイクの粒を自動計算（既定ON）。シーン内・同一ID内で粒度は一定に保たれ、フレームごとにちらつきません。「細かさ」（対象物の分割数 8〜64、既定 16）と最小セル（2〜32px、既定 8px）/ 最大セル（8〜128px、既定 64px）で調整できます</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-[#262626] sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">ブロック分割数</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">自動OFF時、領域を縦横に何分割するかで粗さを固定します（8〜64、Premiere Proと同方式）</div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ブロック分割数</div>
+        <div class="kv-val">自動OFF時（と「ぼかし」のとき）、領域を縦横に何分割するかで粗さを固定します（8〜64、既定 16、Premiere Proと同方式）</div>
       </div>
-      <div class="grid grid-cols-[140px_1fr] border-t border-hair bg-panel-2 sm:grid-cols-[200px_1fr]">
-        <div class="px-4 py-3 text-[13px] font-bold text-[#c0c0c0]">シャープカラー</div>
-        <div class="px-4 py-3 text-[13.5px] leading-[1.9] text-ink-2">粒の色を領域平均でなく1点サンプリングにします（Premiere ProのSharp Colors相当、既定OFF）</div>
+      <div class="kv-row">
+        <div class="kv-key">シャープカラー</div>
+        <div class="kv-val">粒の色を領域平均でなく1点サンプリングにします（Premiere ProのSharp Colors相当、既定OFF）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">最小モザイクの注記</div>
+        <div class="kv-val">パネル上部に、書き出し解像度での最小モザイク（自主規制基準: 長辺÷100、最小 4px）が表示されます。これより細かい設定にしても、書き出し時に自動でこの粒度へ丸められます。ぼかしは対象外です</div>
       </div>
     </div>
-    <p>各項目は右端の {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで既定値に戻せます。</p>
+    <p>各項目は右端の {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで既定値に戻せます。「全て」タブの「この設定を既定にする」を押すと、その内容が<b>次に検出する動画</b>の初期設定になります（この動画の設定は変わりません）。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。かけるモザイクの種類・粒度・不透明度を指定する" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">モザイク設定パネル</figcaption>
+      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。かけるモザイクの種類・粒度・不透明度を指定する" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">モザイク設定パネル（全て）</figcaption>
     </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-mosaic-track.webp" alt="モザイク設定パネルの ID 別タブ。対象 ID を選び「オーバライド中」と表示されている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">ID 別タブ。選んだ対象だけ設定を変えると「オーバライド中」になります</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-mosaic-scene.webp" alt="モザイク設定パネルのシーン別タブ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">シーン別タブ。カット単位でモザイクの見た目を変えられます</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-persons" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="人物ギャラリー" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>ヘッダーの「人物ギャラリー」（<kbd>P</kbd>）を開くと、検出された顔が人物ごとにまとめて表示されます。人物単位でモザイクの ON / OFF や性別の修正ができ、同じ人物が別々に検出されている場合は 1 つに統合できます。パネルはドラッグで移動できます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">人物カード</div>
+        <div class="kv-val">代表画像、性別バッジ、トラック数、出現時間、初出時刻。カードをクリックすると初出フレームへジャンプします</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">性別の修正</div>
+        <div class="kv-val">性別バッジをクリックして「男性顔にする」「女性顔にする」「検出結果に戻す」。クラス別のモザイク設定（男性顔 / 女性顔）の適用先が変わります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">モザイクの ON / OFF</div>
+        <div class="kv-val">「モザイクを OFF にする」でその人物のすべてのトラックをモザイク対象から外します（例: 出演者以外の顔にはモザイクをかけない、など）。「モザイクを ON に戻す」で戻ります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">人物の統合</div>
+        <div class="kv-val">カードを別のカードにドラッグ&amp;ドロップすると同一人物として統合されます。統合したカードには「統合を解除」が表示されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">その他（小さい顔など）</div>
+        <div class="kv-val">人物としてまとめられなかった顔のトラックが並びます。ここでも 1 件ずつモザイクの ON / OFF を切り替えられます</div>
+      </div>
+    </div>
+    <p>旧バージョンで検出したプロジェクトでは「この動画は旧バージョンで検出されています。人物一覧を使うには再検出してください。」と表示されます。その場合は動画を読み込み直して検出してください。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-persons.webp" alt="人物ギャラリーのパネル。検出された顔が人物ごとのカードで並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">人物ギャラリー</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="shortcuts" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編集" title="キーボードショートカット" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>編集ページで使えるショートカットの一覧です。ツールバー右端の {% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} にマウスを乗せても同じ一覧が表示されます。文字入力中は無効です。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-shortcuts.webp" alt="編集ページでショートカットの凡例を表示した状態" width="1280" height="1100" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">ショートカットの凡例</figcaption>
+    </figure>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr><th class="w-[8.5em]">分類</th><th class="w-[11em]">キー</th><th>動作</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="5">再生</td><td><kbd>Space</kbd></td><td>再生 / 一時停止</td></tr>
+          <tr><td><kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td><td>停止 / 停止 / 再生（Premiere Pro 互換）</td></tr>
+          <tr><td><kbd>V</kbd></td><td>ミュート切替</td></tr>
+          <tr><td><kbd>,</kbd> / <kbd>.</kbd></td><td>再生速度を下げる / 上げる</td></tr>
+          <tr><td><kbd>B</kbd></td><td>空白のみ再生（bbox のあるフレームをスキップ）</td></tr>
+          <tr><td rowspan="3">フレーム移動</td><td><kbd>→</kbd> / <kbd>←</kbd></td><td>1 コマ進む / 戻る（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>先頭へ / 末尾へ</td></tr>
+          <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>前の / 次の欠落フレームへ</td></tr>
+          <tr><td rowspan="4">ズーム・表示</td><td><kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd></td><td>フレーム拡大 / 縮小 / ズームをリセット</td></tr>
+          <tr><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
+          <tr><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
+          <tr><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
+          <tr><td rowspan="3">BBox 編集</td><td><kbd>1</kbd> / <kbd>2</kbd></td><td>このフレームのみに bbox 追加 / 以降のフレームに連続 bbox 追加</td></tr>
+          <tr><td><kbd>Delete</kbd></td><td>選択中の bbox を削除</td></tr>
+          <tr><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
+          <tr><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
+          <tr><td><kbd>Ctrl+K</kbd></td><td>現在のフレームでシーンを分割</td></tr>
+          <tr><td rowspan="4">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
+          <tr><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
+          <tr><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
+          <tr><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
+          <tr><td rowspan="5">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
+          <tr><td>中ボタンドラッグ</td><td>パン（拡大中は余白の左ドラッグでも可）</td></tr>
+          <tr><td>ダブルクリック</td><td>bbox を削除</td></tr>
+          <tr><td>右クリック</td><td>トラック操作メニュー（性別切替 / モザイク除外 / 削除）</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </section>
