@@ -72,6 +72,23 @@ npm run build && bundle exec jekyll build
     `fetchpriority="high"` で lazy にしない (LCP 要素のため)、それ以外は
     `loading="lazy" decoding="async"`
 - 動画は `assets/videos/` に配置
+- **docs (`/docs/`, `/docs/web/`) の構成** (TICKET-SITE-42〜48)
+  - `docs/index.html` / `docs/web/index.html` は front matter + 目次 + `{% include docs/*.html %}` の骨組みだけ。
+    本文は章ごとに `_includes/docs/NN-*.html` (Desktop 6 章) と `_includes/docs/web.html`
+  - 目次は `_data/docs_toc.yml` が単一情報源 (`_includes/docs-toc-list.html` が描画)。節を足したら
+    本文の `<section id>` と目次の両方に書く。**既存 20 個の節 ID (about … trouble) はアプリ内ヘルプ /
+    `/price/` / `/spec/` / `llms.txt` が参照する契約** — 改名・削除しない (`src/lib/docs-check.js` の
+    `LEGACY_DOCS_IDS` が CI で強制する)
+  - 節見出しは `{% include docs-h2.html kicker="章名" title="節名" %}`、定義表は `.kv / .kv-row / .kv-key /
+    .kv-val / .kv-alt` をマークアップで直接使う (生ヘックス禁止)、キーは `<kbd>`
+  - 検査: `node scripts/check-docs.mjs` (ビルド後)。スクショを差し替えたら
+    `node scripts/check-docs.mjs --fix-dims` で `<img>` の width/height を実寸に同期する
+  - スクリーンショットは desktop リポの `node scripts/e2e/screenshots.mjs --kill-existing --with-encode`
+    (T-167、既定素材は 4K の非露骨サンプル) → `screenshots/*.png` を `assets/img/screenshots/` へコピー →
+    `node scripts/optimize-images.mjs --apply` → `--fix-dims`。撮れない画面 (初回セットアップ中 /
+    アップデート通知 / オフラインバナー / 他端末ログイン) は文章のみ
+  - 未実装・無効の機能は書かない (SAM は機能フラグ OFF、`Pro（無制限）` は非公開プラン)。
+    「使用時間の計測」の上限適用の方針文は事業判断なので勝手に変えない
 - **スタイルは Tailwind CSS v4**。デザイントークン/移植した独自スタイルは `src/app.css` の `@theme` / `@layer components`、それ以外は markup に Tailwind ユーティリティを直書き。Materialize.css は撤去済み。
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
 - **DL 計測の目印は `data-dl` 属性** (TICKET-SITE-37)。`src/main.js` の `initDownloadTracking()` が

@@ -33,7 +33,7 @@
   Chrome / Edge 119+ / Safari 17+、約 1.9GB 上限、mp4 / mov のみ)、始め方、Desktop 版との違いの対応表、
   実行ウィンドウとキュー、書き出しとダウンロード、データの保存と 7 日での自動削除 (モデルのみ)、
   プラン、トラブルシューティング。根拠は web `app/docs/desktop-parity.md` と各実装
-- [ ] TICKET-SITE-48: 回帰ガード `scripts/check-docs.mjs` — 契約 ID 20 個 / 目次の ID / ページ内リンク /
+- [x] TICKET-SITE-48: 回帰ガード `scripts/check-docs.mjs` — 契約 ID 20 個 / 目次の ID / ページ内リンク /
   サイト内と llms.txt からの `/docs/#…` `/docs/web/#…` の深いリンク / `<img>` の実在・alt・width/height
   (WebP ヘッダから実寸を読んで照合、`--fix-dims` で同期) を CI の `Verify build output` に追加。純ロジック
   `src/lib/docs-check.js` は `npm test` (11 件)。`llms.txt` の docs リンク一覧に新節と `/docs/web/` を追加、

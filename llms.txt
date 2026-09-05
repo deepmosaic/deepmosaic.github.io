@@ -66,11 +66,24 @@ llms.txt (TICKET-SITE-33)。
 
 ## ドキュメント / Documentation
 
-- [ドキュメント / User guide]({{ U }}/docs/): インストールから書き出しまでの全手順 / the full workflow from install to export
+- [ドキュメント / User guide]({{ U }}/docs/): Desktop 版のインストールから書き出しまでの全機能の手順 / the full Desktop workflow from install to export
+- [画面の構成 / Screen layout]({{ U }}/docs/#layout): メニュー・プロフィールメニュー・フッター / menus, profile menu, footer
+- [ログインとライセンス / Login and license]({{ U }}/docs/#license): 無料枠・同時起動 1 台・オフライン時 / free tier, one device at a time, offline behaviour
 - [AI 検出 / AI detection]({{ U }}/docs/#detect)
+- [一括実行 / Detect-and-encode in one go]({{ U }}/docs/#batch)
+- [キュー / Queue]({{ U }}/docs/#queue): 検出とエンコードの待ち行列 / the shared detection and encode queue
+- [検出枠の編集 / Editing detection boxes]({{ U }}/docs/#edit-player): 移動・削除・右クリック操作・1f と ∞ の追加 / move, delete, context menu, single-frame and continuous boxes
 - [モザイク設定 / Mosaic settings]({{ U }}/docs/#edit-mosaic): 粒度・不透明度・ふちのなじませ・適用範囲 / granularity, opacity, edge feathering, scope
+- [人物ギャラリー / Person gallery]({{ U }}/docs/#edit-persons): 顔の人物単位の統合とモザイク ON/OFF / merge faces per person, toggle mosaic per person
+- [キーボードショートカット / Keyboard shortcuts]({{ U }}/docs/#shortcuts)
 - [書き出し / Export]({{ U }}/docs/#edit-encode): モザイクを焼き込んだ動画の書き出し / exporting a video with the mosaic burned in
+- [タイムコードの設定 / Timecode burn-in]({{ U }}/docs/#timecode)
+- [プロジェクトの書き出しと取り込み / Project export and import]({{ U }}/docs/#project-io)
+- [Premiere Pro 連携 / Premiere Pro integration]({{ U }}/docs/#premiere)
+- [アップデート / Updates]({{ U }}/docs/#update)
+- [データの保存場所 / Where data is stored]({{ U }}/docs/#data)
 - [トラブルシューティング / Troubleshooting]({{ U }}/docs/#trouble)
+- [Web 版の使い方 / Web (browser) edition guide]({{ U }}/docs/web/): 対応ブラウザ・約 1.9GB 上限・Desktop 版との違い / supported browsers, the ~1.9 GB limit, differences from Desktop
 
 ## 料金と動作環境 / Pricing and system requirements
 

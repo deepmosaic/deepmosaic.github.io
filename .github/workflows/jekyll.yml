@@ -148,6 +148,11 @@ jobs:
             && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
+          # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /
+          # サイト内と llms.txt からの /docs/#… の深いリンク / <img> の実在・alt・width/height。
+          # 節 ID はアプリ内ヘルプと /price/ /spec/ が参照する契約なので、改名は人手のレビューでは
+          # 見逃す (TICKET-SITE-16)。純ロジックは src/lib/docs-check.js (npm test で検証)
+          node scripts/check-docs.mjs || fail=1
           exit $fail
 
       - name: Upload artifact

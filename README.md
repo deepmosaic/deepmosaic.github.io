@@ -131,6 +131,8 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 | `src/lib/` | 純ロジック + テスト（`npm test` の対象） |
 | `_layouts/` `_includes/` | Jekyll テンプレート / 共通パーツ |
 | `index.html` `docs/` `price/` `company/` `404.html` | 各ページ |
+| `docs/index.html` `docs/web/index.html` | ドキュメント (Desktop 版 / Web 版)。骨組みだけを持ち、本文は `_includes/docs/*.html`、目次は `_data/docs_toc.yml` |
+| `scripts/check-docs.mjs` | docs の回帰ガード (契約 ID / 目次 / リンク / 画像)。`npm run build && bundle exec jekyll build` の後に `node scripts/check-docs.mjs`。CI でも実行 |
 | `assets/dist/` | Vite 出力（**gitignore** ・CI 再生成） |
 | `assets/` | 画像 / フォント / 動画 / `fonts.css`（自己ホスト Roboto） |
 
