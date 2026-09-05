@@ -13,7 +13,7 @@
   `_data/docs_toc.yml` (単一情報源) + `_includes/docs-toc-list.html` に。章見出し付き・縦スクロール可の
   目次と、md 未満向けのモバイル目次 (`<details>`) を追加。Scrollspy 島は `.docs-toc` 内のリンクだけを
   現在位置の表示対象にし、sticky 目次内で現在の項目を自動追従。`<code>`/`<kbd>` の共通スタイル
-- [ ] TICKET-SITE-43: スクリーンショットの撮り直し・追加 — desktop `scripts/e2e/screenshots.mjs`
+- [x] TICKET-SITE-43: スクリーンショットの撮り直し・追加 — desktop `scripts/e2e/screenshots.mjs`
   (T-167) を 4K の非露骨サンプル素材で実走し 36 枚を WebP 化 (旧 11 枚を差し替え)
 - [ ] TICKET-SITE-44: 導入〜検出の執筆 — 画面の構成 (`#layout`) / テーマ (`#theme`) / ログイン手順・
   同時起動 1 台・オフライン時 / プランを選ぶと変更・解約の反映 / アカウントの削除 (`#account`) /
