@@ -113,10 +113,14 @@ Free の横帯は対象外)。
         テキストリンク (`text-accent-soft hover:underline`) に揃える。
         **内部リンク前提** — `_data/plans.yml` の `secondary_cta` に外部 URL を
         入れるなら `target="_blank"` / `rel="noopener noreferrer"` を足すこと。
+        タップ領域 (T-263 修正): テキストリンクのままだと行高 (約 21px) がそのまま
+        当たり判定になり、指では外しやすい。`inline-block` + 縦 padding で 24px 以上を
+        確保する (`py-1.5` = 上下 6px → 21 + 12 ≒ 33px)。`inline-block` が無いと
+        インライン要素の縦 padding は当たり判定を広げないので**両方必要**。
       {%- endcomment -%}
       {%- if plan.secondary_cta %}
       <p class="mt-3 text-center text-[12.5px] leading-[1.7]">
-        <a href="{{ plan.secondary_cta.href }}" class="text-accent-soft hover:underline">{{ plan.secondary_cta.label }}</a>
+        <a href="{{ plan.secondary_cta.href }}" class="inline-block py-1.5 text-accent-soft hover:underline">{{ plan.secondary_cta.label }}</a>
       </p>
       {%- endif %}
     </div>

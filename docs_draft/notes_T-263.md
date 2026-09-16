@@ -144,3 +144,67 @@ bash <CI の Verify build output を抽出したもの>      # exit 0 (data-dl /
 - `secondary_cta` は内部リンク前提 (外部 URL を入れるなら `target="_blank"` /
   `rel="noopener noreferrer"` を include に足す)
 - 親リポの `CHANGELOG.md` の T-263 のチェックは付けていない (リーダーが最後にまとめる運用のため)
+
+---
+
+## 修正パス (leader 依頼、2026-09-17)
+
+検証で残った指摘 3 件への対応。**コミット・push・デプロイなし**。ゲート
+(`npm run build` / `bundle exec jekyll build --strict_front_matter` / `node scripts/check-docs.mjs` /
+`npm test`) を再走して通過。
+
+### (1) 副リンクのタップ領域を 24px 以上に — `_includes/pricing-cards.html`
+
+`secondary_cta` (Enterprise の「導入について相談する」) は本文リンクと同じ見た目にしたぶん、
+当たり判定が行高 (12.5px × 1.7 ≒ 21px) しか無く**指では外しやすい**。
+`inline-block py-1.5` を足して上下 6px ずつ広げ、約 33px を確保した。
+**`inline-block` が無いとインライン要素の縦 padding は当たり判定を広げない**ので両方必要
+(理由は include 内のコメントにも残した)。見た目 (色・下線・中央寄せ) は不変。
+
+### (2) CI に ENTERPRISE の申込導線ガードを追加 — `.github/workflows/jekyll.yml`
+
+`Verify build output` の DL 計測チェックは「ページごとに `data-dl` が 1 つ以上」なので、
+**ENTERPRISE だけが相談リンクに戻っても緑のまま**通る (Pro / Light の `data-dl` が残るため)。
+プラン別に 1 本だけ名指しで固定する行を足した:
+
+```bash
+grep -q 'data-dl="enterprise"' _site/price/index.html \
+  || { echo "::error::/price/ の ENTERPRISE カードから data-dl=enterprise が消えている — …"; fail=1; }
+```
+
+ロールバック手順 (`_data/plans.yml` の `cta` を相談リンクへ戻す) を実行するときは、
+**この行も一緒に外す**こと (意図的なロールバックで CI が落ちる)。
+
+### (3) `llms.txt` に `/docs/#team` を追加
+
+notes の「やっていないこと」に挙げていた 1 行を、他の章と同じ日英併記の書式で
+「ドキュメント / Documentation」節のトラブルシューティングの次に足した:
+
+```
+- [チームの管理 / Team management]({{ U }}/docs/#team): Enterprise のメンバー招待・権限・アカウント数 / inviting members, roles and seat count on Enterprise
+```
+
+`node scripts/check-docs.mjs` は深いリンクの実在も見ているので、アンカー
+(`_includes/docs/07-team.html` の `id="team"`) との整合はここで機械的に守られる。
+
+### 再走したゲート
+
+```bash
+cd C:/Users/core/scripts/deepmosaic/deepmosaic.github.io
+npm run build                                      # vite OK (app.css 38.89 kB / app.js 72.17 kB)
+bundle exec jekyll build --strict_front_matter     # OK
+node scripts/check-docs.mjs                        # docs check: OK (2 ページ, 14 ファイル)
+npm test                                           # tests 129 / pass 128 / skip 1 / fail 0
+grep -o 'data-dl="enterprise"' _site/price/index.html   # 1 件 (新ガードが緑になる状態)
+```
+
+`_site/assets/dist/app.css` に `.inline-block` / `.py-1\.5` が生成されていることも確認済み
+(Tailwind v4 のスキャン対象に `_includes/` が入っている)。
+
+### 申し送り
+
+- スクリーンショットは引き続き未挿入 (T-260 の UI が入ったので撮影可能になった。差し込み位置は
+  `_includes/docs/07-team.html` の HTML コメント)。
+- `_includes/docs/02-account.html` の「Enterprise は『導入について相談する』からお問い合わせください」も
+  据え置き (desktop の `PlanSelectDialog` は自己申込ボタン + 相談リンクの併記になったので、
+  `self_serve` を開くタイミングで docs も直す)。
