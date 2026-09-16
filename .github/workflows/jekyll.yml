@@ -146,6 +146,18 @@ jobs:
           # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
           grep -q 'download/latest/windows?' _site/index.html \
             && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
+          # `download` は真偽属性ではない (T-231)。Svelte 5 で `download={!!x}` と書くと
+          # `download="false"` が出力され、同一オリジンのリンクが "false.html" という名前の
+          # 強制ダウンロードになる (スマホのドロワーで料金 / ドキュメントが開けなかった)。
+          # クロスオリジンの DL 項目は download 属性が無視されるので動き続け、バグを隠していた。
+          # 値は '' (サーバのファイル名で保存) か属性なし (undefined) の二択 — src/lib/download-attr.js
+          grep -qE '["'\''`]download["'\''`],!!' _site/assets/dist/app.js \
+            && { echo "::error::バンドルに download={!!…} が残っている — download は真偽属性ではない。src/lib/download-attr.js を通すこと"; fail=1; } || true
+          if grep -rlE 'download="(true|false)"' --include='*.html' _site >/dev/null 2>&1; then
+            echo "::error::download=\"true\" / download=\"false\" が HTML に出力されている — 値は '' か属性なしにすること"
+            grep -rnE 'download="(true|false)"' --include='*.html' _site | head -20
+            fail=1
+          fi
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
           # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /

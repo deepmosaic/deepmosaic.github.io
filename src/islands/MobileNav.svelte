@@ -11,6 +11,9 @@
     parseFirstEnvelope,
     parseStoredAttribution,
   } from '../lib/attribution.js';
+  // T-231: `download` は真偽属性ではない。`!!` で渡すと download="false" になり
+  // 同一オリジンのリンクが "false.html" の強制ダウンロードになる
+  import { downloadAttr } from '../lib/download-attr.js';
 
   let { links = '[]', edge = 'right', dlAttr = '', dlFirst = '' } = $props();
 
@@ -108,7 +111,7 @@
         <li>
           <a
             href={hrefOf(item)}
-            download={!!item.download}
+            download={downloadAttr(item.download)}
             data-dl={item.dl || undefined}
             target={item.target || undefined}
             rel={item.target ? 'noopener noreferrer' : undefined}
