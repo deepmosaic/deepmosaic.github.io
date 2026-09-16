@@ -54,6 +54,11 @@ desktop:
       - { id: spec, label: 動作環境 }
       - { id: trouble, label: トラブルシューティング }
       - { id: web, label: Web 版について }
+  # T-263: Enterprise の組織機能 (T-255〜T-262)。**新規追加の ID** で、既存 20 個には
+  # 触れていない。本文は `_includes/docs/07-team.html` (include は docs/index.html の末尾)。
+  - title: チーム
+    items:
+      - { id: team, label: チームの管理（Enterprise） }
 web:
   - title: Web 版
     items:

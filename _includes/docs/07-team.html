@@ -1,0 +1,119 @@
+{%- comment -%}
+docs 第 7 章「チーム」(T-263)。Enterprise の組織機能 (T-255〜T-262) の使い方。
+
+節 ID `team` は **新規追加**。既存 20 個の契約 ID (about … trouble) には触れていない
+(`src/lib/docs-check.js` の LEGACY_DOCS_IDS / TICKET-SITE-16)。
+
+⚠️ 数値 (1 アカウントあたりの込み時間・最低アカウント数) は `_data/plans.yml` の
+   enterprise 行から引く。ここに直書きすると料金改定で必ず片方だけ古くなる
+   (真の SSOT は Supabase `plan_catalog`。CI の `scripts/check-plan-catalog.mjs` が
+   plans.yml と突き合わせる)。アカウント数の上限も**数値を書かない** — plans.yml に
+   写しが無く、書くと検査対象外の数値がここだけに残るため。
+
+⚠️ この章が説明する画面は Enterprise の自己申込 (`plan_catalog.self_serve`) を
+   開いてから公開する。切替の順序は `docs_draft/notes_T-263.md`。
+
+スクリーンショットは T-260 の UI 実装後に差し込む (位置は HTML コメントで示してある)。
+{%- endcomment -%}
+{%- assign ent = site.data.plans.tiers | where: "code", "enterprise" | first -%}
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="チーム" title="チームの管理（Enterprise）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Enterprise プランでは、1 つの契約を複数のアカウントで共有します。メンバーの追加・削除、アカウント数の変更、請求書の確認、チーム全体の利用量の確認は、アプリ内の「チームの管理」から行います。</p>
+    <p><strong>「チームの管理」は Enterprise のアカウントにのみ表示されます。</strong>プロフィールメニュー（右上）を開くと、Free / Light / Pro では「プランを変更する」「プラン管理」が並ぶ位置に「チームの管理」が表示されます。料金と込み時間は<a href="/price">料金ページ</a>をご覧ください（最低 {{ ent.min_seats }} アカウントから）。</p>
+    <p>「チームの管理」を選ぶとダイアログが開き、左側に <strong>権限</strong> / <strong>請求</strong> / <strong>利用量</strong> の 3 つが並びます。右側に選んだ内容が表示されます。「準備中」と表示される場合は、時間をおいてから開き直してください。</p>
+    {%- comment -%} スクリーンショット (T-260 実装後): チームの管理ダイアログ全体。左ナビ 3 項目 + 権限タブ {%- endcomment -%}
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">権限（オーナーとメンバー）</h3>
+    <p>チームのメンバーには「オーナー」と「メンバー」の 2 つの権限があります。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">オーナー</div>
+        <div class="kv-val">メンバーの招待・再送・取り消し、メンバーの削除と権限の変更、アカウント数の変更、請求書の閲覧、組織コードの確認と再発行ができます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">メンバー</div>
+        <div class="kv-val">メンバーの一覧とチームの利用量を閲覧できます。招待や請求に関する操作はできません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">請求名義人</div>
+        <div class="kv-val">お申し込みをされたオーナーです。一覧に「請求」と表示され、削除やメンバーへの変更はできません。オーナーが 1 人だけのときも、そのオーナーを削除・変更することはできません</div>
+      </div>
+    </div>
+    <p>メンバーの一覧には、権限・メールアドレス・参加日・<strong>最終ログイン</strong>が並びます。最終ログインが取得できない場合は空欄になります。権限の変更と削除は、一覧の各行から行います。</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">メンバーを招待する</h3>
+    <ol>
+      <li>「権限」でメールアドレスを入力し、権限（オーナー / メンバー）を選んで「招待」を押します</li>
+      <li>相手に招待メールが届きます。メールのリンクから登録（またはログイン）すると、チームに参加した状態でアプリを使い始められます</li>
+      <li>まだ参加していない招待は一覧に残ります。「再送」で招待メールを送り直し、「取り消し」で無効にできます</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">招待も 1 アカウント分</div>
+        <div class="kv-val">アカウント数は「参加済みのメンバー ＋ 未参加の招待」で数えます。空きが無いと招待できないので、不要な招待を取り消すか、「請求」でアカウント数を増やしてください</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">再送の間隔</div>
+        <div class="kv-val">短い間隔で続けて送ることはできません。1 分ほど空けてからもう一度お試しください</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">招待の期限</div>
+        <div class="kv-val">期限を過ぎた招待は期限切れとして一覧に残ります。「再送」を押すと期限が延長され、同じメールアドレスのまま招待し直せます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">届かないとき</div>
+        <div class="kv-val">迷惑メールフォルダをご確認のうえ、アドレスに誤りがなければ「再送」をお試しください。それでも届かない場合は、次の「組織コードで参加する」をご利用いただけます</div>
+      </div>
+    </div>
+    {%- comment -%} スクリーンショット (T-260 実装後): 権限タブ。メンバー一覧 + 招待フォーム + 未参加の招待 {%- endcomment -%}
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">組織コードで参加する</h3>
+    <p>招待メールを使わずに、チーム共通の「組織コード」で参加することもできます。人数が多いときや、社内で配布して各自に登録してもらいたいときに使います。</p>
+    <ol>
+      <li>オーナーが「権限」で組織コードを確認します（<code>ABCD-1234-EFGH</code> のように 4 文字ずつ区切って表示されます）。<strong>組織コードはオーナーにだけ表示されます</strong></li>
+      <li>参加する方は、ログインダイアログの「組織コード」欄にそのコードを入力してからログインします。ブラウザでの認証が終わると、チームに参加した状態でアプリに戻ります</li>
+      <li>コードを配り直したいときは、「権限」から組織コードを再発行します。<strong>再発行すると、それまでのコードは使えなくなります</strong></li>
+    </ol>
+    <p>組織コードが違う場合やアカウント数が足りない場合でも、ログイン自体は成功し、チームへの参加だけが行われません。プロフィールメニューに「チームの管理」が出てこないときは、コードと空きアカウント数をオーナーにご確認ください。組織コードを知っていれば誰でも参加できるため、社外に転送しないようご注意ください。</p>
+    {%- comment -%} スクリーンショット (T-259/T-262 実装後): ログインダイアログの「組織コード」欄 {%- endcomment -%}
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">請求（アカウント数・請求書）</h3>
+    <p>「請求」はオーナーのみが開けます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">アカウント数の変更</div>
+        <div class="kv-val">アカウント数を入力して保存すると、決済に反映され、当期のプール（下記「利用量」）もすぐに新しいアカウント数で計算し直されます。増減の差額は日割りで次回の請求に載ります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">減らせる下限</div>
+        <div class="kv-val">最低 {{ ent.min_seats }} アカウント、かつ「参加済みのメンバー ＋ 未参加の招待」を下回る数にはできません。先にメンバーの削除や招待の取り消しを行ってください</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">増やせる上限</div>
+        <div class="kv-val">上限を超える数を入力すると、そのままでは保存できません。大規模にご利用の場合は<a href="/enterprise/inquiry/">導入相談</a>からご連絡ください</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">請求書の表示 / PDF</div>
+        <div class="kv-val">請求書の一覧に、請求日・対象期間・金額・支払い状況が並びます。「表示」でブラウザに請求書が開き、「PDF」でファイルとして保存できます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">決済ポータル</div>
+        <div class="kv-val">「請求」からブラウザの決済ポータルを開けます。支払い方法の変更、領収書の確認、解約はこちらで行います（<a href="#plan">プランの変更</a>と同じポータルです）</div>
+      </div>
+    </div>
+    <p>請求書払い・銀行振込をご希望の場合は<a href="/enterprise/inquiry/">導入相談</a>からご連絡ください。お支払い方法ごとの対応は<a href="/price">料金ページ</a>に記載しています。</p>
+    {%- comment -%} スクリーンショット (T-260 実装後): 請求タブ。アカウント数の入力 + 請求書一覧 {%- endcomment -%}
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">利用量（プールと内訳）</h3>
+    <p>Enterprise の込み時間は、メンバー個人ごとではなく<strong>チーム全体で共有するプール</strong>です。</p>
+    <ul>
+      <li><strong>プールの大きさ</strong>: アカウント数 × {{ ent.included_hours }} 時間。アカウント数を変更すると当期のプールもすぐに計算し直されます</li>
+      <li><strong>メンバー別の内訳</strong>: 誰がどれだけ消費したかが一覧で表示されます。プールは共有のため、1 人が多く使うと他のメンバーの残りも減ります</li>
+      <li><strong>リセット日</strong>: 当期の開始日と終了日が表示されます。終了日を過ぎると次の期間が始まり、消費が 0 に戻ります。<strong>使い切らなかった分は翌期に繰り越されません</strong></li>
+      <li><strong>数え方</strong>: 検出が完了した動画の再生時間を加算します。詳細は<a href="#usage">使用時間の計測</a>をご覧ください</li>
+    </ul>
+    <p>利用量はオーナーとメンバーのどちらからも確認できます。</p>
+    {%- comment -%} スクリーンショット (T-260 実装後): 利用量タブ。プールの残量 + メンバー別の内訳 {%- endcomment -%}
+  </div>
+</section>

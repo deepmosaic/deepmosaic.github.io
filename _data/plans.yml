@@ -207,9 +207,26 @@ tiers:
       # クレジットカードでも申し込める (T-252)。請求書払い・銀行振込は従来どおり
       - label: "支払方法"
         value: "クレジットカード・請求書払い・銀行振込"
+    # T-263: 自己申込 (アプリ内 Checkout でアカウント数を指定して申し込む) を開くのに
+    # 合わせて、CTA を Light / Pro と同じダウンロード申込にした。
+    #
+    # ⚠️ **自己申込の可否の真の SSOT は Supabase `plan_catalog.self_serve`**。
+    #    サイトはその表示側でしかない。`self_serve: false` のまま**このカードだけ**を
+    #    公開すると、申し込もうとしたユーザーが `seat-based plan requires contact`
+    #    (400) に当たる = 存在しない導線の広告になる。切替の順序 (sandbox → live →
+    #    Worker → サイト) は `docs_draft/notes_T-263.md` を参照。
+    #    戻すときは kind を "link" / href を "/enterprise/inquiry/" に戻し、
+    #    下の `secondary_cta` を消す (同じ導線が 2 つ並ぶため)。
     cta:
+      label: "ダウンロードして申し込む"
+      kind: "download"
+      # Pro (featured) を主ボタンにして視線を集めるため、Light と同じ副ボタン配色にする
+      variant: "secondary"
+    # ボタン下に置くテキストリンク (任意。描画は `_includes/pricing-cards.html`)。
+    # 請求書払い・銀行振込や、申し込み前に要件を詰めたいケースは従来どおりフォームで受ける。
+    # 外部 URL を入れる場合は `_includes/pricing-cards.html` 側に
+    # `target="_blank"` / `rel="noopener noreferrer"` を足すこと (現状は内部リンク前提)。
+    secondary_cta:
       label: "導入について相談する"
-      kind: "link"
       # T-254: 自前の導入相談ページ (Google フォームは廃止)
       href: "/enterprise/inquiry/"
-      external: false
