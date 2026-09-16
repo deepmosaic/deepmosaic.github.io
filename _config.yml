@@ -32,6 +32,9 @@ exclude:
   - package-lock.json
   - vite.config.js
   - docs_draft # T-254: 作業メモを _site に複製しない
+  # T-286: E2E は公開物ではない。除外しないと spec / 設定が _site に複製されて配信される
+  - e2e
+  - playwright.config.ts
 
 # Default front matter
 defaults:

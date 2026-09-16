@@ -173,6 +173,12 @@ jobs:
             || { echo "::error::/enterprise/inquiry/ からフォームのアイランド root が消えている"; fail=1; }
           grep -q '<noscript>' _site/enterprise/inquiry/index.html \
             || { echo "::error::/enterprise/inquiry/ から JS 無効時の代替 (noscript) が消えている"; fail=1; }
+          # T-286: E2E 一式は公開物ではない (_config.yml の exclude)。除外が外れると
+          # spec と設定がそのまま配信されるので、出力に現れた時点で落とす。
+          for leaked in e2e playwright.config.ts; do
+            [ -e "_site/$leaked" ] \
+              && { echo "::error::_site/$leaked が配信対象に入っている — _config.yml の exclude を確認すること"; fail=1; } || true
+          done
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
           # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /
@@ -181,6 +187,37 @@ jobs:
           # 見逃す (TICKET-SITE-16)。純ロジックは src/lib/docs-check.js (npm test で検証)
           node scripts/check-docs.mjs || fail=1
           exit $fail
+
+      # T-286: Enterprise 問い合わせフォームのブラウザ E2E。
+      #
+      # 上の `Verify build output` が固定できるのは「アイランド root と noscript が
+      # 出力に居ること」まで。**送信が実際に通るか** (検証エラーの表示、全角電話の
+      # 正規化、200 / 429 / 502 の文面、payload の形) は本物のブラウザでしか分からない。
+      # T-253 の Worker と T-254 のフォームは別リポジトリなので、契約のずれは
+      # ここで落とさないと本番で初めて気付く。
+      #
+      # ⚠️ **E2E_SKIP_BUILD=1 を外さないこと。** 外すと `npm run build && jekyll build` が
+      #    走り直し、`JEKYLL_ENV=production` も `--baseurl` も無い出力で `_site/` を
+      #    上書きしてしまう。この直後の `Upload artifact` はそれを Pages に上げる。
+      #
+      # 送信先 (`_data/inquiry.yml` の endpoint) は spec 側が page.route で差し替え、
+      # それ以外の外部通信は abort する。CI から本物の問い合わせは飛ばない。
+      - name: Install Playwright browser (Chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E (Enterprise 問い合わせフォーム)
+        env:
+          E2E_SKIP_BUILD: '1'
+        run: npx playwright test
+
+      # 落ちたときだけトレース / スクリーンショットを持ち帰る (成功時は捨てる)
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: e2e/.artifacts/
+          retention-days: 7
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v5

@@ -177,6 +177,23 @@ head -1 _site/llms.txt _site/robots.txt _site/llms-full.txt   # <!doctype が出
 bundle exec jekyll build && find _site -name "*.html" | head -3
 ```
 
+#### ブラウザ E2E（問い合わせフォーム・T-286）
+
+```bash
+npm run e2e:install            # 初回のみ (Chromium)
+npm run e2e                    # build → jekyll build → _site/ を 4173 で配信 → Playwright
+E2E_SKIP_BUILD=1 npm run e2e   # ビルド済みの _site/ を使う (CI と同じ経路)
+```
+
+`e2e/inquiry.spec.ts` は `/enterprise/inquiry/` の送信フロー（検証エラーの aria 属性 /
+全角電話の正規化 / 200・429・502 の文面 / 完了カードのフォーカス / honeypot / payload の形）を
+固定する。**送信先は spec が `page.route` で差し替え、それ以外の外部通信は abort する** ため
+本物の Worker は叩かない。endpoint はビルド出力の `data-endpoint` から読むので、
+`_data/inquiry.yml` の受け渡しが切れたら落ちる。
+
+⚠️ **E2E 一式 (`e2e/` `playwright.config.ts`) は `_config.yml` の `exclude` に入れる。**
+外すと Jekyll が `_site/` に複製して配信してしまう（CI の `Verify build output` が検知する）。
+
 #### dev server スモーク
 ```bash
 bundle exec jekyll serve --port 4000 &

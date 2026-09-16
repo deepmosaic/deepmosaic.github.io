@@ -6,9 +6,12 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "test": "node --test src/lib/*.test.js"
+    "test": "node --test src/lib/*.test.js",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install chromium"
   },
   "devDependencies": {
+    "@playwright/test": "1.62.1",
     "@sveltejs/vite-plugin-svelte": "^7.2.0",
     "@tailwindcss/vite": "^4.3.3",
     "svelte": "^5.56.6",

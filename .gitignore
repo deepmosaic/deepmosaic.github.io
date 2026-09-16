@@ -8,3 +8,6 @@ _site/
 # Node / Vite (front-end build) — built assets are regenerated in CI
 node_modules/
 assets/dist/
+
+# Playwright (E2E: T-286) — ブラウザ本体とレポート/トレースは再生成物
+e2e/.artifacts/

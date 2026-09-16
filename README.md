@@ -106,7 +106,46 @@ npm run dev
 npm test
 ```
 
-期待結果: **92 件中 91 pass / 1 skip**。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
+期待結果: **129 件中 128 pass / 1 skip** (2026-09-17 時点)。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
+
+## ブラウザ E2E（Enterprise 問い合わせフォーム）
+
+`/enterprise/inquiry/` の送信フローを実ブラウザ（Chromium）で検証する（T-286）。`npm test` が見るのは `src/lib/inquiry-validate.js` の**純ロジックだけ**で、**Jekyll の `data-endpoint` → Svelte アイランドの props → `fetch`** という配線はここでしか固定できない。
+
+```powershell
+npm run e2e:install   # 初回のみ: Chromium を取得（既にあれば何もしない）
+npm run e2e           # npm run build → jekyll build → _site/ を配信 → Playwright
+```
+
+ビルドから配信までは `playwright.config.ts` の `webServer` が面倒を見る（`e2e/lib/serve.mjs` が `_site/` を <http://127.0.0.1:4173> で配る。node:http だけで書いてあり依存は増えない）。**ビルド済みの `_site/` をそのまま**使いたいときは:
+
+```powershell
+$env:E2E_SKIP_BUILD = "1"; npm run e2e
+```
+
+固定している振る舞い（`e2e/inquiry.spec.ts`・9 件）:
+
+| 検証 | 期待 |
+|---|---|
+| 未入力のまま送信 | 項目ごとのエラー文 + `aria-invalid` / `aria-describedby`、最初の誤りへフォーカス、Worker は叩かない |
+| 全角で打った電話番号 | `（０３）１２３４－５６７８` → `(03)1234-5678` に直してから送る |
+| 利用アカウント予定数 < 3 | Enterprise の下限（3 アカウント）を示して止まる |
+| 200 `{ok:true, mail:true}` | 完了カード + 受付確認メールの案内、カードへフォーカス移動、「閉じる」で空のフォームに戻る |
+| 200 `{ok:true}` | 完了カードは出すが受付確認メールの案内は出さない |
+| 429 | レート制限の案内。入力は消さず再送できる |
+| 502 | `support_email` を添えた案内 |
+| ハニーポット `website` | 埋まっていても送信し、その値を payload に載せる（bot 判定は Worker 側の責務） |
+| payload の形 | `company` / `name` / `email` / `phone` / `seats`（整数） / `message` / `website`。`turnstileToken` はサイトキーが空の間は載せない |
+
+> ⚠️ **本物の Worker は絶対に叩かない。** spec は `beforeEach` で配信サーバ以外への通信を abort し、`data-endpoint`（`_data/inquiry.yml`）だけを `page.route` で差し替える。endpoint はテストに直書きせず**ビルド出力の `data-endpoint` から読む**ので、`_data/inquiry.yml` の受け渡しが切れたら気付ける。
+
+CI（`.github/workflows/jekyll.yml`）は `Verify build output` の後に `E2E_SKIP_BUILD=1` で同じ spec を走らせ、失敗すればデプロイごと止める。**この env を外さないこと** — `_site/` を作り直すと `JEKYLL_ENV=production` も `--baseurl` も無い出力を Pages に上げてしまう。
+
+E2E のコードはこのリポジトリ唯一の TypeScript / Playwright 資産で、Prettier の設定は置いていない。整形はモノレポの `web` のバイナリを明示オプションで使う:
+
+```powershell
+../web/node_modules/.bin/prettier --no-config --single-quote --print-width 100 --check e2e playwright.config.ts
+```
 
 ## 本番ビルド
 
@@ -133,6 +172,7 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 | `index.html` `docs/` `price/` `company/` `404.html` | 各ページ |
 | `docs/index.html` `docs/web/index.html` | ドキュメント (Desktop 版 / Web 版)。骨組みだけを持ち、本文は `_includes/docs/*.html`、目次は `_data/docs_toc.yml` |
 | `scripts/check-docs.mjs` | docs の回帰ガード (契約 ID / 目次 / リンク / 画像)。`npm run build && bundle exec jekyll build` の後に `node scripts/check-docs.mjs`。CI でも実行 |
+| `playwright.config.ts` `e2e/` | 問い合わせフォームのブラウザ E2E（`npm run e2e`）。配信サーバは `e2e/lib/serve.mjs`。公開物ではないので `_config.yml` の `exclude` に入れてある |
 | `assets/dist/` | Vite 出力（**gitignore** ・CI 再生成） |
 | `assets/` | 画像 / フォント / 動画 / `fonts.css`（自己ホスト Roboto） |
 
