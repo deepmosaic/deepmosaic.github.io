@@ -210,5 +210,6 @@ tiers:
     cta:
       label: "導入について相談する"
       kind: "link"
-      href: "https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link"
-      external: true
+      # T-254: 自前の導入相談ページ (Google フォームは廃止)
+      href: "/enterprise/inquiry/"
+      external: false

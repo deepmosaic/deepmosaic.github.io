@@ -1,0 +1,24 @@
+# Enterprise 導入相談フォーム (T-254) の設定。
+#
+# ページは `enterprise/inquiry/index.html`、フォーム本体は `src/islands/InquiryForm.svelte`、
+# 送信先の実装は desktop リポジトリの `worker-auth0-updater/src/inquiry.ts` (T-253)。
+#
+# endpoint      本番 Worker。CI のビルド (JEKYLL_ENV=production) はこちらを使う。
+# endpoint_dev  dev Worker (`npx wrangler deploy --env dev`)。ローカルの `bundle exec jekyll serve`
+#               (環境 development) はこちらを使う — dev Worker の INQUIRY_ALLOWED_ORIGINS が
+#               http://localhost:4000 を CORS 許可しているため。ポートを変えるなら Worker 側も合わせる。
+#
+# turnstile_site_key
+#   Cloudflare ダッシュボード → Turnstile → ウィジェット (ホスト名 = www.deepmosaic.co.jp /
+#   deepmosaic.co.jp / deepmosaic.github.io) の **Site Key (公開値)** をここに貼る。
+#   空文字の間は widget を描画せず token も送らない。Worker 側も TURNSTILE_SECRET_KEY 未投入なら
+#   検証をスキップする (縮退運用: ハニーポット + レート制限だけで守る)。
+#   ⚠️ 順序: **ここにサイトキーを入れてサイトを公開してから、Worker に secret を投入する**。
+#      逆にすると token を持たない送信が全件 400 (turnstile_failed) になる。
+#
+# support_email  JS 無効時の代替連絡先 (mailto) と、Worker が 502 (delivery_failed) を返したときの
+#                案内文に使う。Worker の MAIL_REPLY_TO と同じ宛先にしておく。
+endpoint: "https://deepmosaic-auth0-updater.deepmosaic.workers.dev/inquiry"
+endpoint_dev: "https://deepmosaic-auth0-updater-dev.deepmosaic.workers.dev/inquiry"
+turnstile_site_key: ""
+support_email: "support@deepmosaic.co.jp"

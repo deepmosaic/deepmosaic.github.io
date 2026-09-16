@@ -205,6 +205,7 @@ import Scrollspy from './islands/Scrollspy.svelte';
 import VideoLightbox from './islands/VideoLightbox.svelte';
 import RoiCalculator from './islands/RoiCalculator.svelte';
 import Tabs from './islands/Tabs.svelte';
+import InquiryForm from './islands/InquiryForm.svelte';
 
 function mountIslands(selector, Component) {
   document.querySelectorAll(selector).forEach((el) => {
@@ -232,6 +233,7 @@ function init() {
   mountIslands('[data-island="video-lightbox"]', VideoLightbox);
   mountIslands('[data-island="roi"]', RoiCalculator);
   mountIslands('[data-island="tabs"]', Tabs);
+  mountIslands('[data-island="inquiry-form"]', InquiryForm);
 }
 
 if (document.readyState === 'loading') {

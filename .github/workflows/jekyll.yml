@@ -158,6 +158,17 @@ jobs:
             grep -rnE 'download="(true|false)"' --include='*.html' _site | head -20
             fail=1
           fi
+          # T-254: Google フォームの導線は自前ページ (/enterprise/inquiry/) に全置換した。旧 URL が出力に
+          # 戻っていないこと、問い合わせページがアイランド root と JS 無効時の代替 (noscript) を持つことを固定する。
+          if grep -rl --include='*.html' 'docs.google.com/forms' _site >/dev/null 2>&1; then
+            echo "::error::Google フォームの URL が出力に残っている — 問い合わせ導線は /enterprise/inquiry/ に統一すること"
+            grep -rln --include='*.html' 'docs.google.com/forms' _site | head -10
+            fail=1
+          fi
+          grep -q 'data-island="inquiry-form"' _site/enterprise/inquiry/index.html \
+            || { echo "::error::/enterprise/inquiry/ からフォームのアイランド root が消えている"; fail=1; }
+          grep -q '<noscript>' _site/enterprise/inquiry/index.html \
+            || { echo "::error::/enterprise/inquiry/ から JS 無効時の代替 (noscript) が消えている"; fail=1; }
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
           # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /
