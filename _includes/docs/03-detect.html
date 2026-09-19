@@ -50,6 +50,10 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">プロジェクトを 1 つの zip にまとめます（<a href="#project-io">プロジェクトの書き出しと取り込み</a>）</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">プロジェクトをコピー</div>
+        <div class="kv-val">検出結果・編集データ・タイムライン素材を含めて複製し、新しいプロジェクト ID を付けます。元動画がプロジェクト外にある場合は同じファイルを参照します（コピーされません）</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">削除</div>
         <div class="kv-val">プロジェクトフォルダごと削除します（確認あり・取り消し不可）。エンコード中のプロジェクトを削除すると、そのエンコードも中止されます</div>
       </div>
