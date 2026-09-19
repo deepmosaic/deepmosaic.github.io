@@ -31,7 +31,7 @@ export const BASE_URL = `http://127.0.0.1:${E2E_PORT}`;
  *   E2E_BASE_URL=https://www.deepmosaic.co.jp npx playwright test
  */
 const EXTERNAL_BASE_URL = process.env.E2E_BASE_URL?.replace(/\/+$/, '') || undefined;
-const READ_ONLY_SPECS = ['mobile-nav.spec.ts'];
+const READ_ONLY_SPECS = ['mobile-nav.spec.ts', 'inquiry-cors.spec.ts'];
 
 const serve = `node e2e/lib/serve.mjs`;
 const command = process.env.E2E_SKIP_BUILD
