@@ -24,6 +24,15 @@ import { defineConfig, devices } from '@playwright/test';
 export const E2E_PORT = Number(process.env.E2E_PORT ?? 4173);
 export const BASE_URL = `http://127.0.0.1:${E2E_PORT}`;
 
+/**
+ * 外部の配信先 (公開後の本番など) へ向けるときの基点 (T-291)。指定すると配信サーバを立てず、
+ * **読み取りだけの spec に対象を絞る** — 問い合わせフォームの spec を本番へ向けない。
+ *
+ *   E2E_BASE_URL=https://www.deepmosaic.co.jp npx playwright test
+ */
+const EXTERNAL_BASE_URL = process.env.E2E_BASE_URL?.replace(/\/+$/, '') || undefined;
+const READ_ONLY_SPECS = ['mobile-nav.spec.ts'];
+
 const serve = `node e2e/lib/serve.mjs`;
 const command = process.env.E2E_SKIP_BUILD
   ? serve
@@ -31,6 +40,9 @@ const command = process.env.E2E_SKIP_BUILD
 
 export default defineConfig({
   testDir: './e2e',
+  ...(EXTERNAL_BASE_URL ? { testMatch: READ_ONLY_SPECS } : {}),
+  // 出力先 (trace / 使い捨ての検証スクリプト置き場) は探索しない
+  testIgnore: ['**/.artifacts/**'],
   outputDir: './e2e/.artifacts/test-results',
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
@@ -39,13 +51,13 @@ export default defineConfig({
   reporter: [['list'], ['html', { outputFolder: './e2e/.artifacts/html', open: 'never' }]],
   use: {
     ...devices['Desktop Chrome'],
-    baseURL: BASE_URL,
+    baseURL: EXTERNAL_BASE_URL ?? BASE_URL,
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'off',
   },
   projects: [{ name: 'chromium' }],
-  webServer: {
+  webServer: EXTERNAL_BASE_URL ? undefined : {
     command,
     // 待つのは検証対象のページそのもの。トップだけ見ていると、島を載せている
     // ページが生成されていないケースを「サーバは起きている」で見逃す。

@@ -191,6 +191,18 @@ E2E_SKIP_BUILD=1 npm run e2e   # ビルド済みの _site/ を使う (CI と同�
 本物の Worker は叩かない。endpoint はビルド出力の `data-endpoint` から読むので、
 `_data/inquiry.yml` の受け渡しが切れたら落ちる。
 
+`e2e/mobile-nav.spec.ts` (T-291) はモバイルドロワーを Pixel 7 エミュレーションで **tap** し、
+同一オリジンのリンクに `download` 属性が無いこと / 保存が起きず遷移することを固定する
+（T-231 の再発防止。CI の grep ガードは `download={!!…}` の形しか拾えず、`Boolean(x)` は素通りする）。
+この spec だけは本番へ向けられる — 公開後の確認に使う:
+
+```bash
+E2E_BASE_URL=https://www.deepmosaic.co.jp npx playwright test   # 配信サーバを立てず、mobile-nav だけを実行
+```
+
+`E2E_BASE_URL` を渡すと `playwright.config.ts` が対象を読み取りだけの spec に絞る
+（問い合わせフォームの spec を本番へ向けない）。解析系のリクエストは spec が abort する。
+
 ⚠️ **E2E 一式 (`e2e/` `playwright.config.ts`) は `_config.yml` の `exclude` に入れる。**
 外すと Jekyll が `_site/` に複製して配信してしまう（CI の `Verify build output` が検知する）。
 
