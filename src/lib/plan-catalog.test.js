@@ -85,7 +85,8 @@ test('契約本数の上限が現行の Supabase 値と一致する (回帰固�
 test('サイトが出す合計時間は included_hours × max_contracts で導出できる', () => {
   // 「最大 3 契約（月 15 時間まで）」の 15 はどこにも手書きしない、という設計の固定。
   assert.equal(byCode('light').included_hours * byCode('light').max_contracts, 15);
-  assert.equal(byCode('pro').included_hours * byCode('pro').max_contracts, 80);
+  // T-297: Pro は月 20 時間 × 2 契約 = 40 時間
+  assert.equal(byCode('pro').included_hours * byCode('pro').max_contracts, 40);
 });
 
 // ── 単位換算 ────────────────────────────────────────────────────────────────

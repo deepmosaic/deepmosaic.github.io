@@ -145,7 +145,9 @@ tiers:
     price: 9800
     price_display: "9,800"
     price_unit: "/ 月"
-    included_hours: 40
+    # T-297 (2026-09-19): 月 40 時間 → 20 時間。真の SSOT は Supabase
+    # `plan_catalog.included_minutes` (1200 分)。値を変えるときは必ず両方を同時に。
+    included_hours: 20
     included_basis: "monthly"
     max_contracts: 2
     overage_per_hour: null # 従量課金は廃止 (旧 ¥500 / 時間)
@@ -162,7 +164,7 @@ tiers:
     summary: "フリーランス編集者・専業に近い個人向け。"
     specs:
       - label: "込み時間"
-        value: "月 40 時間"
+        value: "月 20 時間"
       # 「追加契約」行は `max_contracts` から自動で入る (light の specs のコメントを参照)。
       - label: "同時起動"
         value: "1 台"
@@ -188,7 +190,8 @@ tiers:
     #    キーを変えると突き合わせが壊れる。**変えるのは人が読む文字列だけ。**
     price_unit: "/ アカウント・月"
     # pooled: アカウント数 × included_hours をチームで共有する
-    included_hours: 40
+    # T-297 (2026-09-19): 40 → 20 時間。SSOT は `plan_catalog.included_minutes_per_seat` (1200 分)
+    included_hours: 20
     included_basis: "pooled"
     min_seats: 3
     # アカウント単価で自己申込を塞いでいるため複数契約の対象外 (枠はアカウント数で増やす)
@@ -201,7 +204,7 @@ tiers:
     summary: "メーカー・ポストプロダクション向け。最低 3 アカウント（¥24,000〜）。"
     specs:
       - label: "込み時間"
-        value: "アカウント数 × 40 時間をプール共有"
+        value: "アカウント数 × 20 時間をプール共有"
       - label: "請求"
         value: "月末締め翌月請求"
       # クレジットカードでも申し込める (T-252)。請求書払い・銀行振込は従来どおり

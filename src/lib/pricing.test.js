@@ -74,11 +74,12 @@ test('料金と込み時間が新デザインの確定値と一致する', () =>
   assert.equal(byCode('light').price, 2980);
   assert.equal(byCode('light').included_hours, 5);
 
+  // T-297 (2026-09-19): Pro / Enterprise は月 40 時間 → 20 時間
   assert.equal(byCode('pro').price, 9800);
-  assert.equal(byCode('pro').included_hours, 40);
+  assert.equal(byCode('pro').included_hours, 20);
 
   assert.equal(byCode('enterprise').price, 8000);
-  assert.equal(byCode('enterprise').included_hours, 40);
+  assert.equal(byCode('enterprise').included_hours, 20);
   // 最低 3 シート = 24,000 円。これは Pro×2 の成立条件でもあるので下げない
   assert.equal(byCode('enterprise').min_seats, 3);
 
@@ -98,7 +99,7 @@ test('無料トライアルはどのプランにも設けない', () => {
 
 test('込み時間の内側では基本料だけ', () => {
   assert.equal(monthlyCost(byCode('light'), 5), 2980);
-  assert.equal(monthlyCost(byCode('pro'), 40), 9800);
+  assert.equal(monthlyCost(byCode('pro'), 20), 9800);
 });
 
 test('込み時間を超えたら契約を積む。上限本数でも足りなければ候補外', () => {
@@ -108,9 +109,9 @@ test('込み時間を超えたら契約を積む。上限本数でも足りな�
   assert.equal(monthlyCost(byCode('light'), 6), 5960); // 2 本
   assert.equal(monthlyCost(byCode('light'), 15), 8940); // 3 本 (上限)
   assert.equal(monthlyCost(byCode('light'), 16), Number.POSITIVE_INFINITY); // 上限超え
-  assert.equal(monthlyCost(byCode('pro'), 40), 9800); // 1 本
-  assert.equal(monthlyCost(byCode('pro'), 41), 19600); // 2 本 (上限)
-  assert.equal(monthlyCost(byCode('pro'), 81), Number.POSITIVE_INFINITY); // 上限超え
+  assert.equal(monthlyCost(byCode('pro'), 20), 9800); // 1 本
+  assert.equal(monthlyCost(byCode('pro'), 21), 19600); // 2 本 (上限)
+  assert.equal(monthlyCost(byCode('pro'), 41), Number.POSITIVE_INFINITY); // 上限超え
 });
 
 test('契約本数の上限はデータから読む (コードに数値を持たない)', () => {
@@ -130,8 +131,8 @@ test('必要契約本数は切り上げ、上限を超えたら null', () => {
   assert.equal(contractsNeeded(byCode('light'), 5.1), 2);
   assert.equal(contractsNeeded(byCode('light'), 15), 3);
   assert.equal(contractsNeeded(byCode('light'), 15.1), null);
-  assert.equal(contractsNeeded(byCode('pro'), 80), 2);
-  assert.equal(contractsNeeded(byCode('pro'), 80.1), null);
+  assert.equal(contractsNeeded(byCode('pro'), 40), 2);
+  assert.equal(contractsNeeded(byCode('pro'), 40.1), null);
 });
 
 test('従量課金が復活していないこと (回帰固定)', () => {
@@ -182,18 +183,18 @@ test('Enterprise は最低シート数を下回らない', () => {
   const ent = byCode('enterprise');
   assert.deepEqual(bestSeatPlan(ent, 0), { seats: 3, cost: 24000 });
   assert.deepEqual(bestSeatPlan(ent, 12), { seats: 3, cost: 24000 });
-  // 3 シート = 120 時間ぶんのプール。ここまでは基本料だけ
-  assert.deepEqual(bestSeatPlan(ent, 120), { seats: 3, cost: 24000 });
+  // 3 シート = 60 時間ぶんのプール (T-297)。ここまでは基本料だけ
+  assert.deepEqual(bestSeatPlan(ent, 60), { seats: 3, cost: 24000 });
   // 最低シート数 × 単価が最低契約額
   assert.equal(monthlyCost(ent, 12), 8000 * 3);
 });
 
 test('プールを超えたらシートを足す (超過課金は廃止したので他に手段が無い)', () => {
   const ent = byCode('enterprise');
-  // 3 シート = 120 時間。1 時間でも超えたら 4 シート目が要る
-  assert.deepEqual(bestSeatPlan(ent, 121), { seats: 4, cost: 32000 });
-  assert.deepEqual(bestSeatPlan(ent, 160), { seats: 4, cost: 32000 });
-  assert.deepEqual(bestSeatPlan(ent, 161), { seats: 5, cost: 40000 });
+  // 3 シート = 60 時間。1 時間でも超えたら 4 シート目が要る
+  assert.deepEqual(bestSeatPlan(ent, 61), { seats: 4, cost: 32000 });
+  assert.deepEqual(bestSeatPlan(ent, 80), { seats: 4, cost: 32000 });
+  assert.deepEqual(bestSeatPlan(ent, 81), { seats: 5, cost: 40000 });
 });
 
 test('月 12 時間 (既定値) の適合プランは Light×3 (月額 8,940 円)', () => {
@@ -219,32 +220,36 @@ test('作業量が増えると Light → Pro → Enterprise に切り替わる',
   assert.equal(cheapestPlan(paid, 15).tier.code, 'light');
   //  16h: Light は 3 本でも 15h までで候補外        → Pro
   assert.equal(cheapestPlan(paid, 16).tier.code, 'pro');
-  //  80h: Pro×2 19,600 < Ent 3 シート 24,000       → まだ Pro
-  assert.equal(cheapestPlan(paid, 80).tier.code, 'pro');
-  //  81h: Pro は 2 本でも 80h までで候補外          → Enterprise
-  assert.equal(cheapestPlan(paid, 81).tier.code, 'enterprise');
+  //  40h: Pro×2 19,600 < Ent 3 アカウント 24,000   → まだ Pro
+  assert.equal(cheapestPlan(paid, 40).tier.code, 'pro');
+  //  41h: Pro は 2 本でも 40h までで候補外          → Enterprise
+  assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
 });
 
 test('込み時間ちょうどでは本数を増やさない (境界の丸め事故を防ぐ)', () => {
   assert.equal(monthlyCost(byCode('light'), 5), 2980);
   assert.equal(monthlyCost(byCode('light'), 5.000001), 5960);
-  assert.equal(monthlyCost(byCode('pro'), 40), 9800);
-  assert.equal(monthlyCost(byCode('pro'), 40.000001), 19600);
+  assert.equal(monthlyCost(byCode('pro'), 20), 9800);
+  assert.equal(monthlyCost(byCode('pro'), 20.000001), 19600);
 });
 
 test('内訳文がプランごとの条件をデータから組み立てる', () => {
-  assert.equal(planBreakdown(byCode('pro'), 12), '月 40 時間込み');
+  assert.equal(planBreakdown(byCode('pro'), 12), '月 20 時間込み');
   // 複数契約が必要な時間数では本数と合計時間を出す
   assert.equal(planBreakdown(byCode('light'), 12), '3 契約（月 15 時間込み）');
-  assert.equal(planBreakdown(byCode('pro'), 41), '2 契約（月 80 時間込み）');
+  assert.equal(planBreakdown(byCode('pro'), 21), '2 契約（月 40 時間込み）');
+  // Pro の上限 (2 本 = 40 時間) を超える時間数では **そもそも Pro が候補に出ない**。
+  // ここで planBreakdown(pro, 41) を assert すると「賄えないプランの内訳文」を
+  // 仕様として固定してしまうので、適合プランの選択のほうを固定する (T-297)
+  assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
   // 表示上の呼称は「アカウント」(内部の識別子は Supabase の列名に合わせて seats のまま)
-  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 アカウント（120 時間をプール共有）');
+  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 アカウント（60 時間をプール共有）');
   // プールを超えるとアカウント数が増え、内訳もそれに追従する
-  assert.equal(planBreakdown(byCode('enterprise'), 147), '4 アカウント（160 時間をプール共有）');
+  assert.equal(planBreakdown(byCode('enterprise'), 73), '4 アカウント（80 時間をプール共有）');
 });
 
 test('Enterprise の検討を促す閾値は Pro の込み時間', () => {
-  assert.equal(suggestEnterpriseOver(paid), 40);
+  assert.equal(suggestEnterpriseOver(paid), 20);
 });
 
 test('/price/ の meta description が plans.yml の金額と一致している', () => {
