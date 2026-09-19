@@ -31,6 +31,7 @@ exclude:
   - package.json
   - package-lock.json
   - vite.config.js
+  - docs_draft # T-254: 作業メモを _site に複製しない
 
 # Default front matter
 defaults:
