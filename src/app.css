@@ -10,6 +10,7 @@
 @source "../docs/**/*.html";
 @source "../price/**/*.html";
 @source "../company/**/*.html";
+@source "../enterprise/**/*.html";
 @source "../spec/**/*.html";
 @source "../_guides/**/*.md";
 @source "./**/*.svelte";

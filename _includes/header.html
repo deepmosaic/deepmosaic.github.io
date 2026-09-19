@@ -1,4 +1,5 @@
-{%- capture contact_url -%}https://docs.google.com/forms/d/e/1FAIpQLSedhPxi0r55_iIp8d02qKiFVSG-91P0qib0U6ayKpACw0NLzg/viewform?usp=sf_link{%- endcapture -%}
+{%- comment -%}T-254: 問い合わせは自前ページ (Google フォームは廃止){%- endcomment -%}
+{%- capture contact_url -%}/enterprise/inquiry/{%- endcapture -%}
 {%- assign u = page.url -%}
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
   <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-7">
@@ -25,7 +26,7 @@
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}","target":"_blank"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>
