@@ -136,15 +136,21 @@ jobs:
           # DL 計測 (TICKET-SITE-37)。`data-dl` が付いていない DL リンクは計測から漏れる。
           # クリックできる <a> の数と data-dl の数が一致するはず — 差分は
           # JSON-LD の downloadUrl と data-links (Svelte が描画する分) だけ。
+          # ページ単位で「1 本以上あること」だけを見る (カード枚数は数えない) —
+          # T-298 で ENTERPRISE が相談リンクになり data-dl を持たなくなったが、
+          # /price/ には Light / Pro / Free の DL ボタンが残るのでこの判定は成立する。
           for p in index.html price/index.html spec/index.html; do
             a=$(grep -o 'data-dl="' "_site/$p" | wc -l || true)
             [ "$a" -gt 0 ] \
               || { echo "::error::_site/$p の DL ボタンから data-dl が消えている — 計測が止まる"; fail=1; }
           done
-          # T-263: ENTERPRISE のカードは DL 申込導線 (data-dl="enterprise")。相談リンクだけに
-          # 戻ると申込も計測も静かに消えるので、プラン別に 1 本だけ名指しで固定する。
-          grep -q 'data-dl="enterprise"' _site/price/index.html \
-            || { echo "::error::/price/ の ENTERPRISE カードから data-dl=enterprise が消えている — 申込導線が相談リンクに戻っていないか確認すること"; fail=1; }
+          # T-298: ENTERPRISE は見積ベース (導入相談 → 見積書 → 支払リンク) に戻した。
+          # T-263 の DL 申込導線 (data-dl="enterprise") の固定はここで撤去し、代わりに
+          # **相談導線と維持管理費用の注記**が静かに消えないことを 2 本で固定する。
+          grep -q 'href="/enterprise/inquiry/"' _site/price/index.html \
+            || { echo "::error::/price/ の ENTERPRISE カードから導入相談の導線 (/enterprise/inquiry/) が消えている"; fail=1; }
+          grep -q '維持管理費用' _site/price/index.html \
+            || { echo "::error::/price/ の ENTERPRISE カードから維持管理費用の注記 (plans.yml の price_note) が消えている"; fail=1; }
           grep -q 'data-dl' _site/assets/dist/app.js \
             || { echo "::error::バンドルから DL 計測の配線が消えている"; fail=1; }
           # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)

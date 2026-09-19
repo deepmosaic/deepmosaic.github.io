@@ -1,5 +1,22 @@
 # T-263 — site: ENTERPRISE の CTA をダウンロード申込に / docs にチーム管理節 / ローンチ切替手順
 
+> ## ⚠️ 2026-09-19 (T-298): 見積ベースへ方針変更。**この文書の CTA まわりは巻き戻した**
+>
+> Enterprise は「アプリ内で自己申込」ではなく **お見積り → 支払リンク (dashboard の法人管理) →
+> 組織コードのメール** の流れに決まった。そのため T-298 で以下を戻している:
+>
+> - `_data/plans.yml` enterprise の `cta` を `label: 導入について相談する` / `kind: link` /
+>   `href: /enterprise/inquiry/` に戻し、`secondary_cta` (同じ導線の重複) を削除
+> - 価格の直下に `price_note: "+ 維持管理費用 / 月"` を追加、支払方法を
+>   「請求書払い（クレジットカード即時払い・銀行振込）」に
+> - CI ガードを `data-dl="enterprise"` から **`href="/enterprise/inquiry/"` と `維持管理費用`** の
+>   2 本に置換 (`.github/workflows/jekyll.yml`)
+> - `_includes/docs/07-team.html` の請求節を「導入の流れ」に書き換え
+>
+> `plan_catalog.self_serve` は **false のまま**。下記「ローンチ切替手順」(self_serve を true に
+> する順序) は将来 自己申込を開くときのために残してあるが、**現時点では実行しない**。
+> 詳細は `docs_draft/notes_T-298.md`。
+
 実装日: 2026-09-17 / Role: Implementer → Reviewer → Tester (単独セッション)
 
 **コミット・push・デプロイなし。** ゲート (`npm run build` / `bundle exec jekyll build --strict_front_matter` /

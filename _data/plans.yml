@@ -189,6 +189,12 @@ tiers:
     #    **列名と対応**しており、CI (`scripts/check-plan-catalog.mjs`) が同名で突き合わせる。
     #    キーを変えると突き合わせが壊れる。**変えるのは人が読む文字列だけ。**
     price_unit: "/ アカウント・月"
+    # T-298 (2026-09-19): 価格の直下に出す注記。維持管理費用は会社ごとのお見積りなので
+    # 金額を書かない (書くと実在しない固定額の広告になる)。描画は
+    # `_includes/pricing-cards.html` の `plan.price_note` 分岐 1 箇所だけ。
+    # `scripts/check-plan-catalog.mjs` は Supabase の列 (max_contracts / 込み時間 /
+    # 月額 / min_seats) しか突き合わせないので、このキーは比較対象外。
+    price_note: "+ 維持管理費用 / 月"
     # pooled: アカウント数 × included_hours をチームで共有する
     # T-297 (2026-09-19): 40 → 20 時間。SSOT は `plan_catalog.included_minutes_per_seat` (1200 分)
     included_hours: 20
@@ -207,29 +213,31 @@ tiers:
         value: "アカウント数 × 20 時間をプール共有"
       - label: "請求"
         value: "月末締め翌月請求"
-      # クレジットカードでも申し込める (T-252)。請求書払い・銀行振込は従来どおり
+      # T-298 (2026-09-19): 見積ベースに戻したので、既定の支払方法は請求書払い。
+      # クレジットカードは「即時払い」(支払リンクを一括で決済する) として並べる。
       - label: "支払方法"
-        value: "クレジットカード・請求書払い・銀行振込"
-    # T-263: 自己申込 (アプリ内 Checkout でアカウント数を指定して申し込む) を開くのに
-    # 合わせて、CTA を Light / Pro と同じダウンロード申込にした。
+        value: "請求書払い（クレジットカード即時払い・銀行振込）"
+    # T-298 (2026-09-19): Enterprise は**見積ベース**に戻した。申し込みの流れは
+    # 導入相談 → 見積書 → dashboard (法人管理) が発行する支払リンク → 組織コードの
+    # メール、であってアプリ内 Checkout ではない。したがってカードの CTA は
+    # `/enterprise/inquiry/` への相談リンク 1 本だけにし、T-263 の
+    # 「ダウンロードして申し込む」(`kind: download`) と副リンク `secondary_cta` は外した
+    # (同じ導線が 2 つ並ぶため)。手順の詳細は `/docs/#team` の「導入の流れ」。
     #
-    # ⚠️ **自己申込の可否の真の SSOT は Supabase `plan_catalog.self_serve`**。
-    #    サイトはその表示側でしかない。`self_serve: false` のまま**このカードだけ**を
-    #    公開すると、申し込もうとしたユーザーが `seat-based plan requires contact`
-    #    (400) に当たる = 存在しない導線の広告になる。切替の順序 (sandbox → live →
-    #    Worker → サイト) は `docs_draft/notes_T-263.md` を参照。
-    #    戻すときは kind を "link" / href を "/enterprise/inquiry/" に戻し、
-    #    下の `secondary_cta` を消す (同じ導線が 2 つ並ぶため)。
+    # ⚠️ **自己申込の可否の真の SSOT は Supabase `plan_catalog.self_serve`** で、
+    #    Enterprise は **false のまま**。サイトはその表示側でしかない。self_serve が
+    #    false のまま申込ボタンだけを公開すると、押したユーザーが
+    #    `seat-based plan requires contact` (400) に当たる = 存在しない導線の広告になる。
+    #    自己申込を開くとき (self_serve を true にするとき) の切替順序は
+    #    `docs_draft/notes_T-263.md` / `docs_draft/notes_T-298.md` を参照。
+    #
+    # このカードから相談導線が静かに消えないよう、CI (`.github/workflows/jekyll.yml`)
+    # がビルド出力の `href="/enterprise/inquiry/"` と `維持管理費用` を grep で固定している。
     cta:
-      label: "ダウンロードして申し込む"
-      kind: "download"
-      # Pro (featured) を主ボタンにして視線を集めるため、Light と同じ副ボタン配色にする
-      variant: "secondary"
-    # ボタン下に置くテキストリンク (任意。描画は `_includes/pricing-cards.html`)。
-    # 請求書払い・銀行振込や、申し込み前に要件を詰めたいケースは従来どおりフォームで受ける。
-    # 外部 URL を入れる場合は `_includes/pricing-cards.html` 側に
-    # `target="_blank"` / `rel="noopener noreferrer"` を足すこと (現状は内部リンク前提)。
-    secondary_cta:
       label: "導入について相談する"
+      # 非 download の CTA は `_includes/pricing-cards.html` が常に `btn-secondary` で
+      # 描くため `variant` は持たない (Light / Pro の download CTA だけが使うキー)。
+      kind: "link"
       # T-254: 自前の導入相談ページ (Google フォームは廃止)
       href: "/enterprise/inquiry/"
+      external: false

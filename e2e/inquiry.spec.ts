@@ -214,6 +214,35 @@ test('利用アカウント予定数が 3 未満だと Enterprise の下限を�
   expect(calls).toHaveLength(0);
 });
 
+test('Enterprise 以外の用件で来た人の逃がし先がフォームより上にある (T-298)', async ({ page }) => {
+  // サイト内の「お問い合わせ」(ヘッダ / フッター / docs / クッキーポリシー) は**全部**この
+  // ページに来るのに、フォームは会社名必須・3 アカウント以上の Enterprise 専用。一般の
+  // 問い合わせ窓口への導線が消えると、それ以外の用件で来た人がそのまま行き止まりになる。
+  // T-298 でカード装飾は外したが、導線そのものは残す — その約束をここで固定する。
+  await openInquiryPage(page);
+
+  const howTo = page.locator('a[href="/docs#support"]');
+  await expect(howTo, 'アプリ内「お問い合わせ」の手順への導線が無い').toHaveCount(1);
+  await expect(howTo).toBeVisible();
+
+  // ログインできない人向けの代替連絡先 (mailto)。noscript 内の mailto は JS 有効時は
+  // 要素として存在しないので、ここで数えるのは本文に出ている 1 本だけ。
+  const mailto = page.locator('a[href^="mailto:"]');
+  await expect(mailto, '代替連絡先 (support@) への導線が無い').toHaveCount(1);
+  await expect(mailto).toBeVisible();
+
+  // 「送れないと分かるのはフォームを埋めたあと」にならないよう、フォームより前に出す。
+  const isAboveForm = await page.evaluate(() => {
+    const note = document.querySelector('a[href="/docs#support"]');
+    const form = document.querySelector('[data-island="inquiry-form"]');
+    if (!note || !form) return false;
+    return Boolean(
+      note.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_FOLLOWING,
+    );
+  });
+  expect(isAboveForm, '逃がし先はフォームより上に置く').toBe(true);
+});
+
 test('200 {ok:true, mail:true} で完了カードが出てフォーカスが移り、閉じると空のフォームに戻る', async ({
   page,
 }) => {

@@ -89,6 +89,21 @@ test('料金と込み時間が新デザインの確定値と一致する', () =>
   assert.equal(byCode('free').included_hours, 5);
 });
 
+test('Enterprise の価格には維持管理費用の注記が付く (T-298)', () => {
+  // 月額に加算される項目があることを価格の直下で示す (`_includes/pricing-cards.html` の
+  // `price_note` 分岐)。金額はお見積りなので書かない — 文言が消えたら実態と食い違うので固定する。
+  const note = byCode('enterprise').price_note;
+  assert.equal(typeof note, 'string', 'enterprise.price_note が読めていない');
+  assert.ok(note.trim().length > 0, 'enterprise.price_note が空');
+
+  // ⚠️ CTA (「導入について相談する」/ `/enterprise/inquiry/`) はここでは検査できない。
+  //    `loadTiers()` は `cta:` のネストを読み飛ばす (plans-yml.js) ため。
+  //    相談導線が静かに消えないことは **ビルド出力への CI grep** が固定する —
+  //    `.github/workflows/jekyll.yml` の `Verify build output`:
+  //      grep -q 'href="/enterprise/inquiry/"' _site/price/index.html
+  //      grep -q '維持管理費用'                 _site/price/index.html
+});
+
 test('無料トライアルはどのプランにも設けない', () => {
   // クレジットカードを登録しなければ全員 Free で使えるので試用期間は不要。
   // (再トライアルの穴を作らないためにも設けない)

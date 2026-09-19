@@ -15,7 +15,11 @@ params: なし
 
 プランごとの CTA は `plans.yml` の `cta` (kind = download / link)。`secondary_cta`
 (label / href) があれば、主ボタンの下にテキストリンクを 1 本足す (T-263。カードのみで、
-Free の横帯は対象外)。
+Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談リンク 1 本に戻ったため、
+現在 `secondary_cta` を持つプランは無い** — 仕組みは汎用として残してある。
+
+価格の直下の注記は `plans.yml` の `price_note` (任意。T-298 の「+ 維持管理費用 / 月」)。
+カード下の `note` とは別物で、こちらは金額の続きとして読ませる。
 
 `grandfather` パラメータ (既存 Pro 無制限の据え置き注記) は 2026-08-02 に撤去した。
 `_data/plans.yml` の `grandfather_note` と `/price/` 側の受け渡しも同時に削除してある。
@@ -65,6 +69,14 @@ Free の横帯は対象外)。
       <span class="text-[36px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
       <span class="text-[13px] {{ key_cls }}">{{ plan.price_unit }}（{{ site.data.plans.tax_note }}）</span>
     </div>
+    {%- comment -%}
+      価格の直下の注記 (T-298)。Enterprise の「+ 維持管理費用 / 月」のように、
+      月額に**加算される項目があること**を金額のすぐ下で示す。金額そのものは
+      お見積りなので書かない (文言は `plans.yml` の `price_note` が SSOT)。
+    {%- endcomment -%}
+    {%- if plan.price_note %}
+    <p class="mt-1 text-[12px] leading-[1.7] {{ key_cls }}">{{ plan.price_note }}</p>
+    {%- endif %}
 
     <p class="mt-3.5 text-[13.5px] leading-[1.9] {{ body_cls }}">{{ plan.summary }}</p>
 
@@ -108,7 +120,9 @@ Free の横帯は対象外)。
       {%- endif %}
       {%- comment -%}
         副導線 (T-263)。主ボタンとは別の受け口を 1 本だけ、テキストリンクで置く
-        (Enterprise の「導入について相談する」= 請求書払い・銀行振込や事前相談)。
+        (T-263 当時の用例は Enterprise の「導入について相談する」だった。T-298 で
+        Enterprise が見積ベースに戻り、それが主ボタンになったため**現在この分岐を
+        使うプランは無い** — 仕組みだけ汎用として残してある)。
         ボタンを 2 つ並べるとカードの主導線が分からなくなるため、見た目は本文中の
         テキストリンク (`text-accent-soft hover:underline`) に揃える。
         **内部リンク前提** — `_data/plans.yml` の `secondary_cta` に外部 URL を

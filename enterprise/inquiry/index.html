@@ -48,16 +48,19 @@ schemas:
 <section class="pb-20">
   <div class="mx-auto w-[92%] max-w-[760px]">
     {%- comment -%}
-      T-294: サイト内の「問い合わせ」は全部このページに来る (ナビ / フッター / docs / クッキーポリシー)。
-      下のフォームは会社名必須・3 アカウント以上の Enterprise 専用なので、それ以外の用件で来た人が
-      送れずに迷わないよう、逃がし先をフォームより**上**に本文サイズで置く。
+      T-298: 「Enterprise 以外のお問い合わせはこちら」の**カード** (T-294 でフォームの上に
+      置いた分) は外し、このページの見た目を導入相談に絞った。
+
+      ⚠️ ただし**逃がし先そのものは残す**。サイト内の「お問い合わせ」はヘッダ / フッター /
+         docs (`02-account` の「ログインできない場合」/ `06-ops`) / クッキーポリシーから
+         **全部このページに来る**のに対し、下のフォームは会社名必須・Enterprise の最低
+         アカウント数以上が前提で、それ以外の用件では送れない。カードごと消すと一般の
+         問い合わせが行き止まりになるため、1 行の注記としてフォームの**上**に置く。
+         この導線が消えていないことは `e2e/inquiry.spec.ts` が固定している。
     {%- endcomment -%}
-    <div class="card mb-6 p-5 text-[14px] leading-[1.9] text-ink-2">
-      <p><strong class="text-ink">Enterprise 以外のお問い合わせはこちら</strong></p>
-      <p class="mt-1.5">
-        不具合の報告やご質問は、アプリ内の「お問い合わせ」からお送りください（<a href="/docs#support" class="text-accent-soft hover:underline">手順</a>）。ログインできない場合は <a href="mailto:{{ site.data.inquiry.support_email }}" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> までご連絡ください。下のフォームは Enterprise（3 アカウント以上）の導入相談専用です。
-      </p>
-    </div>
+    <p class="mb-6 text-[14px] leading-[1.9] text-ink-2">
+      Enterprise 以外のご質問・不具合のご報告は、アプリ内の「お問い合わせ」からお送りください（<a href="/docs#support" class="text-accent-soft hover:underline">手順</a>）。ログインできない場合は <a href="mailto:{{ site.data.inquiry.support_email }}" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> までご連絡ください。
+    </p>
     <div data-island="inquiry-form"
          data-endpoint="{{ inquiry_endpoint }}"
          data-turnstile-site-key="{{ site.data.inquiry.turnstile_site_key }}"
