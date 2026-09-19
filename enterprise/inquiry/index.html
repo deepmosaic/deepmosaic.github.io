@@ -48,19 +48,15 @@ schemas:
 <section class="pb-20">
   <div class="mx-auto w-[92%] max-w-[760px]">
     {%- comment -%}
-      T-298: 「Enterprise 以外のお問い合わせはこちら」の**カード** (T-294 でフォームの上に
-      置いた分) は外し、このページの見た目を導入相談に絞った。
+      T-298: フォームの上にあった「Enterprise 以外のお問い合わせはこちら」の案内 (T-294 の
+      カード) は、ユーザー指示 (2026-09-19「この表示は不要」) で外した。このページの上部は
+      導入相談だけにする。
 
-      ⚠️ ただし**逃がし先そのものは残す**。サイト内の「お問い合わせ」はヘッダ / フッター /
-         docs (`02-account` の「ログインできない場合」/ `06-ops`) / クッキーポリシーから
-         **全部このページに来る**のに対し、下のフォームは会社名必須・Enterprise の最低
-         アカウント数以上が前提で、それ以外の用件では送れない。カードごと消すと一般の
-         問い合わせが行き止まりになるため、1 行の注記としてフォームの**上**に置く。
-         この導線が消えていないことは `e2e/inquiry.spec.ts` が固定している。
+      ⚠️ 逃がし先は T-294 以前と同じ**フォーム下の小さな注記 1 行**に戻してある。サイト内の
+         「お問い合わせ」(ヘッダ / フッター / docs / クッキーポリシー) は全部このページに来るので、
+         導線を完全に消すと一般の問い合わせが行き止まりになる。`e2e/inquiry.spec.ts` が
+         「上部に出ていない / 下部に残っている」の両方を固定する。
     {%- endcomment -%}
-    <p class="mb-6 text-[14px] leading-[1.9] text-ink-2">
-      Enterprise 以外のご質問・不具合のご報告は、アプリ内の「お問い合わせ」からお送りください（<a href="/docs#support" class="text-accent-soft hover:underline">手順</a>）。ログインできない場合は <a href="mailto:{{ site.data.inquiry.support_email }}" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> までご連絡ください。
-    </p>
     <div data-island="inquiry-form"
          data-endpoint="{{ inquiry_endpoint }}"
          data-turnstile-site-key="{{ site.data.inquiry.turnstile_site_key }}"
@@ -79,6 +75,9 @@ schemas:
         </div>
       </noscript>
     </div>
+    <p class="mt-6 text-[12.5px] leading-[1.9] text-ink-4">
+      Enterprise 以外のお問い合わせ（不具合の報告やご質問）は、アプリ内の「お問い合わせ」からお送りください（<a href="/docs#support" class="text-accent-soft hover:underline">手順</a>）。
+    </p>
   </div>
 </section>
 
