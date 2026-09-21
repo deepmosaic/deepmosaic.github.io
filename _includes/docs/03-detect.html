@@ -34,6 +34,30 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       <img src="/assets/img/screenshots/home.webp" alt="ホーム画面（処理済み動画一覧）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）。ドラッグ&amp;ドロップはこの画面が受け口になります</figcaption>
     </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">表示形式</h3>
+    <p>一覧の右上で表示形式を3つから選べます。選んだ表示形式は次回以降も引き継がれます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">大アイコン</div>
+        <div class="kv-val">サムネイルを大きく並べる初期表示。内容を絵で見分けたいときに向きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">並べて表示</div>
+        <div class="kv-val">1件ずつ横長の行にして、状態・解像度・ファイルサイズ・追加日を添えます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">詳細</div>
+        <div class="kv-val">表形式。名前・状態・追加日・長さ・解像度・検出数・タグ・プロジェクトIDが列に並び、列見出しをクリックすると並べ替えられます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/home-tile.webp" alt="「並べて表示」のホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">並べて表示。1件ずつ横並びで、状態や解像度を添えて確認できます</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/home-detail.webp" alt="「詳細」表示のホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">詳細。列見出しをクリックすると並べ替えられます</figcaption>
+    </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">動画カードの操作</h3>
     <p>カードをクリックすると<a href="#edit-overview">編集ページ</a>が開きます。カード右上の {% include icon.html name="Menu" class="inline h-3.5 w-3.5 align-[-2px]" %} メニューには次の項目があります。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
