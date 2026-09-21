@@ -106,7 +106,7 @@ npm run dev
 npm test
 ```
 
-期待結果: **144 件中 143 pass / 1 skip** (2026-09-21 時点)。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
+期待結果: **159 件中 158 pass / 1 skip** (2026-09-21 時点)。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
 
 ## ブラウザ E2E（問い合わせフォーム）
 
@@ -190,7 +190,7 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 
 ## 任意 / オプション（基本の起動には不要）
 
-- **`SUPABASE_PROXY_API_KEY` の設定** — `npm test` の plan_catalog ライブ照合 1 件が有効になる（92 件全件実行）。未設定でも開発・起動に支障なし。
+- **`SUPABASE_PROXY_API_KEY` の設定** — `npm test` の plan_catalog ライブ照合 1 件が有効になる（159 件全件実行）。未設定でも開発・起動に支障なし。
 - **`node scripts/check-plan-catalog.mjs`** — `_data/plans.yml` と Supabase `plan_catalog` の乖離検査（CI が実行。鍵が無ければスキップして exit 0）。
 - **`bundle exec jekyll serve --livereload`** — Jekyll 側のみの編集時にブラウザ自動リロード。
 - **画像追加時の運用**（WebP 必須・`node scripts/optimize-images.mjs --apply` 等）は `CLAUDE.md` の Conventions を参照。

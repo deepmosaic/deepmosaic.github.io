@@ -107,7 +107,7 @@ confusion_reasons:
 os: "Windows 10, Windows 11"
 category: "MultimediaApplication"
 subcategory: "Video Editing Software"
-software_requirements: "Windows 10 / 11（64 ビット）、メモリ 8GB 以上（16GB 推奨）、NVIDIA CUDA 対応 GPU を推奨、Microsoft Edge WebView2、ストレージ約 10GB"
+software_requirements: "Windows 10 / 11（64 ビット）、メモリ 8GB 以上（16GB 推奨）、NVIDIA CUDA 対応 GPU を推奨、Microsoft Edge WebView2、ストレージ 10GB程度"
 # JSON-LD の keywords。**方向を含む語だけ**で構成する (削除した keywords メタは
 # 「モザイク編集ソフト」など方向が曖昧な語ばかりで、目的に逆行していた)。
 keywords: "動画 モザイク 自動, 顔 モザイク 自動, モザイク 加工 ソフト, モザイク 焼き込み, Adobe Premiere Pro 連携"

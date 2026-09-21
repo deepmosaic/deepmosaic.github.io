@@ -97,6 +97,58 @@ export function loadTiers(ymlPath = PLANS_YML) {
   return tiers;
 }
 
+/**
+ * 1 プランの `specs:` (カードに並ぶ `- label:` / `value:` の対) を返す。
+ * 未知の `code` なら空配列。
+ *
+ * `loadTiers` は specs を読み飛ばす (料金計算に要らないため)。表示文言の検査にだけ
+ * 必要なのでここに足した — plans.yml を読むコードは必ずこのモジュールを通す、
+ * という約束 (冒頭の注記) を守るため。
+ *
+ * @param {string} code
+ * @param {string} [ymlPath]
+ * @returns {{label: string, value: string}[]}
+ */
+export function loadSpecs(code, ymlPath = PLANS_YML) {
+  const lines = readFileSync(ymlPath, 'utf8').split(/\r?\n/);
+  const specs = [];
+  let inTier = false;
+  let inSpecs = false;
+
+  for (const line of lines) {
+    const tier = line.match(/^ {2}- code: (.*)$/);
+    if (tier) {
+      if (inTier) break; // 目的のプランを読み終えて次のプランに入った
+      inTier = parseScalar(tier[1]) === code;
+      inSpecs = false;
+      continue;
+    }
+    if (!inTier) continue;
+    if (line.trim() === '' || line.trim().startsWith('#')) continue;
+
+    if (/^ {4}specs:\s*$/.test(line)) {
+      inSpecs = true;
+      continue;
+    }
+    if (!inSpecs) continue;
+
+    const label = line.match(/^ {6}- label: (.*)$/);
+    if (label) {
+      specs.push({ label: String(parseScalar(label[1])), value: '' });
+      continue;
+    }
+
+    const value = line.match(/^ {8}value: (.*)$/);
+    if (value && specs.length > 0) {
+      specs[specs.length - 1].value = String(parseScalar(value[1]));
+      continue;
+    }
+
+    inSpecs = false; // specs ブロックの外に出た (cta: など)
+  }
+  return specs;
+}
+
 /** YAML の 1 行スカラーを JS の値にする (行末コメントは落とす)。 */
 export function parseScalar(raw) {
   const v = raw.replace(/\s+#.*$/, '').trim();
