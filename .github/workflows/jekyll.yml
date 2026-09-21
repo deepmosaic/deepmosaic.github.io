@@ -168,17 +168,27 @@ jobs:
             grep -rnE 'download="(true|false)"' --include='*.html' _site | head -20
             fail=1
           fi
-          # T-254: Google フォームの導線は自前ページ (/enterprise/inquiry/) に全置換した。旧 URL が出力に
-          # 戻っていないこと、問い合わせページがアイランド root と JS 無効時の代替 (noscript) を持つことを固定する。
+          # T-254: Google フォームの導線は自前ページ (/enterprise/inquiry/ と /contact/) に全置換した。
+          # 旧 URL が出力に戻っていないことを固定する。
           if grep -rl --include='*.html' 'docs.google.com/forms' _site >/dev/null 2>&1; then
-            echo "::error::Google フォームの URL が出力に残っている — 問い合わせ導線は /enterprise/inquiry/ に統一すること"
+            echo "::error::Google フォームの URL が出力に残っている — 問い合わせ導線は自前ページに統一すること"
             grep -rln --include='*.html' 'docs.google.com/forms' _site | head -10
             fail=1
           fi
-          grep -q 'data-island="inquiry-form"' _site/enterprise/inquiry/index.html \
-            || { echo "::error::/enterprise/inquiry/ からフォームのアイランド root が消えている"; fail=1; }
-          grep -q '<noscript>' _site/enterprise/inquiry/index.html \
-            || { echo "::error::/enterprise/inquiry/ から JS 無効時の代替 (noscript) が消えている"; fail=1; }
+          # T-254 / T-332: 問い合わせは 2 ページ (Enterprise 導入相談 = enterprise、一般 = general)。
+          # どちらも「アイランド root」「kind」「JS 無効時の代替 (noscript)」の 3 点が揃っていること。
+          # kind が落ちると /contact/ が Enterprise の項目立て (会社名・電話・アカウント数必須) で
+          # 描画され、一般の問い合わせが送れなくなる — 見た目は動くので e2e か ここでしか捕まらない。
+          for entry in 'enterprise/inquiry:enterprise' 'contact:general'; do
+            page="${entry%%:*}"
+            kind="${entry##*:}"
+            grep -q 'data-island="inquiry-form"' "_site/$page/index.html" \
+              || { echo "::error::/$page/ からフォームのアイランド root が消えている"; fail=1; }
+            grep -q "data-kind=\"$kind\"" "_site/$page/index.html" \
+              || { echo "::error::/$page/ の data-kind が \"$kind\" でない — _includes/inquiry-form.html の include 引数を確認すること"; fail=1; }
+            grep -q '<noscript>' "_site/$page/index.html" \
+              || { echo "::error::/$page/ から JS 無効時の代替 (noscript) が消えている"; fail=1; }
+          done
           # T-286: E2E 一式は公開物ではない (_config.yml の exclude)。除外が外れると
           # spec と設定がそのまま配信されるので、出力に現れた時点で落とす。
           for leaked in e2e playwright.config.ts; do
@@ -194,7 +204,7 @@ jobs:
           node scripts/check-docs.mjs || fail=1
           exit $fail
 
-      # T-286: Enterprise 問い合わせフォームのブラウザ E2E。
+      # T-286 / T-332: 問い合わせフォーム (/enterprise/inquiry/ と /contact/) のブラウザ E2E。
       #
       # 上の `Verify build output` が固定できるのは「アイランド root と noscript が
       # 出力に居ること」まで。**送信が実際に通るか** (検証エラーの表示、全角電話の
@@ -211,7 +221,7 @@ jobs:
       - name: Install Playwright browser (Chromium)
         run: npx playwright install --with-deps chromium
 
-      - name: E2E (Enterprise 問い合わせフォーム)
+      - name: E2E (問い合わせフォーム)
         env:
           E2E_SKIP_BUILD: '1'
         run: npx playwright test

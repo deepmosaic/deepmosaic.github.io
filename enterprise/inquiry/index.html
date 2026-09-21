@@ -15,15 +15,11 @@ schemas:
 {%- comment -%}
   T-254: Google フォームを置き換えた自前の問い合わせページ。フォーム本体は Svelte アイランド
   (src/islands/InquiryForm.svelte)、送信先は worker-auth0-updater の POST /inquiry (T-253)。
-  設定値は _data/inquiry.yml。本番ビルド (JEKYLL_ENV=production) は endpoint、ローカルの
-  jekyll serve (development) は endpoint_dev を使う — dev Worker だけが http://localhost:4000 を
-  CORS 許可しているため。
+  アイランド root と設定値 (_data/inquiry.yml) の受け渡しは `_includes/inquiry-form.html`。
+
+  T-332: 一般のお問い合わせは `/contact/` (kind="general") に分けた。このページは
+  Enterprise の導入相談専用で、サイト内の「お問い合わせ」導線はもう来ない。
 {%- endcomment -%}
-{%- if jekyll.environment == "production" -%}
-  {%- assign inquiry_endpoint = site.data.inquiry.endpoint -%}
-{%- else -%}
-  {%- assign inquiry_endpoint = site.data.inquiry.endpoint_dev | default: site.data.inquiry.endpoint -%}
-{%- endif -%}
 
 <section class="pt-16 pb-10">
   <div class="mx-auto w-[92%] max-w-[1120px]">
@@ -47,37 +43,7 @@ schemas:
 
 <section class="pb-20">
   <div class="mx-auto w-[92%] max-w-[760px]">
-    {%- comment -%}
-      T-298: フォームの上にあった「Enterprise 以外のお問い合わせはこちら」の案内 (T-294 の
-      カード) は、ユーザー指示 (2026-09-19「この表示は不要」) で外した。このページの上部は
-      導入相談だけにする。
-
-      ⚠️ 逃がし先は T-294 以前と同じ**フォーム下の小さな注記 1 行**に戻してある。サイト内の
-         「お問い合わせ」(ヘッダ / フッター / docs / クッキーポリシー) は全部このページに来るので、
-         導線を完全に消すと一般の問い合わせが行き止まりになる。`e2e/inquiry.spec.ts` が
-         「上部に出ていない / 下部に残っている」の両方を固定する。
-    {%- endcomment -%}
-    <div data-island="inquiry-form"
-         data-endpoint="{{ inquiry_endpoint }}"
-         data-turnstile-site-key="{{ site.data.inquiry.turnstile_site_key }}"
-         data-support-email="{{ site.data.inquiry.support_email }}">
-      <noscript>
-        <div class="card p-6 text-[14.5px] leading-[1.9] text-ink-2">
-          <p>このフォームの送信には JavaScript が必要です。JavaScript を有効にできない場合は、以下の項目を <a href="mailto:{{ site.data.inquiry.support_email }}?subject=Enterprise%20%E5%B0%8E%E5%85%A5%E7%9B%B8%E8%AB%87" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> 宛のメールにご記入ください。</p>
-          <ul class="mt-3 list-disc pl-5">
-            <li>会社名</li>
-            <li>氏名</li>
-            <li>メールアドレス</li>
-            <li>電話番号</li>
-            <li>利用アカウント予定数（3 以上）</li>
-            <li>ご相談内容</li>
-          </ul>
-        </div>
-      </noscript>
-    </div>
-    <p class="mt-6 text-[12.5px] leading-[1.9] text-ink-4">
-      Enterprise 以外のお問い合わせ（不具合の報告やご質問）は、アプリ内の「お問い合わせ」からお送りください（<a href="/docs#support" class="text-accent-soft hover:underline">手順</a>）。
-    </p>
+    {% include inquiry-form.html kind="enterprise" %}
   </div>
 </section>
 

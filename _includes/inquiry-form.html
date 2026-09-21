@@ -1,0 +1,53 @@
+{%- comment -%}
+  問い合わせフォームのアイランド root (T-254、T-332 で 2 種類に)。
+
+    {% include inquiry-form.html kind="enterprise" %}   /enterprise/inquiry/  (既定)
+    {% include inquiry-form.html kind="general" %}      /contact/
+
+  フォーム本体は `src/islands/InquiryForm.svelte`、送信先は desktop リポジトリの
+  `worker-auth0-updater/src/inquiry.ts` (T-253 / T-331) の POST /inquiry で**両者とも同じ**。
+  `kind` だけが項目立てと Worker 側の宛先テンプレートを決める。
+
+  設定値は `_data/inquiry.yml`。本番ビルド (JEKYLL_ENV=production) は endpoint、ローカルの
+  jekyll serve (development) は endpoint_dev を使う — dev Worker だけが http://localhost:4000 を
+  CORS 許可しているため。
+
+  ⚠️ 2 ページが同じ配線 (data-* → 島の props) を使うので、**ここ 1 箇所で持つ**。
+     片方のページにだけ属性が足された状態を作らないこと (e2e が両方の出力を見ている)。
+{%- endcomment -%}
+{%- assign inquiry_kind = include.kind | default: "enterprise" -%}
+{%- if jekyll.environment == "production" -%}
+  {%- assign inquiry_endpoint = site.data.inquiry.endpoint -%}
+{%- else -%}
+  {%- assign inquiry_endpoint = site.data.inquiry.endpoint_dev | default: site.data.inquiry.endpoint -%}
+{%- endif -%}
+<div data-island="inquiry-form"
+     data-kind="{{ inquiry_kind }}"
+     data-endpoint="{{ inquiry_endpoint }}"
+     data-turnstile-site-key="{{ site.data.inquiry.turnstile_site_key }}"
+     data-support-email="{{ site.data.inquiry.support_email }}">
+  <noscript>
+    <div class="card p-6 text-[14.5px] leading-[1.9] text-ink-2">
+      {%- if inquiry_kind == "general" -%}
+      <p>このフォームの送信には JavaScript が必要です。JavaScript を有効にできない場合は、以下の項目を <a href="mailto:{{ site.data.inquiry.support_email }}?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> 宛のメールにご記入ください。</p>
+      <ul class="mt-3 list-disc pl-5">
+        <li>氏名</li>
+        <li>メールアドレス</li>
+        <li>件名</li>
+        <li>お問い合わせ内容</li>
+        <li>ご利用中のバージョン（任意）</li>
+      </ul>
+      {%- else -%}
+      <p>このフォームの送信には JavaScript が必要です。JavaScript を有効にできない場合は、以下の項目を <a href="mailto:{{ site.data.inquiry.support_email }}?subject=Enterprise%20%E5%B0%8E%E5%85%A5%E7%9B%B8%E8%AB%87" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> 宛のメールにご記入ください。</p>
+      <ul class="mt-3 list-disc pl-5">
+        <li>会社名</li>
+        <li>氏名</li>
+        <li>メールアドレス</li>
+        <li>電話番号</li>
+        <li>利用アカウント予定数（3 以上）</li>
+        <li>ご相談内容</li>
+      </ul>
+      {%- endif -%}
+    </div>
+  </noscript>
+</div>

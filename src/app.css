@@ -11,6 +11,7 @@
 @source "../price/**/*.html";
 @source "../company/**/*.html";
 @source "../enterprise/**/*.html";
+@source "../contact/**/*.html";
 @source "../spec/**/*.html";
 @source "../_guides/**/*.md";
 @source "./**/*.svelte";

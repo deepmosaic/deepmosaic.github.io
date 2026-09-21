@@ -106,11 +106,11 @@ npm run dev
 npm test
 ```
 
-期待結果: **129 件中 128 pass / 1 skip** (2026-09-17 時点)。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
+期待結果: **144 件中 143 pass / 1 skip** (2026-09-21 時点)。skip の 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる plan_catalog ライブ照合（→「環境変数」参照）。失敗 0 が正常。
 
-## ブラウザ E2E（Enterprise 問い合わせフォーム）
+## ブラウザ E2E（問い合わせフォーム）
 
-`/enterprise/inquiry/` の送信フローを実ブラウザ（Chromium）で検証する（T-286）。`npm test` が見るのは `src/lib/inquiry-validate.js` の**純ロジックだけ**で、**Jekyll の `data-endpoint` → Svelte アイランドの props → `fetch`** という配線はここでしか固定できない。
+`/enterprise/inquiry/`（Enterprise 導入相談・T-286）と `/contact/`（一般のお問い合わせ・T-332）の送信フローを実ブラウザ（Chromium）で検証する。`npm test` が見るのは `src/lib/inquiry-validate.js` の**純ロジックだけ**で、**Jekyll の `data-endpoint` / `data-kind` → Svelte アイランドの props → `fetch`** という配線はここでしか固定できない。
 
 ```powershell
 npm run e2e:install   # 初回のみ: Chromium を取得（既にあれば何もしない）

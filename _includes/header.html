@@ -1,5 +1,5 @@
-{%- comment -%}T-254: 問い合わせは自前ページ (Google フォームは廃止){%- endcomment -%}
-{%- capture contact_url -%}/enterprise/inquiry/{%- endcapture -%}
+{%- comment -%}T-254: 問い合わせは自前ページ (Google フォームは廃止)。T-332 で一般窓口 /contact/ に付け替え (Enterprise の導入相談は /enterprise/inquiry/){%- endcomment -%}
+{%- capture contact_url -%}/contact/{%- endcapture -%}
 {%- assign u = page.url -%}
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
   <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-7">

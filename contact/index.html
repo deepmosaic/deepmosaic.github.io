@@ -1,0 +1,51 @@
+---
+layout: default
+title: お問い合わせ
+seo_title: お問い合わせ｜Deepmosaic
+permalink: /contact/
+description: Deepmosaic の一般のお問い合わせフォーム。ご質問、不具合のご報告、ご請求に関するご連絡などをお送りください。氏名・メールアドレス・件名・お問い合わせ内容をご記入いただければ、3 営業日以内に担当者よりご返答いたします。
+schemas:
+  - breadcrumb
+---
+
+{% include header.html %}
+
+{%- comment -%}
+  T-332: 一般のお問い合わせ窓口。ヘッダ / フッタ / ドキュメント / クッキーポリシーの
+  「お問い合わせ」はこのページに来る。Enterprise の導入相談だけが `/enterprise/inquiry/`。
+
+  フォームは Svelte アイランド (`src/islands/InquiryForm.svelte`) で、
+  `_includes/inquiry-form.html` が data-* 経由で `kind="general"` を渡す。
+  送信先は Enterprise と同じ Worker の POST /inquiry (kind で宛先テンプレートが変わる)。
+{%- endcomment -%}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="パンくず" class="mb-5 text-[13px] text-ink-4">
+      <a href="/" class="hover:text-accent-soft">ホーム</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">お問い合わせ</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">お問い合わせ</h1>
+    {%- comment -%}
+      先頭の 1 文は製品カテゴリの宣言 (出所は _data/entity.yml、/price/ と同じ)。
+      金額・込み時間はここに書かない (正は _data/plans.yml、表示は /price/)。
+    {%- endcomment -%}
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.entity.one_liner }}
+      ご質問、不具合のご報告、ご請求についてのご連絡は、以下のフォームからお送りください。3 営業日以内に担当者よりご返答いたします。
+      使い方でお困りの場合は<a href="/docs" class="text-accent-soft hover:underline">ドキュメント</a>もあわせてご確認ください。
+    </p>
+    <p class="mt-3 text-[13.5px] leading-[1.95] text-ink-3">
+      Enterprise（3 アカウント以上）の導入のご相談・お見積り・請求書払いのご希望は、<a href="/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise 導入相談</a>からお送りください。
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    {% include inquiry-form.html kind="general" %}
+  </div>
+</section>
+
+{% include footer.html %}

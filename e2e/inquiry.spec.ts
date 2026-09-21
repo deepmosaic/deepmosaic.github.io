@@ -8,19 +8,23 @@
 //   - 全角で打った電話番号が **送信時に** 半角へ変換されている
 //   - Worker の応答 (200 / 429 / 502) ごとに出る文面と、完了カードのフォーカス移動
 //   - ハニーポット `website` が payload に載る (Worker が bot を判定できる)
-//   - POST ボディの形が Worker の契約どおり
+//   - POST ボディの形が Worker の契約どおり (enterprise は `kind` を載せない)
 //
-// ## 外部通信は一切させない
-//
-// `data-endpoint` は本番 / dev の Worker を指す。**実行のたびに本物の問い合わせを
-// 作ってしまわないよう**、`beforeEach` でまず全リクエストを見張り、配信サーバ以外へ
-// 出ようとするものを abort する。その後に endpoint だけを `page.route` で差し替える
-// (後から登録したハンドラが先に評価されるため、差し替えが見張りに優先する)。
-//
-// route.fulfill した応答にもブラウザは CORS を適用するので、プリフライト (OPTIONS) と
-// `Access-Control-Allow-Origin` を自前で返す。ここを落とすと本体の fetch が
-// ネットワークエラーに倒れ、「送信できませんでした」の文面が出て原因が分かりにくい。
-import { expect, test, type Page, type Route } from '@playwright/test';
+// 一般のお問い合わせ (`/contact/`, kind=general) は `e2e/contact.spec.ts`。
+// 共有の道具立て (外部通信の遮断 / endpoint の差し替え / locator) は
+// `e2e/lib/inquiry-harness.ts` にある。
+import { expect, test, type Page } from '@playwright/test';
+
+import {
+  blockExternalTraffic,
+  doneCard,
+  fillFields,
+  inquiryForm,
+  openInquiryPage,
+  stubInquiryEndpoint,
+  submitButton,
+  type InquiryCall,
+} from './lib/inquiry-harness';
 
 const INQUIRY_PATH = '/enterprise/inquiry/';
 
@@ -36,105 +40,11 @@ const VALID_INPUT = Object.freeze({
 
 type FieldKey = keyof typeof VALID_INPUT;
 
-/** `page.route` で捕まえた `POST /inquiry` の 1 件。 */
-type InquiryCall = {
-  method: string;
-  contentType: string;
-  body: Record<string, unknown>;
-};
-
-/** Worker の代わりに返す応答。`body` は JSON にして返す。 */
-type StubReply = { status: number; body?: unknown };
-
-const CORS_HEADERS = Object.freeze({
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'POST, OPTIONS',
-  'access-control-allow-headers': 'content-type',
-  'access-control-max-age': '0',
-});
-
-/** 配信サーバ以外への通信を止める。テストが本物の Worker を叩かないための最後の砦。 */
-async function blockExternalTraffic(page: Page, baseURL: string): Promise<void> {
-  await page.route('**/*', async (route: Route) => {
-    const url = route.request().url();
-    if (url.startsWith(baseURL) || url.startsWith('data:') || url.startsWith('blob:')) {
-      await route.continue();
-      return;
-    }
-    await route.abort();
-  });
-}
-
-/**
- * 問い合わせページを開き、島に渡っている設定値を読む。
- *
- * 値は **Jekyll が出した markup から**取る。テスト側に endpoint を直書きすると
- * `_data/inquiry.yml` の差し替えを検知できなくなる。
- */
-async function openInquiryPage(page: Page): Promise<{ endpoint: string; supportEmail: string }> {
-  await page.goto(INQUIRY_PATH);
-  const root = page.locator('[data-island="inquiry-form"]');
-  await expect(root).toHaveCount(1);
-
-  const endpoint = (await root.getAttribute('data-endpoint')) ?? '';
-  const supportEmail = (await root.getAttribute('data-support-email')) ?? '';
-  expect(endpoint, 'data-endpoint が空 — _data/inquiry.yml の受け渡しが切れている').not.toBe('');
-  expect(supportEmail, 'data-support-email が空 — 502 の案内文に宛先が出せない').not.toBe('');
-
-  // 島がマウントされてフォームが描画されるまで待つ (素の markup は noscript だけ)
-  await expect(page.locator('#inq-company')).toBeVisible();
-  return { endpoint, supportEmail };
-}
-
-/** endpoint への POST を横取りして `reply` を返す。捕まえた送信内容を配列で返す。 */
-async function stubInquiryEndpoint(
-  page: Page,
-  endpoint: string,
-  reply: StubReply,
-): Promise<InquiryCall[]> {
-  const calls: InquiryCall[] = [];
-  await page.route(endpoint, async (route: Route) => {
-    const request = route.request();
-    if (request.method() === 'OPTIONS') {
-      await route.fulfill({ status: 204, headers: { ...CORS_HEADERS }, body: '' });
-      return;
-    }
-    calls.push({
-      method: request.method(),
-      contentType: request.headers()['content-type'] ?? '',
-      body: (request.postDataJSON() ?? {}) as Record<string, unknown>,
-    });
-    await route.fulfill({
-      status: reply.status,
-      headers: { ...CORS_HEADERS, 'content-type': 'application/json; charset=utf-8' },
-      body: JSON.stringify(reply.body ?? {}),
-    });
-  });
-  return calls;
-}
-
 async function fillForm(
   page: Page,
   overrides: Partial<Record<FieldKey, string>> = {},
 ): Promise<void> {
-  const values = { ...VALID_INPUT, ...overrides };
-  for (const [key, value] of Object.entries(values)) {
-    await page.locator(`#inq-${key}`).fill(value);
-  }
-}
-
-/** 島の root で範囲を絞る (ページ内の他のフォーム / ボタンと混ざらないように)。 */
-function inquiryForm(page: Page) {
-  return page.locator('[data-island="inquiry-form"] form');
-}
-
-function submitButton(page: Page) {
-  return inquiryForm(page).locator('button[type="submit"]');
-}
-
-/** 完了カード。島の root 配下で `tabindex="-1"` を持つのはこれだけ。 */
-function doneCard(page: Page) {
-  return page.locator('[data-island="inquiry-form"] div[tabindex="-1"]');
+  await fillFields(page, { ...VALID_INPUT, ...overrides });
 }
 
 test.beforeEach(async ({ page, baseURL }) => {
@@ -144,7 +54,7 @@ test.beforeEach(async ({ page, baseURL }) => {
 test('未入力のまま送信すると、項目ごとのエラーが aria 属性つきで出て送信はされない', async ({
   page,
 }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
 
   await submitButton(page).click();
@@ -180,7 +90,7 @@ test('未入力のまま送信すると、項目ごとのエラーが aria 属�
 });
 
 test('全角で入力した電話番号は半角に直してから送信される', async ({ page }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, {
     status: 200,
     body: { ok: true, mail: true },
@@ -196,7 +106,7 @@ test('全角で入力した電話番号は半角に直してから送信され�
 });
 
 test('利用アカウント予定数が 3 未満だと Enterprise の下限を示して止まる', async ({ page }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
 
   await fillForm(page, { seats: '2' });
@@ -214,37 +124,10 @@ test('利用アカウント予定数が 3 未満だと Enterprise の下限を�
   expect(calls).toHaveLength(0);
 });
 
-test('Enterprise 以外の案内はフォームの上に出さず、下の小さな注記だけに残す (T-298)', async ({ page }) => {
-  // ユーザー指示 (2026-09-19): フォームの上の「Enterprise 以外のお問い合わせはこちら」の
-  // 表示は不要。ただしサイト内の「お問い合わせ」(ヘッダ / フッター / docs / クッキーポリシー) は
-  // **全部**このページに来るので、導線を完全に消すと一般の問い合わせが行き止まりになる。
-  // T-294 以前と同じ「フォーム下の注記 1 行」だけを残す — その両方をここで固定する。
-  await openInquiryPage(page);
-
-  await expect(
-    page.getByText('Enterprise 以外のお問い合わせはこちら'),
-    'フォーム上のカード見出しが復活している',
-  ).toHaveCount(0);
-
-  const howTo = page.locator('a[href="/docs#support"]');
-  await expect(howTo, 'アプリ内「お問い合わせ」の手順への導線が無い').toHaveCount(1);
-  await expect(howTo).toBeVisible();
-
-  const isBelowForm = await page.evaluate(() => {
-    const note = document.querySelector('a[href="/docs#support"]');
-    const form = document.querySelector('[data-island="inquiry-form"]');
-    if (!note || !form) return false;
-    return Boolean(
-      note.compareDocumentPosition(form) & Node.DOCUMENT_POSITION_PRECEDING,
-    );
-  });
-  expect(isBelowForm, '案内はフォームの下 (上部には出さない)').toBe(true);
-});
-
 test('200 {ok:true, mail:true} で完了カードが出てフォーカスが移り、閉じると空のフォームに戻る', async ({
   page,
 }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true, mail: true } });
 
   await fillForm(page);
@@ -270,7 +153,7 @@ test('200 {ok:true, mail:true} で完了カードが出てフォーカスが移�
 });
 
 test('200 {ok:true} だけ (mail なし) のときは受付確認メールの案内を出さない', async ({ page }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
 
   await fillForm(page);
@@ -282,7 +165,7 @@ test('200 {ok:true} だけ (mail なし) のときは受付確認メールの案
 });
 
 test('429 はレート制限として案内し、フォームの入力は残す', async ({ page }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   await stubInquiryEndpoint(page, endpoint, {
     status: 429,
     body: { ok: false, code: 'rate_limited' },
@@ -301,7 +184,7 @@ test('429 はレート制限として案内し、フォームの入力は残す'
 });
 
 test('502 は support_email を添えた案内を出す', async ({ page }) => {
-  const { endpoint, supportEmail } = await openInquiryPage(page);
+  const { endpoint, supportEmail } = await openInquiryPage(page, INQUIRY_PATH);
   await stubInquiryEndpoint(page, endpoint, {
     status: 502,
     body: { ok: false, code: 'delivery_failed' },
@@ -319,7 +202,7 @@ test('502 は support_email を添えた案内を出す', async ({ page }) => {
 test('ハニーポット website に値が入っていても送信され、その値が payload に載る', async ({
   page,
 }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
 
   // bot が全項目を埋めた状況。人には見えないので Playwright も force で触る
@@ -335,8 +218,10 @@ test('ハニーポット website に値が入っていても送信され、そ�
 });
 
 test('送信 payload は Worker の契約どおりの形で、正規化済みの値を持つ', async ({ page }) => {
-  const { endpoint } = await openInquiryPage(page);
+  const { endpoint, kind } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
+
+  expect(kind, 'このページは Enterprise 導入相談 (T-332 で /contact/ と分かれた)').toBe('enterprise');
 
   await fillForm(page, { company: '  デモ映像制作株式会社  ', seats: '12' });
   await submitButton(page).click();
@@ -363,6 +248,8 @@ test('送信 payload は Worker の契約どおりの形で、正規化済みの
   expect(call.body['seats'], 'seats は文字列ではなく整数').toBe(12);
   expect(call.body['message']).toBe(VALID_INPUT.message);
   expect(call.body['website'], '人が触らないハニーポットは空文字').toBe('');
+  // **enterprise は kind を載せない** (Worker の既定 = 旧サイト互換、T-331 / T-332)
+  expect(call.body).not.toHaveProperty('kind');
   // turnstile_site_key が空の間はトークンを作れないので、キーごと載せない
   expect(call.body).not.toHaveProperty('turnstileToken');
 });

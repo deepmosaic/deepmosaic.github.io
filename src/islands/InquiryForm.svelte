@@ -1,9 +1,14 @@
 <script>
-  // Enterprise 導入相談フォーム (T-254)。
+  // 問い合わせフォーム (T-254、T-332 で 2 種類に)。
   //
-  // 送信先は worker-auth0-updater の `POST /inquiry` (T-253)。設定 (endpoint / Turnstile の
-  // サイトキー / support 宛先) は Jekyll が `_data/inquiry.yml` から data-* 属性で渡す
-  // (`enterprise/inquiry/index.html`)。検証・正規化・失敗時の文面は
+  // 1 つの島で 2 つのページを賄う。どちらの項目立てにするかは `data-kind` で決まる:
+  //
+  //   kind="enterprise" (既定) … /enterprise/inquiry/  会社名・電話・アカウント数あり
+  //   kind="general"            … /contact/            件名・ご利用中のバージョンあり
+  //
+  // 送信先は worker-auth0-updater の `POST /inquiry` (T-253 / T-331) で**両者とも同じ**。
+  // 設定 (endpoint / Turnstile のサイトキー / support 宛先) は Jekyll が `_data/inquiry.yml`
+  // から data-* 属性で渡す。検証・正規化・失敗時の文面は
   // `src/lib/inquiry-validate.js` (純関数、node --test) に置き、ここは DOM / fetch /
   // Turnstile だけを担う。
   //
@@ -14,22 +19,33 @@
   // Turnstile はサイトキーが空なら一切読み込まない (Worker 側も secret 未投入なら検証を
   // スキップする縮退運用、T-253)。キーがあるときだけ api.js を動的に読んで明示レンダーする。
   // トークンは 1 回きりなので、Worker まで届いた送信のたび (成否を問わず) widget を reset する。
-  import { tick } from 'svelte';
+  import { tick, untrack } from 'svelte';
   import {
-    FIELD_NAMES,
     LIMITS,
     buildPayload,
     describeFailure,
     emptyFields,
+    fieldNames,
+    normalizeKind,
     validateInquiry,
   } from '../lib/inquiry-validate.js';
 
-  let { endpoint = '', turnstileSiteKey = '', supportEmail = '' } = $props();
+  let { endpoint = '', turnstileSiteKey = '', supportEmail = '', kind = 'enterprise' } = $props();
+
+  /** `data-kind` の書き間違いは enterprise に倒す (純関数側と同じ規則)。 */
+  const formKind = $derived(normalizeKind(kind));
+  const isGeneral = $derived(formKind === 'general');
+  /** 誤りがあったときに最初の項目へフォーカスする順 (= 画面の上から下)。 */
+  const keys = $derived(fieldNames(formKind));
 
   const TURNSTILE_ORIGIN = 'https://challenges.cloudflare.com';
   const TURNSTILE_SRC = `${TURNSTILE_ORIGIN}/turnstile/v0/api.js?render=explicit`;
 
-  let fields = $state(emptyFields());
+  // 島は data-* から **1 度だけ** マウントされ props は後から変わらないので、初期値を作る
+  // ときに `kind` を読むのは意図どおり。`untrack` で包んでいるのは Svelte の
+  // `state_referenced_locally` 警告を消すため — ビルドログに警告を残すと、本物の
+  // 取りこぼしが埋もれる。
+  let fields = $state(emptyFields(untrack(() => kind)));
   /** @type {'idle' | 'submitting' | 'done' | 'error'} */
   let status = $state('idle');
   let errorMessage = $state('');
@@ -162,10 +178,10 @@
     event.preventDefault();
     if (status === 'submitting') return;
 
-    const result = validateInquiry(fields);
+    const result = validateInquiry(fields, formKind);
     if (!result.ok) {
       showError('入力内容をご確認ください。', result.errors);
-      const first = FIELD_NAMES.find((key) => result.errors[key]);
+      const first = keys.find((key) => result.errors[key]);
       if (first) focusField(first);
       return;
     }
@@ -183,7 +199,7 @@
     status = 'submitting';
     liveText = '送信しています。';
 
-    const payload = buildPayload(result.fields, turnstileToken);
+    const payload = buildPayload(result.fields, turnstileToken, formKind);
     let outcome;
     try {
       const res = await fetch(endpoint, {
@@ -211,7 +227,11 @@
 
     liveText = '';
     const failure = describeFailure(outcome, { supportEmail });
-    if (failure.kind === 'invalid' && failure.field) {
+    // `describeFailure` が返す項目名は**全 kind の和集合**。この kind で描画していない項目
+    // (例: Worker を T-331 より前に巻き戻すと、general の送信にも「会社名を入力して…」が
+    // 返る) を fieldErrors に入れると、どこにも表示されないまま汎用の一文だけが出て
+    // 手詰まりになる。描画していない項目のときは Worker の文面をそのまま警告に出す。
+    if (failure.kind === 'invalid' && failure.field && keys.includes(failure.field)) {
       showError('入力内容をご確認ください。', { [failure.field]: failure.message });
       focusField(failure.field);
     } else {
@@ -221,7 +241,7 @@
 
   /** 送信完了パネルを閉じて空のフォームに戻す。ここでしか完了表示は消えない。 */
   async function closeDone() {
-    fields = emptyFields();
+    fields = emptyFields(formKind);
     fieldErrors = {};
     errorMessage = '';
     mailSent = false;
@@ -229,7 +249,7 @@
     status = 'idle';
     resetTurnstile();
     await tick();
-    focusField('company');
+    focusField(keys[0]);
   }
 </script>
 
@@ -261,22 +281,24 @@
   <p class="text-[13px] text-ink-4"><span class="text-danger" aria-hidden="true">*</span> は必須項目です。</p>
 
   <div class="mt-5 grid gap-5 sm:grid-cols-2">
-    <div class="sm:col-span-2">
-      <label for="inq-company" class={LABEL}>会社名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
-      <input
-        id="inq-company"
-        name="company"
-        type="text"
-        class={inputClass('company')}
-        bind:value={fields.company}
-        required
-        autocomplete="organization"
-        maxlength={LIMITS.company}
-        aria-invalid={invalid('company')}
-        aria-describedby={describedBy('company', false)}
-      />
-      {#if fieldErrors.company}<p id="inq-company-error" class={ERROR}>{fieldErrors.company}</p>{/if}
-    </div>
+    {#if !isGeneral}
+      <div class="sm:col-span-2">
+        <label for="inq-company" class={LABEL}>会社名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <input
+          id="inq-company"
+          name="company"
+          type="text"
+          class={inputClass('company')}
+          bind:value={fields.company}
+          required
+          autocomplete="organization"
+          maxlength={LIMITS.company}
+          aria-invalid={invalid('company')}
+          aria-describedby={describedBy('company', false)}
+        />
+        {#if fieldErrors.company}<p id="inq-company-error" class={ERROR}>{fieldErrors.company}</p>{/if}
+      </div>
+    {/if}
 
     <div>
       <label for="inq-name" class={LABEL}>氏名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
@@ -314,48 +336,74 @@
       {#if fieldErrors.email}<p id="inq-email-error" class={ERROR}>{fieldErrors.email}</p>{/if}
     </div>
 
-    <div>
-      <label for="inq-phone" class={LABEL}>電話番号<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
-      <input
-        id="inq-phone"
-        name="phone"
-        type="tel"
-        class={inputClass('phone')}
-        bind:value={fields.phone}
-        required
-        autocomplete="tel"
-        inputmode="tel"
-        maxlength={LIMITS.phoneMax}
-        placeholder="03-1234-5678"
-        aria-invalid={invalid('phone')}
-        aria-describedby={describedBy('phone', true)}
-      />
-      <p id="inq-phone-help" class={HELP}>全角で入力しても送信時に半角へ変換します。</p>
-      {#if fieldErrors.phone}<p id="inq-phone-error" class={ERROR}>{fieldErrors.phone}</p>{/if}
-    </div>
+    {#if !isGeneral}
+      <div>
+        <label for="inq-phone" class={LABEL}>電話番号<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <input
+          id="inq-phone"
+          name="phone"
+          type="tel"
+          class={inputClass('phone')}
+          bind:value={fields.phone}
+          required
+          autocomplete="tel"
+          inputmode="tel"
+          maxlength={LIMITS.phoneMax}
+          placeholder="03-1234-5678"
+          aria-invalid={invalid('phone')}
+          aria-describedby={describedBy('phone', true)}
+        />
+        <p id="inq-phone-help" class={HELP}>全角で入力しても送信時に半角へ変換します。</p>
+        {#if fieldErrors.phone}<p id="inq-phone-error" class={ERROR}>{fieldErrors.phone}</p>{/if}
+      </div>
 
-    <div>
-      <label for="inq-seats" class={LABEL}>利用アカウント予定数<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
-      <input
-        id="inq-seats"
-        name="seats"
-        type="number"
-        class={inputClass('seats')}
-        bind:value={fields.seats}
-        required
-        min={LIMITS.seatsMin}
-        max={LIMITS.seatsMax}
-        step="1"
-        inputmode="numeric"
-        aria-invalid={invalid('seats')}
-        aria-describedby={describedBy('seats', true)}
-      />
-      <p id="inq-seats-help" class={HELP}>Enterprise は {LIMITS.seatsMin} アカウント以上</p>
-      {#if fieldErrors.seats}<p id="inq-seats-error" class={ERROR}>{fieldErrors.seats}</p>{/if}
-    </div>
+      <div>
+        <label for="inq-seats" class={LABEL}>利用アカウント予定数<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <input
+          id="inq-seats"
+          name="seats"
+          type="number"
+          class={inputClass('seats')}
+          bind:value={fields.seats}
+          required
+          min={LIMITS.seatsMin}
+          max={LIMITS.seatsMax}
+          step="1"
+          inputmode="numeric"
+          aria-invalid={invalid('seats')}
+          aria-describedby={describedBy('seats', true)}
+        />
+        <p id="inq-seats-help" class={HELP}>Enterprise は {LIMITS.seatsMin} アカウント以上</p>
+        {#if fieldErrors.seats}<p id="inq-seats-error" class={ERROR}>{fieldErrors.seats}</p>{/if}
+      </div>
+    {:else}
+      <div class="sm:col-span-2">
+        <label for="inq-subject" class={LABEL}>件名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <input
+          id="inq-subject"
+          name="subject"
+          type="text"
+          class={inputClass('subject')}
+          bind:value={fields.subject}
+          required
+          maxlength={LIMITS.subject}
+          placeholder="書き出しに失敗する / 請求書の再発行 など"
+          aria-invalid={invalid('subject')}
+          aria-describedby={describedBy('subject', false)}
+        />
+        {#if fieldErrors.subject}<p id="inq-subject-error" class={ERROR}>{fieldErrors.subject}</p>{/if}
+      </div>
+    {/if}
 
     <div class="sm:col-span-2">
-      <label for="inq-message" class={LABEL}>ご相談内容<span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span></label>
+      <label for="inq-message" class={LABEL}>
+        {isGeneral ? 'お問い合わせ内容' : 'ご相談内容'}
+        {#if isGeneral}
+          <span class="ml-1 text-danger" aria-hidden="true">*</span>
+        {:else}
+          <span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
+        {/if}
+      </label>
       <textarea
         id="inq-message"
         name="message"
@@ -363,13 +411,36 @@
         class={inputClass('message')}
         bind:value={fields.message}
         maxlength={LIMITS.message}
-        placeholder="導入時期、対象となる映像の本数や尺、請求書払いのご希望など"
+        placeholder={isGeneral
+          ? '発生した操作、画面に出たメッセージ、お困りの内容などをご記入ください'
+          : '導入時期、対象となる映像の本数や尺、請求書払いのご希望など'}
         aria-invalid={invalid('message')}
         aria-describedby={describedBy('message', true)}
       ></textarea>
       <p id="inq-message-help" class={HELP}>{LIMITS.message} 文字まで</p>
       {#if fieldErrors.message}<p id="inq-message-error" class={ERROR}>{fieldErrors.message}</p>{/if}
     </div>
+
+    {#if isGeneral}
+      <div>
+        <label for="inq-appVersion" class={LABEL}>
+          ご利用中のバージョン<span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
+        </label>
+        <input
+          id="inq-appVersion"
+          name="appVersion"
+          type="text"
+          class={inputClass('appVersion')}
+          bind:value={fields.appVersion}
+          maxlength={LIMITS.appVersion}
+          placeholder="2.3.7"
+          aria-invalid={invalid('appVersion')}
+          aria-describedby={describedBy('appVersion', true)}
+        />
+        <p id="inq-appVersion-help" class={HELP}>アプリ画面の右下、またはブラウザ版のフッターに表示されます。</p>
+        {#if fieldErrors.appVersion}<p id="inq-appVersion-error" class={ERROR}>{fieldErrors.appVersion}</p>{/if}
+      </div>
+    {/if}
 
     {#if turnstileSiteKey}
       <div class="sm:col-span-2">

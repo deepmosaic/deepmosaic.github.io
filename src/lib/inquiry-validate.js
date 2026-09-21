@@ -1,10 +1,20 @@
-// Enterprise 導入相談フォームの入力検証 (T-254)。
+// 問い合わせフォームの入力検証 (T-254、T-332 で kind 分岐)。
 //
 // 送信先は `desktop/worker-auth0-updater/src/inquiry.ts` (T-253) の `POST /inquiry`。
 // **ここは Worker 側の `validateInquiry` の写し**で、規則 (上限・正規表現・制御文字) を
 // 同じにしてある。サーバ側が正で、ここは往復を減らすための前検査に過ぎない —
 // ここを緩めても Worker が 400 を返すだけだが、厳しくすると正当な入力を送れなくなる。
 // **規則を変えるときは Worker と同時に変える。**
+//
+// ## 2 種類の問い合わせ (T-331 / T-332)
+//
+// | kind | ページ | 項目 |
+// |------|--------|------|
+// | `enterprise` (既定) | `/enterprise/inquiry/` | 会社名・氏名・メール・電話・アカウント数・ご相談内容 |
+// | `general` | `/contact/` | 氏名・メール・件名・お問い合わせ内容・ご利用中のバージョン (任意) |
+//
+// **enterprise は `kind` を載せずに送る。** Worker 側の既定が enterprise で、そうすることで
+// 旧サイト (このコードが届く前の公開物) からの送信と同じボディのままになる。
 //
 // ## この module の約束
 //
@@ -16,6 +26,20 @@
 //   括弧しか受けないため、日本語 IME で `０３－１２３４` と打った入力をそのまま送ると
 //   400 になる。
 
+/** 問い合わせの種類。Worker の判別 union と同じ値 (T-331)。 */
+export const KINDS = Object.freeze(['enterprise', 'general']);
+
+/**
+ * 未知の値は `enterprise` に倒す。Worker 側の既定と同じにしてあり、
+ * `data-kind` の書き間違いでフォームが壊れるより、旧来の形で送るほうが安全。
+ *
+ * @param {unknown} raw
+ * @returns {'enterprise' | 'general'}
+ */
+export function normalizeKind(raw) {
+  return KINDS.includes(raw) ? raw : 'enterprise';
+}
+
 /** Worker 側 `LIMITS` と同じ値。 */
 export const LIMITS = Object.freeze({
   company: 200,
@@ -25,20 +49,48 @@ export const LIMITS = Object.freeze({
   phoneMax: 40,
   seatsMin: 3,
   seatsMax: 10_000,
+  subject: 100,
+  appVersion: 40,
   message: 4000,
 });
 
-/** フォームに出す項目名。Worker のエラー応答の `field` をこの表で表示に対応させる。 */
+/**
+ * フォームに出す項目名 (全 kind 分)。Worker のエラー応答の `field` をこの表で表示に
+ * 対応させる。`message` の表示名だけ kind で変わる (general は `GENERAL_LABELS`)。
+ */
 export const FIELD_LABELS = Object.freeze({
   company: '会社名',
   name: '氏名',
   email: 'メールアドレス',
   phone: '電話番号',
   seats: '利用アカウント予定数',
+  subject: '件名',
+  appVersion: 'ご利用中のバージョン',
   message: 'ご相談内容',
 });
 
+/** `describeFailure` が受け付ける項目名 (全 kind の和集合)。 */
 export const FIELD_NAMES = Object.freeze(Object.keys(FIELD_LABELS));
+
+/**
+ * kind ごとの項目と**並び**。誤りがあったときに最初の項目へフォーカスする順でもあるので、
+ * 画面の上から下の順に並べる。
+ */
+const FIELD_ORDER = Object.freeze({
+  enterprise: Object.freeze(['company', 'name', 'email', 'phone', 'seats', 'message']),
+  general: Object.freeze(['name', 'email', 'subject', 'message', 'appVersion']),
+});
+
+/**
+ * @param {unknown} [kind]
+ * @returns {readonly string[]}
+ */
+export function fieldNames(kind) {
+  return FIELD_ORDER[normalizeKind(kind)];
+}
+
+/** general だけ「ご相談内容」ではなく「お問い合わせ内容」と呼ぶ。 */
+const GENERAL_LABELS = Object.freeze({ ...FIELD_LABELS, message: 'お問い合わせ内容' });
 
 // RFC 5322 の実用サブセット (HTML5 の input[type=email] 相当 + TLD 必須)。Worker と同一。
 const EMAIL_RE =
@@ -46,8 +98,15 @@ const EMAIL_RE =
 // 数字・`+`・`-`・空白・括弧のみ。Worker と同一。
 const PHONE_RE = /^[0-9+()\- ]+$/;
 
-/** 空のフォーム。`website` はハニーポット (人は触らないので常に空)。 */
-export function emptyFields() {
+/**
+ * 空のフォーム。`website` はハニーポット (人は触らないので常に空)。
+ *
+ * @param {unknown} [kind]
+ */
+export function emptyFields(kind) {
+  if (normalizeKind(kind) === 'general') {
+    return { name: '', email: '', subject: '', message: '', appVersion: '', website: '' };
+  }
   return {
     company: '',
     name: '',
@@ -135,13 +194,14 @@ export function normalizeSeats(raw) {
 
 /**
  * @param {unknown} raw
- * @param {'company'|'name'|'email'|'phone'} key
+ * @param {'company'|'name'|'email'|'phone'|'subject'|'appVersion'} key
  * @param {number} min
  * @param {number} max
+ * @param {Record<string, string>} [labels] kind ごとの表示名
  * @returns {{ ok: true, value: string } | { ok: false, message: string }}
  */
-function singleLine(raw, key, min, max) {
-  const label = FIELD_LABELS[key];
+function singleLine(raw, key, min, max, labels = FIELD_LABELS) {
+  const label = labels[key];
   const value = key === 'phone' ? normalizePhone(raw) : asString(raw).trim();
   if (value.length < min) {
     return {
@@ -162,11 +222,68 @@ function singleLine(raw, key, min, max) {
  * 200 を返す契約なので、ここで弾くと bot に気付かれる。
  *
  * @param {Record<string, unknown>} input
- * @returns {{ ok: true, fields: { company: string, name: string, email: string, phone: string, seats: number, message: string, website: string } }
- *         | { ok: false, errors: Record<string, string> }}
+ * @param {unknown} [kind] `'enterprise'` (既定) か `'general'`
+ * @returns {{ ok: true, fields: Record<string, string | number> } | { ok: false, errors: Record<string, string> }}
  */
-export function validateInquiry(input) {
+export function validateInquiry(input, kind) {
   const src = input && typeof input === 'object' ? input : {};
+  return normalizeKind(kind) === 'general' ? validateGeneral(src) : validateEnterprise(src);
+}
+
+/**
+ * 一般問い合わせ (`/contact/`, T-332)。会社名・電話番号・アカウント数は扱わない。
+ *
+ * 本文は **Enterprise と違って必須**にする。件名だけの問い合わせは返答のしようがなく、
+ * Worker が受け付けても担当者が困るため — ここだけ意図的に Worker より厳しい。
+ *
+ * @param {Record<string, unknown>} src
+ */
+function validateGeneral(src) {
+  const labels = GENERAL_LABELS;
+  /** @type {Record<string, string>} */
+  const errors = {};
+  const out = { name: '', email: '', subject: '', message: '', appVersion: '', website: '' };
+
+  const name = singleLine(src.name, 'name', 1, LIMITS.name, labels);
+  if (name.ok) out.name = name.value;
+  else errors.name = name.message;
+
+  const email = singleLine(src.email, 'email', 1, LIMITS.email, labels);
+  if (!email.ok) errors.email = email.message;
+  else if (!EMAIL_RE.test(email.value)) errors.email = 'メールアドレスの形式が正しくありません';
+  else out.email = email.value;
+
+  const subject = singleLine(src.subject, 'subject', 1, LIMITS.subject, labels);
+  if (subject.ok) out.subject = subject.value;
+  else errors.subject = subject.message;
+
+  const message = normalizeMessage(src.message);
+  if (message.length === 0) errors.message = `${labels.message}を入力してください`;
+  else if (message.length > LIMITS.message) {
+    errors.message = `${labels.message}は ${LIMITS.message} 文字以内で入力してください`;
+  } else if (hasInvalidMessageChar(message)) {
+    errors.message = `${labels.message}に使用できない文字が含まれています`;
+  } else out.message = message;
+
+  // 任意項目。未入力はそのまま空で通し、入力があるときだけ単行・長さを見る
+  if (asString(src.appVersion).trim() !== '') {
+    const appVersion = singleLine(src.appVersion, 'appVersion', 1, LIMITS.appVersion, labels);
+    if (appVersion.ok) out.appVersion = appVersion.value;
+    else errors.appVersion = appVersion.message;
+  }
+
+  out.website = asString(src.website);
+
+  if (Object.keys(errors).length > 0) return { ok: false, errors };
+  return { ok: true, fields: out };
+}
+
+/**
+ * Enterprise 導入相談 (`/enterprise/inquiry/`, T-254)。規則は T-254 から不変。
+ *
+ * @param {Record<string, unknown>} src
+ */
+function validateEnterprise(src) {
   /** @type {Record<string, string>} */
   const errors = {};
   const out = { company: '', name: '', email: '', phone: '', seats: 0, message: '', website: '' };
@@ -215,12 +332,21 @@ export function validateInquiry(input) {
  * `POST /inquiry` の JSON ボディ。`turnstileToken` は空なら載せない
  * (Worker は未指定と空文字を同じに扱うが、サイトキー未設定時に空のキーを送る意味が無い)。
  *
- * @param {{ company: string, name: string, email: string, phone: string, seats: number, message: string, website: string }} fields
+ * **enterprise は `kind` を載せない。** Worker の既定が enterprise なので、旧サイトからの
+ * 送信とボディが 1 バイトも変わらず、公開の前後どちらでも同じ経路で受け付けられる。
+ *
+ * @param {Record<string, unknown>} fields `validateInquiry` が返した `fields`
  * @param {string} [turnstileToken]
+ * @param {unknown} [kind]
  * @returns {Record<string, string | number>}
  */
-export function buildPayload(fields, turnstileToken = '') {
-  const body = {
+export function buildPayload(fields, turnstileToken = '', kind) {
+  const body = normalizeKind(kind) === 'general' ? generalBody(fields) : enterpriseBody(fields);
+  return turnstileToken ? { ...body, turnstileToken } : body;
+}
+
+function enterpriseBody(fields) {
+  return {
     company: fields.company,
     name: fields.name,
     email: fields.email,
@@ -229,7 +355,19 @@ export function buildPayload(fields, turnstileToken = '') {
     message: fields.message,
     website: fields.website,
   };
-  return turnstileToken ? { ...body, turnstileToken } : body;
+}
+
+/** 任意項目の `appVersion` は、入力があるときだけ載せる (Worker 側も任意)。 */
+function generalBody(fields) {
+  const body = {
+    kind: 'general',
+    name: fields.name,
+    email: fields.email,
+    subject: fields.subject,
+    message: fields.message,
+    website: fields.website,
+  };
+  return fields.appVersion ? { ...body, appVersion: fields.appVersion } : body;
 }
 
 /**

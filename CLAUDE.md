@@ -177,7 +177,7 @@ head -1 _site/llms.txt _site/robots.txt _site/llms-full.txt   # <!doctype が出
 bundle exec jekyll build && find _site -name "*.html" | head -3
 ```
 
-#### ブラウザ E2E（問い合わせフォーム・T-286）
+#### ブラウザ E2E（問い合わせフォーム・T-286 / T-332）
 
 ```bash
 npm run e2e:install            # 初回のみ (Chromium)
@@ -187,9 +187,12 @@ E2E_SKIP_BUILD=1 npm run e2e   # ビルド済みの _site/ を使う (CI と同�
 
 `e2e/inquiry.spec.ts` は `/enterprise/inquiry/` の送信フロー（検証エラーの aria 属性 /
 全角電話の正規化 / 200・429・502 の文面 / 完了カードのフォーカス / honeypot / payload の形）を
-固定する。**送信先は spec が `page.route` で差し替え、それ以外の外部通信は abort する** ため
-本物の Worker は叩かない。endpoint はビルド出力の `data-endpoint` から読むので、
-`_data/inquiry.yml` の受け渡しが切れたら落ちる。
+固定する。`e2e/contact.spec.ts` (T-332) は `/contact/` の kind=general 側（項目立ての切り替え /
+件名の上限 / `kind: 'general'` を載せた payload / 任意項目 appVersion）を固定する。
+共通の道具立ては `e2e/lib/inquiry-harness.ts`。
+**送信先は spec が `page.route` で差し替え、それ以外の外部通信は abort する** ため
+本物の Worker は叩かない。endpoint と kind はビルド出力の `data-endpoint` / `data-kind` から
+読むので、`_data/inquiry.yml` や `_includes/inquiry-form.html` の受け渡しが切れたら落ちる。
 
 `e2e/mobile-nav.spec.ts` (T-291) はモバイルドロワーを Pixel 7 エミュレーションで **tap** し、
 同一オリジンのリンクに `download` 属性が無いこと / 保存が起きず遷移することを固定する
