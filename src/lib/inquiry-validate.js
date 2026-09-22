@@ -1,7 +1,7 @@
 // 問い合わせフォームの入力検証 (T-254、T-332 で kind 分岐)。
 //
 // 送信先は `desktop/worker-auth0-updater/src/inquiry.ts` (T-253) の `POST /inquiry`。
-// **ここは Worker 側の `validateInquiry` の写し**で、規則 (上限・正規表現・制御文字) を
+// **ここは Worker 側の `validateInquiry` の写し**で、規則 (上限・正規表現・制御文字・U+FFFD 拒否) を
 // 同じにしてある。サーバ側が正で、ここは往復を減らすための前検査に過ぎない —
 // ここを緩めても Worker が 400 を返すだけだが、厳しくすると正当な入力を送れなくなる。
 // **規則を変えるときは Worker と同時に変える。**
@@ -118,20 +118,30 @@ export function emptyFields(kind) {
   };
 }
 
-/** 1 行フィールド用: 制御文字 (U+0000–U+001F, U+007F) を一切許さない。 */
-function hasAnyControlChar(s) {
+/**
+ * T-404: 文字化けの跡 (U+FFFD REPLACEMENT CHARACTER)。
+ *
+ * Worker は本文を fatal UTF-8 でデコードするようになったが、**送信元が既に化けていれば**
+ * 正しい UTF-8 として U+FFFD が届く。Slack / メール / Supabase に `����` を通さないため、
+ * Worker (`inquiry-validate.ts`) と同じく制御文字と同じ扱いで拒否する。
+ */
+const REPLACEMENT_CHAR_CODE = 0xfffd;
+
+/** 1 行フィールド用: 制御文字 (U+0000–U+001F, U+007F) と U+FFFD を一切許さない。 */
+function hasForbiddenChar(s) {
   for (let i = 0; i < s.length; i++) {
     const code = s.charCodeAt(i);
     if (code < 0x20 || code === 0x7f) return true;
+    if (code === REPLACEMENT_CHAR_CODE) return true;
   }
   return false;
 }
 
-/** 本文用: `\t` / `\n` 以外の制御文字を拒否する。 */
-function hasInvalidMessageChar(s) {
+/** 本文用: `\t` / `\n` 以外の制御文字と U+FFFD を拒否する。 */
+function hasForbiddenMessageChar(s) {
   for (let i = 0; i < s.length; i++) {
     const code = s.charCodeAt(i);
-    if (code === 0x7f) return true;
+    if (code === 0x7f || code === REPLACEMENT_CHAR_CODE) return true;
     if (code <= 0x1f && code !== 0x09 && code !== 0x0a) return true;
   }
   return false;
@@ -210,7 +220,7 @@ function singleLine(raw, key, min, max, labels = FIELD_LABELS) {
     };
   }
   if (value.length > max) return { ok: false, message: `${label}は ${max} 文字以内で入力してください` };
-  if (hasAnyControlChar(value)) return { ok: false, message: `${label}に使用できない文字が含まれています` };
+  if (hasForbiddenChar(value)) return { ok: false, message: `${label}に使用できない文字が含まれています` };
   return { ok: true, value };
 }
 
@@ -261,7 +271,7 @@ function validateGeneral(src) {
   if (message.length === 0) errors.message = `${labels.message}を入力してください`;
   else if (message.length > LIMITS.message) {
     errors.message = `${labels.message}は ${LIMITS.message} 文字以内で入力してください`;
-  } else if (hasInvalidMessageChar(message)) {
+  } else if (hasForbiddenMessageChar(message)) {
     errors.message = `${labels.message}に使用できない文字が含まれています`;
   } else out.message = message;
 
@@ -318,7 +328,7 @@ function validateEnterprise(src) {
   const message = normalizeMessage(src.message);
   if (message.length > LIMITS.message) {
     errors.message = `${FIELD_LABELS.message}は ${LIMITS.message} 文字以内で入力してください`;
-  } else if (hasInvalidMessageChar(message)) {
+  } else if (hasForbiddenMessageChar(message)) {
     errors.message = `${FIELD_LABELS.message}に使用できない文字が含まれています`;
   } else out.message = message;
 

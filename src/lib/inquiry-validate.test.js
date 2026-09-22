@@ -192,6 +192,21 @@ test('validateInquiry は制御文字を弾く (本文はタブ・改行だけ�
   assert.equal(esc.errors.message, 'ご相談内容に使用できない文字が含まれています');
 });
 
+// T-404: 文字化けの跡 (U+FFFD)。Worker 側 (`inquiry-validate.ts`) と同時に入れた規則で、
+// ここが緩いと「サイトでは通るのに Worker が 400」という往復になる
+test('validateInquiry は U+FFFD (文字化け) を弾く', () => {
+  const r = validateInquiry({ ...VALID, company: 'テスト�株式会社', message: '導入を�検討' });
+  assert.equal(r.ok, false);
+  assert.equal(r.errors.company, '会社名に使用できない文字が含まれています');
+  assert.equal(r.errors.message, 'ご相談内容に使用できない文字が含まれています');
+
+  const general = validateInquiry({ ...VALID_GENERAL, subject: '件名�' }, 'general');
+  assert.equal(general.ok, false);
+  assert.equal(general.errors.subject, '件名に使用できない文字が含まれています');
+
+  assert.equal(validateInquiry(VALID).ok, true, '正常な日本語は通る');
+});
+
 test('validateInquiry はハニーポットを検査しない (埋まっていても通す)', () => {
   const r = validateInquiry({ ...VALID, website: 'http://spam.example' });
   assert.equal(r.ok, true, 'ここで弾くと bot に気付かれる。Worker が副作用なしの 200 を返す');
