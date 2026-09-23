@@ -63,7 +63,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
     <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
     <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。枠の上のラベル（チップ）には「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザ」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1256" height="898" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">再生コントロール</h3>
@@ -90,7 +90,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-hud-off.webp" alt="検出オーバーレイを非表示にしたプレイヤー" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-hud-off.webp" alt="検出オーバーレイを非表示にしたプレイヤー" width="1188" height="410" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">オーバーレイ非表示（<kbd>H</kbd>）。映像だけを確認したいときに</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">検出枠の操作</h3>
@@ -130,14 +130,14 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
     </div>
     <p>検出枠の選択・追加・消しゴムは、再生ヘッドが元の動画（検出元）の区間にあるときだけ使えます。<a href="#edit-media">取り込んだ素材</a>の区間は AI 検出の対象外のため、枠はありません。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-context-menu.webp" alt="検出枠を右クリックしたときのメニュー（性別の変更・モザイク対象外・削除）" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-context-menu.webp" alt="検出枠を右クリックしたときのメニュー（性別の変更・モザイク対象外・削除）" width="1188" height="410" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">枠の右クリックメニュー</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">タイムライン</h3>
     <p>タイムラインは上から、ツールバー、目盛り、<a href="#edit-scenes">シーン（カット）の帯</a>、テキスト・クリップ・音声のレーン（<a href="#timeline-edit">クリップの編集</a>）、検出クラスごとの行の順に並びます。クラスの行には検出のある区間が帯で描かれ、行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは書き出す映像の時間で並ぶので、クリップをトリムしたり動かしたりすると、検出の帯も一緒に動きます。</p>
     <p>タイムラインは <kbd>Ctrl</kbd>+ホイール、またはツールバー左端の拡大・縮小ボタンで最大 16 倍まで拡大できます。高さの変更と折りたたみは<a href="#timeline-edit">クリップの編集</a>を参照してください。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-timeline.webp" alt="タイムライン。シーン帯と、クラス行を展開した追跡 ID ごとの行" width="1256" height="183" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-timeline.webp" alt="タイムライン。シーン帯と、クラス行を展開した追跡 ID ごとの行" width="1188" height="305" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムライン（シーン帯とクラス行 → ID 行の展開）</figcaption>
     </figure>
   </div>
@@ -162,7 +162,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-zoom.webp" alt="プレイヤーを拡大した状態。右上に倍率とズームボタン" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-zoom.webp" alt="プレイヤーを拡大した状態。右上に倍率とズームボタン" width="1188" height="410" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">拡大表示。細かい枠合わせに</figcaption>
     </figure>
   </div>
@@ -267,7 +267,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" width="711" height="42" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <img src="/assets/img/screenshots/edit-toolbar.webp" alt="編集ツールバー" width="723" height="43" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">編集ツールバー</figcaption>
     </figure>
   </div>
