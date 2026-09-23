@@ -6,6 +6,13 @@ docs 第 1 章「導入」(TICKET-SITE-42 で部品化、TICKET-SITE-44 で拡�
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
 {%- assign spec_storage = site.data.spec.windows | where: "key", "ストレージ" | first -%}
 <section id="about" class="scroll-mt-24">
+  {%- comment -%}
+    T-509: docs は desktop のリリースより先に公開する (2026-09-23 ユーザー決定) ので、冒頭に
+    「先取り」の注記を置く。#about の**中**に置くのは、アプリ内ヘルプが /docs#about へ深いリンクで
+    来たときにも読まれるようにするため。desktop の次期リリース時に T-515 で外す
+    (`src/lib/docs-desktop-refresh.test.js` も合わせて直す)。
+  {%- endcomment %}
+  <p role="note" class="mt-8 rounded-lg border-l-[3px] border-warning bg-panel px-5 py-4 text-[13.5px] leading-[1.95] text-ink-body">本ドキュメントは次回のデスクトップ更新 (v2.4) の内容です。配布中の v2.3.7 では一部の機能と表記が異なります。</p>
   {% include docs-h2.html kicker="導入" title="はじめに" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     {%- comment -%}
