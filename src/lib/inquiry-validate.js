@@ -1,4 +1,4 @@
-// 問い合わせフォームの入力検証 (T-254、T-332 で kind 分岐)。
+// 問い合わせフォームの入力検証 (T-254、T-332 で kind 分岐、T-516 で general の項目を削減)。
 //
 // 送信先は `desktop/worker-auth0-updater/src/inquiry.ts` (T-253) の `POST /inquiry`。
 // **ここは Worker 側の `validateInquiry` の写し**で、規則 (上限・正規表現・制御文字・U+FFFD 拒否) を
@@ -11,7 +11,11 @@
 // | kind | ページ | 項目 |
 // |------|--------|------|
 // | `enterprise` (既定) | `/enterprise/inquiry/` | 会社名・氏名・メール・電話・アカウント数・ご相談内容 |
-// | `general` | `/contact/` | 氏名・メール・件名・お問い合わせ内容・ご利用中のバージョン (任意) |
+// | `general` | `/contact/` | メール・お問い合わせ内容 |
+//
+// general の氏名・件名・ご利用中のバージョンは T-516 (2026-09-23 ユーザー決定) で廃止した。
+// Worker 側 (`inquiry-validate.ts`) と同じく、入力に旧項目が付いていても**検査せず・送らず**に
+// 無視する (旧フォームの値が残っていても 400 の往復を作らない)。
 //
 // **enterprise は `kind` を載せずに送る。** Worker 側の既定が enterprise で、そうすることで
 // 旧サイト (このコードが届く前の公開物) からの送信と同じボディのままになる。
@@ -49,14 +53,14 @@ export const LIMITS = Object.freeze({
   phoneMax: 40,
   seatsMin: 3,
   seatsMax: 10_000,
-  subject: 100,
-  appVersion: 40,
   message: 4000,
 });
 
 /**
  * フォームに出す項目名 (全 kind 分)。Worker のエラー応答の `field` をこの表で表示に
  * 対応させる。`message` の表示名だけ kind で変わる (general は `GENERAL_LABELS`)。
+ * T-516 で廃止した general の件名・バージョンは載せない — どのフォームにも欄が無いので、
+ * Worker がその項目名を返しても項目に紐づけず、文面だけを警告に出す。
  */
 export const FIELD_LABELS = Object.freeze({
   company: '会社名',
@@ -64,8 +68,6 @@ export const FIELD_LABELS = Object.freeze({
   email: 'メールアドレス',
   phone: '電話番号',
   seats: '利用アカウント予定数',
-  subject: '件名',
-  appVersion: 'ご利用中のバージョン',
   message: 'ご相談内容',
 });
 
@@ -78,7 +80,7 @@ export const FIELD_NAMES = Object.freeze(Object.keys(FIELD_LABELS));
  */
 const FIELD_ORDER = Object.freeze({
   enterprise: Object.freeze(['company', 'name', 'email', 'phone', 'seats', 'message']),
-  general: Object.freeze(['name', 'email', 'subject', 'message', 'appVersion']),
+  general: Object.freeze(['email', 'message']),
 });
 
 /**
@@ -105,7 +107,7 @@ const PHONE_RE = /^[0-9+()\- ]+$/;
  */
 export function emptyFields(kind) {
   if (normalizeKind(kind) === 'general') {
-    return { name: '', email: '', subject: '', message: '', appVersion: '', website: '' };
+    return { email: '', message: '', website: '' };
   }
   return {
     company: '',
@@ -204,7 +206,7 @@ export function normalizeSeats(raw) {
 
 /**
  * @param {unknown} raw
- * @param {'company'|'name'|'email'|'phone'|'subject'|'appVersion'} key
+ * @param {'company'|'name'|'email'|'phone'} key
  * @param {number} min
  * @param {number} max
  * @param {Record<string, string>} [labels] kind ごとの表示名
@@ -241,9 +243,11 @@ export function validateInquiry(input, kind) {
 }
 
 /**
- * 一般問い合わせ (`/contact/`, T-332)。会社名・電話番号・アカウント数は扱わない。
+ * 一般問い合わせ (`/contact/`, T-332 → T-516)。メールアドレスとお問い合わせ内容だけを扱う。
+ * 会社名・電話番号・アカウント数 (Enterprise 専用) と、T-516 で廃止した氏名・件名・
+ * ご利用中のバージョンは**読まない** — 付いていても検査も送信もしない (Worker と同じ契約)。
  *
- * 本文は **Enterprise と違って必須**にする。件名だけの問い合わせは返答のしようがなく、
+ * 本文は **Enterprise と違って必須**にする。本文の無い問い合わせは返答のしようがなく、
  * Worker が受け付けても担当者が困るため — ここだけ意図的に Worker より厳しい。
  *
  * @param {Record<string, unknown>} src
@@ -252,20 +256,12 @@ function validateGeneral(src) {
   const labels = GENERAL_LABELS;
   /** @type {Record<string, string>} */
   const errors = {};
-  const out = { name: '', email: '', subject: '', message: '', appVersion: '', website: '' };
-
-  const name = singleLine(src.name, 'name', 1, LIMITS.name, labels);
-  if (name.ok) out.name = name.value;
-  else errors.name = name.message;
+  const out = { email: '', message: '', website: '' };
 
   const email = singleLine(src.email, 'email', 1, LIMITS.email, labels);
   if (!email.ok) errors.email = email.message;
   else if (!EMAIL_RE.test(email.value)) errors.email = 'メールアドレスの形式が正しくありません';
   else out.email = email.value;
-
-  const subject = singleLine(src.subject, 'subject', 1, LIMITS.subject, labels);
-  if (subject.ok) out.subject = subject.value;
-  else errors.subject = subject.message;
 
   const message = normalizeMessage(src.message);
   if (message.length === 0) errors.message = `${labels.message}を入力してください`;
@@ -274,13 +270,6 @@ function validateGeneral(src) {
   } else if (hasForbiddenMessageChar(message)) {
     errors.message = `${labels.message}に使用できない文字が含まれています`;
   } else out.message = message;
-
-  // 任意項目。未入力はそのまま空で通し、入力があるときだけ単行・長さを見る
-  if (asString(src.appVersion).trim() !== '') {
-    const appVersion = singleLine(src.appVersion, 'appVersion', 1, LIMITS.appVersion, labels);
-    if (appVersion.ok) out.appVersion = appVersion.value;
-    else errors.appVersion = appVersion.message;
-  }
 
   out.website = asString(src.website);
 
@@ -367,17 +356,17 @@ function enterpriseBody(fields) {
   };
 }
 
-/** 任意項目の `appVersion` は、入力があるときだけ載せる (Worker 側も任意)。 */
+/**
+ * general のボディ。項目は Worker の general 契約 (T-516) と同じ `email` + `message` だけで、
+ * `fields` に旧項目 (name / subject / appVersion) が混ざっていても載せない。
+ */
 function generalBody(fields) {
-  const body = {
+  return {
     kind: 'general',
-    name: fields.name,
     email: fields.email,
-    subject: fields.subject,
     message: fields.message,
     website: fields.website,
   };
-  return fields.appVersion ? { ...body, appVersion: fields.appVersion } : body;
 }
 
 /**

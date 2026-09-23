@@ -1,10 +1,11 @@
 <script>
-  // 問い合わせフォーム (T-254、T-332 で 2 種類に)。
+  // 問い合わせフォーム (T-254、T-332 で 2 種類に、T-516 で general を 2 項目に)。
   //
   // 1 つの島で 2 つのページを賄う。どちらの項目立てにするかは `data-kind` で決まる:
   //
-  //   kind="enterprise" (既定) … /enterprise/inquiry/  会社名・電話・アカウント数あり
-  //   kind="general"            … /contact/            件名・ご利用中のバージョンあり
+  //   kind="enterprise" (既定) … /enterprise/inquiry/  会社名・氏名・メール・電話・アカウント数・ご相談内容
+  //   kind="general"            … /contact/            メール・お問い合わせ内容のみ (T-516 で氏名・件名・
+  //                                                    ご利用中のバージョンを廃止)
   //
   // 送信先は worker-auth0-updater の `POST /inquiry` (T-253 / T-331) で**両者とも同じ**。
   // 設定 (endpoint / Turnstile のサイトキー / support 宛先) は Jekyll が `_data/inquiry.yml`
@@ -229,7 +230,8 @@
     const failure = describeFailure(outcome, { supportEmail });
     // `describeFailure` が返す項目名は**全 kind の和集合**。この kind で描画していない項目
     // (例: Worker を T-331 より前に巻き戻すと、general の送信にも「会社名を入力して…」が
-    // 返る) を fieldErrors に入れると、どこにも表示されないまま汎用の一文だけが出て
+    // 返る。T-516 の Worker 側が本番に出る前にこのサイトを出すと「氏名を入力して…」が返る)
+    // を fieldErrors に入れると、どこにも表示されないまま汎用の一文だけが出て
     // 手詰まりになる。描画していない項目のときは Worker の文面をそのまま警告に出す。
     if (failure.kind === 'invalid' && failure.field && keys.includes(failure.field)) {
       showError('入力内容をご確認ください。', { [failure.field]: failure.message });
@@ -298,26 +300,27 @@
         />
         {#if fieldErrors.company}<p id="inq-company-error" class={ERROR}>{fieldErrors.company}</p>{/if}
       </div>
+
+      <div>
+        <label for="inq-name" class={LABEL}>氏名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <input
+          id="inq-name"
+          name="name"
+          type="text"
+          class={inputClass('name')}
+          bind:value={fields.name}
+          required
+          autocomplete="name"
+          maxlength={LIMITS.name}
+          aria-invalid={invalid('name')}
+          aria-describedby={describedBy('name', false)}
+        />
+        {#if fieldErrors.name}<p id="inq-name-error" class={ERROR}>{fieldErrors.name}</p>{/if}
+      </div>
     {/if}
 
-    <div>
-      <label for="inq-name" class={LABEL}>氏名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
-      <input
-        id="inq-name"
-        name="name"
-        type="text"
-        class={inputClass('name')}
-        bind:value={fields.name}
-        required
-        autocomplete="name"
-        maxlength={LIMITS.name}
-        aria-invalid={invalid('name')}
-        aria-describedby={describedBy('name', false)}
-      />
-      {#if fieldErrors.name}<p id="inq-name-error" class={ERROR}>{fieldErrors.name}</p>{/if}
-    </div>
-
-    <div>
+    <!-- general は氏名の隣が空くので (T-516)、メールアドレスを 1 行ぶん使う -->
+    <div class={isGeneral ? 'sm:col-span-2' : undefined}>
       <label for="inq-email" class={LABEL}>メールアドレス<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
       <input
         id="inq-email"
@@ -376,23 +379,6 @@
         <p id="inq-seats-help" class={HELP}>Enterprise は {LIMITS.seatsMin} アカウント以上</p>
         {#if fieldErrors.seats}<p id="inq-seats-error" class={ERROR}>{fieldErrors.seats}</p>{/if}
       </div>
-    {:else}
-      <div class="sm:col-span-2">
-        <label for="inq-subject" class={LABEL}>件名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
-        <input
-          id="inq-subject"
-          name="subject"
-          type="text"
-          class={inputClass('subject')}
-          bind:value={fields.subject}
-          required
-          maxlength={LIMITS.subject}
-          placeholder="書き出しに失敗する / 請求書の再発行 など"
-          aria-invalid={invalid('subject')}
-          aria-describedby={describedBy('subject', false)}
-        />
-        {#if fieldErrors.subject}<p id="inq-subject-error" class={ERROR}>{fieldErrors.subject}</p>{/if}
-      </div>
     {/if}
 
     <div class="sm:col-span-2">
@@ -420,27 +406,6 @@
       <p id="inq-message-help" class={HELP}>{LIMITS.message} 文字まで</p>
       {#if fieldErrors.message}<p id="inq-message-error" class={ERROR}>{fieldErrors.message}</p>{/if}
     </div>
-
-    {#if isGeneral}
-      <div>
-        <label for="inq-appVersion" class={LABEL}>
-          ご利用中のバージョン<span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
-        </label>
-        <input
-          id="inq-appVersion"
-          name="appVersion"
-          type="text"
-          class={inputClass('appVersion')}
-          bind:value={fields.appVersion}
-          maxlength={LIMITS.appVersion}
-          placeholder="2.3.7"
-          aria-invalid={invalid('appVersion')}
-          aria-describedby={describedBy('appVersion', true)}
-        />
-        <p id="inq-appVersion-help" class={HELP}>アプリ画面の右下、またはブラウザ版のフッターに表示されます。</p>
-        {#if fieldErrors.appVersion}<p id="inq-appVersion-error" class={ERROR}>{fieldErrors.appVersion}</p>{/if}
-      </div>
-    {/if}
 
     {#if turnstileSiteKey}
       <div class="sm:col-span-2">

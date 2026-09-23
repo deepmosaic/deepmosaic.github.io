@@ -35,15 +35,22 @@ const VALID = {
   website: '',
 };
 
-/** 通る入力の雛形 (kind='general', T-332)。会社名・電話・アカウント数は持たない。 */
+/**
+ * 通る入力の雛形 (kind='general', T-332 → T-516)。T-516 で氏名・件名・ご利用中のバージョンを
+ * 外したので、メールアドレスとお問い合わせ内容 (+ ハニーポット) だけを持つ。
+ */
 const VALID_GENERAL = {
-  name: '確認 太郎',
   email: 'taro@example.co.jp',
-  subject: '書き出しに失敗する',
-  message: 'T-332 動作確認',
-  appVersion: '2.3.7',
+  message: 'T-516 動作確認',
   website: '',
 };
+
+/** T-516 より前の general が送っていた項目。今は受け取っても無視する (Worker と同じ契約)。 */
+const RETIRED_GENERAL_FIELDS = Object.freeze({
+  name: '確認 太郎',
+  subject: '書き出しに失敗する',
+  appVersion: '2.3.7',
+});
 
 // ── normalizePhone ──────────────────────────────────────────────────────────
 
@@ -200,9 +207,9 @@ test('validateInquiry は U+FFFD (文字化け) を弾く', () => {
   assert.equal(r.errors.company, '会社名に使用できない文字が含まれています');
   assert.equal(r.errors.message, 'ご相談内容に使用できない文字が含まれています');
 
-  const general = validateInquiry({ ...VALID_GENERAL, subject: '件名�' }, 'general');
+  const general = validateInquiry({ ...VALID_GENERAL, message: '書き出しが�止まる' }, 'general');
   assert.equal(general.ok, false);
-  assert.equal(general.errors.subject, '件名に使用できない文字が含まれています');
+  assert.equal(general.errors.message, 'お問い合わせ内容に使用できない文字が含まれています');
 
   assert.equal(validateInquiry(VALID).ok, true, '正常な日本語は通る');
 });
@@ -285,91 +292,114 @@ test('describeFailure: 未知の code / 壊れた応答は generic に倒す', (
   assert.equal(describeFailure({}).kind, 'network', 'status が無ければネットワーク扱い');
 });
 
-// ── kind='general' (一般問い合わせ /contact/、T-332) ─────────────────────────
+// ── kind='general' (一般問い合わせ /contact/、T-332 → T-516) ─────────────────
 //
 // Worker (`POST /inquiry`) は `kind` で判別する union を受ける (T-331)。**既定は
 // enterprise** で、旧サイト (kind を送らない) との互換をそこで保つ。general は
-// 会社名・電話番号・アカウント数を持たず、代わりに件名 (必須) とご利用中の
-// バージョン (任意) を持つ。
+// 会社名・電話番号・アカウント数を持たない。
+//
+// T-516 (2026-09-23 ユーザー決定) で氏名・件名・ご利用中のバージョンも外し、general は
+// **メールアドレス + お問い合わせ内容** だけになった。Worker 側 (`inquiry-validate.ts`) と
+// 同じく、旧項目が入力に付いていても**検査せず・送らず**に無視する。
 
-test("kind='general' は会社名・電話・アカウント数を要求せず、正規化した値だけを返す", () => {
-  const r = validateInquiry({ ...VALID_GENERAL, name: '  確認 太郎  ', message: 'a\r\nb' }, 'general');
+test("kind='general' はメールアドレスとお問い合わせ内容だけを正規化して返す", () => {
+  // Arrange
+  const input = { ...VALID_GENERAL, email: '  taro@example.co.jp  ', message: 'a\r\nb' };
+
+  // Act
+  const r = validateInquiry(input, 'general');
+
+  // Assert
   assert.equal(r.ok, true);
-  assert.deepEqual(r.fields, {
-    name: '確認 太郎',
-    email: 'taro@example.co.jp',
-    subject: '書き出しに失敗する',
-    message: 'a\nb',
-    appVersion: '2.3.7',
-    website: '',
-  });
+  assert.deepEqual(r.fields, { email: 'taro@example.co.jp', message: 'a\nb', website: '' });
 });
 
-test("kind='general' は必須 4 項目の未入力を全部返し、Enterprise 専用の項目は検査しない", () => {
+test("kind='general' は旧項目 (氏名・件名・バージョン) が付いていても無視して通す (Worker と同じ契約)", () => {
+  // Arrange: 旧フォームの値 + 旧規則なら弾かれていた値 (制御文字・上限超過) の両方
+  const legacy = validateInquiry({ ...VALID_GENERAL, ...RETIRED_GENERAL_FIELDS }, 'general');
+  const broken = validateInquiry(
+    {
+      ...VALID_GENERAL,
+      name: '太郎\u0000',
+      subject: 'あ'.repeat(101),
+      appVersion: '2.3.7\n2.3.6',
+    },
+    'general',
+  );
+
+  // Assert
+  assert.equal(legacy.ok, true);
+  assert.deepEqual(legacy.fields, { email: 'taro@example.co.jp', message: 'T-516 動作確認', website: '' });
+  assert.equal(broken.ok, true, '無視する項目の中身で 400 相当にしない');
+  assert.deepEqual(broken.fields, legacy.fields);
+});
+
+test("kind='general' は必須 2 項目の未入力を全部返し、それ以外の項目は赤くしない", () => {
+  // Arrange / Act
   const r = validateInquiry({}, 'general');
+
+  // Assert
   assert.equal(r.ok, false);
   assert.deepEqual(
     Object.keys(r.errors).sort(),
-    ['email', 'message', 'name', 'subject'],
-    'company / phone / seats は general には無い項目なので赤くしない',
+    ['email', 'message'],
+    '氏名・件名 (T-516 で廃止) と company / phone / seats (Enterprise 専用) は general に無い',
   );
-  assert.equal(r.errors.subject, '件名を入力してください');
+  assert.equal(r.errors.email, 'メールアドレスを入力してください');
   assert.equal(r.errors.message, 'お問い合わせ内容を入力してください');
 });
 
-test("kind='general' は上限ちょうどを通し、1 文字超過を項目ごとに弾く", () => {
-  const ok = validateInquiry(
-    {
-      ...VALID_GENERAL,
-      subject: 'あ'.repeat(LIMITS.subject),
-      appVersion: '1'.repeat(LIMITS.appVersion),
-      message: 'う'.repeat(LIMITS.message),
-    },
-    'general',
-  );
-  assert.equal(ok.ok, true);
+test("kind='general' は本文が空白だけでも未入力として弾く (general の本文は必須)", () => {
+  // Arrange / Act
+  const r = validateInquiry({ ...VALID_GENERAL, message: ' \r\n\t ' }, 'general');
 
-  const ng = validateInquiry(
-    {
-      ...VALID_GENERAL,
-      subject: 'あ'.repeat(LIMITS.subject + 1),
-      appVersion: '1'.repeat(LIMITS.appVersion + 1),
-      message: 'う'.repeat(LIMITS.message + 1),
-    },
-    'general',
-  );
+  // Assert
+  assert.equal(r.ok, false);
+  assert.equal(r.errors.message, 'お問い合わせ内容を入力してください');
+});
+
+test("kind='general' は本文の上限ちょうどを通し、1 文字超過を弾く", () => {
+  // Arrange / Act
+  const ok = validateInquiry({ ...VALID_GENERAL, message: 'う'.repeat(LIMITS.message) }, 'general');
+  const ng = validateInquiry({ ...VALID_GENERAL, message: 'う'.repeat(LIMITS.message + 1) }, 'general');
+
+  // Assert
+  assert.equal(ok.ok, true);
   assert.equal(ng.ok, false);
-  assert.equal(ng.errors.subject, `件名は ${LIMITS.subject} 文字以内で入力してください`);
-  assert.equal(ng.errors.appVersion, `${FIELD_LABELS.appVersion}は ${LIMITS.appVersion} 文字以内で入力してください`);
   assert.equal(ng.errors.message, `お問い合わせ内容は ${LIMITS.message} 文字以内で入力してください`);
 });
 
-test("kind='general' のバージョンは任意だが、改行・制御文字は弾く", () => {
-  const empty = validateInquiry({ ...VALID_GENERAL, appVersion: '' }, 'general');
-  assert.equal(empty.ok, true, '未入力で通る (任意項目)');
-  assert.equal(empty.fields.appVersion, '');
-  assert.equal(validateInquiry({ ...VALID_GENERAL, appVersion: undefined }, 'general').ok, true);
+test("kind='general' はメールアドレスの形式と本文の制御文字を検査する", () => {
+  // Arrange / Act
+  const badEmail = validateInquiry({ ...VALID_GENERAL, email: 'taro@example' }, 'general');
+  const esc = validateInquiry({ ...VALID_GENERAL, message: 'a\u001bb' }, 'general');
+  const tabs = validateInquiry({ ...VALID_GENERAL, message: 'ok\tok\nok' }, 'general');
 
-  const multiline = validateInquiry({ ...VALID_GENERAL, appVersion: '2.3.7\n2.3.6' }, 'general');
-  assert.equal(multiline.ok, false, '単行のみ (Worker と同じ)');
-  assert.equal(multiline.errors.appVersion, `${FIELD_LABELS.appVersion}に使用できない文字が含まれています`);
-
-  const subject = validateInquiry({ ...VALID_GENERAL, subject: '件名\u0000' }, 'general');
-  assert.equal(subject.ok, false);
-  assert.equal(subject.errors.subject, '件名に使用できない文字が含まれています');
+  // Assert
+  assert.equal(badEmail.ok, false);
+  assert.equal(badEmail.errors.email, 'メールアドレスの形式が正しくありません');
+  assert.equal(esc.ok, false);
+  assert.equal(esc.errors.message, 'お問い合わせ内容に使用できない文字が含まれています');
+  assert.equal(tabs.ok, true, 'タブ・改行入りの本文は通る');
 });
 
 test("emptyFields('general') は general の項目だけを持つ", () => {
+  // Arrange / Act
   const f = emptyFields('general');
+
+  // Assert
   assert.deepEqual(Object.keys(f).sort(), [...fieldNames('general'), 'website'].sort());
-  assert.equal('seats' in f, false, 'アカウント数は Enterprise 専用');
-  assert.equal(f.subject, '');
+  for (const retired of ['name', 'subject', 'appVersion', 'seats']) {
+    assert.equal(retired in f, false, `${retired} は general のフォームに無い`);
+  }
+  assert.equal(f.email, '');
+  assert.equal(f.message, '');
   assert.equal(f.website, '');
 });
 
 test('fieldNames は kind ごとの並び (最初のエラーへフォーカスする順) を返す', () => {
   assert.deepEqual(fieldNames('enterprise'), ['company', 'name', 'email', 'phone', 'seats', 'message']);
-  assert.deepEqual(fieldNames('general'), ['name', 'email', 'subject', 'message', 'appVersion']);
+  assert.deepEqual(fieldNames('general'), ['email', 'message']);
   assert.deepEqual(fieldNames('スパム'), fieldNames('enterprise'), '未知の kind は enterprise に倒す');
   assert.deepEqual(fieldNames(), fieldNames('enterprise'), '既定は enterprise');
   for (const key of [...fieldNames('enterprise'), ...fieldNames('general')]) {
@@ -377,30 +407,56 @@ test('fieldNames は kind ごとの並び (最初のエラーへフォーカス�
   }
 });
 
+test('describeFailure: 廃止した general の項目 (件名・バージョン) は項目に紐づけない', () => {
+  // Arrange: T-516 より前の Worker が general の送信に返しうる応答
+  const outcomes = ['subject', 'appVersion'].map((field) => ({
+    status: 400,
+    data: { ok: false, code: 'invalid_input', field, message: `${field} の検証エラー` },
+  }));
+
+  // Act
+  const failures = outcomes.map((o) => describeFailure(o));
+
+  // Assert: 項目に紐づけず、Worker の文面はそのまま出す (島が警告として表示する)
+  for (const [i, f] of failures.entries()) {
+    assert.equal(f.kind, 'invalid');
+    assert.equal(f.field, null, `${outcomes[i].data.field} はどの kind のフォームにも無い`);
+    assert.equal(f.message, outcomes[i].data.message);
+  }
+});
+
 test('buildPayload は general に kind を載せ、enterprise には載せない (旧サイト互換)', () => {
+  // Arrange
   const general = validateInquiry(VALID_GENERAL, 'general').fields;
+  const enterprise = validateInquiry(VALID).fields;
+
+  // Act / Assert
   assert.deepEqual(buildPayload(general, '', 'general'), {
     kind: 'general',
-    name: '確認 太郎',
     email: 'taro@example.co.jp',
-    subject: '書き出しに失敗する',
-    message: 'T-332 動作確認',
-    appVersion: '2.3.7',
+    message: 'T-516 動作確認',
     website: '',
   });
-  assert.deepEqual(buildPayload({ ...general, appVersion: '' }, 'tok', 'general'), {
+  assert.deepEqual(buildPayload(general, 'tok', 'general'), {
     kind: 'general',
-    name: '確認 太郎',
     email: 'taro@example.co.jp',
-    subject: '書き出しに失敗する',
-    message: 'T-332 動作確認',
+    message: 'T-516 動作確認',
     website: '',
     turnstileToken: 'tok',
   });
-
-  const enterprise = validateInquiry(VALID).fields;
   assert.equal('kind' in buildPayload(enterprise), false, 'Worker の既定 (enterprise) にそのまま乗る');
   assert.deepEqual(buildPayload(enterprise), { ...VALID });
+});
+
+test('buildPayload は general の fields に旧項目が混ざっていても送らない', () => {
+  // Arrange: 呼び出し側が旧形の fields を渡してしまった場合
+  const fields = { ...VALID_GENERAL, ...RETIRED_GENERAL_FIELDS };
+
+  // Act
+  const body = buildPayload(fields, '', 'general');
+
+  // Assert
+  assert.deepEqual(Object.keys(body).sort(), ['email', 'kind', 'message', 'website']);
 });
 
 test('未知の kind は enterprise として検証する (既定は旧サイトの契約)', () => {

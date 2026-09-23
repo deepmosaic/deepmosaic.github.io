@@ -187,8 +187,9 @@ E2E_SKIP_BUILD=1 npm run e2e   # ビルド済みの _site/ を使う (CI と同�
 
 `e2e/inquiry.spec.ts` は `/enterprise/inquiry/` の送信フロー（検証エラーの aria 属性 /
 全角電話の正規化 / 200・429・502 の文面 / 完了カードのフォーカス / honeypot / payload の形）を
-固定する。`e2e/contact.spec.ts` (T-332) は `/contact/` の kind=general 側（項目立ての切り替え /
-件名の上限 / `kind: 'general'` を載せた payload / 任意項目 appVersion）を固定する。
+固定する。`e2e/contact.spec.ts` (T-332、T-516 でメール + お問い合わせ内容の 2 項目に) は
+`/contact/` の kind=general 側（項目立ての切り替え / 本文の上限 / `kind: 'general'` を載せた
+payload に廃止した氏名・件名・バージョンが載らないこと）を固定する。
 共通の道具立ては `e2e/lib/inquiry-harness.ts`。
 **送信先は spec が `page.route` で差し替え、それ以外の外部通信は abort する** ため
 本物の Worker は叩かない。endpoint と kind はビルド出力の `data-endpoint` / `data-kind` から
