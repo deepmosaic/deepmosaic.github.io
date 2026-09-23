@@ -68,6 +68,14 @@ npm run build && bundle exec jekyll build
     を通すこと。忘れると参照だけ `.webp` のまま残り、画像が表示されなくなる
   - 変換は ffmpeg (libwebp) で quality 82。ビルドには組み込まない
     (CI に ImageMagick/libvips を要求したくない。Vite に通すと URL が全部変わる)
+  - `optimize-images.mjs` の既定の対象は **`assets/img/screenshots/` 直下だけ** (どこから実行しても同じ、T-522)。
+    別の場所は `node scripts/optimize-images.mjs <dir> [--apply]` (cwd 基準、直下の PNG のみで再帰しない)。
+    まず `--apply` なしで一覧を見る: `[DRY]` = 変換して元 PNG を削除 / `[KEEP]` = 参照あり / `[SKIP]` = 互換性優先
+  - サイトの原稿 (HTML / `_includes` / JSON-LD / Markdown / YAML / CSS / アイランド) から `.png` のまま参照されている
+    PNG は `--apply` でも**変換も削除もしない** (例: `logo-font.png` は `_includes/schema/organization.html` の JSON-LD、
+    favicon 群は `_layouts/default.html`)。変換したいときは先に参照を `.webp` に書き換えてから実行する。
+    判定は `src/lib/image-optimize.js` (`npm test`)。Liquid / HTML のコメント内と `docs_draft/` / `scripts/` / `e2e/` /
+    README・CLAUDE・CHANGELOG / `*.test.js` の記述は参照に数えない。Liquid で組み立てたパスは検出できない
   - `<img>` には **`width` / `height` を必ず付ける** (CLS 対策)。ヒーローだけ
     `fetchpriority="high"` で lazy にしない (LCP 要素のため)、それ以外は
     `loading="lazy" decoding="async"`
