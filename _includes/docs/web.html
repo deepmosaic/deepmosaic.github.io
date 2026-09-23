@@ -5,6 +5,17 @@ utils/browser-requirements.ts (必須/推奨)、video/size-guard.ts (約 1.9GB �
 video/container-sniff.ts (mp4/mov/m4v 以外を拒否)、opfs/gc.ts (7 日でモデル削除、プロジェクトは残す)、
 components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginGate.svelte (ログイン必須)。
 数値 (無料枠) は _data/plans.yml から引く。
+
+T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/docs_toc.yml` の web にも追加、
+`src/lib/docs-web-refresh.test.js` が固定)。根拠は desktop-parity.md の各節:
+  - #timeline … T-308 / T-439 (タイムライン一式の同期)、T-440 (空白)、T-273 (音声)、T-437 (素材は
+    OPFS → Blob URL)。画像クリップ (desktop T-493) は web エンコーダが T-498 で対応するまで「今後」
+  - #home … T-383 (`library.json` は OPFS、タブ内だけ直列化 = 複数タブは最後の保存が残る)、
+    T-410 / T-411 / T-443 (「他のフォルダ」と「このプロジェクトフォルダに切り替える」)
+  - #team … T-262 / T-443 (同じモーダル、LoginGate の組織コード欄、請求書は window.open)、
+    T-485 (メニューの「組織コードで参加」は撤去)
+⚠️ プロジェクトの zip 書き出し・取り込みは web では**まだモック** (`api/project-io.ts`、
+   HOME の「プロジェクトをエクスポート」は「W-6xx で実装予定」の通知だけ)。提供済みと書かないこと。
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
 <section id="about" class="scroll-mt-24">
@@ -77,35 +88,43 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">編集ページ</div>
-        <div class="kv-val">同じ（枠の編集、1f / ∞ の追加、モザイク設定の 4 タブ、シーン、人物ギャラリー、ズーム、ショートカット）</div>
+        <div class="kv-val">同じ（枠の編集、1f / ∞ の追加、モザイク設定の 4 タブ、シーン、人物ギャラリー、ズーム、ショートカット、タイムライン編集）。タイムライン編集の違いは<a href="#timeline">タイムライン編集</a>を参照してください</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">ホーム画面の分類</div>
+        <div class="kv-val">同じ（フォルダとタグ、「他のフォルダ」の行）。分類はブラウザ内に保存されます（<a href="#home">ホーム画面の分類</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">書き出し形式</div>
         <div class="kv-val">MP4 (H.264) / WebM (VP9) / WebM (AV1) の 3 種類。H.265・ProRes・MKV・AVI は Desktop 版のみ。ブラウザが対応しない形式を選ぶと MP4 (H.264) に切り替わります</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">解像度 / フレームレート / ビットレート</div>
         <div class="kv-val">解像度は同じ 7 種類。フレームレートは「元動画と同じ」のみ（変換はできません）。ビットレートの「自動」は解像度から決まります</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">タイムコード</div>
         <div class="kv-val">同じ（埋め込みと文字サイズ・位置・色・表示形式の設定）</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">GPU エンコード</div>
         <div class="kv-val">ブラウザが対応している場合に「GPU エンコード」として選べます（NVIDIA ドライバの条件はありません）</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">保存先</div>
         <div class="kv-val">ブラウザの保存ダイアログで指定するか、いったんブラウザ内に保存してからダウンロードします（<a href="#export">書き出しとダウンロード</a>）</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">Premiere Pro 連携</div>
         <div class="kv-val">ありません（Desktop 版のみ）</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">プロジェクトの書き出しと取り込み</div>
-        <div class="kv-val">zip の書き出し・取り込みは未提供です。代わりに「検出データをダウンロード」で検出結果と編集データを保存できます</div>
+        <div class="kv-val">zip の書き出し・取り込みは Web 版ではまだご利用いただけません（準備中です）。代わりに「検出データをダウンロード」で検出結果と編集データを保存できます（<a href="#export">書き出しとダウンロード</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">組織の管理（Enterprise）</div>
+        <div class="kv-val">同じ（招待と権限、アカウント数、請求書、利用量）。参加の手順は<a href="#team">組織の管理</a>を参照してください</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">アップデート</div>
@@ -120,6 +139,62 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
         <div class="kv-val">ログインの確認に通信が必要なため、オフラインでは「サーバーに接続できません」と表示され利用できません。Desktop 版はセットアップ後にオフラインでも検出・編集・書き出しができます</div>
       </div>
     </div>
+  </div>
+</section>
+
+<section id="home" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="ホーム画面の分類" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>ホーム画面の左サイドバーで、プロジェクトを<b>フォルダ</b>と<b>タグ</b>で分類できます。操作は Desktop 版と同じです（<a href="/docs/#import">動画の読み込み</a>）。</p>
+    <ul>
+      <li><b>フォルダ</b>: 一覧上部の「新規フォルダ」でフォルダを作り、フォルダのメニューからサブフォルダも作れます。動画カードのメニュー（右クリックでも開きます）の「フォルダへ移動」で移すか、カードをサイドバーのフォルダへドラッグします。「すべての動画」にドロップすると分類を外せます</li>
+      <li><b>タグ</b>: 動画カードのメニューのタグ欄で付け外しします。サイドバーの「タグで絞り込み」でタグを選ぶと、そのタグの動画だけが並びます</li>
+      <li><b>「他のフォルダ」</b>: 現在のプロジェクトフォルダの外にあるプロジェクトは、サイドバーの「他のフォルダ」の行にまとまります（0 件のときは表示されません）。フォルダとタグは使えないので、分類したいときは動画カードのメニューの「このプロジェクトフォルダに切り替える」を選びます</li>
+    </ul>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">分類の保存先</div>
+        <div class="kv-val">フォルダとタグは、ブラウザ内のプロジェクトフォルダに保存されます。Desktop 版とは共有されません（別のブラウザ / PC とも共有されません）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">複数のタブ</div>
+        <div class="kv-val">同じブラウザの複数のタブで同時に分類を変えると、最後に保存したタブの内容が残ります。分類の変更は 1 つのタブで行ってください</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">動画カードのメニュー</div>
+        <div class="kv-val">「プロジェクトフォルダを開く」「Premiere Pro」「プロジェクトをコピー」はありません。Web 版には代わりに「検出データをダウンロード」があります（<a href="#export">書き出しとダウンロード</a>）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="タイムライン編集" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>編集ページのタイムライン編集は Desktop 版と同じ操作で使えます。左のサイドバー（メディア / テキスト / 透かし / 音声 / フェード / トランジション）から素材や効果を追加し、クリップのトリム・分割・並べ替え・削除、クリップ間の<b>空白</b>、<b>テキスト</b>、<b>音声</b>（BGM）を編集できます。編集した内容は、そのまま書き出しに反映されます（<a href="/docs/#edit-overview">編集ページ</a>）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">素材の取り込み</div>
+        <div class="kv-val">動画・音声・画像の素材は、メディアパネルの「メディアをインポート」から選ぶか、ファイルを編集ページにドラッグ&amp;ドロップして取り込みます。素材はブラウザ内のプロジェクトに保存され、プレビューではブラウザ内の一時的な URL（<b>Blob URL</b>）から読み込みます。ページを開いた直後など、素材の読み込みが終わるまではプレビューのその区間が黒く表示されることがあります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">空白</div>
+        <div class="kv-val">クリップの間に置いた空白は、黒い画面・無音として書き出されます（Desktop 版と同じ結果です）。BGM は空白をまたいで流れ続けます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">テキスト・透かし・フェード・トランジション</div>
+        <div class="kv-val">同じ。書き出しではブラウザが映像に焼き込みます。トランジションを長くするほど、書き出し中のメモリを多く使います</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">音声</div>
+        <div class="kv-val">元の動画の音声と BGM などの音声トラックをミックスして書き出します（MP4 は AAC、WebM は Opus）。取り込んだ動画クリップの音声は書き出しに含まれません（Desktop 版と同じです）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">画像クリップ</div>
+        <div class="kv-val">画像を好きな長さのクリップとしてタイムラインに置く機能（Desktop 版の次回の更新で追加）は、Web 版の書き出しには今後の更新で対応します。それまでは、画像の素材は透かしとしてお使いください</div>
+      </div>
+    </div>
+    <p>モザイクは、AI で検出した元の動画の区間にかかります。取り込んだ素材は検出の対象外です。</p>
   </div>
 </section>
 
@@ -145,7 +220,7 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
       </div>
       <div class="kv-row">
         <div class="kv-key">検出データをダウンロード</div>
-        <div class="kv-val">プロジェクトの検出結果と編集データを JSON ファイルとして保存します。Desktop 版のプロジェクトフォルダに置くと、Desktop 版で編集や Premiere Pro への送信を続けられます</div>
+        <div class="kv-val">プロジェクトの検出結果と編集データを JSON ファイルとして保存します。Desktop 版のプロジェクトフォルダに置くと、Desktop 版で編集や Premiere Pro への送信を続けられます。タイムライン編集で取り込んだ素材のファイルは含まれません</div>
       </div>
     </div>
   </div>
@@ -154,7 +229,7 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
 <section id="storage" class="scroll-mt-24">
   {% include docs-h2.html kicker="Web 版" title="データの保存と自動削除" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>読み込んだ動画のコピー、検出結果、編集データ、ブラウザ内に書き出した動画、AI モデルは、すべてブラウザのサイト専用ストレージに保存されます。サーバーには保存されません。</p>
+    <p>読み込んだ動画のコピー、検出結果、編集データ、タイムライン編集で取り込んだ素材、ホーム画面の分類（フォルダとタグ）、ブラウザ内に書き出した動画、AI モデルは、すべてブラウザのサイト専用ストレージに保存されます。サーバーには保存されません。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">AI モデル</div>
@@ -182,6 +257,23 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>アカウント、プラン、使用時間は Desktop 版と共通です。無料アカウントでは累計 {{ free_plan.included_hours }} 時間分の動画を検出でき、フッターに残り時間が表示されます。使用時間は検出が完了したときに加算され、エンコードは加算されません。有料プランの込み時間と料金は<a href="/price">料金ページ</a>をご覧ください。</p>
     <p>プランの申し込み・変更・解約はプロフィールメニューから行います。決済画面は新しいタブで開き、手続きが終わって元のタブに戻ると自動で反映されます。Enterprise はプロフィールメニューの「お問い合わせ」からご相談ください。</p>
+  </div>
+</section>
+
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web 版" title="組織の管理（Enterprise）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Enterprise の組織に参加しているアカウントでは、プロフィールメニューの「組織の管理」から、メンバーの招待と権限、アカウント数の変更、請求書、利用量を Desktop 版と同じ画面で扱えます。権限や導入の流れは Desktop 版のガイドの<a href="/docs/#team">組織の管理（Enterprise）</a>をご覧ください。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">組織コードでの参加</div>
+        <div class="kv-val">ログイン画面の「組織コードをお持ちの方」を開き、「組織コード」欄にコードを入力してからログインします。認証を終えてこのページに戻ると、組織への参加が行われます。ログインした後のメニューからは参加できないので、ログイン済みの場合はいったんログアウトしてから入力し直してください</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">請求書の表示 / PDF</div>
+        <div class="kv-val">「請求書」の「表示」と「PDF」は、ブラウザの新しいタブで開きます</div>
+      </div>
+    </div>
   </div>
 </section>
 

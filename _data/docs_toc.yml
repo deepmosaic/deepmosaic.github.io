@@ -67,8 +67,12 @@ web:
       - { id: requirements, label: 対応ブラウザと要件 }
       - { id: start, label: 始め方 }
       - { id: diff, label: Desktop 版との違い }
+      # T-511: web に入ったホーム画面の分類 / タイムライン編集 / 組織の管理。追加のみ (既存 ID は不変)。
+      - { id: home, label: ホーム画面の分類 }
+      - { id: timeline, label: タイムライン編集 }
       - { id: run, label: 実行ウィンドウとキュー }
       - { id: export, label: 書き出しとダウンロード }
       - { id: storage, label: データの保存と自動削除 }
       - { id: plan, label: プランと使用時間 }
+      - { id: team, label: 組織の管理（Enterprise） }
       - { id: trouble, label: トラブルシューティング }
