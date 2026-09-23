@@ -37,6 +37,19 @@ desktop:
       - { id: edit-mosaic, label: モザイク設定パネル }
       - { id: edit-persons, label: 人物ギャラリー }
       - { id: shortcuts, label: キーボードショートカット }
+  # T-513: タイムライン編集 (サイドバー + ドロワー、クリップ / テキスト / 音声のレーン)。**新規追加の ID** のみで、
+  # 既存の節 ID には触れていない。本文は `_includes/docs/04-edit.html` の後半 (#shortcuts の後ろ) で、並びは目次と同じ
+  # (`src/lib/docs-edit-timeline.test.js` が固定する)。
+  - title: タイムライン編集
+    items:
+      - { id: edit-sidebar, label: サイドバーとドロワー }
+      - { id: timeline-edit, label: クリップの編集 }
+      - { id: edit-media, label: メディア（素材の取り込み） }
+      - { id: edit-text, label: テキスト }
+      - { id: edit-watermark, label: 透かし }
+      - { id: edit-audio, label: 音声と BGM }
+      - { id: edit-fade, label: フェード }
+      - { id: edit-transition, label: トランジション }
   - title: 書き出しと連携
     items:
       - { id: edit-encode, label: エンコード（書き出し） }

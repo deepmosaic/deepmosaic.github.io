@@ -76,6 +76,7 @@ llms.txt (TICKET-SITE-33)。
 - [モザイク設定 / Mosaic settings]({{ U }}/docs/#edit-mosaic): 粒度・不透明度・ふちのなじませ・適用範囲 / granularity, opacity, edge feathering, scope
 - [人物ギャラリー / Person gallery]({{ U }}/docs/#edit-persons): 顔の人物単位の統合とモザイク ON/OFF / merge faces per person, toggle mosaic per person
 - [キーボードショートカット / Keyboard shortcuts]({{ U }}/docs/#shortcuts)
+- [タイムライン編集 / Timeline editing]({{ U }}/docs/#timeline-edit): クリップのトリム・分割・移動・空白、素材の取り込み、テキスト・透かし・BGM・フェード・トランジション / trimming, splitting and moving clips, gaps, imported media, text, watermark, background music, fades and transitions
 - [書き出し / Export]({{ U }}/docs/#edit-encode): モザイクを焼き込んだ動画の書き出し / exporting a video with the mosaic burned in
 - [タイムコードの設定 / Timecode burn-in]({{ U }}/docs/#timecode)
 - [プロジェクトの書き出しと取り込み / Project export and import]({{ U }}/docs/#project-io)

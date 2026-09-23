@@ -1,14 +1,21 @@
 {%- comment -%}
-docs 第 4 章「編集」(TICKET-SITE-42 で部品化、TICKET-SITE-45 で拡充)。
+docs 第 4 章「編集」(TICKET-SITE-42 で部品化、TICKET-SITE-45 で拡充、T-513 でタイムライン編集を追加)。
 節 ID (edit-overview / edit-player / edit-toolbar / edit-mosaic) は外部参照の契約
 (llms.txt が #edit-mosaic を参照)。改名しない。edit-zoom / edit-bbox / edit-scenes /
 edit-persons / shortcuts は TICKET-SITE-45 で追加。
-ショートカット表は desktop `src/lib/edit-shortcuts.ts` (単一情報源) と 1:1。SAM の行は機能無効のため載せない。
+T-513: 後半の 8 節 (edit-sidebar / timeline-edit / edit-media / edit-text / edit-watermark / edit-audio /
+edit-fade / edit-transition) は目次の「タイムライン編集」群。目次 (`_data/docs_toc.yml`) と同じ順に並べる。
+ショートカット表は desktop `src/lib/edit-shortcuts.ts` (単一情報源) と 1:1。各行の `data-shortcut` は
+その ID で、`src/lib/docs-edit-timeline.test.js` が ID・分類・キーを写しと突き合わせる。無効化済みの 1 群
+(owner が annotation の 9 個) と SAM の行は、機能が無効のため載せない。
+新しいスクリーンショット 8 枚 (edit-sidebar-media / edit-timeline-clips / edit-timeline-menu / edit-text /
+edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影で届く。width / height は仮の値で、
+撮影後に `node scripts/check-docs.mjs --fix-dims` で実寸に揃える。
 {%- endcomment -%}
 <section id="edit-overview" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="編集ページ" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ホーム画面の動画カードをクリックすると編集ページが開きます。画面は上から「ヘッダー」「動画プレイヤー（編集ツールバー内蔵）」「タイムライン」で構成されます。</p>
+    <p>ホーム画面の動画カードをクリックすると編集ページが開きます。画面は上部の「ヘッダー」、端に縦に並ぶ「サイドバー」（と、その隣に開くドロワー）、中央の「動画プレイヤー（編集ツールバー内蔵）」、下部の「タイムライン」で構成されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">ヘッダー左</div>
@@ -27,6 +34,18 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
         <div class="kv-val">編集は操作の約 1 秒後に自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます。エンコードの開始時にも未保存分が保存されます</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">サイドバー</div>
+        <div class="kv-val">メディア / テキスト / 透かし / 音声 / フェード / トランジション の 6 項目。押すと隣にドロワーが開き、素材の取り込みやテキスト・BGM などの設定ができます（<a href="#edit-sidebar">サイドバーとドロワー</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">タイムライン</div>
+        <div class="kv-val">シーンの帯、テキスト・クリップ・音声のレーン、検出クラスごとの行が並びます（<a href="#edit-player">プレイヤーとタイムライン</a> / <a href="#timeline-edit">クリップの編集</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">ツールチップ</div>
+        <div class="kv-val">ボタンにマウスを乗せると、すぐに（約 0.15 秒で）その機能の説明とショートカットキーがツールチップで表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">詳細データがありません</div>
         <div class="kv-val">検出結果のファイルが見つからないときに表示されます（プロジェクトフォルダの移動や削除など）。この画面の「プロジェクトを削除」で一覧から取り除けます</div>
       </div>
@@ -42,7 +61,7 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
   {% include docs-h2.html kicker="編集" title="プレイヤーとタイムライン" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
-    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。枠の上のラベルには「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザ」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
+    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。枠の上のラベル（チップ）には「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザ」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1256" height="898" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
@@ -89,8 +108,16 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
         <div class="kv-val">選択して <kbd>Delete</kbd>、枠をダブルクリック、または右クリックメニューの「この BBox を削除」。削除はそのフレームの枠だけに適用されます（同じ ID の他のフレームは残ります）</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">連続削除（消しゴム）</div>
+        <div class="kv-val">映像の上で右ボタンを押したままドラッグすると、カーソルが円形の消しゴムになり、円に触れた枠を削除します。押したまま再生したりホイールでコマ送りしたりすると、流れていくフレームの枠も続けて消せます（右ボタンを動かさずに離したときは、いつもの右クリックメニューが開きます）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">ID ごと削除（チップの ✕）</div>
+        <div class="kv-val">検出した枠のチップの右端にある ✕ を押すと、その ID の枠を全フレームからまとめて削除します。削除するフレーム数を示した確認が出ます。手動で追加した枠のチップには ✕ は出ません</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">右クリックメニュー</div>
-        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、「この BBox を削除」。連続 bbox に軌跡があるときは「移動軌跡をクリア」</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、「この BBox を削除」、検出した枠では「この ID をすべて削除」（チップの ✕ と同じ）。連続 bbox に軌跡があるときは「移動軌跡をクリア」</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">追跡 ID の統合</div>
@@ -101,12 +128,14 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
         <div class="kv-val">対象から外したトラックがあると「N トラックをモザイク除外中です」と常時表示されます。「すべてモザイク対象に戻す」で一括で戻せます。除外した箇所は書き出してもモザイクがかかりません</div>
       </div>
     </div>
+    <p>検出枠の選択・追加・消しゴムは、再生ヘッドが元の動画（検出元）の区間にあるときだけ使えます。<a href="#edit-media">取り込んだ素材</a>の区間は AI 検出の対象外のため、枠はありません。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-context-menu.webp" alt="検出枠を右クリックしたときのメニュー（性別の変更・モザイク対象外・削除）" width="1246" height="534" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">枠の右クリックメニュー</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">タイムライン</h3>
-    <p>上段の目盛りの下に<a href="#edit-scenes">シーン（カット）の帯</a>、その下にクラスごとの行が並びます。各行には検出のある区間が帯で描かれ、行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは <kbd>Ctrl</kbd>+ホイール、または右上の {% include icon.html name="Maximize2" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで最大 16 倍まで拡大できます。</p>
+    <p>タイムラインは上から、ツールバー、目盛り、<a href="#edit-scenes">シーン（カット）の帯</a>、テキスト・クリップ・音声のレーン（<a href="#timeline-edit">クリップの編集</a>）、検出クラスごとの行の順に並びます。クラスの行には検出のある区間が帯で描かれ、行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは書き出す映像の時間で並ぶので、クリップをトリムしたり動かしたりすると、検出の帯も一緒に動きます。</p>
+    <p>タイムラインは <kbd>Ctrl</kbd>+ホイール、またはツールバー左端の拡大・縮小ボタンで最大 16 倍まで拡大できます。高さの変更と折りたたみは<a href="#timeline-edit">クリップの編集</a>を参照してください。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-timeline.webp" alt="タイムライン。シーン帯と、クラス行を展開した追跡 ID ごとの行" width="1256" height="183" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムライン（シーン帯とクラス行 → ID 行の展開）</figcaption>
@@ -176,7 +205,7 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">分割（<kbd>Ctrl+K</kbd>）</div>
-        <div class="kv-val">タイムライン右上の {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+K</kbd> で、現在のフレームを境にシーンを 2 つに分けます。自動判定が見逃したカットや、同じカット内で設定を変えたい箇所に使います</div>
+        <div class="kv-val">タイムラインのツールバー（拡大・縮小ボタンの右）の {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+K</kbd> で、現在のフレームを境にシーンを 2 つに分けます。自動判定が見逃したカットや、同じカット内で設定を変えたい箇所に使います</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">境界の調整</div>
@@ -187,7 +216,7 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
         <div class="kv-val">帯にマウスを乗せると出る ✕（このシーンを削除）で、隣のシーンと結合します</div>
       </div>
     </div>
-    <p>シーンの変更は編集データとして保存され、検出結果そのものは変わりません。「全編集リセット」で自動判定の状態に戻ります。</p>
+    <p>シーンの変更は編集データとして保存され、検出結果そのものは変わりません。「全編集リセット」で自動判定の状態に戻ります。シーンの分割は書き出す映像を切りません。映像そのものを切り分けるときは、クリップの分割（<kbd>Ctrl+Shift+K</kbd>、<a href="#timeline-edit">クリップの編集</a>）を使います。</p>
   </div>
 </section>
 
@@ -350,6 +379,10 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
   {% include docs-h2.html kicker="編集" title="キーボードショートカット" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>編集ページで使えるショートカットの一覧です。ツールバー右端の {% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} にマウスを乗せても同じ一覧が表示されます。文字入力中は無効です。</p>
+    <ul>
+      <li>「タイムライン」の行は、タイムラインを表示しているときに効きます（折りたたみ中は効きません）。取り消しは検出枠の <kbd>Ctrl+Z</kbd> と別で、タイムライン編集は <kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+Y</kbd> です</li>
+      <li><kbd>Delete</kbd> は、最後に操作した場所で対象が変わります。プレイヤー（映像）を最後に触ったときは選択中の検出枠を、タイムラインを最後に触ったときは選択中のクリップ・テキスト・音声トラックを削除します</li>
+    </ul>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-shortcuts.webp" alt="編集ページでショートカットの凡例を表示した状態" width="1280" height="1100" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">ショートカットの凡例</figcaption>
@@ -358,34 +391,378 @@ edit-persons / shortcuts は TICKET-SITE-45 で追加。
       <table>
         <thead><tr><th class="w-[8.5em]">分類</th><th class="w-[11em]">キー</th><th>動作</th></tr></thead>
         <tbody>
-          <tr><td rowspan="5">再生</td><td><kbd>Space</kbd></td><td>再生 / 一時停止</td></tr>
-          <tr><td><kbd>J</kbd> <kbd>K</kbd> <kbd>L</kbd></td><td>停止 / 停止 / 再生（Premiere Pro 互換）</td></tr>
-          <tr><td><kbd>V</kbd></td><td>ミュート切替</td></tr>
-          <tr><td><kbd>,</kbd> / <kbd>.</kbd></td><td>再生速度を下げる / 上げる</td></tr>
-          <tr><td><kbd>B</kbd></td><td>空白のみ再生（bbox のあるフレームをスキップ）</td></tr>
-          <tr><td rowspan="3">フレーム移動</td><td><kbd>→</kbd> / <kbd>←</kbd></td><td>1 コマ進む / 戻る（<kbd>Shift</kbd> で 10 コマ）</td></tr>
-          <tr><td><kbd>Home</kbd> / <kbd>End</kbd></td><td>先頭へ / 末尾へ</td></tr>
-          <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>前の / 次の欠落フレームへ</td></tr>
-          <tr><td rowspan="4">ズーム・表示</td><td><kbd>+</kbd> / <kbd>-</kbd> / <kbd>0</kbd></td><td>フレーム拡大 / 縮小 / ズームをリセット</td></tr>
-          <tr><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
-          <tr><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
-          <tr><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
-          <tr><td rowspan="3">BBox 編集</td><td><kbd>1</kbd> / <kbd>2</kbd></td><td>このフレームのみに bbox 追加 / 以降のフレームに連続 bbox 追加</td></tr>
-          <tr><td><kbd>Delete</kbd></td><td>選択中の bbox を削除</td></tr>
-          <tr><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
-          <tr><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
-          <tr><td><kbd>Ctrl+K</kbd></td><td>現在のフレームでシーンを分割</td></tr>
-          <tr><td rowspan="4">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
-          <tr><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
-          <tr><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
-          <tr><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
-          <tr><td rowspan="5">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
-          <tr><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
-          <tr><td>中ボタンドラッグ</td><td>パン（拡大中は余白の左ドラッグでも可）</td></tr>
-          <tr><td>ダブルクリック</td><td>bbox を削除</td></tr>
-          <tr><td>右クリック</td><td>トラック操作メニュー（性別切替 / モザイク除外 / 削除）</td></tr>
+          <tr data-shortcut="play_pause"><td rowspan="6">再生</td><td><kbd>Space</kbd></td><td>再生 / 一時停止</td></tr>
+          <tr data-shortcut="jkl_transport"><td><kbd>J</kbd> / <kbd>K</kbd> / <kbd>L</kbd></td><td>停止 / 停止 / 再生（Premiere Pro 互換）</td></tr>
+          <tr data-shortcut="mute_toggle"><td><kbd>V</kbd></td><td>ミュート切替</td></tr>
+          <tr data-shortcut="speed_down"><td><kbd>,</kbd></td><td>再生速度を下げる</td></tr>
+          <tr data-shortcut="speed_up"><td><kbd>.</kbd></td><td>再生速度を上げる</td></tr>
+          <tr data-shortcut="blank_only_toggle"><td><kbd>B</kbd></td><td>空白のみ再生（bbox のあるフレームをスキップ）</td></tr>
+          <tr data-shortcut="step_fwd"><td rowspan="6">フレーム移動</td><td><kbd>→</kbd></td><td>1 コマ進む（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>1 コマ戻る（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="go_start"><td><kbd>Home</kbd></td><td>先頭へ</td></tr>
+          <tr data-shortcut="go_end"><td><kbd>End</kbd></td><td>末尾へ</td></tr>
+          <tr data-shortcut="jump_prev_empty"><td><kbd>[</kbd></td><td>前の欠落フレームへ</td></tr>
+          <tr data-shortcut="jump_next_empty"><td><kbd>]</kbd></td><td>次の欠落フレームへ</td></tr>
+          <tr data-shortcut="frame_zoom_in"><td rowspan="6">ズーム・表示</td><td><kbd>+</kbd> / <kbd>=</kbd></td><td>フレーム拡大</td></tr>
+          <tr data-shortcut="frame_zoom_out"><td><kbd>-</kbd></td><td>フレーム縮小</td></tr>
+          <tr data-shortcut="frame_zoom_reset"><td><kbd>0</kbd></td><td>ズームをリセット</td></tr>
+          <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
+          <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
+          <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="4">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
+          <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
+          <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
+          <tr data-shortcut="mosaic_panel_open"><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
+          <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>現在のフレームでシーンを分割</td></tr>
+          <tr data-shortcut="timeline_clip_split"><td rowspan="10">タイムライン</td><td><kbd>Ctrl+Shift+K</kbd></td><td>再生ヘッドの位置でクリップを分割</td></tr>
+          <tr data-shortcut="timeline_clip_delete"><td><kbd>Backspace</kbd></td><td>選択中のクリップ / テキスト / 音声トラックを削除</td></tr>
+          <tr data-shortcut="timeline_undo"><td><kbd>Ctrl+Shift+Z</kbd></td><td>タイムライン編集を元に戻す</td></tr>
+          <tr data-shortcut="timeline_redo"><td><kbd>Ctrl+Shift+Y</kbd></td><td>タイムライン編集をやり直す</td></tr>
+          <tr data-shortcut="timeline_nudge_back"><td><kbd>Ctrl+←</kbd></td><td>選択中の要素を 1 フレーム前へ動かす</td></tr>
+          <tr data-shortcut="timeline_nudge_fwd"><td><kbd>Ctrl+→</kbd></td><td>選択中の要素を 1 フレーム後ろへ動かす</td></tr>
+          <tr data-shortcut="timeline_duplicate"><td><kbd>Ctrl+D</kbd></td><td>選択中の要素を複製</td></tr>
+          <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の要素をコピー</td></tr>
+          <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした要素を貼り付け（テキスト・音声は再生ヘッドの位置、クリップは選択中のクリップの後ろ）</td></tr>
+          <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>選択中の要素を削除（最後にタイムラインを操作したとき）</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="7">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
+          <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>メディア（サイドバー）を開閉</td></tr>
+          <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>テキスト / 透かし / 音声 / フェード / トランジションのドロワーを開閉（直前に開いていた項目）</td></tr>
+          <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>タイムラインを折りたたむ / 展開する</td></tr>
+          <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
+          <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
+          <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="6">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
+          <tr data-shortcut="mouse_pan"><td>中ボタンドラッグ</td><td>パン（拡大中は余白の左ドラッグでも可）</td></tr>
+          <tr data-shortcut="mouse_dblclick_delete"><td>ダブルクリック</td><td>bbox を削除</td></tr>
+          <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
+          <tr data-shortcut="mouse_eraser"><td>右ドラッグ</td><td>連続削除（消しゴム。円に触れた bbox を削除。再生 / コマ送りしながらでも可）</td></tr>
         </tbody>
       </table>
     </div>
+  </div>
+</section>
+
+<section id="edit-sidebar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="サイドバーとドロワー" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>編集ページの端に縦に並ぶサイドバーから、タイムライン編集の機能を開きます。項目を押すと隣にドロワー（設定の引き出し）が開き、同じ項目をもう一度押すと閉じます。ドロワーを開いたままでも、プレイヤーやタイムラインはそのまま操作できます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Images" class="inline h-3.5 w-3.5 align-[-2px]" %} メディア（<kbd>A</kbd>）</div>
+        <div class="kv-val">動画・音声・画像の素材を取り込み、タイムラインに追加します（<a href="#edit-media">メディア</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Type" class="inline h-3.5 w-3.5 align-[-2px]" %} テキスト</div>
+        <div class="kv-val">映像に文字を焼き込みます（<a href="#edit-text">テキスト</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Stamp" class="inline h-3.5 w-3.5 align-[-2px]" %} 透かし</div>
+        <div class="kv-val">ロゴなどの画像を全編に重ねます（<a href="#edit-watermark">透かし</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Music" class="inline h-3.5 w-3.5 align-[-2px]" %} 音声</div>
+        <div class="kv-val">元の動画の音量と、BGM などの音声トラックを調整します（<a href="#edit-audio">音声と BGM</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Blend" class="inline h-3.5 w-3.5 align-[-2px]" %} フェード</div>
+        <div class="kv-val">書き出す映像全体の先頭と末尾をフェードさせます（<a href="#edit-fade">フェード</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="ArrowLeftRight" class="inline h-3.5 w-3.5 align-[-2px]" %} トランジション</div>
+        <div class="kv-val">クリップの継ぎ目に切り替えの効果を付けます。サイドバーの表示は「つなぎ」です（<a href="#edit-transition">トランジション</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><kbd>T</kbd> キー</div>
+        <div class="kv-val">テキスト〜トランジションのうち、直前に開いていた項目のドロワーを開閉します（初回は「透かし」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 配置</div>
+        <div class="kv-val">サイドバーの末尾のボタンで、サイドバーとドロワーを画面の左右どちらに置くかを切り替えます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">ドロワーの幅</div>
+        <div class="kv-val">ドロワーのプレイヤー側の縁をドラッグすると、240〜520px の範囲で幅を変えられます。縁を選んで <kbd>←</kbd> / <kbd>→</kbd> キーでも 16px ずつ調整でき、ダブルクリックで既定の 300px に戻ります</div>
+      </div>
+    </div>
+    <p>ドロワーの幅と左右の配置は、次に編集ページを開いたときも引き継がれます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-sidebar-media.webp" alt="サイドバーの「メディア」を押してドロワーを開いた編集ページ。取り込んだ素材が一覧で並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">サイドバーとドロワー（メディアを開いた状態）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="timeline-edit" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="クリップの編集" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>タイムラインの「クリップレーン」には、書き出す映像の並びが帯（クリップ）で表示されます。最初は元の動画（検出元）1 本だけのクリップで、トリム・分割・削除で不要な部分を切り詰めたり、<a href="#edit-media">取り込んだ素材</a>を前後に足したりできます。クリップレーンの上には<a href="#edit-text">テキスト</a>、下には<a href="#edit-audio">音声</a>のレーンがあり、どのレーンも書き出す映像の時間で並びます。</p>
+    <p>編集した内容はプレビューにそのまま反映され、<a href="#edit-encode">エンコード</a>で書き出されます。モザイクは元の動画の区間にかかります。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選択</div>
+        <div class="kv-val">帯をクリックすると選択され、帯の右上に削除の ✕ が出ます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">トリム</div>
+        <div class="kv-val">帯の左右の端をドラッグして、クリップの開始・終了を詰めます（最短 1 フレーム）。シーンの境界や再生ヘッドに近づくと吸着します。取り込んだ動画は素材の長さまで、画像のクリップは好きな長さまで伸ばせます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">分割（<kbd>Ctrl+Shift+K</kbd>）</div>
+        <div class="kv-val">ツールバー右側の {% include icon.html name="SquareSplitHorizontal" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+Shift+K</kbd> で、再生ヘッドの位置でクリップを 2 つに分けます。キーで分割したときは後半が選択されるので、続けてトリムや削除ができます。分割した継ぎ目にはカットの印（斜線とはさみ）が付きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">削除</div>
+        <div class="kv-val">選択して帯の ✕、<kbd>Backspace</kbd> / <kbd>Delete</kbd> キー、または右クリックメニューの「削除」。後ろのクリップは前に詰まります（リップル削除）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">並べ替え・移動</div>
+        <div class="kv-val">帯をつかんで左右にドラッグすると、置いた位置に応じて並べ替えられます。他のクリップの端・シーンの境界・再生ヘッドに吸着します。今の終わりより右へ運ぶこともできます。<kbd>Ctrl+←</kbd> / <kbd>Ctrl+→</kbd> で選択中のクリップを 1 フレームずつ動かせます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">空白</div>
+        <div class="kv-val">前のクリップから離して置くと、その間が空白（黒い画面・無音）になり、斜線の帯に「空白 N フレーム」と表示されます。書き出してもそのまま黒い画面・無音になります。空白を詰めるときは、クリップを前のクリップの端までドラッグします（端に吸着します）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">継ぎ目</div>
+        <div class="kv-val">クリップの継ぎ目には {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジが出ます。押すと<a href="#edit-transition">トランジション</a>の設定が開き、トランジションのチップをドラッグして置くこともできます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">フィルムストリップ</div>
+        <div class="kv-val">動画のクリップの帯には、中身のサムネイルが並びます（フィルムストリップ）。画像のクリップには画像そのものが表示されます。サムネイルの読み込みが終わるまでは無地で表示されます</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-timeline-clips.webp" alt="タイムラインのクリップレーン。元の動画を分割して素材のクリップと空白を挟み、上にテキスト、下に音声のレーンが並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">クリップレーン（トリム・分割・空白）とテキスト・音声のレーン</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">右クリックメニューとクリップボード</h3>
+    <p>クリップ・テキスト・音声トラックの帯を右クリックすると「複製」「コピー」「ペースト」「削除」のメニューが出ます。レーンの何もない所を右クリックしたときは「ペースト」だけが出ます。メニューとショートカットは同じ動作です。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">複製（<kbd>Ctrl+D</kbd>）</div>
+        <div class="kv-val">クリップはすぐ後ろに、テキストは帯のすぐ後ろに、音声トラックは同じ位置に複製します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">コピー / ペースト（<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>）</div>
+        <div class="kv-val">コピーした要素を貼り付けます。テキストと音声トラックは再生ヘッドの位置に、クリップは選択中のクリップ（選択していなければ再生ヘッドのあるクリップ）のすぐ後ろに入ります。クリップボードに入るのは直前にコピーした 1 つだけで、パソコンのクリップボードとは別です（編集ページの中でだけ使えます）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">削除（<kbd>Delete</kbd>）</div>
+        <div class="kv-val">選択中の要素を削除します。プレイヤーを最後に操作していたときの <kbd>Delete</kbd> は検出枠の削除になります（<a href="#shortcuts">ショートカット</a>）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-timeline-menu.webp" alt="タイムラインのクリップを右クリックしたメニュー（複製・コピー・ペースト・削除）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムラインの右クリックメニュー</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">取り消しと履歴</h3>
+    <p>タイムラインの編集（クリップ・テキスト・音声・透かし・フェード・トランジション・素材の追加）は、検出枠の編集とは別の履歴に記録されます。ツールバー右側の「元に戻す」（<kbd>Ctrl+Shift+Z</kbd>）/「やり直す」（<kbd>Ctrl+Shift+Y</kbd>）で 1 手ずつ、{% include icon.html name="History" class="inline h-3.5 w-3.5 align-[-2px]" %} 履歴ボタンの一覧から選ぶと、その操作までまとめて戻せます。一覧には「分割」「トリム」「移動」「テキスト追加」などの操作名と時刻が新しい順に並び、最大 100 件まで残ります。履歴は動画を開き直すと空になります。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">タイムラインの高さと折りたたみ</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">高さの変更</div>
+        <div class="kv-val">タイムラインの上端をドラッグすると、220〜720px の範囲で高さを変えられます（プレイヤーには常に 200px 以上が残ります）。上端を選んで <kbd>↑</kbd> / <kbd>↓</kbd> キーでも 16px ずつ調整でき、ダブルクリックで既定の 400px に戻ります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">折りたたみ（<kbd>Ctrl+Shift+T</kbd>）</div>
+        <div class="kv-val">ツールバー右端の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで、タイムラインをツールバー 1 行だけに折りたたみ、プレイヤーを大きく使えます。もう一度押すと展開します</div>
+      </div>
+    </div>
+    <p>高さと折りたたみの状態は、次に編集ページを開いたときも引き継がれます。</p>
+  </div>
+</section>
+
+<section id="edit-media" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="メディア（素材の取り込み）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「メディア」（<kbd>A</kbd>）で開くメディアパネルで、タイムラインに使う動画・音声・画像の素材を取り込みます。取り込んだ素材はプロジェクトフォルダの中にコピーされるため、元のファイルを動かしても使い続けられます（<a href="#project-io">プロジェクトの書き出し</a>の zip にも入ります）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">取り込み</div>
+        <div class="kv-val">「メディアをインポート」で種類（動画 / 音声 / 画像）を選んでファイルを選ぶか、エクスプローラーからファイルを編集ページにドラッグ&amp;ドロップします</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">対応形式と上限</div>
+        <div class="kv-val">動画: <a href="#import">動画の読み込み</a>と同じ形式（1 ファイル 2GB まで）/ 音声: MP3・WAV・AAC・M4A・FLAC・OGG・Opus（200MB まで）/ 画像: PNG・JPEG・WebP・BMP（50MB まで）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">タイムラインに追加</div>
+        <div class="kv-val">素材の行の「タイムラインに追加」で、動画はクリップとして末尾に、音声は音声トラックとして再生ヘッドの位置に置かれます。素材をレーンへドラッグして好きな位置に置くこともできます（動画・画像はクリップレーン、音声は音声レーン）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">画像</div>
+        <div class="kv-val">「タイムラインに追加」で 5 秒の画像クリップとして置かれ、帯の端をドラッグすると好きな長さに伸縮できます。「透かしに設定」を選ぶと、全編に重ねるロゴとして使えます（<a href="#edit-watermark">透かし</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">動画の音声</div>
+        <div class="kv-val">取り込んだ動画をクリップとして置いた区間は、書き出しではその動画の音声が入らず無音になります（音声トラックの BGM などは流れます）。取り込んだ動画の音声を使いたいときは、同じ素材を音声レーンにもドロップします</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">素材の削除</div>
+        <div class="kv-val">行の削除ボタンで、素材をプロジェクトから削除します。ファイルの実体も消えるため取り消せません（タイムラインの取り消しでも戻りません）。タイムラインで使っている素材は削除できません</div>
+      </div>
+    </div>
+    <p>取り込んだ素材は AI 検出の対象外です。素材の区間にはモザイクがかからず、検出枠の追加や消しゴムも使えません。モザイクが必要な映像は、先に動画として読み込んで検出・書き出ししたものを取り込んでください。</p>
+  </div>
+</section>
+
+<section id="edit-text" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="テキスト" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「テキスト」で、映像に文字を焼き込みます。テキストはいくつでも追加でき、それぞれに表示する区間・位置・書式を設定できます。表示する区間は、書き出す映像のフレーム番号で指定します。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">追加</div>
+        <div class="kv-val">「テキストを追加」で、全編に表示される「テキスト」が下中央に追加されます。一覧から選んで編集します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">表示する区間</div>
+        <div class="kv-val">開始・終了のフレーム番号を入れます。「現在位置に」で再生ヘッドの位置が入ります。「最後まで表示」にチェックすると映像の最後まで表示します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">プレビュー上の文字をドラッグすると、好きな位置へ自由に動かせます。数値では「位置 X / Y (%)」（左上からの位置）で指定します。「配置プリセット」（左上〜右下の 9 か所）を選ぶと、端から 2% の余白で寄せます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">大きさ</div>
+        <div class="kv-val">文字の高さを、映像の高さに対する割合で指定します（2〜50%、既定 6%）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">フォントと太字</div>
+        <div class="kv-val">フォントは 5 種類: ゴシック（既定）/ 游ゴシック / 明朝 / MS ゴシック / BIZ UDゴシック。「太字」にもできます。パソコンに入っていないフォントは同じ系統のフォント、それも無ければゴシックで焼き込まれます。太字の無いフォント（MS ゴシックなど）は通常の太さになります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">色・縁取り・不透明度</div>
+        <div class="kv-val">文字の色（既定: 白）、縁取りの太さ（文字の高さの 0〜25%、既定 8%）と色（既定: 黒）、不透明度（既定 100%）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">テキストレーン</h3>
+    <p>タイムラインのクリップレーンの上に、テキストごとに 1 段ずつ、表示する区間の帯が並びます（テキストレーン）。帯をドラッグすると表示する区間ごと動き、両端をドラッグすると開始・終了を変えられます。帯を選ぶと、テキストパネルでも同じテキストが選ばれます。右クリックで複製・コピー・ペースト・削除ができます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-text.webp" alt="テキストパネルで文字・フォント・位置を設定し、プレビューに文字が重なりテキストレーンに帯が並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">テキストパネルとテキストレーン</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-watermark" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="透かし" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「透かし」で、ロゴなどの画像 1 枚を書き出す映像の全編に重ねます。先に<a href="#edit-media">メディアパネル</a>で画像を取り込んでおきます（メディアパネルの画像の「透かしに設定」からも設定できます）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">画像</div>
+        <div class="kv-val">取り込んだ画像から選びます。「なし」で透かしを外します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">左上〜右下の 9 か所から選びます（既定: 右下）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">大きさ</div>
+        <div class="kv-val">画像の幅を、映像の幅に対する割合で指定します（1〜100%、既定 15%）。縦横比は保たれます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">不透明度</div>
+        <div class="kv-val">0〜100%（既定 80%）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">横の余白 / 縦の余白</div>
+        <div class="kv-val">映像の端からの距離を、映像の幅・高さに対する割合で指定します（0〜50%、既定 2%）</div>
+      </div>
+    </div>
+    <p>文字の透かしを入れたいときは、全編に表示する<a href="#edit-text">テキスト</a>を使います。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-watermark.webp" alt="透かしパネルで画像・位置・大きさを設定し、プレビューの隅にロゴが重なっている状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">透かしパネル</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-audio" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="音声と BGM" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「音声」で、元の動画の音声と、BGM などの音声トラックを調整します。書き出しでは、元の動画の音声とすべての音声トラックが重ねて（ミックスして）出力されます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">検出元の音声</div>
+        <div class="kv-val">元の動画の音量（-40〜+12dB）とミュート</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">音声トラックの追加</div>
+        <div class="kv-val">メディアパネルの音声素材の「タイムラインに追加」（再生ヘッドの位置に置かれます）、または音声素材を音声レーンへドラッグします。動画素材を音声レーンに置くと、その動画の音声だけを使えます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">音量 / ミュート</div>
+        <div class="kv-val">トラックごとに -40〜+12dB。ミュートでそのトラックだけを一時的に消します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">フェードイン / フェードアウト</div>
+        <div class="kv-val">トラックごとに、鳴り始めと終わりを 0〜20 秒でフェードさせます</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">音声レーンと波形</h3>
+    <p>タイムラインのクリップレーンの下に、音声トラックごとに 1 段ずつ帯が並びます（音声レーン）。帯には BGM の波形が描かれ、曲の盛り上がりや無音の位置を見ながら合わせられます。帯をドラッグすると位置が動き、両端をドラッグすると使う範囲（曲の頭と終わり）を詰められます。BGM はクリップの間の空白をまたいで流れ続けます。長さの分からない音声は、帯の代わりに「長さ不明」と表示されます。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-audio.webp" alt="音声パネルで BGM の音量とフェードを設定し、音声レーンの帯に波形が描かれている状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">音声パネルと音声レーンの波形</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-fade" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="フェード" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「フェード」で、書き出す映像全体の先頭を黒からフェードイン、末尾を黒へフェードアウトさせます。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">フェードイン / フェードアウト</div>
+        <div class="kv-val">秒で指定します（0〜20 秒、0 秒でフェードなし）。秒数の横に、実際にフェードするフレーム数が表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">先頭へ / 末尾へ</div>
+        <div class="kv-val">再生ヘッドを映像の先頭 / 末尾へ動かします。フェードは両端にだけかかるので、プレビューで効き具合を確認するときに使います</div>
+      </div>
+    </div>
+    <p>音声トラックごとのフェードは<a href="#edit-audio">音声と BGM</a>で、クリップの継ぎ目の切り替えは<a href="#edit-transition">トランジション</a>で設定します。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-fade.webp" alt="フェードパネルでフェードインとフェードアウトの秒数を設定した状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">フェードパネル</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-transition" class="scroll-mt-24">
+  {% include docs-h2.html kicker="タイムライン編集" title="トランジション" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>サイドバーの「トランジション」（サイドバーの表示は「つなぎ」）で、隣り合うクリップの継ぎ目に切り替えの効果を付けます。クリップが 1 つだけのときは継ぎ目がないため設定できません。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">種類</div>
+        <div class="kv-val">フェード / ディゾルブ / ワイプ（左へ・右へ）/ スライド（左へ・右へ）/ 黒フェード / 白フェード の 8 種類</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">置き方</div>
+        <div class="kv-val">パネル上部のチップを、タイムラインの継ぎ目（{% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジ）へドラッグします。パネルの継ぎ目の一覧（「前のクリップ → 次のクリップ」）で種類を選んでも設定できます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">長さ</div>
+        <div class="kv-val">継ぎ目ごとに 0.1〜5 秒で指定します（既定 0.5 秒）。前後のクリップがその長さだけ重なるため、映像全体はその分短くなります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">外す</div>
+        <div class="kv-val">種類を「なし」にします</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">空白のある継ぎ目</div>
+        <div class="kv-val">空白（黒い画面）を挟んだ継ぎ目には置けません。設定した後で間に空白を作るとトランジションは効かなくなり、空白を詰めると元に戻ります</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-transition.webp" alt="トランジションパネルのチップと継ぎ目の一覧。タイムラインの継ぎ目にバッジが出ている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">トランジションパネルと継ぎ目のバッジ</figcaption>
+    </figure>
   </div>
 </section>
