@@ -56,9 +56,10 @@ desktop:
       - { id: web, label: Web 版について }
   # T-263: Enterprise の組織機能 (T-255〜T-262)。**新規追加の ID** で、既存 20 個には
   # 触れていない。本文は `_includes/docs/07-team.html` (include は docs/index.html の末尾)。
-  - title: チーム
+  # T-510: 表示はアプリ (T-484) に合わせて「組織」。ID `team` はアプリ内ヘルプ / llms.txt が指すので変えない。
+  - title: 組織
     items:
-      - { id: team, label: チームの管理（Enterprise） }
+      - { id: team, label: 組織の管理（Enterprise） }
 web:
   - title: Web 版
     items:

@@ -1,22 +1,22 @@
-// docs「チーム（Enterprise）」の**導入の流れ**を実装 (アプリ / Worker / DB) に固定する回帰テスト (T-338)。
+// docs「組織（Enterprise）」の**導入の流れ**を実装 (アプリ / Worker / DB / 見積書) に固定する回帰テスト
+// (T-338 → T-510)。
 //
 //   node --test src/lib/docs-team-quote.test.js
 //
-// T-334〜T-337 で「組織がいつできるか」が変わった:
+// 組織は**見積を出した時点**で `status='quoted'` として作られ、組織コードもそのときに決まる
+// (T-334〜T-337)。入金・請求書の発行で**同じ組織が `active` になり**、組織コードは変わらない。
 //
-//   旧: 支払リンクの発行・入金で初めて組織ができ、そのあと組織コードをメールで配る
-//   新: **見積を出した時点で `status='quoted'` の組織と組織コードができる** (組織コードは見積書に印字)。
-//       入金・請求書の発行で**同じ組織が `active` になる** (attach。組織コードは変わらない)
+// T-398 (2026-09-21) で**見積書から組織コードの欄を外した** (コードの配布は案内メール側)。
+// 組織コードがお客様に渡るのは、ご契約が有効になったときの「組織のご利用を開始できます」の
+// 案内メール (Worker `email-copy.ts` の `org-activated`) だけになった:
 //
-// 契約前にできることは**ログインと参加だけ**。これは新しい分岐ではなく既存の判定の帰結:
+//   - 案内メールが届いたアドレス (= 見積の宛先 `quote.email`) でログインすると、owner 招待が
+//     消化されて**自動で管理者として参加**する (`enterprise-provision.ts` の `ownerEmail`)
+//   - 他のメンバーはログインダイアログの「組織コード」欄から参加する
 //
-//   - `org_join_by_code` … `canceled` 以外は参加できる          → 組織コードでの参加は通る
-//   - `get_license_v2`  … プランの合成は `active|past_due` だけ → 共有枠 (込み時間) は使えない
-//   - `org_update_subscription` … `quoted` は 409 `org_not_activated` → アカウント数は変更できない
-//
-// サイトは公開文書なので、**実装より広い約束を書くと問い合わせになる**。
-// 「見積書にコードがある」「契約が有効になるまで共有枠とアカウント数の変更は使えない」の
-// 2 点を、節 (導入の流れ) の構造ごと固定する。
+// そのため T-338 で書いた「お見積書のコードを配れば、ご契約の前でも参加できる」
+// 「(組織コードは) お見積書に記載したものから変わりません」は**事実と食い違う**ようになった
+// (T-510 で削除)。サイトは公開文書なので、実装より広い約束も、無くなった紙面への言及も残さない。
 //
 // 読み取りはこのファイル内で完結させる (他に読み手がいないため lib 化しない。
 // `docs-team-seats.test.js` と同じ流儀)。
@@ -45,15 +45,19 @@ function sectionOf(html, heading) {
 /** 節の中の `<li>` の中身。 */
 const listItems = (section) => [...section.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1])
 
-/** 節の中の `<p>` の中身。 */
-const paragraphs = (section) => [...section.matchAll(/<p>([\s\S]*?)<\/p>/g)].map((m) => m[1])
-
 /** タグを落とした素の文字列。 */
 const textOf = (html) => html.replace(/<[^>]*>/g, '')
 
-const html = readFileSync(TEAM_DOC, 'utf8')
+/**
+ * Liquid の `{% comment %}` を落とす。章冒頭のコメントは消した文言の経緯を引用するので、
+ * 表示される本文だけを検査する。
+ */
+const stripComments = (source) => source.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '')
+
+const html = stripComments(readFileSync(TEAM_DOC, 'utf8'))
 const section = sectionOf(html, FLOW_HEADING)
 const sectionText = textOf(section ?? '')
+const steps = listItems(section ?? '').map(textOf)
 
 test('sectionOf は無い見出しなら null を返す (検査のすり抜けを防ぐ)', () => {
 	// Arrange / Act
@@ -63,92 +67,84 @@ test('sectionOf は無い見出しなら null を返す (検査のすり抜け�
 	assert.equal(found, null)
 })
 
+test('stripComments は Liquid のコメントだけを落とす (本文を消して緑にならない)', () => {
+	// Arrange
+	const source = '<p>A</p>{%- comment -%}お見積書にも記載{%- endcomment -%}<p>B</p>{% comment %}x{% endcomment %}'
+
+	// Act / Assert
+	assert.equal(stripComments(source), '<p>A</p><p>B</p>')
+})
+
 test(`「${FLOW_HEADING}」の節がある`, () => {
 	// Arrange / Act / Assert
 	assert.ok(section, `${FLOW_HEADING} の節が見つからない`)
-	assert.ok(listItems(section).length >= 4, '手順が 4 つ未満になっている')
+	assert.ok(steps.length >= 4, '手順が 4 つ未満になっている')
 })
 
-test('組織コードはお見積書で渡す (見積書を説明する手順に書いてある)', () => {
+test('お見積書の手順に組織コードを書いていない (T-398 で見積書から外した)', () => {
 	// Arrange
-	const quoteStep = listItems(section).find((li) => textOf(li).includes('お見積書'))
+	const quoteStep = steps.find((li) => li.includes('お見積書'))
 	assert.ok(quoteStep, 'お見積書を説明する手順が無い')
 
-	// Act
-	const text = textOf(quoteStep)
-
-	// Assert
-	assert.match(text, /組織コード/, `お見積書の手順に組織コードが無い: ${text}`)
+	// Act / Assert
+	assert.doesNotMatch(quoteStep, /組織コード/, `見積書に組織コードがあるように読める: ${quoteStep}`)
 })
 
-test('組織コードはお支払いより前に渡る (手順の順序)', () => {
+test('組織コードはご契約が有効になったときの案内メールで届く', () => {
+	// Arrange
+	const activation = steps.find((li) => li.includes('ご契約が有効'))
+	assert.ok(activation, '契約が有効になる手順が無い')
+
+	// Act / Assert
+	assert.match(activation, /組織コード/, `有効化の手順で組織コードに触れていない: ${activation}`)
+	assert.match(activation, /案内メール/, `組織コードの届け方 (案内メール) が無い: ${activation}`)
+})
+
+test('組織コードはお支払いのリンクより後に出てくる (契約前には渡らない)', () => {
 	// Arrange / Act
-	const code = sectionText.indexOf('組織コード')
 	const payment = sectionText.indexOf('お支払いのリンク')
+	const code = sectionText.indexOf('組織コード')
 
 	// Assert
-	assert.ok(code >= 0, '組織コードの説明が無い')
 	assert.ok(payment >= 0, 'お支払いのリンクの説明が無い')
-	assert.ok(code < payment, '組織コードがお支払いのリンクより後に出てくる')
+	assert.ok(code >= 0, '組織コードの説明が無い')
+	assert.ok(payment < code, '組織コードがお支払いのリンクより前に出てくる (見積時に渡るように読める)')
 })
 
 test('契約が有効になる条件は「カードのお支払い」または「請求書の発行」', () => {
 	// Arrange
-	const activation = listItems(section).find((li) => textOf(li).includes('ご契約が有効'))
+	const activation = steps.find((li) => li.includes('ご契約が有効'))
 	assert.ok(activation, '契約が有効になる手順が無い')
 
-	// Act
-	const text = textOf(activation)
-
-	// Assert
-	assert.match(text, /お支払い/, `カードのお支払いに触れていない: ${text}`)
-	assert.match(text, /請求書の発行/, `請求書の発行に触れていない: ${text}`)
+	// Act / Assert
+	assert.match(activation, /お支払い/, `カードのお支払いに触れていない: ${activation}`)
+	assert.match(activation, /請求書の発行/, `請求書の発行に触れていない: ${activation}`)
 })
 
-test('契約が有効になるまで共有枠 (込み時間) とアカウント数の変更は使えないと書いてある', () => {
+test('案内メールのアドレスでログインすると管理者になり、他のメンバーは組織コード欄から参加する', () => {
 	// Arrange
-	const limit = paragraphs(section).find((p) => textOf(p).includes('ご契約が有効になるまで'))
-	assert.ok(limit, '「ご契約が有効になるまで」の説明が無い')
+	const login = steps.find((li) => li.includes('案内メール') && li.includes('ログイン') && li.includes('管理者'))
+	assert.ok(login, '案内メールのアドレスでログインして管理者になる手順が無い')
 
-	// Act
-	const text = textOf(limit)
-
-	// Assert
-	assert.match(text, /共有枠/, `共有枠 (込み時間) に触れていない: ${text}`)
-	assert.match(text, /込み時間/, `込み時間の言い換えが無い: ${text}`)
-	assert.match(text, /アカウント数の変更/, `アカウント数の変更に触れていない: ${text}`)
+	// Act / Assert
+	assert.match(login, /ログインダイアログ/, `他のメンバーの参加経路が書かれていない: ${login}`)
+	assert.match(login, /「組織コード」欄/, `参加の入口 (組織コード欄) が書かれていない: ${login}`)
 })
 
-test('契約前でもログインと参加はできると書いてある (できることを狭めない)', () => {
-	// Arrange / Act / Assert
-	assert.match(sectionText, /ご契約の前でも/, '契約前にできることの説明が無い')
-	assert.match(sectionText, /参加/, '参加できる旨が書かれていない')
-})
-
-test('組織コードでの参加は対応版アプリからだと断ってある (見積書と同じ断り書き)', () => {
-	// Arrange: 見積書 (dashboard の印刷ページ) に入っているのと同じ一文。
-	// 出荷版アプリのログインダイアログには「組織コード」欄がまだ無いため、
-	// サイトだけ先に公開すると見積書と説明が食い違う。
-	const notice = '組織コードでのご参加は、対応版アプリの公開後にご利用いただけます'
-
-	// Act
-	const joinClaim = sectionText.indexOf('チームに参加できます')
-	const caveat = sectionText.indexOf(notice)
-
-	// Assert
-	assert.ok(joinClaim >= 0, '参加できる旨の説明が無い')
-	assert.ok(caveat >= 0, `見積書と同じ断り書きが無い: ${notice}`)
-	assert.ok(joinClaim < caveat, '断り書きが参加の説明より前に出てくる')
-	assert.match(sectionText, /「組織コード」欄/, '対応版で何が増えるのか (入力欄) が書かれていない')
-})
-
-test('「支払い確認後に初めて組織コードが届く」旧説明が残っていない (T-334 で変わった)', () => {
-	// Arrange / Act
+test('見積書に組織コードがある / 契約前から配れる、という旧説明が章のどこにも残っていない (T-398)', () => {
+	// Arrange
 	const text = textOf(html)
+	const stale = [
+		'お見積書にも記載',
+		'お見積書に記載したもの',
+		'お見積書のコード',
+		'お見積りの段階から',
+		'お見積書にも同じご案内',
+	]
+
+	// Act
+	const found = stale.filter((phrase) => text.includes(phrase))
 
 	// Assert
-	assert.ok(
-		!text.includes('組織コードが記載されたメールをお送りします'),
-		'組織コードが支払い後に初めて届く、という旧説明が残っている',
-	)
+	assert.deepEqual(found, [], `見積書に組織コードがある前提の文言が残っている: ${found.join(' / ')}`)
 })

@@ -1,5 +1,5 @@
-// docs「チーム（Enterprise）」の**お支払い方法**を実装 (Worker の支払リンク発行) に固定する
-// 回帰テスト (T-419)。
+// docs「組織（Enterprise）」の**お支払い方法**を実装 (Worker の支払リンク発行) に固定する
+// 回帰テスト (T-419)。章の表記は T-510 で「チーム」から「組織」に変えた。
 //
 //   node --test src/lib/docs-team-payment.test.js
 //
