@@ -238,12 +238,13 @@ schemas:
 
 {%- comment -%}
   RELIABILITY (施策④-3 の実装済み範囲)。
-  T-205: 「確認支援ビュー」は T-187 で出荷済み (T-203 でアノテーションモードに)。詳細は /docs/#review。
+  T-512: 見直し候補を 1 件ずつ判断する確認モード (T-203) は T-246 で無効化したので、その紹介を消した
+  (「未実装・無効の機能は書かない」)。残りの確認手段は /docs/#review。
 {%- endcomment -%}
 <!-- RELIABILITY -->
 <section class="py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動、粒度の変更に加え、見直したほうがよい箇所（中抜け・急消失・短い追跡）を自動で拾って 1 件ずつ判断できるアノテーションモードを備えています。" %}
+    {% include section-title.html kicker="RELIABILITY" title="検出結果はすべて自分の手で直せます" sub="AI の検出は完璧ではありません。だから「直せること」を製品の中心に置いています。検出枠の追加・削除・移動や粒度の変更、検出が途切れたフレームへのジャンプで、気になる箇所だけを直せます。" %}
     <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
         {%- comment -%}
@@ -303,6 +304,89 @@ schemas:
     <div class="mt-8 overflow-hidden rounded-xl border border-edge">
       <img src="/assets/img/screenshots/edit-mosaic.webp" alt="モザイク設定パネル。かけるモザイクの種類（モザイク／ぼかし）・粒度・不透明度・エッジぼかしを指定する画面" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
     </div>
+  </div>
+</section>
+
+{%- comment -%}
+  TIMELINE (T-512)。編集ページのタイムライン編集 (desktop T-301〜T-307 / T-428〜T-438 / 画像クリップ T-493)。
+  機能の説明は docs 04-edit (T-513) が正本。ここは入口なので操作の細部 (キー・メニュー名) は書かない。
+  配布中の desktop (v2.3.7) には無いので `desktop-next-note.html` を添える (T-515 で外す)。
+  画像はまだ置かない — 既存の edit-timeline.webp は検出区間の帯 (旧タイムライン) で内容が合わない。
+  T-496 の撮り直し (edit-timeline-clips) が届いたら差し込む。
+{%- endcomment -%}
+<!-- TIMELINE -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="TIMELINE" title="書き出す前に、タイムラインで仕上げる" sub="不要な場面のカットや並べ替えから、テキスト・BGM・トランジションの追加まで、編集ページのタイムラインで行えます。編集した内容はそのまま書き出しに反映されます。" %}
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Clapperboard" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">カットと並べ替え</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">クリップの両端をドラッグしてトリムし、分割・削除・並べ替えができます。クリップの間に空白を置くこともできます。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FolderInput" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">素材を追加</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">動画・画像・音声の素材を取り込んで、タイムラインに並べられます。画像は好きな長さのクリップにできます。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="PenLine" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">テキストと透かし</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">テキストは画面の好きな位置に置け、書体（5 種類）と太字を選べます。ロゴなどの画像を透かしとして重ねられます。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Activity" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">BGM と音量</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">BGM を音声トラックに置き、波形を見ながら位置と音量を調整できます。元の動画の音声の音量も変えられます。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="RefreshCw" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">フェードとトランジション</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">映像の最初と最後のフェードイン・フェードアウトと、クリップのつなぎ目のトランジションを設定できます。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ShieldCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">モザイクはそのまま</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">カットや並べ替えをしても、モザイクは AI が検出した元の動画の区間にかかります。取り込んだ素材は検出の対象外です。</p>
+      </div>
+    </div>
+    {% include desktop-next-note.html features="タイムライン編集" %}
+  </div>
+</section>
+
+{%- comment -%}
+  MANAGE (T-512)。ホーム画面のフォルダとタグ (desktop T-377〜T-383 / T-410 / T-411) と
+  組織 (Enterprise、T-255〜T-262 / T-484〜T-488)。詳細は docs 03-detect #import / 07-team #team。
+  home.webp は T-496 が同じファイル名で撮り直すので、alt は撮り直しの前後どちらでも合う書き方にしてある。
+  組織の人数や金額は書かない (数値の正は _data/plans.yml、説明は /price と /docs/#team)。
+{%- endcomment -%}
+<!-- MANAGE -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="MANAGE" title="動画の整理も、組織での利用も" sub="本数が増えても、フォルダとタグで目的の動画にすぐたどり着けます。Enterprise では 1 つの契約を組織のメンバーで共有できます。" %}
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="card overflow-hidden">
+        <img src="/assets/img/screenshots/home.webp" alt="ホーム画面。左のサイドバーで一覧を絞り込み、右に処理済みの動画のカードが並ぶ" width="1280" height="800" loading="lazy" decoding="async" class="block w-full border-b border-hair">
+        <div class="p-6">
+          <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="FolderInput" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">ホーム画面のフォルダとタグ</h3></div>
+          <ul class="flex flex-col gap-2.5">
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>フォルダの中にサブフォルダを作り、動画カードをドラッグして分類</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>タグを付けて、サイドバーから絞り込み</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>名前・タグ・プロジェクト ID で検索、表示形式は 3 種類から選択</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card p-6">
+        <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Building2" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">組織で使う（Enterprise）</h3></div>
+        <ul class="flex flex-col gap-2.5">
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>1 つの契約を複数のアカウントで共有し、込み時間は組織全体で使えます</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>管理者がメンバーを招待し、権限とアカウント数を管理</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>組織コードを配れば、各自がログイン時に入力して参加</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>過去の請求書を一覧で確認し、PDF で保存</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>メンバー別の利用量を確認</span></li>
+        </ul>
+        <p class="mt-5 text-[13.5px] leading-[1.9] text-ink-2">
+          <a href="/docs/#team" class="text-accent-soft hover:underline">組織の管理の使い方</a>
+          ・
+          <a href="/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise の導入相談</a>
+        </p>
+      </div>
+    </div>
+    {% include desktop-next-note.html features="ホーム画面のフォルダとタグ、組織の管理" %}
   </div>
 </section>
 
