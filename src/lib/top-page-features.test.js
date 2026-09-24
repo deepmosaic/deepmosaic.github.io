@@ -10,9 +10,10 @@
 //   - hero 画像はファイル名を変えない (T-496 の撮り直しが同じ名前で上書きする)
 //   - 表記は「チーム」ではなく「組織」(T-484 のアプリ表記)
 //
-// 3 機能はどれも**配布中の desktop (v2.3.7) に無い** (次回の更新 v2.4 で入る)。トップは
-// 「無料でダウンロード」の直後に読まれる面なので、docs の 01-intro と同じ版表記の注記を
-// 機能節に添える (`_includes/desktop-next-note.html`)。desktop のリリース時 (T-515) に外す。
+// 3 機能は desktop 2.3.7 には無く、docs の先行公開中は機能節に「次回の更新 (v2.4) から」の注記
+// (`_includes/desktop-next-note.html`) を添えていた。desktop 2.4.0 の公開で配布版に入ったので、
+// T-515 で注記の部品と呼び出しを外した (再登場させない)。同じく T-515 で、フェードとトランジションの
+// カードに「効果」のパレットからのドラッグとクリップごとのフェード (desktop T-536 / T-539、docs T-544) を足した。
 //
 // 読み取りはこのファイル内で完結させる (`docs-team-quote.test.js` と同じ流儀)。
 
@@ -54,11 +55,13 @@ function markedSection(html, name) {
 const images = (html) =>
 	[...html.matchAll(/<img\s([^>]*)>/g)].map((m) => Object.fromEntries([...m[1].matchAll(/([\w-]+)="([^"]*)"/g)].map((a) => [a[1], a[2]])))
 
-/** 01-intro の先取り注記から「次回の版」と「配布中の版」を取り出す (T-509 が置いた文面)。 */
-function prereleaseVersions(introHtml) {
-	const next = introHtml.match(/次回のデスクトップ更新 \((v[\d.]+)\)/)
-	const current = introHtml.match(/配布中の (v[\d.]+)/)
-	return next === null || current === null ? null : { next: next[1], current: current[1] }
+/** `<div class="card …">` のうち、`<h3>` の見出しが `heading` のカードの HTML。見つからなければ null。 */
+function cardOf(html, heading) {
+	const at = html.search(new RegExp(`<h3[^>]*>${heading}</h3>`))
+	if (at < 0) return null
+	const start = html.lastIndexOf('<div class="card', at)
+	const end = html.indexOf('<div class="card', at)
+	return start < 0 ? null : html.slice(start, end < 0 ? undefined : end)
 }
 
 const index = read('index.html')
@@ -70,7 +73,8 @@ const indexIncludes = [...new Set([...index.matchAll(/\{%-?\s*include\s+([\w./-]
 test('補助関数は見つからなければ null / 空を返す (すり抜け防止)', () => {
 	// Arrange / Act / Assert
 	assert.equal(markedSection(index, '存在しない節'), null)
-	assert.equal(prereleaseVersions('<p>注記なし</p>'), null)
+	assert.equal(cardOf(index, '存在しない見出し'), null)
+	assert.match(cardOf('<div class="card p-5"><h3 class="x">A</h3><p>本文</p></div>', 'A') ?? '', /本文/)
 	assert.deepEqual(images('<p>画像なし</p>'), [])
 	assert.equal(stripComments('A{% comment %}x{% endcomment %}B<!-- y -->C'), 'ABC')
 	assert.equal(stripYamlComments('# a\nb: 1\n  # c'), 'b: 1')
@@ -123,18 +127,49 @@ test('新しい機能節の画像は実在し、alt / width / height / lazy を�
 	}
 })
 
-test('機能節は desktop の次回更新で入ると、01-intro の先取り注記と同じ版で断ってある', () => {
+test('フェードとトランジションのカードは「効果」からのドラッグとクリップごとのフェードに触れている', () => {
 	// Arrange
-	const versions = prereleaseVersions(read('_includes', 'docs', '01-intro.html'))
-	assert.ok(versions, '01-intro の先取り注記から版を取り出せない (T-509 の文面が変わった?)')
-	const note = textOf(stripComments(read('_includes', 'desktop-next-note.html')))
+	const card = cardOf(markedSection(index, 'TIMELINE') ?? '', 'フェードとトランジション')
+	assert.ok(card, 'TIMELINE に「フェードとトランジション」のカードが無い')
+	const text = textOf(stripComments(card))
 
-	// Act / Assert
-	assert.ok(note.includes(`次回の更新 (${versions.next})`), `注記の次の版が 01-intro と違う: ${note}`)
-	assert.ok(note.includes(`配布中の ${versions.current}`), `注記の配布中の版が 01-intro と違う: ${note}`)
-	for (const name of ['TIMELINE', 'MANAGE']) {
-		assert.match(markedSection(index, name) ?? '', /\{%-?\s*include desktop-next-note\.html/, `${name} に注記が無い`)
-	}
+	// Act
+	const missing = ['「効果」', 'チップ', 'ドラッグ', 'クリップごと'].filter((w) => !text.includes(w))
+
+	// Assert — 語は docs 04-edit の #edit-fade (T-544) と揃える
+	assert.deepEqual(missing, [], `触れていない語: ${missing.join(' / ')} (${text})`)
+})
+
+// ── 先取りの注記の撤去 (desktop 2.4.0 の公開、T-515) ─────────────────────────
+
+test('desktop-next-note の部品は無く、トップのどこからも読まれていない', () => {
+	// Arrange / Act
+	const includers = ['index.html', ...indexIncludes.map((name) => `_includes/${name}`)]
+		.filter((path) => existsSync(join(ROOT, ...path.split('/'))))
+		.filter((path) => /\{%-?\s*include\s+desktop-next-note\.html/.test(read(...path.split('/'))))
+
+	// Assert
+	assert.ok(!existsSync(join(ROOT, '_includes', 'desktop-next-note.html')), '_includes/desktop-next-note.html が残っている')
+	assert.deepEqual(includers, [], `desktop-next-note.html を読んでいる: ${includers.join(' / ')}`)
+})
+
+test('トップ (本文と読み込む部品) の表示文字列に desktop の次回更新・配布中の旧版の断り書きが無い', () => {
+	// Arrange
+	const sources = [
+		['index.html', indexShown],
+		...indexIncludes
+			.filter((name) => existsSync(join(ROOT, '_includes', name)))
+			.map((name) => [`_includes/${name}`, stripComments(read('_includes', name))]),
+	]
+	const wording = [/次回の更新 \(v[\d.]+\)/, /配布中の v\d/, /Desktop 版では次回の更新/, /次回のデスクトップ更新/]
+
+	// Act
+	const found = sources.flatMap(([name, body]) =>
+		wording.filter((re) => re.test(textOf(body))).map((re) => `${name}: ${re}`),
+	)
+
+	// Assert
+	assert.deepEqual(found, [], `先取りの断り書きが残っている: ${found.join(' / ')}`)
 })
 
 // ── RELIABILITY のアノテーションモード (T-246 で無効化) ───────────────────────

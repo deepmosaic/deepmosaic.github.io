@@ -310,7 +310,9 @@ schemas:
 {%- comment -%}
   TIMELINE (T-512)。編集ページのタイムライン編集 (desktop T-301〜T-307 / T-428〜T-438 / 画像クリップ T-493)。
   機能の説明は docs 04-edit (T-513) が正本。ここは入口なので操作の細部 (キー・メニュー名) は書かない。
-  配布中の desktop (v2.3.7) には無いので `desktop-next-note.html` を添える (T-515 で外す)。
+  desktop 2.4.0 で公開 (先行公開中に添えていた「次回の更新から」の注記は T-515 で外した)。
+  フェードとトランジションのカードの「効果」のパレット / クリップごとのフェードは T-515 (desktop T-536 / T-539)、
+  語は docs 04-edit の #edit-fade / #edit-transition (T-544) に揃える。
   画像はまだ置かない — 既存の edit-timeline.webp は検出区間の帯 (旧タイムライン) で内容が合わない。
   T-496 の撮り直し (edit-timeline-clips) が届いたら差し込む。
 {%- endcomment -%}
@@ -337,14 +339,13 @@ schemas:
       </div>
       <div class="card p-5">
         <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="RefreshCw" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">フェードとトランジション</h3></div>
-        <p class="text-[13px] leading-[1.9] text-ink-2">映像の最初と最後のフェードイン・フェードアウトと、クリップのつなぎ目のトランジションを設定できます。</p>
+        <p class="text-[13px] leading-[1.9] text-ink-2">映像の最初と最後のフェードイン・フェードアウトと、クリップのつなぎ目のトランジションを設定できます。どちらもタイムライン上部の「効果」のパレットからチップをドラッグして置け、フェードはクリップごとの先頭と末尾にもかけられます。</p>
       </div>
       <div class="card p-5">
         <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ShieldCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">モザイクはそのまま</h3></div>
         <p class="text-[13px] leading-[1.9] text-ink-2">カットや並べ替えをしても、モザイクは AI が検出した元の動画の区間にかかります。取り込んだ素材は検出の対象外です。</p>
       </div>
     </div>
-    {% include desktop-next-note.html features="タイムライン編集" %}
   </div>
 </section>
 
@@ -386,7 +387,6 @@ schemas:
         </p>
       </div>
     </div>
-    {% include desktop-next-note.html features="ホーム画面のフォルダとタグ、組織の管理" %}
   </div>
 </section>
 

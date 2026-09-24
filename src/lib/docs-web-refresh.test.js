@@ -7,7 +7,9 @@
 //
 //   - タイムライン編集 (T-308 / T-439): 空白 (T-440) / 取り込んだ素材 / テキスト / 音声 (T-273) は
 //     desktop と同じ操作。素材は OPFS に置き、プレビューは **Blob URL** で読む (T-437)。
-//     画像クリップ (desktop T-493) は web の書き出しが T-498 で対応するまで使えない
+//     画像クリップ (desktop T-493) は web の書き出しが T-498 で対応済み (2026-09-24 本番反映、
+//     desktop は 2.4.0 で公開)。T-515 で「今後の更新で対応」「次回の更新で追加」の断り書きを外した。
+//     透過 PNG は web では黒地に合成して書き出す (desktop-parity.md の既知の差)
 //   - HOME の分類 (T-383 / T-410 / T-411 / T-443): フォルダとタグは OPFS の `library.json`。
 //     タブ間のロックが無いので、複数タブで同時に分類を変えると最後に保存したタブが残る
 //   - 組織の管理 (T-262 / T-443): 同じモーダル。参加はログイン画面の組織コード欄 (T-485 で
@@ -88,14 +90,17 @@ test('タイムライン編集の節は 空白・素材・テキスト・音声 
 	assert.match(text, /Blob URL/, `素材のプレビューが Blob URL であることが書かれていない: ${text}`)
 })
 
-test('画像クリップは Web 版の書き出しでは今後の対応だと断ってある (T-498 まで)', () => {
+test('画像クリップは Web 版でも同じように書き出せると書いてあり、未対応の断り書きが無い (T-498 / T-515)', () => {
 	// Arrange
 	const image = kvValue(sectionOf(web, 'timeline') ?? '', '画像クリップ')
 
 	// Act / Assert
 	assert.ok(image, '#timeline に「画像クリップ」の行が無い')
-	assert.match(image, /今後の更新/, `未対応であることが書かれていない: ${image}`)
-	assert.match(image, /透かし/, `それまでの代わりの使い方が書かれていない: ${image}`)
+	assert.match(image, /^同じ。/, `Desktop 版と同じだと書かれていない: ${image}`)
+	assert.match(image, /書き出し/, `書き出しに入ることが書かれていない: ${image}`)
+	for (const stale of ['今後の更新', '次回の更新', 'それまでは']) {
+		assert.ok(!image.includes(stale), `未対応だった頃の断り書き「${stale}」が残っている: ${image}`)
+	}
 })
 
 test('HOME の分類の節は フォルダ・タグ・他のフォルダ と、ブラウザ内に保存されることに触れている', () => {

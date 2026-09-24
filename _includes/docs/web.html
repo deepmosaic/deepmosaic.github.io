@@ -9,7 +9,9 @@ components/EncodeDialog.svelte (3 形式・fps 変換なし)、components/LoginG
 T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/docs_toc.yml` の web にも追加、
 `src/lib/docs-web-refresh.test.js` が固定)。根拠は desktop-parity.md の各節:
   - #timeline … T-308 / T-439 (タイムライン一式の同期)、T-440 (空白)、T-273 (音声)、T-437 (素材は
-    OPFS → Blob URL)。画像クリップ (desktop T-493) は web エンコーダが T-498 で対応するまで「今後」
+    OPFS → Blob URL)。画像クリップ (desktop T-493) は web エンコーダが T-498 で対応済み (2026-09-24 本番、
+    desktop は 2.4.0) なので、T-515 で「今後の更新で対応」を「同じ」に改めた。透過 PNG は web では黒地に
+    合成して書き出す (desktop-parity.md の既知の差、desktop は α を捨てて画像の RGB のまま)
   - #home … T-383 (`library.json` は OPFS、タブ内だけ直列化 = 複数タブは最後の保存が残る)、
     T-410 / T-411 / T-443 (「他のフォルダ」と「このプロジェクトフォルダに切り替える」)
   - #team … T-262 / T-443 (同じモーダル、LoginGate の組織コード欄、請求書は window.open)、
@@ -191,7 +193,7 @@ T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/d
       </div>
       <div class="kv-row">
         <div class="kv-key">画像クリップ</div>
-        <div class="kv-val">画像を好きな長さのクリップとしてタイムラインに置く機能（Desktop 版の次回の更新で追加）は、Web 版の書き出しには今後の更新で対応します。それまでは、画像の素材は透かしとしてお使いください</div>
+        <div class="kv-val">同じ。画像の素材は好きな長さのクリップとしてタイムラインに置け、書き出しにもその長さのまま入ります。透過 PNG の透明な部分は、Web 版の書き出しでは黒になります</div>
       </div>
     </div>
     <p>モザイクは、AI で検出した元の動画の区間にかかります。取り込んだ素材は検出の対象外です。</p>

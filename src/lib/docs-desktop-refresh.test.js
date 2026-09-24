@@ -1,13 +1,15 @@
-// docs (Desktop) 01 / 03 / 05 / 06 章を次回のデスクトップ更新 (v2.4) の実装に合わせた内容を
-// 固定する回帰テスト (T-509)。
+// docs (Desktop) 01 / 03 / 05 / 06 章を desktop 2.4.0 の実装に合わせた内容を
+// 固定する回帰テスト (T-509、T-515 で先取り注記の撤去を固定)。
 //
 //   node --test src/lib/docs-desktop-refresh.test.js
 //
-// 2026-09-23 のユーザー決定で **docs を desktop のリリースより先に公開する**。そのため:
+// 2026-09-23 のユーザー決定で docs を desktop のリリースより先に公開し、01-intro の冒頭に
+// 「先取り」の注記 (次回のデスクトップ更新 v2.4 / 配布中の v2.3.7) を置いていた (T-509)。
+// desktop 2.4.0 の公開で配布版と docs が一致したので、T-515 で注記を外した。ここでは:
 //
-//   - 01-intro の冒頭 (#about の中、見出しより前) に「先取り」の注記を置く。アプリ内ヘルプは
-//     `/docs#about` へ深いリンクで来るので、節の外に置くと注記を飛ばして読まれる。
-//     注記は desktop のリリース時に T-515 で外す — そのときはこのテストも合わせて直す。
+//   - 01-intro の #about は節見出しから始まり、先取り注記が残っていない。
+//   - docs のどの章 (Web 版を含む) にも「次回のデスクトップ更新」「配布中の v…」などの
+//     断り書きが残っていない (表示されない Liquid コメントは対象外)。
 //   - 撤去済みの HOME の「他のプロジェクトフォルダに N 件」バナー (T-411) の説明を、サイドバーの
 //     「他のフォルダ」行 (フォルダ・タグで分類できない) に置き換える。
 //   - 無効化済みのアノテーションモード (T-246、`ANNOTATION_MODE_ENABLED=false`) を書かない
@@ -25,14 +27,32 @@ import { dirname, join } from 'node:path'
 
 const DOCS_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '_includes', 'docs')
 
-/** 01-intro 冒頭の先取り注記 (ユーザー指定の文面、T-515 で外す)。 */
-const PRERELEASE_NOTE =
-	'本ドキュメントは次回のデスクトップ更新 (v2.4) の内容です。配布中の v2.3.7 では一部の機能と表記が異なります。'
+/**
+ * desktop のリリース前に置いていた断り書きの言い回し (T-509 / T-510 / T-511、T-515 で撤去)。
+ * 「次回更新日」(Enterprise の請求の更新日、07-team) は別物なので、版の断り書きに固有の形だけを拾う。
+ */
+const PRERELEASE_WORDING = [
+	/次回のデスクトップ更新/,
+	/配布中の v\d/,
+	/Desktop 版では次回の更新/,
+	/次回の更新で追加/,
+	/このページ冒頭の注記/,
+]
 
 const readChapter = (name) => readFileSync(join(DOCS_DIR, name), 'utf8')
 
 /** Desktop 版の章 (`NN-*.html`)。Web 版 (`web.html`) は別の製品面なので含めない。 */
 const DESKTOP_CHAPTERS = readdirSync(DOCS_DIR).filter((f) => /^\d{2}-.+\.html$/.test(f))
+
+/** docs の全章 (Desktop 版の章 + Web 版の `web.html`)。 */
+const ALL_CHAPTERS = readdirSync(DOCS_DIR).filter((f) => f.endsWith('.html'))
+
+/** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は検査対象外)。 */
+function stripComments(source) {
+	return source
+		.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '')
+		.replace(/<!--[\s\S]*?-->/g, '')
+}
 
 /** タグを落とし、空白を 1 つに潰した素の文字列。 */
 const textOf = (html) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ')
@@ -78,37 +98,45 @@ test('sectionOf / subsectionOf / listItemOf は無い ID・見出し・項目な
 test('Desktop 版の章が 1 つ以上見つかる (読み取り対象が空で緑になるのを防ぐ)', () => {
 	assert.ok(DESKTOP_CHAPTERS.includes('01-intro.html'), `章の一覧: ${DESKTOP_CHAPTERS.join(', ')}`)
 	assert.ok(DESKTOP_CHAPTERS.length >= 6)
+	assert.ok(ALL_CHAPTERS.includes('web.html'), `全章の一覧: ${ALL_CHAPTERS.join(', ')}`)
 })
 
-// ── 01-intro: 先取り注記 ────────────────────────────────────────────────────
-
-test('01-intro の #about の冒頭 (見出しより前) に先取り注記がある', () => {
+test('stripComments は Liquid / HTML のコメントだけを落とす', () => {
 	// Arrange
-	const about = sectionOf(readChapter('01-intro.html'), 'about')
+	const source = 'A{%- comment -%}次回のデスクトップ更新{%- endcomment -%}B<!-- x -->C{% comment %}y{% endcomment %}D'
+
+	// Act / Assert
+	assert.equal(stripComments(source), 'ABCD')
+})
+
+// ── 01-intro: 先取り注記の撤去 (desktop 2.4.0 の公開、T-515) ─────────────────
+
+test('01-intro の #about は節見出しから始まり、先取り注記が残っていない', () => {
+	// Arrange
+	const html = readChapter('01-intro.html')
+	const about = sectionOf(stripComments(html), 'about')
 	assert.ok(about, '#about の節が無い')
 
 	// Act
-	const noteAt = about.indexOf(PRERELEASE_NOTE)
 	const headingAt = about.indexOf('docs-h2.html')
+	const firstParagraphAt = about.indexOf('<p')
 
 	// Assert
-	assert.ok(noteAt >= 0, `先取り注記の文面が #about に無い (文面はユーザー指定: ${PRERELEASE_NOTE})`)
+	assert.equal(html.indexOf('<section id="about"'), html.indexOf('<section id='), '01-intro の最初の節が #about でない')
 	assert.ok(headingAt >= 0, '#about に節見出しが無い')
-	assert.ok(noteAt < headingAt, '注記が見出しより後ろにある (冒頭に置く)')
+	assert.ok(firstParagraphAt > headingAt, '#about の見出しより前に段落が残っている (先取り注記の撤去漏れ)')
+	assert.ok(!/role="note"/.test(about), '#about に role="note" の囲みが残っている')
 })
 
-test('先取り注記は role="note" の囲みで、01-intro の最初の節の中にある', () => {
-	// Arrange
-	const html = readChapter('01-intro.html')
+test('docs のどの章にも desktop の次回更新・配布中の旧版の断り書きが残っていない', () => {
+	for (const chapter of ALL_CHAPTERS) {
+		// Arrange / Act
+		const text = textOf(stripComments(readChapter(chapter)))
+		const found = PRERELEASE_WORDING.filter((re) => re.test(text)).map(String)
 
-	// Act
-	const firstSection = html.indexOf('<section id=')
-	const noteBox = html.match(/<(?:div|p|aside)[^>]*role="note"[^>]*>([\s\S]*?)<\/(?:div|p|aside)>/)
-
-	// Assert
-	assert.equal(html.indexOf('<section id="about"'), firstSection, '01-intro の最初の節が #about でない')
-	assert.ok(noteBox, 'role="note" の囲みが無い')
-	assert.ok(textOf(noteBox[1]).includes(PRERELEASE_NOTE), '注記の囲みに文面が入っていない')
+		// Assert
+		assert.deepEqual(found, [], `${chapter} に先取りの断り書きが残っている: ${found.join(' / ')}`)
+	}
 })
 
 // ── 撤去済みのバナー → サイドバーの「他のフォルダ」行 (T-411) ───────────────

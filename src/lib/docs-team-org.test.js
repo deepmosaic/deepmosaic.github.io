@@ -3,8 +3,7 @@
 //
 //   node --test src/lib/docs-team-org.test.js
 //
-// 2026-09-23 の改修要件で desktop / web の表示が次のように変わった (docs は desktop の
-// 次回更新 v2.4 を先取りして公開する — 01-intro の先取り注記、T-509):
+// 2026-09-23 の改修要件で desktop / web の表示が次のように変わった (desktop は 2.4.0 で公開):
 //
 //   - T-484: 表示文字列の「チーム」を「組織」に統一 (「組織の管理」)。docs も同じ語に揃える
 //   - T-485: ログイン後のアカウントメニューから「組織コードで参加」を撤去。**参加の入口は
@@ -14,9 +13,9 @@
 //   - T-488: 「請求書」タブを追加し、過去の請求書をすべて一覧 (状態 5 種、「さらに読み込む」、
 //     表示 / PDF)。一覧 API は owner のみなので、タブも管理者だけに出る
 //
-// 組織の機能は配布中の desktop (v2.3.7) に**まだ無い** (TeamWindow も組織コード欄も未収録)。
-// T-338 の「対応版アプリの公開後にご利用いただけます（お見積書にも同じご案内…）」は、
-// 見積書側の断り書きが T-398 で消えたので、01-intro の先取り注記と同じ版表記に揃える。
+// 組織の機能は desktop 2.3.7 には無く、docs の先行公開中は 01-intro の先取り注記 (T-509) と同じ
+// 版表記の断り書きを置いていた (T-510)。desktop 2.4.0 の公開で配布版に入ったので、T-515 で
+// 断り書きを外した。T-338 の「対応版アプリの公開後にご利用いただけます…」も再登場させない。
 //
 // 読み取りはこのファイル内で完結させる (`docs-team-quote.test.js` と同じ流儀)。
 
@@ -55,13 +54,6 @@ function kvValue(html, label) {
 	return m === null ? null : textOf(m[1])
 }
 
-/** 01-intro の先取り注記から「次回の版」と「配布中の版」を取り出す (T-509 が置いた文面)。 */
-function prereleaseVersions(introHtml) {
-	const next = introHtml.match(/次回のデスクトップ更新 \((v[\d.]+)\)/)
-	const current = introHtml.match(/配布中の (v[\d.]+)/)
-	return next === null || current === null ? null : { next: next[1], current: current[1] }
-}
-
 const rawDoc = read('_includes', 'docs', '07-team.html')
 const doc = stripComments(rawDoc)
 const docText = textOf(doc)
@@ -77,11 +69,10 @@ test('stripComments は Liquid / HTML のコメントだけを落とす', () => 
 	assert.equal(stripped, 'ABCD')
 })
 
-test('subsectionOf / kvValue / prereleaseVersions は見つからなければ null を返す (すり抜け防止)', () => {
+test('subsectionOf / kvValue は見つからなければ null を返す (すり抜け防止)', () => {
 	// Arrange / Act / Assert
 	assert.equal(subsectionOf(doc, '存在しない見出し'), null)
 	assert.equal(kvValue(doc, '存在しないラベル'), null)
-	assert.equal(prereleaseVersions('<p>注記なし</p>'), null)
 })
 
 // ── T-484 / T-510: 「チーム」→「組織」 ───────────────────────────────────────
@@ -193,23 +184,21 @@ test('請求書の一覧を「請求」タブの中にあるように書いて�
 	assert.ok(!docText.includes('「請求」の請求書一覧'), '請求書の一覧が「請求」タブにあるように読める')
 })
 
-// ── 先取り注記との整合 (T-509 / T-510) ───────────────────────────────────────
+// ── 先取りの断り書きの撤去 (desktop 2.4.0 の公開、T-515) ─────────────────────
 
-test('組織の機能は次回のデスクトップ更新からだと、01-intro の先取り注記と同じ版で断ってある', () => {
+test('組織の機能に「次回のデスクトップ更新から」の断り書きが残っていない (2.4.0 で公開済み)', () => {
 	// Arrange
-	const versions = prereleaseVersions(read('_includes', 'docs', '01-intro.html'))
-	assert.ok(versions, '01-intro の先取り注記から版を取り出せない (T-509 の文面が変わった?)')
-	const caveat = [...doc.matchAll(/<p>([\s\S]*?)<\/p>/g)]
-		.map((m) => textOf(m[1]))
-		.find((p) => p.includes(`次回のデスクトップ更新 (${versions.next})`))
+	const leftovers = ['次回のデスクトップ更新', 'このページ冒頭の注記']
 
-	// Act / Assert
-	assert.ok(caveat, `07-team に「次回のデスクトップ更新 (${versions.next})」の断り書きが無い`)
-	assert.match(caveat, new RegExp(`配布中の ${versions.current.replace(/\./g, '\\.')}`), caveat)
-	assert.match(caveat, /組織コード/, `組織コードでの参加に触れていない: ${caveat}`)
+	// Act
+	const found = leftovers.filter((w) => docText.includes(w))
+
+	// Assert
+	assert.deepEqual(found, [], `07-team に先取りの断り書きが残っている: ${found.join(' / ')}`)
+	assert.ok(!/配布中の v\d/.test(docText), '07-team に配布中の旧版への言及が残っている')
 })
 
-test('「対応版アプリの公開後」の旧い断り書きが残っていない (先取り注記に統一)', () => {
+test('「対応版アプリの公開後」の旧い断り書きが残っていない', () => {
 	// Arrange / Act / Assert
 	assert.ok(!docText.includes('対応版アプリの公開後'), '版を示さない旧い断り書きが残っている')
 	assert.ok(!docText.includes('対応版から'), '版を示さない旧い断り書きが残っている')
