@@ -11,6 +11,9 @@ edit-fade / edit-transition) は目次の「タイムライン編集」群。目
 新しいスクリーンショット 8 枚 (edit-sidebar-media / edit-timeline-clips / edit-timeline-menu / edit-text /
 edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影で届く。width / height は仮の値で、
 撮影後に `node scripts/check-docs.mjs --fix-dims` で実寸に揃える。
+T-544: edit-fade / edit-transition を desktop 2.4.0 の「効果」のパレット (T-539) からの DnD とクリップのフェード (T-536)
+に合わせて書き直した (節 ID 不変)。値 (秒数・種類) の入力はサイドバーだけで、印 (バッジ / 帯 / ランプ) のクリックでタブが開く
+(2026-09-24 のユーザー決定)。画像 3 枚は T-542 の撮影 (edit-effects は新規)。`src/lib/docs-edit-effects.test.js` が固定する。
 {%- endcomment -%}
 <section id="edit-overview" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="編集ページ" %}
@@ -39,7 +42,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">タイムライン</div>
-        <div class="kv-val">シーンの帯、テキスト・クリップ・音声のレーン、検出クラスごとの行が並びます（<a href="#edit-player">プレイヤーとタイムライン</a> / <a href="#timeline-edit">クリップの編集</a>）</div>
+        <div class="kv-val">シーンの帯、テキスト・クリップ・音声のレーン、検出クラスごとの行が並びます。ツールバーのすぐ下には、フェードとトランジションのチップを並べた「効果」のパレットがあります（<a href="#edit-player">プレイヤーとタイムライン</a> / <a href="#timeline-edit">クリップの編集</a> / <a href="#edit-fade">フェード</a>）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ツールチップ</div>
@@ -467,11 +470,11 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
       <div class="kv-row">
         <div class="kv-key">{% include icon.html name="Blend" class="inline h-3.5 w-3.5 align-[-2px]" %} フェード</div>
-        <div class="kv-val">書き出す映像全体の先頭と末尾をフェードさせます（<a href="#edit-fade">フェード</a>）</div>
+        <div class="kv-val">書き出す映像全体の先頭と末尾、選択中のクリップの先頭と末尾のフェードの秒数を設定します（<a href="#edit-fade">フェード</a>）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="ArrowLeftRight" class="inline h-3.5 w-3.5 align-[-2px]" %} トランジション</div>
-        <div class="kv-val">クリップの継ぎ目に切り替えの効果を付けます。サイドバーの表示は「つなぎ」です（<a href="#edit-transition">トランジション</a>）</div>
+        <div class="kv-val">クリップの継ぎ目に付ける切り替えの効果の種類と長さを設定します。サイドバーの表示は「つなぎ」です（<a href="#edit-transition">トランジション</a>）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key"><kbd>T</kbd> キー</div>
@@ -526,7 +529,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
       <div class="kv-row">
         <div class="kv-key">継ぎ目</div>
-        <div class="kv-val">クリップの継ぎ目には {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジが出ます。押すと<a href="#edit-transition">トランジション</a>の設定が開き、トランジションのチップをドラッグして置くこともできます</div>
+        <div class="kv-val">クリップの継ぎ目には {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジが出ます。タイムライン上部の「効果」から「つなぎ」のチップをバッジへドラッグすると<a href="#edit-transition">トランジション</a>を置けます。バッジを押すとサイドバーの「つなぎ」が開き、種類と長さを変えられます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">フィルムストリップ</div>
@@ -715,21 +718,45 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
 <section id="edit-fade" class="scroll-mt-24">
   {% include docs-h2.html kicker="タイムライン編集" title="フェード" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>サイドバーの「フェード」で、書き出す映像全体の先頭を黒からフェードイン、末尾を黒へフェードアウトさせます。</p>
+    <p>書き出す映像を黒からフェードイン、黒へフェードアウトさせます。映像全体の先頭と末尾にかける「全体のフェード」と、クリップごとの先頭と末尾にかける「クリップのフェード」があります。どちらもタイムライン上部の「効果」のパレットからチップをドラッグして置き、秒数はサイドバーの「フェード」で調整します（タイムラインの上では秒数を入力しません）。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
-        <div class="kv-key">フェードイン / フェードアウト</div>
-        <div class="kv-val">秒で指定します（0〜20 秒、0 秒でフェードなし）。秒数の横に、実際にフェードするフレーム数が表示されます</div>
+        <div class="kv-key">「効果」のパレット</div>
+        <div class="kv-val">タイムラインのツールバーのすぐ下に、「フェード」（フェードイン / フェードアウト）と「つなぎ」（<a href="#edit-transition">トランジション</a>の 8 種類）のチップが並びます。タイムラインを折りたたんでいる間は表示されません。チップにマウスを乗せると、置ける場所が表示されます</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">全体のフェード</div>
+        <div class="kv-val">「フェードイン」のチップをルーラーの先頭へ、「フェードアウト」のチップをルーラーの末尾へドラッグします。ドラッグを始めると、ルーラーの両端に落とし先が現れます。置くと 1 秒のフェードになり、ルーラーの端にその長さのランプ（三角の印）が出ます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">クリップのフェード</div>
+        <div class="kv-val">チップをクリップの帯の左端（フェードイン）/ 右端（フェードアウト）へドラッグします。置くと 1 秒のフェードになり、帯の下端にランプが出ます。フェードするのはそのクリップの映像だけで（元の動画のクリップは音声も）、透かしとテキストは暗くなりません</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">秒数の調整</div>
+        <div class="kv-val">ランプをクリック（選んで <kbd>Enter</kbd> でも可）すると、サイドバーの「フェード」が開きます。クリップのランプから開いたときはそのクリップが選ばれ、「選択中のクリップ」の欄にその秒数が出ます。秒で指定し（0〜20 秒、0 秒でフェードなし）、秒数の横に実際にフェードするフレーム数が表示されます。「外す」で選択中のクリップのフェードを両方とも外します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">キーボードで置く</div>
+        <div class="kv-val">チップを選んで <kbd>Enter</kbd> / <kbd>Space</kbd> を押すと、選択中のクリップの端に 1 秒のフェードを置きます。クリップを選んでいなければ全体のフェードになります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">置けない所</div>
+        <div class="kv-val">フェードインのチップを末尾側（ルーラーの末尾 / クリップの右端）へ、フェードアウトのチップを先頭側へ落としたときは、何も変えずに理由を表示します。トランジションのある継ぎ目の側の端にもクリップのフェードは置けず、サイドバーの入力欄も押せなくなって理由が出ます。トランジションを外すと設定できます</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">先頭へ / 末尾へ</div>
-        <div class="kv-val">再生ヘッドを映像の先頭 / 末尾へ動かします。フェードは両端にだけかかるので、プレビューで効き具合を確認するときに使います</div>
+        <div class="kv-val">サイドバーの「フェード」のボタンで、再生ヘッドを映像の先頭 / 末尾へ動かします。全体のフェードは両端にだけかかるので、プレビューで効き具合を確認するときに使います</div>
       </div>
     </div>
-    <p>音声トラックごとのフェードは<a href="#edit-audio">音声と BGM</a>で、クリップの継ぎ目の切り替えは<a href="#edit-transition">トランジション</a>で設定します。</p>
+    <p>フェードは書き出しと同じようにプレビューにも反映されます。全体のフェードとクリップのフェードが重なるフレームには両方がかかります。音声トラックごとのフェードは<a href="#edit-audio">音声と BGM</a>で、クリップの継ぎ目の切り替えは<a href="#edit-transition">トランジション</a>で設定します。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-fade.webp" alt="フェードパネルでフェードインとフェードアウトの秒数を設定した状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">フェードパネル</figcaption>
+      <img src="/assets/img/screenshots/edit-effects.webp" alt="タイムラインのツールバーの下に並ぶ「効果」のパレット（フェードイン・フェードアウトと 8 種類のつなぎのチップ）。ルーラーの両端に全体のフェードのランプ、先頭のクリップの左下にクリップのフェードのランプ、1 つ目の継ぎ目にトランジションの斜線の帯が出ている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">「効果」のパレットとタイムラインの印（フェードのランプ・トランジションの帯）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/edit-fade.webp" alt="先頭のクリップのランプをクリックしてサイドバーの「フェード」を開いた状態。全体のフェードイン 1 秒・フェードアウト 1.5 秒と、選択中のクリップのフェードイン 1 秒が入り、次の継ぎ目にトランジションがあるためクリップのフェードアウトの欄は押せず理由が出ている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">ランプのクリックで開いたフェードの設定（全体と選択中のクリップ）</figcaption>
     </figure>
   </div>
 </section>
@@ -737,7 +764,7 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
 <section id="edit-transition" class="scroll-mt-24">
   {% include docs-h2.html kicker="タイムライン編集" title="トランジション" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>サイドバーの「トランジション」（サイドバーの表示は「つなぎ」）で、隣り合うクリップの継ぎ目に切り替えの効果を付けます。クリップが 1 つだけのときは継ぎ目がないため設定できません。</p>
+    <p>隣り合うクリップの継ぎ目に、切り替えの効果（トランジション）を付けます。タイムライン上部の「効果」のパレットからチップを継ぎ目へドラッグして置き、種類と長さはサイドバーの「つなぎ」（ドロワーの見出しは「トランジション」）で変えます。クリップが 1 つだけのときは継ぎ目がないため置けません。トランジションのある継ぎ目の側の端には、クリップの<a href="#edit-fade">フェード</a>を置けません。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">種類</div>
@@ -745,24 +772,28 @@ edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影�
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">置き方</div>
-        <div class="kv-val">パネル上部のチップを、タイムラインの継ぎ目（{% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジ）へドラッグします。パネルの継ぎ目の一覧（「前のクリップ → 次のクリップ」）で種類を選んでも設定できます</div>
+        <div class="kv-val">「効果」の「つなぎ」のチップを、タイムラインの継ぎ目（{% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} のバッジ）へドラッグします。置くと 0.5 秒のトランジションになり、継ぎ目に前後のクリップが重なる長さの斜線の帯が出ます。バッジにマウスを乗せると、今の種類と秒数が表示されます</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">長さ</div>
-        <div class="kv-val">継ぎ目ごとに 0.1〜5 秒で指定します（既定 0.5 秒）。前後のクリップがその長さだけ重なるため、映像全体はその分短くなります</div>
+        <div class="kv-key">キーボードで置く</div>
+        <div class="kv-val">クリップを選んだ状態でチップを選び、<kbd>Enter</kbd> / <kbd>Space</kbd> を押すと、選んだクリップの後ろの継ぎ目に置きます。クリップを選んでいないときは何も変えずに案内が出ます</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">外す</div>
-        <div class="kv-val">種類を「なし」にします</div>
+        <div class="kv-key">種類と長さの変更</div>
+        <div class="kv-val">継ぎ目のバッジか斜線の帯をクリック（選んで <kbd>Enter</kbd> でも可）すると、サイドバーの「つなぎ」が開きます。継ぎ目の一覧（「前のクリップ → 次のクリップ」）で種類を選び（「なし」で外れます）、長さを 0.1〜5 秒で指定します。前後のクリップがその長さだけ重なるため、映像全体はその分短くなります</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">空白のある継ぎ目</div>
-        <div class="kv-val">空白（黒い画面）を挟んだ継ぎ目には置けません。設定した後で間に空白を作るとトランジションは効かなくなり、空白を詰めると元に戻ります</div>
+        <div class="kv-val">空白（黒い画面）を挟んだ継ぎ目には置けません。チップを持って近づけるとバッジが置けない表示に変わり、落としても何も変えずに理由が表示されます（空白は自動では詰めません）。設定した後で間に空白を作るとトランジションは効かなくなり、空白を詰めると元に戻ります</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プレビュー</div>
+        <div class="kv-val">重なりのあいだは、前後のクリップを書き出しと同じ種類の切り替えで合成して表示します。後ろのクリップの側には、プレビューではモザイクが表示されません（書き出しではかかります）</div>
       </div>
     </div>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/edit-transition.webp" alt="トランジションパネルのチップと継ぎ目の一覧。タイムラインの継ぎ目にバッジが出ている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">トランジションパネルと継ぎ目のバッジ</figcaption>
+      <img src="/assets/img/screenshots/edit-transition.webp" alt="継ぎ目の斜線の帯をクリックしてサイドバーの「つなぎ」を開いた状態。継ぎ目ごとに種類と秒数を選ぶ欄が並び、1 つ目の継ぎ目はディゾルブ 0.5 秒、2 つ目はなし。タイムラインの継ぎ目にバッジと斜線の帯が出ている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">継ぎ目の帯のクリックで開いたトランジションの設定</figcaption>
     </figure>
   </div>
 </section>
