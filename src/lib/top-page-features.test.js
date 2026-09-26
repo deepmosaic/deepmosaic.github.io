@@ -127,17 +127,19 @@ test('新しい機能節の画像は実在し、alt / width / height / lazy を�
 	}
 })
 
-test('フェードとトランジションのカードは「効果」からのドラッグとクリップごとのフェードに触れている', () => {
+test('フェードとトランジションのカードは、はさみからの選択とクリップごとのフェードに触れ、撤去したパレットを書いていない', () => {
 	// Arrange
 	const card = cardOf(markedSection(index, 'TIMELINE') ?? '', 'フェードとトランジション')
 	assert.ok(card, 'TIMELINE に「フェードとトランジション」のカードが無い')
 	const text = textOf(stripComments(card))
 
 	// Act
-	const missing = ['「効果」', 'チップ', 'ドラッグ', 'クリップごと'].filter((w) => !text.includes(w))
+	const missing = ['はさみ', 'フェード', 'つなぎ', 'クリップごと'].filter((w) => !text.includes(w))
+	const leftovers = ['「効果」', 'チップ'].filter((w) => text.includes(w))
 
-	// Assert — 語は docs 04-edit の #edit-fade (T-544) と揃える
+	// Assert — 語は docs 04-edit の #edit-fade / #edit-transition (T-637) と揃える
 	assert.deepEqual(missing, [], `触れていない語: ${missing.join(' / ')} (${text})`)
+	assert.deepEqual(leftovers, [], `撤去した「効果」のパレットの語が残っている: ${leftovers.join(' / ')} (${text})`)
 })
 
 // ── 先取りの注記の撤去 (desktop 2.4.0 の公開、T-515) ─────────────────────────
