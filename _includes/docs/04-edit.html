@@ -413,10 +413,15 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="4">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="9">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
+          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>E</kbd></td><td>追加する bbox の形を楕円に（もう一度押すと四角に戻る）</td></tr>
+          <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する bbox の形を多角形に（もう一度押すと四角に戻る）</td></tr>
+          <tr data-shortcut="bbox_draw_toggle"><td><kbd>W</kbd></td><td>フレーム上に描く（ペン）の切替。選んでいる形で、フレームを直接ドラッグ / クリックして bbox を描く</td></tr>
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
+          <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>選択中の bbox を 15° 回転</td></tr>
+          <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>選択中の bbox を -15° 回転（逆回り）</td></tr>
           <tr data-shortcut="mosaic_panel_open"><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
           <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>現在のフレームでシーンを分割</td></tr>
           <tr data-shortcut="timeline_clip_split"><td rowspan="10">タイムライン</td><td><kbd>Ctrl+Shift+K</kbd></td><td>再生ヘッドの位置でクリップを分割</td></tr>
@@ -429,17 +434,22 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の要素をコピー</td></tr>
           <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした要素を貼り付け（テキスト・音声は再生ヘッドの位置、クリップは選択中のクリップの後ろ）</td></tr>
           <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>選択中の要素を削除（最後にタイムラインを操作したとき）</td></tr>
-          <tr data-shortcut="person_gallery_toggle"><td rowspan="7">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="8">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
           <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>メディア（サイドバー）を開閉</td></tr>
           <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>テキスト / 透かし / 音声 / フェード / トランジションのドロワーを開閉（直前に開いていた項目）</td></tr>
           <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>タイムラインを折りたたむ / 展開する</td></tr>
+          <tr data-shortcut="sidebar_collapse_toggle"><td><kbd>Ctrl+Shift+B</kbd></td><td>サイドバーを最小化 / 展開する</td></tr>
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
-          <tr data-shortcut="mouse_wheel_step"><td rowspan="6">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="10">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
           <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
           <tr data-shortcut="mouse_pan"><td>中ボタンドラッグ</td><td>パン（拡大中は余白の左ドラッグでも可）</td></tr>
           <tr data-shortcut="mouse_dblclick_delete"><td>ダブルクリック</td><td>bbox を削除</td></tr>
+          <tr data-shortcut="mouse_rotate_handle"><td>ドラッグ</td><td>選択中の bbox の回転ハンドルをドラッグして回転（<kbd>Shift</kbd> で 15° 刻み）</td></tr>
+          <tr data-shortcut="mouse_vertex_drag"><td>ドラッグ</td><td>多角形の頂点をドラッグして変形</td></tr>
+          <tr data-shortcut="mouse_vertex_add"><td>ダブルクリック</td><td>多角形の辺をダブルクリックして頂点を追加</td></tr>
+          <tr data-shortcut="mouse_vertex_delete"><td>クリック+<kbd>Delete</kbd></td><td>頂点をクリックで選んで <kbd>Delete</kbd> で削除（3 点未満にはできない）</td></tr>
           <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
           <tr data-shortcut="mouse_eraser"><td>右ドラッグ</td><td>連続削除（消しゴム。円に触れた bbox を削除。再生 / コマ送りしながらでも可）</td></tr>
         </tbody>

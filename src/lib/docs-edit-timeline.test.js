@@ -7,7 +7,7 @@
 //   1. 目次 (`_data/docs_toc.yml` の desktop) は**追加のみ** — T-513 より前の節 ID (契約の 20 個を含む) は
 //      1 つも消えず、新しい 8 個 (NEW_SECTIONS) が目次と本文の両方にある
 //   2. ショートカット表 (`#shortcuts`) の行は desktop `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` から
-//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 47 個と、ID・分類・キーが並び順まで一致する
+//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 57 個と、ID・分類・キーが並び順まで一致する
 //      (下の EDIT_SHORTCUTS_FIXTURE が写し。desktop 側の割当を変えたら、ここと表を同時に直す)
 //   3. タイムライン編集の各機能 (CHANGELOG T-513 の列挙) に本文が触れている
 //   4. T-496 で撮る新しいスクリーンショット 8 枚 (NEW_SCREENSHOTS) を参照している
@@ -78,7 +78,7 @@ function shortcutRows(sectionHtml) {
 
 // ── desktop の単一情報源の写し ─────────────────────────────────────────────
 //
-// 写し元: desktop リポ `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` (desktop 04b4cff 時点、56 個)。
+// 写し元: desktop リポ `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` (desktop ca03c450 = T-632 時点、66 個)。
 // 並びもそのまま。group が 'アノテーション' の 9 個 (annotation_ok … annotation_close) は機能が
 // 無効化されている (T-246) ので docs に載せない = ここにも写さない。
 // 形: [id, group, keys] (keys は `ShortcutDef.keys` そのまま)。
@@ -103,8 +103,13 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['class_menu_toggle', 'ズーム・表示', ['C']],
 	['bbox_add_single', 'BBox 編集', ['1']],
 	['bbox_add_persistent', 'BBox 編集', ['2']],
+	['bbox_shape_ellipse', 'BBox 編集', ['E']],
+	['bbox_shape_polygon', 'BBox 編集', ['O']],
+	['bbox_draw_toggle', 'BBox 編集', ['W']],
 	['delete_bbox', 'BBox 編集', ['Delete']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
+	['bbox_rotate_cw', 'BBox 編集', ['Q']],
+	['bbox_rotate_ccw', 'BBox 編集', ['Shift', 'Q']],
 	['mosaic_panel_open', 'ツール', ['G']],
 	['scene_split', 'ツール', ['Ctrl', 'K']],
 	['timeline_clip_split', 'タイムライン', ['Ctrl', 'Shift', 'K']],
@@ -121,6 +126,7 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['media_panel_toggle', 'ページ', ['A']],
 	['timeline_panel_toggle', 'ページ', ['T']],
 	['timeline_collapse_toggle', 'ページ', ['Ctrl', 'Shift', 'T']],
+	['sidebar_collapse_toggle', 'ページ', ['Ctrl', 'Shift', 'B']],
 	['encode_dialog_open', 'ページ', ['Ctrl', 'Enter']],
 	['open_folder', 'ページ', ['Ctrl', 'Shift', 'O']],
 	['premiere_send', 'ページ', ['Ctrl', 'Shift', 'P']],
@@ -128,12 +134,19 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['mouse_wheel_zoom', 'マウス', ['Ctrl', 'ホイール']],
 	['mouse_pan', 'マウス', ['中ボタンドラッグ']],
 	['mouse_dblclick_delete', 'マウス', ['ダブルクリック']],
+	['mouse_rotate_handle', 'マウス', ['ドラッグ']],
+	['mouse_vertex_drag', 'マウス', ['ドラッグ']],
+	['mouse_vertex_add', 'マウス', ['ダブルクリック']],
+	['mouse_vertex_delete', 'マウス', ['クリック', 'Delete']],
 	['mouse_context_menu', 'マウス', ['右クリック']],
 	['mouse_eraser', 'マウス', ['右ドラッグ']],
 ].map(([id, group, keys]) => ({ id, group, keys }))
 
-/** 表の行数 (= 写しの数)。desktop の 56 個 − 無効化済みの 9 個。 */
-const SHORTCUT_ROW_COUNT = 47
+/**
+ * 表の行数 (= 写しの数)。desktop の 66 個 − 無効化済みの 9 個。凡例専用の「マウス」の 10 個は数に含む
+ * (owner が無いだけで凡例にも表にも載る)。
+ */
+const SHORTCUT_ROW_COUNT = 57
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
@@ -200,7 +213,7 @@ test('shortcutRows は rowspan を超えて続く行の分類を null にする 
 	])
 })
 
-test('写しは 47 個で、ID の重複も無効化済みの群も無い', () => {
+test(`写しは ${SHORTCUT_ROW_COUNT} 個で、ID の重複も無効化済みの群も無い`, () => {
 	// Arrange
 	const ids = EDIT_SHORTCUTS_FIXTURE.map((s) => s.id)
 
