@@ -101,7 +101,7 @@ npm run build && bundle exec jekyll build
     (T-167、既定素材は 4K の非露骨サンプル) → `screenshots/*.png` を `assets/img/screenshots/` へコピー →
     `node scripts/optimize-images.mjs --apply` → `--fix-dims`。撮れない画面 (初回セットアップ中 /
     アップデート通知 / オフラインバナー / 他端末ログイン) は文章のみ
-  - 未実装・無効の機能は書かない (`Pro（無制限）` は非公開プラン。モザイクの精緻化 (SAM) は 2.5.0 から GPU 機で既定 ON なので 03-detect / 04-edit に載せる、Web 版は非対応と書く)。
+  - 未実装・無効の機能は書かない (`Pro（無制限）` は非公開プラン。モザイクの精緻化 (SAM) は 2.5.0 から GPU 機で既定 ON なので 03-detect / 04-edit に載せる (2.6.0 からは設定なしの標準機能)、Web 版は 2.6.1 から WebGPU の shader-f16 に対応した環境でだけ有効 = `web.html` にはその条件と「対応しない環境では四角い枠」を書く)。
     「使用時間の計測」の上限適用の方針文は事業判断なので勝手に変えない
 - **スタイルは Tailwind CSS v4**。デザイントークン/移植した独自スタイルは `src/app.css` の `@theme` / `@layer components`、それ以外は markup に Tailwind ユーティリティを直書き。Materialize.css は撤去済み。
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
