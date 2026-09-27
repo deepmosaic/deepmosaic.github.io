@@ -79,7 +79,13 @@ npm run build && bundle exec jekyll build
   - `<img>` には **`width` / `height` を必ず付ける** (CLS 対策)。ヒーローだけ
     `fetchpriority="high"` で lazy にしない (LCP 要素のため)、それ以外は
     `loading="lazy" decoding="async"`
-- 動画は `assets/videos/` に配置
+- 動画は `assets/videos/` に配置。トップの hero は `assets/videos/hero-sam.webm` (T-710: Pexels 素材 ID 8379044 を
+  Deepmosaic で検出・SAM 精緻化して書き出した 1080p から 6 秒 / 1280px / VP9 / ≤ 3 MB を切り出し、poster は
+  `assets/img/hero/hero-sam-poster.webp`、`<video>` の中の `<img>` は video 非対応のフォールバック)。
+  四角い枠と SAM の比較静止画は `assets/img/samples/sam-compare-N-{rect,sam}.webp` (同じフレームを設定だけ変えて
+  書き出したもの。**未加工のフレームは公開しない**、figcaption に「素材: Pexels」)。差し替え手順は親リポの
+  CHANGELOG の T-710 (デスクトップで複製 → 写しを「形を変更 → すべて → 四角」→ 両方を 1080p で書き出し → ffmpeg で切り出し →
+  `node scripts/optimize-images.mjs <dir> --apply`)。`src/lib/top-page-features.test.js` が属性・実在・容量を固定する
 - **docs (`/docs/`, `/docs/web/`) の構成** (TICKET-SITE-42〜48)
   - `docs/index.html` / `docs/web/index.html` は front matter + 目次 + `{% include docs/*.html %}` の骨組みだけ。
     本文は章ごとに `_includes/docs/NN-*.html` (Desktop 6 章) と `_includes/docs/web.html`

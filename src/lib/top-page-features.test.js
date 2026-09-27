@@ -19,7 +19,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -196,6 +196,58 @@ test('hero 画像はファイル名を変えず、LCP 用の fetchpriority="high
 	assert.equal(hero.src, '/assets/img/screenshots/edit-player-mosaic.webp')
 	assert.equal(hero.fetchpriority, 'high')
 	assert.equal(hero.loading, undefined, 'hero を lazy にしてはいけない')
+})
+
+// ── hero の動画と SAM の比較画像 (T-710) ──────────────────────────────────────
+
+const assetPath = (src) => join(ROOT, src.replace(/^\//, ''))
+
+test('hero は形に沿ったモザイクのループ動画 (autoplay / muted / loop / playsinline、poster は WebP、source は 3 MB 以下の WebM、フォールバック img と素材の表記)', () => {
+	// Arrange
+	const section = markedSection(index, 'HERO')
+	assert.ok(section, 'index.html に <!-- HERO --> の節が無い')
+	const video = section.match(/<video\s([^>]*)>([\s\S]*?)<\/video>/)
+	assert.ok(video, 'HERO に <video> が無い')
+	const [, attrs, inner] = video
+
+	// Act
+	const missing = ['autoplay', 'muted', 'loop', 'playsinline'].filter((a) => !new RegExp(`(^|\\s)${a}(\\s|>|$)`).test(attrs))
+	const poster = attrs.match(/poster="([^"]+)"/)?.[1] ?? ''
+	const source = inner.match(/<source\s[^>]*src="([^"]+)"/)?.[1] ?? ''
+
+	// Assert
+	assert.deepEqual(missing, [], `hero の video に無い属性: ${missing.join(' / ')}`)
+	assert.match(attrs, /\swidth="\d+"/, 'video に width が無い (CLS)')
+	assert.match(attrs, /\sheight="\d+"/, 'video に height が無い (CLS)')
+	assert.ok(poster.endsWith('.webp') && existsSync(assetPath(poster)), `poster が WebP で実在しない: ${poster}`)
+	assert.ok(source.endsWith('.webm') && existsSync(assetPath(source)), `source が WebM で実在しない: ${source}`)
+	assert.ok(statSync(assetPath(source)).size <= 3 * 1024 * 1024, `hero の WebM は 3 MB 以下にする: ${statSync(assetPath(source)).size} bytes`)
+	assert.match(inner, /<img\s[^>]*edit-player-mosaic\.webp/, 'video 非対応環境のフォールバック img (従来の hero 画像) が無い')
+	assert.match(textOf(stripComments(section)), /Pexels/, '素材 (Pexels) の表記が無い')
+})
+
+test('MOSAIC 節に四角い枠と SAM の比較画像が対で並び、実在して alt / width / height / lazy を持つ', () => {
+	// Arrange
+	const section = markedSection(index, 'MOSAIC')
+	assert.ok(section, 'index.html に <!-- MOSAIC --> の節が無い')
+	const imgs = images(stripComments(section)).filter((img) => (img.src ?? '').includes('/assets/img/samples/sam-compare-'))
+
+	// Act
+	const rects = imgs.filter((img) => img.src.endsWith('-rect.webp'))
+	const sams = imgs.filter((img) => img.src.endsWith('-sam.webp'))
+
+	// Assert
+	assert.ok(rects.length >= 1 && rects.length === sams.length, `四角 (${rects.length}) と SAM (${sams.length}) が同数で 1 組以上ではない`)
+	for (const img of imgs) {
+		assert.ok(existsSync(assetPath(img.src)), `画像が無い: ${img.src}`)
+		assert.ok(img.alt, `alt が無い: ${img.src}`)
+		assert.match(img.width ?? '', /^\d+$/, `width が無い: ${img.src}`)
+		assert.match(img.height ?? '', /^\d+$/, `height が無い: ${img.src}`)
+		assert.equal(img.loading, 'lazy', `hero 以外は lazy にする: ${img.src}`)
+	}
+	const text = textOf(stripComments(section))
+	assert.match(text, /SAM/, 'MOSAIC 節が SAM に触れていない')
+	assert.match(text, /Pexels/, '素材 (Pexels) の表記が無い')
 })
 
 // ── 表記: 「チーム」→「組織」(T-484) ───────────────────────────────────────────
