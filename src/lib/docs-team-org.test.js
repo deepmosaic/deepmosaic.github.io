@@ -83,6 +83,25 @@ test('07-team の表示文字列に「チーム」が無く、「組織の管理
 	assert.match(docText, /「組織の管理」/, 'アプリのメニュー名「組織の管理」で案内していない')
 })
 
+// ── T-686: メニュー名「組織」/ 組織コードの再発行は画面から外した ───────────────────
+
+test('プロフィールメニューの項目名は「組織」で案内し、「組織の管理」はダイアログ名として残す', () => {
+	// Arrange
+	const webText = textOf(stripComments(read('_includes', 'docs', 'web.html')))
+
+	// Act / Assert
+	assert.match(docText, /プロフィールメニューの「組織」/, '07-team のメニュー名が「組織」になっていない')
+	assert.match(docText, /「組織」を選ぶと「組織の管理」のダイアログが開き/)
+	assert.ok(!/メニュー[^。]*「組織の管理」/.test(docText), '07-team にメニュー名としての「組織の管理」が残っている')
+	assert.match(webText, /プロフィールメニューの「組織」から/, 'web.html のメニュー名が「組織」になっていない')
+})
+
+test('組織コードは「確認」だけを案内し、再発行の手順を載せない (アプリの画面から外したため)', () => {
+	// Act / Assert
+	assert.ok(!docText.includes('再発行'), '07-team に組織コードの再発行の案内が残っている')
+	assert.match(docText, /組織コードの確認ができます/)
+})
+
 test('目次 (docs_toc.yml) と llms.txt の見出しも「組織」に揃っている', () => {
 	// Arrange
 	const toc = read('_data', 'docs_toc.yml')
