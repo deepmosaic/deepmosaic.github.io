@@ -78,16 +78,16 @@ schemas:
         bbox 版 (`edit-player.webp`) は docs の「プレイヤーとタイムライン」節が
         検出枠そのものの説明なのでそちらで使い続ける。用途が違うので 2 枚ある。
 
-        T-710: hero を「物体の形に沿ったモザイク (SAM)」の実写ループ動画にした。素材は
-        Pexels (ID 8379044) を Deepmosaic で検出 (顔 6 トラック、全部 SAM の多角形) して
+        T-710: hero を「物体の形に沿ったモザイク」の実写ループ動画にした (T-719: 公開面には精緻化モデルの名前を書かない = CLAUDE.md)。素材は
+        Pexels (ID 8379044) を Deepmosaic で検出 (顔 6 トラック、全部 形に沿った多角形) して
         書き出した 1080p から、6 秒 / 1280px / VP9 (≤ 3 MB) を切り出したもの。poster は
         同じ書き出しの先頭フレーム。**未加工のフレームは置かない**。`<video>` の中の
         `<img>` は video 非対応環境のフォールバック (従来の hero 画像。
         top-page-features.test.js の hero テストはこの img を見る)。prefers-reduced-motion
         のときは直後の小さな script が自動再生を止める (video は残す)。
       {%- endcomment -%}
-      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-sam-poster.webp" width="1280" height="720" aria-label="Deepmosaic で書き出した動画。AI が検出した 6 人の顔に、四角い枠ではなく顔の形に沿ってモザイクがかかっている" class="block w-full">
-        <source src="/assets/videos/hero-sam.webm" type="video/webm">
+      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="Deepmosaic で書き出した動画。AI が検出した 6 人の顔に、四角い枠ではなく顔の形に沿ってモザイクがかかっている" class="block w-full">
+        <source src="/assets/videos/hero-shape.webm" type="video/webm">
         <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="Deepmosaic Desktop の編集画面。AI が検出した顔にモザイクがかかった状態をプレビューしており、下部に検出区間のタイムラインが並ぶ" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
       </video>
     </div>
@@ -299,7 +299,7 @@ schemas:
   <div class="mx-auto w-[92%] max-w-[1120px]">
     {% include section-title.html kicker="MOSAIC" title="柔軟な編集機能" sub="物体の形に沿ったモザイク、対象物のサイズに連動した自動調整、Adobe Premiere Pro と同方式のブロック分割数指定。提出先ごとの規定値に合わせて調整できます。" %}
     {%- comment -%}
-      T-710: 「物体の形に沿ったモザイク (SAM)」の実写比較。左 = 四角い枠のまま / 右 = SAM で
+      T-710: 「物体の形に沿ったモザイク」の実写比較。左 = 四角い枠のまま / 右 = 形に沿って
       作った輪郭。同じ素材 (Pexels 8379044) を Deepmosaic で検出し、写しだけ「形を変更 →
       すべて → 四角」にして書き出した**同じフレーム** (1 組目 = 0:01.6、2 組目 = 0:05.96)。
       **未加工のフレームは置かない**。画像は scripts/optimize-images.mjs で WebP 化 (1280x720)。
@@ -307,23 +307,23 @@ schemas:
     {%- endcomment -%}
     <div class="mb-12">
       <h3 class="text-[18px] font-bold text-ink">四角い枠ではなく、物体の形に沿ってかける</h3>
-      <p class="mt-2 max-w-[760px] text-[14px] leading-[1.9] text-ink-2">検出した枠の中で SAM 2.1 が対象の輪郭を作り、その形にモザイクをかけます（CUDA 対応 GPU 機では標準で有効。設定はありません）。髪や背景まで四角く潰れないので、隠すべき部分だけを隠せます。輪郭は編集ページでそのまま扱えます。</p>
+      <p class="mt-2 max-w-[760px] text-[14px] leading-[1.9] text-ink-2">検出した枠の中で AI が対象の輪郭を作り、その形にモザイクをかけます（CUDA 対応 GPU 機では標準で有効。設定はありません）。髪や背景まで四角く潰れないので、隠すべき部分だけを隠せます。輪郭は編集ページでそのまま扱えます。</p>
       <div class="mt-5 grid gap-4 sm:grid-cols-2">
         <figure class="overflow-hidden rounded-xl border border-edge">
-          <img src="/assets/img/samples/sam-compare-2-rect.webp" alt="四角い枠のまま 6 人の顔にモザイクをかけたフレーム。髪や背景まで四角く覆われている" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="四角い枠のまま 6 人の顔にモザイクをかけたフレーム。髪や背景まで四角く覆われている" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
           <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">四角い枠のまま</figcaption>
         </figure>
         <figure class="overflow-hidden rounded-xl border border-edge">
-          <img src="/assets/img/samples/sam-compare-2-sam.webp" alt="同じフレームを SAM で精緻化し、6 人の顔の形に沿ってモザイクをかけた状態。髪や背景は覆われていない" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
-          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">形に沿ったモザイク（SAM）</figcaption>
+          <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="同じフレームを精緻化し、6 人の顔の形に沿ってモザイクをかけた状態。髪や背景は覆われていない" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">形に沿ったモザイク</figcaption>
         </figure>
         <figure class="overflow-hidden rounded-xl border border-edge">
-          <img src="/assets/img/samples/sam-compare-1-rect.webp" alt="引きの構図で 6 人の顔に四角い枠のままモザイクをかけたフレーム" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <img src="/assets/img/samples/shape-compare-1-rect.webp" alt="引きの構図で 6 人の顔に四角い枠のままモザイクをかけたフレーム" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
           <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">四角い枠のまま（引きの構図）</figcaption>
         </figure>
         <figure class="overflow-hidden rounded-xl border border-edge">
-          <img src="/assets/img/samples/sam-compare-1-sam.webp" alt="引きの構図の同じフレームを SAM で精緻化し、顔の形に沿ってモザイクをかけた状態" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
-          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">形に沿ったモザイク（SAM、引きの構図）</figcaption>
+          <img src="/assets/img/samples/shape-compare-1-shape.webp" alt="引きの構図の同じフレームを精緻化し、顔の形に沿ってモザイクをかけた状態" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">形に沿ったモザイク（引きの構図）</figcaption>
         </figure>
       </div>
       <p class="mt-2 text-[12px] text-ink-4">同じ動画の同じフレームを、設定だけ変えて Deepmosaic で書き出したものです。素材: Pexels</p>

@@ -7,7 +7,7 @@ T-513: 後半の 8 節 (edit-sidebar / timeline-edit / edit-media / edit-text / 
 edit-fade / edit-transition) は目次の「タイムライン編集」群。目次 (`_data/docs_toc.yml`) と同じ順に並べる。
 ショートカット表は desktop `src/lib/edit-shortcuts.ts` (単一情報源) と 1:1。各行の `data-shortcut` は
 その ID で、`src/lib/docs-edit-timeline.test.js` が ID・分類・キーを写しと突き合わせる。無効化済みの 1 群
-(owner が annotation の 9 個) と SAM の行は、機能が無効のため載せない。
+(owner が annotation の 9 個) とモザイクの精緻化の行は、機能が無効のため載せない。
 新しいスクリーンショット 8 枚 (edit-sidebar-media / edit-timeline-clips / edit-timeline-menu / edit-text /
 edit-watermark / edit-audio / edit-fade / edit-transition) は T-496 の撮影で届く。width / height は仮の値で、
 撮影後に `node scripts/check-docs.mjs --fix-dims` で実寸に揃える。

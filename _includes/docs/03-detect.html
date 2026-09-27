@@ -137,16 +137,16 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">画面を開くとモデルファイルの有無を確認し、不足していれば自動でダウンロードします。確認が終わるまで「開始」は押せません。失敗したときは「再試行」で取り直します</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">モザイクの精緻化（SAM）</div>
-        <div class="kv-val">検出した枠の中で物体の形に沿った輪郭を SAM 2.1 で作り、四角い枠ではなくその形にモザイクをかけます。<b>CUDA 対応の NVIDIA GPU がある環境では標準で有効</b>で、ON / OFF の設定はありません。離れた部位は別々の輪郭になり、編集ページではその形のまま扱えます（四角に戻したいときは編集ページの右クリック「形を変更」）。所要時間は長くなります（GPU 機で動画 1 分あたり約 +107 秒の目安）。<b>CUDA 対応の NVIDIA GPU が無い環境では使えません。</b>その場合は「GPUが利用できない場合は、物体の形状に合わせた検出機能が利用できません」と表示され、四角い枠でモザイクをかけます</div>
+        <div class="kv-key">モザイクの精緻化</div>
+        <div class="kv-val">検出した枠の中で物体の形に沿った輪郭を AI が作り、四角い枠ではなくその形にモザイクをかけます。<b>CUDA 対応の NVIDIA GPU がある環境では標準で有効</b>で、ON / OFF の設定はありません。離れた部位は別々の輪郭になり、編集ページではその形のまま扱えます（四角に戻したいときは編集ページの右クリック「形を変更」）。所要時間は長くなります（GPU 機で動画 1 分あたり約 +107 秒の目安）。<b>CUDA 対応の NVIDIA GPU が無い環境では使えません。</b>その場合は「GPUが利用できない場合は、物体の形状に合わせた検出機能が利用できません」と表示され、四角い枠でモザイクをかけます</div>
       </div>
     </div>
     <figure class="my-4">
       <div class="grid gap-3 sm:grid-cols-2">
-        <img src="/assets/img/samples/sam-compare-2-rect.webp" alt="四角い枠のまま 6 人の顔にモザイクをかけたフレーム" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-        <img src="/assets/img/samples/sam-compare-2-sam.webp" alt="同じフレームを SAM で精緻化し、顔の形に沿ってモザイクをかけた状態" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+        <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="四角い枠のまま 6 人の顔にモザイクをかけたフレーム" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+        <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="同じフレームを精緻化し、顔の形に沿ってモザイクをかけた状態" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       </div>
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">左: 四角い枠のまま / 右: 形に沿ったモザイク（SAM）。同じ動画の同じフレームを、設定だけ変えて書き出したもの（素材: Pexels）</figcaption>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">左: 四角い枠のまま / 右: 形に沿ったモザイク。同じ動画の同じフレームを、設定だけ変えて書き出したもの（素材: Pexels）</figcaption>
     </figure>
     <figure class="my-4">
       <img src="/assets/img/screenshots/detect-options-panel.webp" alt="検出対象とモザイク初期設定"
