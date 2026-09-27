@@ -111,3 +111,16 @@ test('決済ポータルはカード契約だけという説明を広げてい�
 	)
 	assert.match(value, /請求書払いの場合は/, `請求書払いの案内先が消えている: ${value}`)
 })
+
+// T-687: 支払後に「未払い」のまま見えるという問い合わせへの案内。アプリの請求書タブの「更新」と、
+// 銀行振込は入金の確認まで反映されない (Stripe の customer_balance) ことを書いておく。
+test('請求書の節に、支払済みへの反映の遅れ・「更新」・銀行振込の反映の案内がある', () => {
+	// Arrange
+	const section = docText.slice(docText.indexOf('請求書（過去のご請求）'))
+	assert.ok(section.startsWith('請求書（過去のご請求）'), '請求書の節が無い')
+
+	// Act / Assert
+	assert.match(section, /状態が『支払済み』に変わるまで少し時間がかかることがあります/)
+	assert.match(section, /『更新』で最新の状態を取り直せます/)
+	assert.match(section, /銀行振込は入金の確認後に反映されます/)
+})
