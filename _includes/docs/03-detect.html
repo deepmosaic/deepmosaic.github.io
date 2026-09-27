@@ -122,7 +122,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       </div>
       <div class="kv-row">
         <div class="kv-key">ピクセルサイズ自動</div>
-        <div class="kv-val">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。検出後に編集ページの<a href="#edit-mosaic">モザイク設定</a>からいつでも変更できます</div>
+        <div class="kv-val">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。ON のときはその下の「細かさ（対象物の分割数）」（8〜64、初期値 16）で粒の基準を決めます。対象物の代表サイズをこの数で割った値が粒の 1 辺になるので、大きいほど細かくなります。ここで決めた値は新しい検出の初期値で、検出後に編集ページの<a href="#edit-mosaic">モザイク設定</a>からいつでも変更できます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">検出後の処理</div>
@@ -135,6 +135,10 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       <div class="kv-row kv-alt">
         <div class="kv-key">モデルの確認</div>
         <div class="kv-val">画面を開くとモデルファイルの有無を確認し、不足していれば自動でダウンロードします。確認が終わるまで「開始」は押せません。失敗したときは「再試行」で取り直します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">モザイクの精緻化（SAM）</div>
+        <div class="kv-val">検出した枠の中で物体の形に沿った輪郭を SAM 2.1 で作り、四角い枠ではなくその形にモザイクをかけます（初期値ON）。離れた部位は別々の輪郭になり、編集ページではその形のまま扱えます。所要時間は長くなります（GPU 機で動画 1 分あたり約 +107 秒の目安）。<b>CUDA 対応の NVIDIA GPU が無い環境では使えません。</b>その場合はチェックが外れた状態で固定され、「GPUが利用できない場合は、物体の形状に合わせた検出機能が利用できません」と表示されます（四角い枠でモザイクをかけます）</div>
       </div>
     </div>
     <figure class="my-4">
@@ -173,15 +177,15 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
 <section id="detect" class="scroll-mt-24">
   {% include docs-h2.html kicker="読み込みと検出" title="AI検出" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析」の4段階で進み、全体進捗・処理速度（fps）・残り時間が表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
+    <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析 → モザイクの精緻化」の 5 段階（モザイクの精緻化を使わないときは 4 段階）で進み、全体進捗・処理速度（fps）・残り時間が表示されます。使う段は開始した時点から全部表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（4段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（4段階ステッパー + 進捗バー）</figcaption>
+      <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（5段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（ステッパー + 進捗バー。モザイクの精緻化を使うときは 5 段）</figcaption>
     </figure>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">進捗の見方</div>
-        <div class="kv-val">進捗バーは検出全体の割合です。その下に現在のステップ名、処理中のフレーム数、速度（fps）、「〇〇の残り」（そのステップの残り時間の目安）が並びます。残り時間が出ないステップもあります</div>
+        <div class="kv-val">進捗バーは検出全体の割合です。その下に現在のステップ名、処理中のフレーム数、速度（fps）、「〇〇の残り」（そのステップの残り時間の目安）が並びます。残り時間が出ないステップもあります。「モザイクの精緻化」の段は、対象の枠があるフレームだけを数えて「n / N 対象フレーム」と表示し、全体の進捗もこの段に多くの割合を割り当てて、実際の所要時間に近い速さで進みます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">一時停止 / 再開</div>

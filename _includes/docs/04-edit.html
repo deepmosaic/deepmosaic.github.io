@@ -113,7 +113,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">連続削除（消しゴム）</div>
-        <div class="kv-val">映像の上で右ボタンを押したままドラッグすると、カーソルが円形の消しゴムになり、円に触れた枠を削除します。押したまま再生したりホイールでコマ送りしたりすると、流れていくフレームの枠も続けて消せます（右ボタンを動かさずに離したときは、いつもの右クリックメニューが開きます）</div>
+        <div class="kv-val">映像の上で右ボタンを押したままドラッグすると消しゴムになります。既定では円に触れた枠をそのフレームから削除します。ツールバーの消しゴムボタンで、消し方（触れた BBox を削除 / 触れた部分だけ削除）、形（円 / 角丸四角）、大きさ（8〜120px）を選べます。「触れた部分だけ削除」では、削った跡が枠の形（多角形）として残り、手動で追加した枠が 2 つに割れたときは片ごとに別の枠になります。押したまま再生したりホイールでコマ送りしたりすると、流れていくフレームの枠も続けて消せます（右ボタンを動かさずに離したときは、いつもの右クリックメニューが開きます）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ID ごと削除（チップの ✕）</div>
@@ -130,6 +130,18 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       <div class="kv-row kv-alt">
         <div class="kv-key">モザイク除外の注意表示</div>
         <div class="kv-val">対象から外したトラックがあると「N トラックをモザイク除外中です」と常時表示されます。「すべてモザイク対象に戻す」で一括で戻せます。除外した箇所は書き出してもモザイクがかかりません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">枠を描く（左ドラッグ）</div>
+        <div class="kv-val">映像の空いている所を左ドラッグすると、ツールバーの形の選択で選んでいる形（四角 / 楕円 / 多角形）の枠を描けます。多角形はクリックで点を置き、始点のクリック / <kbd>Enter</kbd> / ダブルクリックで閉じます。描いた枠は既定で以降のフレームにも続く連続 bbox で、形の選択メニューの「描いた BBox」で「このフレームのみ」に変えられます。拡大中にフレームを動かすときは <kbd>Ctrl</kbd>+左ドラッグ（中ボタンドラッグでも可）です</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">手動で追加した枠の表示</div>
+        <div class="kv-val">手動で追加した枠のチップは「ユーザー」と表示され、ID は検出された枠と同じ 3 文字のコード（例: #K7Q）です。タイムラインでは「ユーザー」の行に並びます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">モザイク設定の引き継ぎ</div>
+        <div class="kv-val">検出された枠に重ねて、または近く（隙間が画面の短辺の 5% 以内）に枠を追加すると、その検出枠に効いているモザイク設定（種類・ぼかし・不透明度・粒の大きさ）を写します。粒の大きさは、その検出枠と同じ見た目になるように固定されます。写した設定は<a href="#edit-mosaic">モザイク設定</a>の「ID 別」タブでいつでも変えられます</div>
       </div>
     </div>
     <p>検出枠の選択・追加・消しゴムは、再生ヘッドが元の動画（検出元）の区間にあるときだけ使えます。<a href="#edit-media">取り込んだ素材</a>の区間は AI 検出の対象外のため、枠はありません。</p>
@@ -227,23 +239,31 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
 <section id="edit-toolbar" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="編集ツールバー" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>プレイヤーと再生コントロールの間にあるツールバーに、編集機能が集約されています。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
+    <p>プレイヤーの下の操作列には、左から<b>再生コントロール</b>（先頭へ / 1 コマ戻る / 再生 / 1 コマ進む / 末尾へ / 空白のみ再生 / 対象クラスと欠落フレームジャンプ / ミュート / オーバーレイの表示切替 / プレビュー切替）、<b>編集ツールバー</b>、時刻の順に並びます。幅が足りないときはツールバーと時刻が 2 段目に折り返します。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
-        <div class="kv-key">欠落フレームジャンプ</div>
-        <div class="kv-val">検出が無いフレームへ前後にジャンプ。対象クラス（全クラス / 局部 / 男性顔 / 女性顔）を選んで絞り込めます。ショートカット: <kbd>[</kbd> / <kbd>]</kbd></div>
+        <div class="kv-key">空白のみ再生（<kbd>B</kbd>）</div>
+        <div class="kv-val">再生コントロールの「末尾へ」の右。検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">bbox追加（1f / ∞）</div>
-        <div class="kv-val">現在のフレーム中央に検出枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整（<a href="#edit-bbox">検出枠の追加</a>）。ショートカット: <kbd>1</kbd> / <kbd>2</kbd></div>
+        <div class="kv-key">対象クラスと欠落フレームジャンプ</div>
+        <div class="kv-val">「空白のみ再生」の右。クラスの選択（全クラス / 局部 / 男性顔 / 女性顔）はプレビューとタイムラインに表示する枠を絞り込み、その右の 2 つのボタンで、そのクラスの検出が無いフレームへ前後にジャンプします。絞り込みは表示だけで、書き出しには影響しません。ショートカット: <kbd>[</kbd> / <kbd>]</kbd></div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">空白のみ再生（<kbd>B</kbd>）</div>
-        <div class="kv-val">検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
+        <div class="kv-key">プレビュー切替（<kbd>M</kbd>）</div>
+        <div class="kv-val">オーバーレイの表示切替の右。bbox枠表示とモザイク適用プレビューを切り替えます。モザイク表示では書き出し結果に近い見た目をその場で確認できます</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">プレビュー切替（B / M）</div>
-        <div class="kv-val">bbox枠表示とモザイク適用プレビューを切り替えます。モザイク表示では書き出し結果に近い見た目をその場で確認できます。ショートカット: <kbd>M</kbd></div>
+        <div class="kv-key">形の選択</div>
+        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>E</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの下段「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを選べます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">bbox追加（1f / ∞）</div>
+        <div class="kv-val">現在のフレーム中央に、形の選択で選んでいる形の枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整（<a href="#edit-bbox">検出枠の操作</a>）。ショートカット: <kbd>1</kbd> / <kbd>2</kbd></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">消しゴム</div>
+        <div class="kv-val">右ドラッグの消しゴムの設定（消し方: 触れた BBox を削除 / 触れた部分だけ削除、形: 円 / 角丸四角、大きさ: 8〜120px）。ボタンを押しても消しゴムにはならず、消すのは常に右ドラッグです</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">モザイク設定（<kbd>G</kbd>）</div>
@@ -259,7 +279,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">クラス表示（<kbd>C</kbd>）</div>
-        <div class="kv-val">表示する検出クラスをドロップダウンで絞り込みます（例: 局部のみ表示）。表示を消したクラスもモザイクの対象からは外れません</div>
+        <div class="kv-val">書き出しの対象にする検出クラスをドロップダウンで選びます（例: 局部だけを書き出す）。プレビューの絞り込み（対象クラス）とは別の設定です</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">再生速度</div>
@@ -314,7 +334,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row">
         <div class="kv-key">ピクセルサイズ自動</div>
-        <div class="kv-val">対象物のサイズに連動してモザイクの粒を自動計算（既定ON）。シーン内・同一ID内で粒度は一定に保たれ、フレームごとにちらつきません。「細かさ」（対象物の分割数 8〜64、既定 16）と最小セル（2〜32px、既定 8px）/ 最大セル（8〜128px、既定 64px）で調整できます</div>
+        <div class="kv-val">対象物のサイズに連動してモザイクの粒を自動計算（既定ON）。仕組みは、カット（シーン）× ID ごとに枠の代表サイズ（√(幅×高さ) の中央値）を取り、それを「細かさ（対象物の分割数）」（8〜64、既定 16）で割った値を粒の 1 辺にします。粒は最小セル（2〜32px、既定 8px）と最大セル（8〜128px、既定 64px）の範囲に収め、同じカット・同じ ID の中では一定でフレームごとにちらつきません。大きく映る対象ほど粒も大きくなり、細かさの値を上げるほど粒は細かくなります。自主規制の最小モザイク（長辺 400px 以上は長辺÷100、最小 4px）が優先されるため、細かさを上げても粒がそれ以上細かくならないことがあります。新しい検出の初期値は<a href="#detect-options">検出オプション</a>の「細かさ」で決めます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">ブロック分割数</div>
@@ -413,18 +433,17 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="9">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="8">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
-          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>E</kbd></td><td>追加する bbox の形を楕円に（もう一度押すと四角に戻る）</td></tr>
-          <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する bbox の形を多角形に（もう一度押すと四角に戻る）</td></tr>
-          <tr data-shortcut="bbox_draw_toggle"><td><kbd>W</kbd></td><td>フレーム上に描く（ペン）の切替。選んでいる形で、フレームを直接ドラッグ / クリックして bbox を描く</td></tr>
+          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>E</kbd></td><td>追加する / 描く bbox の形を楕円に（もう一度押すと四角に戻ります）</td></tr>
+          <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する / 描く bbox の形を多角形に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
           <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>選択中の bbox を 15° 回転</td></tr>
           <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>選択中の bbox を -15° 回転（逆回り）</td></tr>
           <tr data-shortcut="mosaic_panel_open"><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
-          <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>現在のフレームでシーンを分割</td></tr>
-          <tr data-shortcut="timeline_clip_split"><td rowspan="10">タイムライン</td><td><kbd>Ctrl+Shift+K</kbd></td><td>再生ヘッドの位置でクリップを分割</td></tr>
+          <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>再生ヘッドの位置で分割（クリップとシーンを同時に割ります。ツールバーのハサミと同じで、<kbd>Ctrl+Shift+Z</kbd> 1 回で両方戻ります）</td></tr>
+          <tr data-shortcut="timeline_clip_split"><td rowspan="10">タイムライン</td><td><kbd>Ctrl+Shift+K</kbd></td><td>再生ヘッドの位置で分割（タイムラインにフォーカスがあるとき。<kbd>Ctrl+K</kbd> と同じ）</td></tr>
           <tr data-shortcut="timeline_clip_delete"><td><kbd>Backspace</kbd></td><td>選択中のクリップ / テキスト / 音声トラックを削除</td></tr>
           <tr data-shortcut="timeline_undo"><td><kbd>Ctrl+Shift+Z</kbd></td><td>タイムライン編集を元に戻す</td></tr>
           <tr data-shortcut="timeline_redo"><td><kbd>Ctrl+Shift+Y</kbd></td><td>タイムライン編集をやり直す</td></tr>
@@ -442,16 +461,22 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
-          <tr data-shortcut="mouse_wheel_step"><td rowspan="10">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="16">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ）</td></tr>
           <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
-          <tr data-shortcut="mouse_pan"><td>中ボタンドラッグ</td><td>パン（拡大中は余白の左ドラッグでも可）</td></tr>
+          <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+左ドラッグ</td><td>フレームをパン（拡大中だけ動きます。中ボタンドラッグでも可）</td></tr>
+          <tr data-shortcut="mouse_draw"><td>左ドラッグ</td><td>空き領域を左ドラッグして、形の選択で選んでいる形（四角 / 楕円 / 多角形）の bbox を描く。多角形はクリックで点を置き、始点 / <kbd>Enter</kbd> / ダブルクリックで閉じます。短いタップは選択解除</td></tr>
           <tr data-shortcut="mouse_dblclick_delete"><td>ダブルクリック</td><td>bbox を削除</td></tr>
           <tr data-shortcut="mouse_rotate_handle"><td>ドラッグ</td><td>選択中の bbox の回転ハンドルをドラッグして回転（<kbd>Shift</kbd> で 15° 刻み）</td></tr>
           <tr data-shortcut="mouse_vertex_drag"><td>ドラッグ</td><td>多角形の頂点をドラッグして変形</td></tr>
-          <tr data-shortcut="mouse_vertex_add"><td>ダブルクリック</td><td>多角形の辺をダブルクリックして頂点を追加</td></tr>
+          <tr data-shortcut="mouse_vertex_add"><td>ダブルクリック</td><td>多角形の辺をダブルクリックしても頂点を追加（1 回で 1 点）</td></tr>
           <tr data-shortcut="mouse_vertex_delete"><td>クリック+<kbd>Delete</kbd></td><td>頂点をクリックで選んで <kbd>Delete</kbd> で削除（3 点未満にはできない）</td></tr>
+          <tr data-shortcut="mouse_handle_drag"><td>ドラッグ</td><td>選択中の多角形のハンドルをドラッグして曲線を変形（<kbd>Alt</kbd> で片側だけ）</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_drag"><td><kbd>Alt</kbd>+ドラッグ</td><td>多角形の頂点を <kbd>Alt</kbd>+ドラッグしてハンドルを引き出す（角を曲線に）</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_click"><td><kbd>Alt</kbd>+クリック</td><td>多角形の頂点を <kbd>Alt</kbd>+クリックして角に戻す</td></tr>
+          <tr data-shortcut="mouse_anchor_ctrl_click"><td><kbd>Ctrl</kbd>+クリック</td><td>多角形の頂点を <kbd>Ctrl</kbd>+クリックして削除（3 点未満にはなりません）</td></tr>
+          <tr data-shortcut="mouse_edge_click_add"><td>クリック</td><td>選択中の多角形の辺をクリックして頂点を追加</td></tr>
           <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
-          <tr data-shortcut="mouse_eraser"><td>右ドラッグ</td><td>連続削除（消しゴム。円に触れた bbox を削除。再生 / コマ送りしながらでも可）</td></tr>
+          <tr data-shortcut="mouse_eraser"><td>右ドラッグ</td><td>連続削除（消しゴム）。ツールバーの消しゴムボタンで「触れた BBox を削除 / 触れた部分だけ削除」「円 / 角丸四角」「大きさ」を選べます。押したまま再生 / コマ送りしても続きます</td></tr>
         </tbody>
       </table>
     </div>
@@ -523,8 +548,8 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
         <div class="kv-val">帯の左右の端をドラッグして、クリップの開始・終了を詰めます（最短 1 フレーム）。シーンの境界や再生ヘッドに近づくと吸着します。取り込んだ動画は素材の長さまで、画像のクリップは好きな長さまで伸ばせます</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">分割（<kbd>Ctrl+Shift+K</kbd>）</div>
-        <div class="kv-val">ツールバー右側の {% include icon.html name="SquareSplitHorizontal" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+Shift+K</kbd> で、再生ヘッドの位置でクリップを 2 つに分けます。キーで分割したときは後半が選択されるので、続けてトリムや削除ができます。分割した継ぎ目にはカットの印（斜線とはさみ）が付きます</div>
+        <div class="kv-key">分割（<kbd>Ctrl+K</kbd> / <kbd>Ctrl+Shift+K</kbd>）</div>
+        <div class="kv-val">タイムラインのズームボタンの右にある {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタン、または <kbd>Ctrl+K</kbd>（タイムラインにフォーカスがあるときは <kbd>Ctrl+Shift+K</kbd>）で、再生ヘッドの位置でクリップを 2 つに分け、同時にシーンも分けます。分けた瞬間にクリップの帯が 2 つになり、継ぎ目にカットの印（斜線とはさみ）、シーンの帯に新しい番号が付きます。後半が選択されるので、続けてトリムや削除ができます。「元に戻す」1 回でクリップとシーンの両方が戻ります</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">削除</div>
@@ -572,7 +597,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       <figcaption class="mt-2 text-[12.5px] text-ink-4">タイムラインの右クリックメニュー</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">取り消しと履歴</h3>
-    <p>タイムラインの編集（クリップ・テキスト・音声・透かし・フェード・トランジション・素材の追加）は、検出枠の編集とは別の履歴に記録されます。ツールバー右側の「元に戻す」（<kbd>Ctrl+Shift+Z</kbd>）/「やり直す」（<kbd>Ctrl+Shift+Y</kbd>）で 1 手ずつ、{% include icon.html name="History" class="inline h-3.5 w-3.5 align-[-2px]" %} 履歴ボタンの一覧から選ぶと、その操作までまとめて戻せます。一覧には「分割」「トリム」「移動」「テキスト追加」などの操作名と時刻が新しい順に並び、最大 100 件まで残ります。履歴は動画を開き直すと空になります。</p>
+    <p>タイムラインの編集（クリップ・テキスト・音声・透かし・フェード・トランジション・素材の追加）は、検出枠の編集とは別の履歴に記録されます。タイムラインのズームボタンの右にある「元に戻す」（<kbd>Ctrl+Shift+Z</kbd>）/「やり直す」（<kbd>Ctrl+Shift+Y</kbd>）で 1 手ずつ、{% include icon.html name="History" class="inline h-3.5 w-3.5 align-[-2px]" %} 履歴ボタンの一覧から選ぶと、その操作までまとめて戻せます。一覧には「分割」「トリム」「移動」「テキスト追加」などの操作名と時刻が新しい順に並び、最大 100 件まで残ります。履歴は動画を開き直すと空になります。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">タイムラインの高さと折りたたみ</h3>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">

@@ -105,7 +105,6 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['bbox_add_persistent', 'BBox 編集', ['2']],
 	['bbox_shape_ellipse', 'BBox 編集', ['E']],
 	['bbox_shape_polygon', 'BBox 編集', ['O']],
-	['bbox_draw_toggle', 'BBox 編集', ['W']],
 	['delete_bbox', 'BBox 編集', ['Delete']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
@@ -132,12 +131,18 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['premiere_send', 'ページ', ['Ctrl', 'Shift', 'P']],
 	['mouse_wheel_step', 'マウス', ['ホイール']],
 	['mouse_wheel_zoom', 'マウス', ['Ctrl', 'ホイール']],
-	['mouse_pan', 'マウス', ['中ボタンドラッグ']],
+	['mouse_pan', 'マウス', ['Ctrl', '左ドラッグ']],
+	['mouse_draw', 'マウス', ['左ドラッグ']],
 	['mouse_dblclick_delete', 'マウス', ['ダブルクリック']],
 	['mouse_rotate_handle', 'マウス', ['ドラッグ']],
 	['mouse_vertex_drag', 'マウス', ['ドラッグ']],
 	['mouse_vertex_add', 'マウス', ['ダブルクリック']],
 	['mouse_vertex_delete', 'マウス', ['クリック', 'Delete']],
+	['mouse_handle_drag', 'マウス', ['ドラッグ']],
+	['mouse_anchor_alt_drag', 'マウス', ['Alt', 'ドラッグ']],
+	['mouse_anchor_alt_click', 'マウス', ['Alt', 'クリック']],
+	['mouse_anchor_ctrl_click', 'マウス', ['Ctrl', 'クリック']],
+	['mouse_edge_click_add', 'マウス', ['クリック']],
 	['mouse_context_menu', 'マウス', ['右クリック']],
 	['mouse_eraser', 'マウス', ['右ドラッグ']],
 ].map(([id, group, keys]) => ({ id, group, keys }))
@@ -146,7 +151,7 @@ const EDIT_SHORTCUTS_FIXTURE = [
  * 表の行数 (= 写しの数)。desktop の 66 個 − 無効化済みの 9 個。凡例専用の「マウス」の 10 個は数に含む
  * (owner が無いだけで凡例にも表にも載る)。
  */
-const SHORTCUT_ROW_COUNT = 57
+const SHORTCUT_ROW_COUNT = 62
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
