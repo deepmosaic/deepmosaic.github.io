@@ -206,7 +206,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
         <div class="kv-val">「現在のフレームをリセット」（<kbd>Ctrl+Z</kbd>）は現在のフレームの編集を元に戻します。∞ の枠を削除で終わらせた直後に押すと、まず終端の確定が解除されます</div>
       </div>
     </div>
-    <p>枠の追加・移動・削除はすべて自動保存され、<a href="#edit-encode">エンコード</a>と <a href="#premiere">Premiere Pro 連携</a>の両方に反映されます。</p>
+    <p>枠の追加・移動・削除はすべて自動保存され、<a href="#edit-encode">エンコード</a>に反映されます。<a href="#premiere">Premiere Pro 連携</a>に渡るのは検出結果とエッジのぼかしの値だけで、この画面での枠の編集（移動・形の変更・削除など）は渡りません。</p>
   </div>
 </section>
 
@@ -330,7 +330,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">エッジぼかし</div>
-        <div class="kv-val">モザイク領域のふちをぼかして背景となじませます（0〜64px）。既定: 6px。Premiere Pro のフェザーに相当します</div>
+        <div class="kv-val">モザイク領域のふちをぼかして背景となじませます（0〜64px）。既定: 6px。Premiere Pro のマスクの「マスクの境界のぼかし」と同じ意味で、輪郭を中心に内側と外側へ半分ずつぼかします（値は内外を合わせた幅です）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ピクセルサイズ自動</div>

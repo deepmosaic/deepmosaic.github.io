@@ -186,8 +186,8 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析 → モザイクの精緻化」の 5 段階（モザイクの精緻化を使わないときは 4 段階）で進み、全体進捗・処理速度（fps）・残り時間が表示されます。使う段は開始した時点から全部表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
     <figure class="my-4">
-      <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（5段階ステッパー + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（ステッパー + 進捗バー。モザイクの精緻化を使うときは 5 段）</figcaption>
+      <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（5段階ステッパー + ステップごとの所要時間 + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（ステッパー + ステップごとの所要時間 + 進捗バー。モザイクの精緻化を使うときは 5 段）</figcaption>
     </figure>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
@@ -211,7 +211,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">「処理が完了しました」と表示され、ホーム画面にカードが追加されます。<a href="#batch">一括実行</a>のときはエンコードがキューに入ります</div>
       </div>
     </div>
-    <p>処理中は待ち時間用のミニゲームが表示されます。遊んでも遊ばなくても処理には影響しません。</p>
+    <p>処理中はステップごとの進み具合と所要時間の目安が表示されます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/detect-cancel.webp" alt="検出中に「キャンセル」を押したときの確認ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">キャンセルの確認。「いいえ」で処理を続けます</figcaption>
