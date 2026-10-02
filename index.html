@@ -8,7 +8,7 @@ seo_title: 動画にモザイクを自動でかけるAIソフト｜Deepmosaic
 # `description` はランキング要因ではなくスニペット専用の面なので、ここにだけ
 # 「除去」を置いて SERP 段階で誤認ユーザーを濾過する (語彙ポリシー: _data/entity.yml)。
 # 否定句は先頭から約 37 全角の位置に置いている (末尾だと切り詰めで消えるため)。
-description: Deepmosaicは動画内の対象をAIが自動検出してモザイクをかけるWindowsアプリ。モザイクの除去・解除はできません。処理はすべてお使いのPC内で完結し映像は外部に送信しません。Adobe Premiere Pro連携に対応。
+description: Deepmosaicは動画内の対象をAIが自動検出してモザイクをかけるWindowsアプリ。モザイクの除去・解除はできません。検出対象は男性器・女性器・人間の顔。処理はすべてお使いのPC内で完結し映像は外部に送信しません。Adobe Premiere Pro連携に対応。
 schemas:
   - software-application
   - faq
@@ -35,6 +35,18 @@ schemas:
     <div class="kicker mb-3.5">{{ S.hero.kicker }}</div>
     <h1 class="mx-auto max-w-[820px] text-[clamp(38px,5.4vw,60px)] font-bold leading-[1.25] tracking-[-0.02em] text-ink">{{ S.hero.headline_lead }}<br><span class="text-accent">{{ S.hero.headline_accent }}</span></h1>
     <p class="mx-auto mt-[22px] max-w-[660px] text-[17px] leading-[2] text-ink-2">{{ S.hero.sub }}</p>
+
+    {%- comment -%}
+      T-870 (ユーザー決定 2026-10-02): TICKET-SITE-06 / 16 で施策④-5 によりトップから
+      外した検出対象の図を、ボタン列の上へ戻した。検索の対象にするのが目的なので、
+      alt だけでなく見える 1 行 (figcaption) と description / meta_desc にも同じ語を置く。
+      ファーストビューに入るので lazy にしない。LCP は下の hero 動画のままにするため
+      fetchpriority も付けない。
+    {%- endcomment -%}
+    <figure id="hero-detectable" class="mx-auto mt-8 max-w-[660px]">
+      <img src="/assets/img/detectable-objects.webp" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" decoding="async" class="mx-auto block w-[min(240px,100%)] rounded-[8px] border border-edge">
+      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">検出支援できる物体: 男性器・女性器・人間の顔（<a href="/docs/#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF）</figcaption>
+    </figure>
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
       <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>

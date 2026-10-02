@@ -46,6 +46,10 @@ llms-full.txt は llms.txt 仕様の一部ではなく慣習。実効性は llms
 - {{ c.ja }} / {{ c.en }}
 {%- endfor %}
 
+### 検出対象 / Detection targets
+
+男性器・女性器・人間の顔 (検出オプションで個別に ON / OFF) / male genitalia, female genitalia and human faces (each can be turned on or off in the detection options)
+
 ### できないこと / What it does NOT do
 {% for c in E.cannot %}
 - {{ c.ja }} / {{ c.en }}

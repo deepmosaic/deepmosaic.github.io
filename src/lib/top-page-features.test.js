@@ -189,13 +189,65 @@ test('RELIABILITY の節からアノテーションモードの記述が消え�
 // ── hero 画像 (T-496 が同じファイル名で撮り直す) ─────────────────────────────────
 
 test('hero 画像はファイル名を変えず、LCP 用の fetchpriority="high" のまま', () => {
-	// Arrange / Act
-	const [hero] = images(index)
+	// Arrange / Act (T-870 で HERO の先頭に検出対象の図が入ったので、先頭ではなく src で探す)
+	const hero = images(index).find((img) => img.src === '/assets/img/screenshots/edit-player-mosaic.webp')
 
 	// Assert
-	assert.equal(hero.src, '/assets/img/screenshots/edit-player-mosaic.webp')
+	assert.ok(hero, 'hero 画像 (edit-player-mosaic.webp) が無い')
 	assert.equal(hero.fetchpriority, 'high')
 	assert.equal(hero.loading, undefined, 'hero を lazy にしてはいけない')
+})
+
+// ── 検出対象の図と語 (T-870) ─────────────────────────────────────────────────
+//
+// TICKET-SITE-06 / 16 で施策④-5 によりトップから外した図を、ユーザー決定 (2026-10-02) で
+// HERO のボタン列の上へ戻した。目的は検索の対象にすることなので、alt だけでなく見える文字列・
+// トップの description・meta_desc (JSON-LD の description) にも同じ語を置く。
+
+const DETECT_TERMS = ['男性器', '女性器', '人間の顔']
+
+test('HERO のボタン列より前に検出対象の図があり、alt / width / height を持ち lazy でない', () => {
+	// Arrange
+	const section = markedSection(index, 'HERO')
+	assert.ok(section, 'index.html に <!-- HERO --> の節が無い')
+	const shown = stripComments(section)
+
+	// Act
+	const figAt = shown.indexOf('/assets/img/detectable-objects.webp')
+	const buttonsAt = shown.indexOf('data-dl="hero"')
+	const [img] = images(shown).filter((i) => i.src === '/assets/img/detectable-objects.webp')
+
+	// Assert
+	assert.ok(figAt >= 0, 'HERO に検出対象の図が無い')
+	assert.ok(buttonsAt >= 0, 'HERO にダウンロードボタンが無い')
+	assert.ok(figAt < buttonsAt, '検出対象の図がボタン列より後ろにある')
+	assert.ok(existsSync(assetPath(img.src)), `画像が無い: ${img.src}`)
+	assert.match(img.width ?? '', /^\d+$/, 'width が無い (CLS)')
+	assert.match(img.height ?? '', /^\d+$/, 'height が無い (CLS)')
+	assert.equal(img.loading, undefined, 'ファーストビューの図を lazy にしてはいけない')
+	assert.equal(img.fetchpriority, undefined, 'LCP は hero 動画のまま (図に fetchpriority を付けない)')
+	for (const term of DETECT_TERMS) assert.ok(img.alt.includes(term), `alt に「${term}」が無い`)
+})
+
+test('検出対象の語が HERO の見える文字列・トップの description・meta_desc・llms にある', () => {
+	// Arrange
+	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
+	const description = index.split(/\r?\n/).find((l) => l.startsWith('description:')) ?? ''
+	const metaDesc = JSON.parse(read('_data', 'lang', 'ja.json')).meta_desc ?? ''
+	const sources = [
+		['HERO の表示文字列', heroText],
+		['index.html の description', description],
+		['ja.json の meta_desc', metaDesc],
+		['llms.txt', read('llms.txt')],
+		['llms-full.txt', read('llms-full.txt')],
+	]
+
+	// Act
+	const missing = sources.flatMap(([name, body]) => DETECT_TERMS.filter((t) => !body.includes(t)).map((t) => `${name}: ${t}`))
+
+	// Assert
+	assert.deepEqual(missing, [], `検出対象の語が無い: ${missing.join(' / ')}`)
+	assert.match(description, /^description:.{0,60}除去/, 'description の否定句が先頭から外れた (切り詰めで消える)')
 })
 
 // ── hero の動画と SAM の比較画像 (T-710) ──────────────────────────────────────
