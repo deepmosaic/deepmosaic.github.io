@@ -278,6 +278,62 @@ test('hero は形に沿ったモザイクのループ動画 (autoplay / muted / 
 	assert.match(textOf(stripComments(section)), /Pexels/, '素材 (Pexels) の表記が無い')
 })
 
+// ── Web 版への導線 (T-884) ───────────────────────────────────────────────────
+//
+// ユーザー決定 (2026-10-03): 「ブラウザで試す」と DL CTA の Web 版リンクは新規タブで開く。
+// 自動ログイン (`?login=1`、TICKET-SITE-38 / web T-031) は撤去 = 着地 URL にクエリを付けない。
+
+/** `<a …>` のうち `data-dl="<name>"` を持つものの属性。見つからなければ null。 */
+function linkAttrs(html, name) {
+	const tag = html.match(new RegExp(`<a\\s[^>]*data-dl="${name}"[^>]*>`))?.[0]
+	return tag ? Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map((a) => [a[1], a[2]])) : null
+}
+
+test('「ブラウザで試す」と CTA の Web 版リンクは target="_blank" rel="noopener noreferrer" で開く', () => {
+	// Arrange
+	const sources = [
+		['index.html の hero-webapp', stripComments(index), 'hero-webapp'],
+		['cta-download.html の cta-webapp', stripComments(read('_includes', 'cta-download.html')), 'cta-webapp'],
+	]
+
+	// Act
+	const found = sources.map(([name, html, dl]) => [name, linkAttrs(html, dl)])
+
+	// Assert
+	for (const [name, attrs] of found) {
+		assert.ok(attrs, `${name} のリンクが無い`)
+		assert.equal(attrs.target, '_blank', `${name} が新規タブで開かない`)
+		assert.equal(attrs.rel, 'noopener noreferrer', `${name} の rel が noopener noreferrer でない`)
+	}
+	assert.equal(linkAttrs('<p>リンクなし</p>', 'hero-webapp'), null)
+})
+
+test('Web 版の URL に自動ログインのクエリ (login=) が無い', () => {
+	// Arrange
+	const yaml = stripYamlComments(read('_data', 'site.yml'))
+
+	// Act
+	const url = yaml.match(/web_app:[\s\S]*?\n\s+url:\s*"([^"]+)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(url, /^https:\/\/app\.deepmosaic\.co\.jp\//, `web_app.url が読めない: ${url}`)
+	assert.doesNotMatch(url, /login=/, `web_app.url に login= が残っている: ${url}`)
+})
+
+test('hero の説明文と動画の aria-label は「自動検出の結果」(素材: Pexels)', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'HERO') ?? '')
+
+	// Act
+	const text = textOf(section)
+	const ariaLabel = section.match(/<video\s[^>]*aria-label="([^"]*)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(text, /自動検出の結果（素材: Pexels）。/, 'hero の説明文が「自動検出の結果（素材: Pexels）。」でない')
+	assert.doesNotMatch(text, /6 人の顔/, '旧い説明文が残っている')
+	assert.equal(ariaLabel, 'Deepmosaic で書き出した動画。自動検出の結果')
+})
+
 test('MOSAIC 節に四角い枠と形に沿ったモザイクの比較画像が対で並び、実在して alt / width / height / lazy を持つ', () => {
 	// Arrange
 	const section = markedSection(index, 'MOSAIC')

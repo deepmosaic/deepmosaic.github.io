@@ -40,7 +40,7 @@ params:
       `data-dl` は DL ボタンと同じ計測配管 (utm_*/ref の載せ直し + GA4) に乗せる目印。
     {%- endcomment -%}
     {%- if site.data.site.web_app.enabled %}
-    <p class="mt-2 text-[13px] text-ink-4">インストール不要の <a href="{{ site.data.site.web_app.url }}" data-dl="cta-webapp" class="text-accent-soft hover:underline">Web 版</a>（Chrome / Edge 対応）もご利用いただけます。動画はサーバーに送信されず、お使いのブラウザ内で処理します。</p>
+    <p class="mt-2 text-[13px] text-ink-4">インストール不要の <a href="{{ site.data.site.web_app.url }}" data-dl="cta-webapp" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline">Web 版</a>（Chrome / Edge 対応）もご利用いただけます。動画はサーバーに送信されず、お使いのブラウザ内で処理します。</p>
     {%- endif %}
     {%- comment -%}
       TICKET-SITE-28: 製品の方向を DL ボタンの直下に置く。この include は

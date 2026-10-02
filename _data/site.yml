@@ -43,17 +43,18 @@ hero:
 # (_includes/cta-download.html: トップ末尾 / /price/ / /spec/ の 3 箇所) が同時に出る。
 # false に戻すとビルド出力から導線だけ即時撤去できる (アプリ本体はそのまま)。
 #
-# TICKET-SITE-38: URL の `?login=1` は Web 版側 (web T-031) の自動ログイン導線 —
-# 未認証ならアプリを経由して即 Auth0 のログイン画面へ、認証済みならそのままアプリへ。
-# `decorateDownloadUrl` (src/lib/attribution.js) は既存クエリを温存して dm/utm を
-# **追記** する契約 (テストで固定済み) なので、この静的クエリと共存する。
+# TICKET-SITE-38 では URL に `?login=1` (Web 版側 web T-031 の自動ログイン導線) を
+# 付けていたが、T-884 で撤去した (ユーザー決定 2026-10-03: 勝手に Auth0 へ遷移させない。
+# `?login=1` の自動ログインは web 側 (T-883) でも撤去済みで、旧 URL は web 側で無視される)。
+# `decorateDownloadUrl` (src/lib/attribution.js) は dm/utm を **追記** する契約。
+# リンクは新規タブで開く (index.html / _includes/cta-download.html の target="_blank")。
 #
 # 2026-08-17: 導線を一旦非表示 (enabled: false)。
 # 2026-08-30 (TICKET-SITE-41): 再表示。Web 版は統合キュー / スロット待機 (web T-138〜T-148)
 # を備えた状態で公開再開。非表示に戻すときは false にするだけ。
 web_app:
   enabled: true
-  url: "https://app.deepmosaic.co.jp/?login=1"
+  url: "https://app.deepmosaic.co.jp/"
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
 # 「現状の1本あたりコスト」の既定 ¥24,000 は 時給¥3,000 × 8時間 の試算。

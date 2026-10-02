@@ -59,7 +59,7 @@ schemas:
         `download` 属性は付けない (ファイル DL ではなくページ遷移)。
       {%- endcomment -%}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザで試す（インストール不要）</a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザで試す（インストール不要）</a>
       {%- endif %}
       <a href="/docs" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
     </div>
@@ -98,12 +98,12 @@ schemas:
         top-page-features.test.js の hero テストはこの img を見る)。prefers-reduced-motion
         のときは直後の小さな script が自動再生を止める (video は残す)。
       {%- endcomment -%}
-      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="Deepmosaic で書き出した動画。AI が検出した 6 人の顔に、四角い枠ではなく顔の形に沿ってモザイクがかかっている" class="block w-full">
+      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="Deepmosaic で書き出した動画。自動検出の結果" class="block w-full">
         <source src="/assets/videos/hero-shape.webm" type="video/webm">
         <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="Deepmosaic Desktop の編集画面。AI が検出した顔にモザイクがかかった状態をプレビューしており、下部に検出区間のタイムラインが並ぶ" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
       </video>
     </div>
-    <p class="mx-auto mt-3 max-w-[720px] text-[12.5px] leading-[1.8] text-ink-4">AI が検出した 6 人の顔に、四角い枠ではなく<b class="font-semibold text-ink-2">顔の形に沿って</b>モザイクをかけた、書き出しそのままの映像です（素材: Pexels）。</p>
+    <p class="mx-auto mt-3 max-w-[720px] text-[12.5px] leading-[1.8] text-ink-4">自動検出の結果（素材: Pexels）。</p>
     <script>if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { var heroVideo = document.getElementById('hero-video'); if (heroVideo) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); } }</script>
   </div>
 </section>
