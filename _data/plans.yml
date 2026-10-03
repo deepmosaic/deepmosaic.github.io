@@ -199,7 +199,7 @@ tiers:
     # T-297 (2026-09-19): 40 → 20 時間。SSOT は `plan_catalog.included_minutes_per_seat` (1200 分)
     included_hours: 20
     included_basis: "pooled"
-    min_seats: 3
+    min_seats: 1
     # アカウント単価で自己申込を塞いでいるため複数契約の対象外 (枠はアカウント数で増やす)
     max_contracts: 1
     overage_per_hour: null # 従量課金は廃止 (旧 ¥300 / 時間)
@@ -207,7 +207,7 @@ tiers:
     trial_days: 0
     featured: false
     public: true
-    summary: "メーカー・ポストプロダクション向け。最低 3 アカウント（¥24,000〜）。"
+    summary: "メーカー・ポストプロダクション向け。1 アカウントから。"
     specs:
       - label: "込み時間"
         value: "アカウント数 × 20 時間をプール共有"

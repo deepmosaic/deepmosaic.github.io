@@ -44,7 +44,7 @@ Enterprise の組織機能 (T-255〜T-262) の使い方。
   {% include docs-h2.html kicker="組織" title="組織の管理（Enterprise）" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>Enterprise プランでは、1 つの契約を組織の複数のアカウントで共有します。メンバーの招待・削除、アカウント数の変更、請求書の確認、組織全体の利用量の確認は、アプリ内の「組織の管理」から行います。</p>
-    <p><strong>プロフィールメニューの「組織」は Enterprise の組織に参加しているアカウントにのみ表示されます。</strong>プロフィールメニュー（右上）を開くと、Free / Light / Pro では「プランを変更する」「プラン管理」が並ぶ位置に「組織」が表示されます。料金と込み時間は<a href="/price">料金ページ</a>をご覧ください（最低 {{ ent.min_seats }} アカウントから）。</p>
+    <p><strong>プロフィールメニューの「組織」は Enterprise の組織に参加しているアカウントにのみ表示されます。</strong>プロフィールメニュー（右上）を開くと、Free / Light / Pro では「プランを変更する」「プラン管理」が並ぶ位置に「組織」が表示されます。料金と込み時間は<a href="/price">料金ページ</a>をご覧ください（{{ ent.min_seats }} アカウントから）。</p>
     <p>「組織」を選ぶと「組織の管理」のダイアログが開き、左側に項目が並びます。<strong>管理者には 権限 / 請求 / 請求書 / 利用量 の 4 つ</strong>、メンバーには 権限 / 利用量 の 2 つが表示され、右側に選んだ内容が表示されます。「準備中」と表示される場合は、時間をおいてから開き直してください。</p>
     {%- comment -%} スクリーンショット (T-495 の team-window。組織アカウントがあるときだけ撮れる): 組織の管理ダイアログ全体。左ナビ + 権限タブ {%- endcomment -%}
 
@@ -104,7 +104,7 @@ Enterprise の組織機能 (T-255〜T-262) の使い方。
     {%- comment -%} スクリーンショット (T-495 / T-496 の撮影後): ログインダイアログの「組織コード」欄 {%- endcomment -%}
 
     <h3 class="mt-6 text-[16px] font-bold text-ink">導入の流れ（お見積り・お支払い）</h3>
-    <p>Enterprise は<strong>お見積りによるご契約</strong>です（最低 {{ ent.min_seats }} アカウントから）。アプリ内から直接お申し込みいただくことはできません。</p>
+    <p>Enterprise は<strong>お見積りによるご契約</strong>です（{{ ent.min_seats }} アカウントから）。アプリ内から直接お申し込みいただくことはできません。</p>
     <ol>
       <li><a href="/enterprise/inquiry/">導入相談</a>からご連絡ください。ご利用予定のアカウント数とご要望をお伺いします</li>
       <li>お見積書をお送りします。<strong>会社名・アカウント数・アカウント単価・維持管理費用</strong>を記載しています</li>
@@ -129,7 +129,7 @@ Enterprise の組織機能 (T-255〜T-262) の使い方。
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">減らせる下限</div>
-        <div class="kv-val"><strong>3 アカウント未満・使用中の数未満にはできません</strong>（「使用中」はメンバーが使っているアカウント数です。それより減らしたい場合は、先にメンバーを削除してください）。アカウント数の見直しをご希望の場合は<a href="/enterprise/inquiry/">導入相談</a>からご連絡ください</div>
+        <div class="kv-val"><strong>使用中の数未満・1 アカウント未満にはできません</strong>（「使用中」はメンバーが使っているアカウント数です。それより減らしたい場合は、先にメンバーを削除してください）。アカウント数の見直しをご希望の場合は<a href="/enterprise/inquiry/">導入相談</a>からご連絡ください</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">決済ポータル</div>

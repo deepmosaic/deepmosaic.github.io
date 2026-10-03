@@ -1,6 +1,6 @@
 // T-292: 公開後の確認 — 問い合わせページから Worker への CORS を実ブラウザで確認する。
 // `E2E_BASE_URL` を渡したときだけ走る (ローカルの _site からは本番 Worker を叩かない)。
-// 送るのは検証エラーになる本文 (seats=2) だけ — Slack / メールは飛ばず、レート制限も消費しない
+// 送るのは検証エラーになる本文 (seats=0) だけ — Slack / メールは飛ばず、レート制限も消費しない
 // (検証はレート制限より前)。ブラウザが 400 の本文を読めれば、preflight と ACAO が実際に通っている。
 import { test, expect } from '@playwright/test';
 
@@ -21,7 +21,7 @@ test('問い合わせページから Worker へ fetch でき、検証エラー�
     const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ company: 'x', name: 'x', email: 'x@example.com', phone: '0300000000', seats: 2, message: '', website: '' }),
+      body: JSON.stringify({ company: 'x', name: 'x', email: 'x@example.com', phone: '0300000000', seats: 0, message: '', website: '' }),
     });
     return { status: res.status, body: (await res.json()) as { ok: boolean; code?: string; field?: string } };
   }, endpoint!);

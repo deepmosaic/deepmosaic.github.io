@@ -120,10 +120,10 @@ test('validateInquiry は境界値ちょうどを通す', () => {
   });
   assert.equal(r.ok, true);
   const min = validateInquiry({ ...VALID, phone: '12345', seats: LIMITS.seatsMin });
-  assert.equal(min.ok, true, '電話 5 文字 / 3 アカウントは下限として通る');
+  assert.equal(min.ok, true, '電話 5 文字 / 1 アカウントは下限として通る');
 });
 
-test('emptyFields は 3 アカウントを既定にしハニーポットは空', () => {
+test('emptyFields は 1 アカウント (下限) を既定にしハニーポットは空', () => {
   const f = emptyFields();
   assert.equal(f.seats, LIMITS.seatsMin);
   assert.equal(f.website, '');
@@ -176,11 +176,15 @@ test('validateInquiry は正規化後も規則外の電話番号を弾く', () =
   assert.equal(dot.ok, false, 'ドット区切りは Worker も拒否する');
 });
 
-test('validateInquiry は予定アカウント数 3 未満・上限超過・非整数を弾く', () => {
-  const low = validateInquiry({ ...VALID, seats: 2 });
+test('validateInquiry は予定アカウント数 1 未満・上限超過・非整数を弾く', () => {
+  // T-924 (2026-10-03): 最低アカウント数 3 を撤廃し 1 アカウントから
+  assert.equal(LIMITS.seatsMin, 1);
+  const low = validateInquiry({ ...VALID, seats: 0 });
   assert.equal(low.ok, false);
-  assert.match(low.errors.seats, /3 以上/);
-  assert.match(low.errors.seats, /Enterprise は 3 アカウントから/);
+  assert.match(low.errors.seats, /1 以上/);
+  assert.match(low.errors.seats, /Enterprise は 1 アカウントから/);
+  const one = validateInquiry({ ...VALID, seats: 1 });
+  assert.equal(one.ok, true, '1 アカウントは通る');
   const high = validateInquiry({ ...VALID, seats: LIMITS.seatsMax + 1 });
   assert.equal(high.ok, false);
   assert.match(high.errors.seats, /10000 以下/);

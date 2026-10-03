@@ -80,8 +80,10 @@ test('料金と込み時間が新デザインの確定値と一致する', () =>
 
   assert.equal(byCode('enterprise').price, 8000);
   assert.equal(byCode('enterprise').included_hours, 20);
-  // 最低 3 シート = 24,000 円。これは Pro×2 の成立条件でもあるので下げない
-  assert.equal(byCode('enterprise').min_seats, 3);
+  // 最低アカウント数は 1 (T-924)。以前は「最低 3 = 24,000 円は Pro×2 の成立条件なので下げない」
+  // としていたが、2026-10-03 のユーザー決定で撤廃した (1 アカウントから契約できる。
+  // Enterprise は見積ベースで自己申込を塞いでいるため、Pro との価格の逆転は見積で扱う)
+  assert.equal(byCode('enterprise').min_seats, 1);
 
   // Free はアプリの FREE_USAGE_LIMIT_SECONDS = 5h と一致させる (T-013 で 6h→5h)。
   // **Supabase の `plan_catalog.included_minutes` が正**で、CI の
@@ -194,14 +196,39 @@ test('無制限プラン (旧 Pro の据え置き枠) は時間に関係なく�
   assert.equal(monthlyCost(legacy, 1000), 9800);
 });
 
-test('Enterprise は最低シート数を下回らない', () => {
+test('Enterprise は最低シート数 (1、T-924) を下回らない', () => {
   const ent = byCode('enterprise');
-  assert.deepEqual(bestSeatPlan(ent, 0), { seats: 3, cost: 24000 });
-  assert.deepEqual(bestSeatPlan(ent, 12), { seats: 3, cost: 24000 });
-  // 3 シート = 60 時間ぶんのプール (T-297)。ここまでは基本料だけ
+  assert.deepEqual(bestSeatPlan(ent, 0), { seats: 1, cost: 8000 });
+  assert.deepEqual(bestSeatPlan(ent, 12), { seats: 1, cost: 8000 });
+  // 1 シート = 20 時間ぶんのプール (T-297)。ここまでは基本料だけ
+  assert.deepEqual(bestSeatPlan(ent, 20), { seats: 1, cost: 8000 });
   assert.deepEqual(bestSeatPlan(ent, 60), { seats: 3, cost: 24000 });
   // 最低シート数 × 単価が最低契約額
-  assert.equal(monthlyCost(ent, 12), 8000 * 3);
+  assert.equal(monthlyCost(ent, 12), 8000 * 1);
+});
+
+test('bestSeatPlan は min_seats が無ければ 1、あれば下限として使う', () => {
+  const base = { price: 1000, included_hours: 10, included_basis: 'pooled' };
+  assert.deepEqual(bestSeatPlan(base, 0), { seats: 1, cost: 1000 });
+  assert.deepEqual(bestSeatPlan({ ...base, min_seats: 3 }, 0), { seats: 3, cost: 3000 });
+  assert.deepEqual(bestSeatPlan({ ...base, min_seats: 3 }, 31), { seats: 4, cost: 4000 });
+});
+
+test('Enterprise (アカウント共有型) は月次プランで賄えるうちは候補に出さない (T-924)', () => {
+  // 最低アカウント数を 1 にすると単価だけなら Enterprise 1 アカウント (8,000 円 / 20 時間) が
+  // Light×3 / Pro より安く見えるが、Enterprise は維持管理費用 (お見積り) が別にかかり、
+  // 見積ベースの契約。月次プランで賄えない作業量になったときだけ Enterprise を出す。
+  for (const h of [0, 11, 12, 16, 20, 21, 40]) {
+    assert.notEqual(cheapestPlan(paid, h).tier.code, 'enterprise', `${h} 時間で Enterprise が出た`);
+  }
+  assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
+  assert.equal(cheapestPlan(paid, 41).cost, 8000 * 3);
+});
+
+test('cheapestPlan は候補が無ければ null、アカウント共有型だけならそれを返す', () => {
+  const pooled = { code: 'p', price: 1000, included_hours: 10, included_basis: 'pooled', min_seats: 1 };
+  assert.equal(cheapestPlan([], 5), null);
+  assert.equal(cheapestPlan([pooled], 5).tier.code, 'p');
 });
 
 test('プールを超えたらシートを足す (超過課金は廃止したので他に手段が無い)', () => {
@@ -235,7 +262,7 @@ test('作業量が増えると Light → Pro → Enterprise に切り替わる',
   assert.equal(cheapestPlan(paid, 15).tier.code, 'light');
   //  16h: Light は 3 本でも 15h までで候補外        → Pro
   assert.equal(cheapestPlan(paid, 16).tier.code, 'pro');
-  //  40h: Pro×2 19,600 < Ent 3 アカウント 24,000   → まだ Pro
+  //  40h: Pro×2 19,600 で賄える (Enterprise は月次プランで賄えないときだけ、T-924) → まだ Pro
   assert.equal(cheapestPlan(paid, 40).tier.code, 'pro');
   //  41h: Pro は 2 本でも 40h までで候補外          → Enterprise
   assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
@@ -258,7 +285,7 @@ test('内訳文がプランごとの条件をデータから組み立てる', ()
   // 仕様として固定してしまうので、適合プランの選択のほうを固定する (T-297)
   assert.equal(cheapestPlan(paid, 41).tier.code, 'enterprise');
   // 表示上の呼称は「アカウント」(内部の識別子は Supabase の列名に合わせて seats のまま)
-  assert.equal(planBreakdown(byCode('enterprise'), 12), '3 アカウント（60 時間をプール共有）');
+  assert.equal(planBreakdown(byCode('enterprise'), 12), '1 アカウント（20 時間をプール共有）');
   // プールを超えるとアカウント数が増え、内訳もそれに追従する
   assert.equal(planBreakdown(byCode('enterprise'), 73), '4 アカウント（80 時間をプール共有）');
 });

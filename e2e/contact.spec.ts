@@ -89,7 +89,7 @@ test('未入力のまま送信すると、必須 2 項目のエラーが aria �
   await expect(page.locator('#inq-message')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#inq-message')).toHaveAttribute(
     'aria-describedby',
-    'inq-message-help inq-message-error',
+    'inq-message-error',
   );
 
   await expect(page.getByRole('alert')).toHaveText('入力内容をご確認ください。');

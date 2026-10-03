@@ -78,7 +78,7 @@ test('未入力のまま送信すると、項目ごとのエラーが aria 属�
     'inq-email-help inq-email-error',
   );
 
-  // 既定値 (3) の seats は誤りではないので赤くしない
+  // 既定値 (1) の seats は誤りではないので赤くしない
   await expect(page.locator('#inq-seats-error')).toHaveCount(0);
   await expect(page.locator('#inq-seats')).not.toHaveAttribute('aria-invalid', 'true');
 
@@ -105,15 +105,15 @@ test('全角で入力した電話番号は半角に直してから送信され�
   expect(calls[0]?.body['phone']).toBe('(03)1234-5678');
 });
 
-test('利用アカウント予定数が 3 未満だと Enterprise の下限を示して止まる', async ({ page }) => {
+test('利用アカウント予定数が 1 未満だと Enterprise の下限を示して止まる', async ({ page }) => {
   const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
   const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
 
-  await fillForm(page, { seats: '2' });
+  await fillForm(page, { seats: '0' });
   await submitButton(page).click();
 
   await expect(page.locator('#inq-seats-error')).toHaveText(
-    '利用アカウント予定数は 3 以上で入力してください (Enterprise は 3 アカウントから)',
+    '利用アカウント予定数は 1 以上で入力してください (Enterprise は 1 アカウントから)',
   );
   await expect(page.locator('#inq-seats')).toHaveAttribute('aria-invalid', 'true');
   await expect(page.locator('#inq-seats')).toHaveAttribute(

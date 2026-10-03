@@ -401,9 +401,8 @@
           ? '発生した操作、画面に出たメッセージ、お困りの内容などをご記入ください'
           : '導入時期、対象となる映像の本数や尺、請求書払いのご希望など'}
         aria-invalid={invalid('message')}
-        aria-describedby={describedBy('message', true)}
+        aria-describedby={describedBy('message', false)}
       ></textarea>
-      <p id="inq-message-help" class={HELP}>{LIMITS.message} 文字まで</p>
       {#if fieldErrors.message}<p id="inq-message-error" class={ERROR}>{fieldErrors.message}</p>{/if}
     </div>
 

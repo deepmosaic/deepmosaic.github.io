@@ -109,18 +109,36 @@ export function monthlyCost(tier, hours) {
 }
 
 /**
+ * 候補のうち最も安いもの。同額なら配列の順を保つ。候補が無ければ null。
+ *
+ * @param {Tier[]} tiers
+ * @param {number} hours
+ * @returns {{tier: Tier, cost: number}|null}
+ */
+function cheapestOf(tiers, hours) {
+  const options = tiers
+    .map((tier) => ({ tier, cost: monthlyCost(tier, hours) }))
+    .filter((o) => Number.isFinite(o.cost));
+  if (options.length === 0) return null;
+  return options.reduce((best, o) => (o.cost < best.cost ? o : best), options[0]);
+}
+
+/**
  * 月間の消費時間から最も安いプランを選ぶ。同額なら配列の順 (= plans.yml の順) を保つ。
+ *
+ * **アカウント共有型 (Enterprise) は、それ以外のプランで賄えないときだけ候補にする** (T-924)。
+ * 最低アカウント数を 3 → 1 にした (2026-10-03 ユーザー決定) ため、単価だけを比べると
+ * Enterprise 1 アカウントが Light×3 / Pro より安く見える。しかし Enterprise は
+ * 維持管理費用 (お見積り) が別にかかる見積ベースの契約で、その額はここでは計算できない。
+ * 以前は最低 3 アカウント (24,000 円) がこの逆転を防いでいたので、その振る舞いを保つ。
  *
  * @param {Tier[]} tiers 有料プランのみを渡す (Free は price 0 で常に最安になる)
  * @param {number} hours
  * @returns {{tier: Tier, cost: number}|null}
  */
 export function cheapestPlan(tiers, hours) {
-  const options = tiers
-    .map((tier) => ({ tier, cost: monthlyCost(tier, hours) }))
-    .filter((o) => Number.isFinite(o.cost));
-  if (options.length === 0) return null;
-  return options.reduce((best, o) => (o.cost < best.cost ? o : best), options[0]);
+  const selfServe = tiers.filter((t) => t.included_basis !== 'pooled');
+  return cheapestOf(selfServe, hours) ?? cheapestOf(tiers, hours);
 }
 
 /**

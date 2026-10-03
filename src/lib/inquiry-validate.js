@@ -51,7 +51,7 @@ export const LIMITS = Object.freeze({
   email: 254,
   phoneMin: 5,
   phoneMax: 40,
-  seatsMin: 3,
+  seatsMin: 1,
   seatsMax: 10_000,
   message: 4000,
 });
