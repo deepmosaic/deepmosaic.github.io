@@ -2,7 +2,8 @@
 docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡充)。
 節 ID (update / uninstall / usage / spec / trouble) は外部参照の契約
 (/price/ が #usage、/spec/ と llms.txt が #trouble を参照)。改名しない。data / web は TICKET-SITE-46 で追加。
-「使用時間の計測」の方針文 (上限適用は順次開始 …) は事業判断の文言なので原文維持。
+「使用時間の計測」の「上限の適用」は T-942 で「順次開始」の告知を外した (アプリは 2026-08-02 から適用済み)。
+超過料金なし・追加契約の説明は事業判断の文言なので原文維持。
 {%- endcomment -%}
 <section id="update" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="アップデート" %}
@@ -96,7 +97,7 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
       {%- endcomment -%}
       <li><strong>計測の単位</strong>: 検出が完了した動画の再生時間を累計します。フッターに残り時間が表示されます（無料プランのみ）</li>
       <li><strong>計測のタイミング</strong>: 検出が<strong>完了したとき</strong>に加算されます。エンコード（書き出し）は加算対象ではありません。検出範囲を絞った場合も動画全体の長さで数えます</li>
-      <li><strong>上限の適用</strong>: 上限時間の適用は順次開始します。開始日は事前にお知らせします。超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。現在ご利用中のお客様の条件は変わりません。適用が始まるまでは有料プランの検出回数に制限はありません（<a href="/price">料金ページ</a>）</li>
+      <li><strong>上限の適用</strong>: 超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}、<a href="/price">料金ページ</a>）</li>
       <li><strong>送信する内容</strong>: 使用量（動画の秒数）とファイルのハッシュ値のみです。<strong>ファイル名・映像・検出結果の座標は送信しません</strong>。詳細は<a href="/#privacy">通信内容の開示</a>をご覧ください</li>
     </ul>
   </div>

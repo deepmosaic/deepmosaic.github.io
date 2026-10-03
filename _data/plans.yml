@@ -13,10 +13,10 @@
 #    メーターも deactivate 済み。**¥800 / ¥500 / ¥300 という単価はもう存在しない**ので、
 #    金額を書き戻さないこと (実在しない料金の広告になる)。
 #
-# ⚠️ アプリ側の課金実装 (front の TICKET-BILL 群) は Phase 0 のみ完了しており、
-#    **上限時間はまだ強制されていない**。この事実の開示先は `_data/faq.yml` の
-#    「上限に達したらどうなりますか」と `/docs/#plan` の 2 箇所。料金カード直下の
-#    `rollout_note` は 2026-08-08 に空にした (下の該当行を参照)。
+# ⚠️ 上限時間はアプリが 2026-08-02 から適用済み (T-942 で「上限時間の適用は順次開始」の
+#    告知を `_data/faq.yml` / `/docs/#plan` / `/docs/#usage` から削除した)。超過料金なし・
+#    追加契約の説明はその 3 箇所が開示先。料金カード直下の `rollout_note` は
+#    2026-08-08 に空にした (下の該当行を参照)。
 #
 #    枠が足りない場合に同じプランを追加契約できる方式 (本数は各 tier の
 #    `max_contracts`) は **2026-08-02 に提供開始**。Worker (deepmosaic-auth0-updater)
@@ -27,14 +27,18 @@
 #
 #    「同時起動 1 台」は device_lock で既に強制済みなので注記の対象外。
 #
-# ⚠️ Free の `included_hours` は **6 のまま**にしている。新デザインの既定値は 3 だが、
-#    アプリの `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` は 6h を強制しており、3 と書くと
-#    実際の挙動と食い違う。3h 化は front 側の切替と同時に行う。
+# ⚠️ Free の `included_hours` はアプリの `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` と
+#    Supabase `plan_catalog` の free 行に合わせる (値の経緯は free 行のコメントを参照)。
 
 # 表示通貨と税表記 (全プランで共通)
 currency: "JPY"
 currency_symbol: "¥"
 tax_note: "税別"
+# 税込併記の税率 (%、T-942)。料金カードは「税別・税込 ¥N」と併記する。税込額は各 tier の
+# `price_incl_display` に写しを持つ (Liquid に桁区切りが無いため)。規則は
+# `src/lib/pricing.js::taxIncluded` (1 円未満切り捨て) で、`site-copy-t942.test.js` が
+# `price` × 税率と写しの一致を強制する。価格か税率を変えたら写しも直すこと。
+tax_rate_percent: 10
 
 # 料金カード直下に出る注記。**空文字にすると注記が出ない** (出し先は
 # `_includes/pricing-cards.html` の 1 箇所で、トップと `/price/` の両方に効く)。
@@ -110,6 +114,7 @@ tiers:
     display: card
     price: 2980
     price_display: "2,980"
+    price_incl_display: "3,278"
     price_unit: "/ 月"
     included_hours: 5
     included_basis: "monthly"
@@ -144,6 +149,7 @@ tiers:
     display: card
     price: 9800
     price_display: "9,800"
+    price_incl_display: "10,780"
     price_unit: "/ 月"
     # T-297 (2026-09-19): 月 40 時間 → 20 時間。真の SSOT は Supabase
     # `plan_catalog.included_minutes` (1200 分)。値を変えるときは必ず両方を同時に。
@@ -156,8 +162,8 @@ tiers:
     # 使えるので、試用期間を別に用意する意味がない (かつ再トライアルの穴も作らない)。
     trial_days: 0
     featured: true
-    # カード左上のバッジ (新デザイン準拠)。空なら出さない。
-    badge: "最も選ばれています"
+    # カード左上のバッジ (`badge`) は T-942 で外した。旧「最も選ばれています」は裏付けとなる
+    # 実績が無かったため。仕組み (`pricing-cards.html` の `plan.badge`) は汎用として残す。
     public: true
     # 実効単価 (¥245 / 時間) の表記は削除した。込み時間を「使い切った場合」という
     # 最良ケースの単価で、実際にそこまで使うユーザーは限られるため誤解を招く。
@@ -184,6 +190,7 @@ tiers:
     display: card
     price: 8000
     price_display: "8,000"
+    price_incl_display: "8,800"
     # ⚠️ **表示上の呼称は「アカウント」で統一する** (2026-08-02)。
     #    内部キーは `min_seats` のまま据え置く — Supabase `plan_catalog.min_seats` の
     #    **列名と対応**しており、CI (`scripts/check-plan-catalog.mjs`) が同名で突き合わせる。

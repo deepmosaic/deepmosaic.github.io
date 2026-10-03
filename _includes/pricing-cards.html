@@ -67,8 +67,13 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
         表示形は `price_display` としてデータ側に持たせている。
       {%- endcomment -%}
       <span class="text-[36px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
-      <span class="text-[13px] {{ key_cls }}">{{ plan.price_unit }}（{{ site.data.plans.tax_note }}）</span>
+      <span class="text-[13px] {{ key_cls }}">{{ plan.price_unit }}（{{ site.data.plans.tax_note }}{% if plan.price_incl_display %}・税込 {{ site.data.plans.currency_symbol }}{{ plan.price_incl_display }}{% endif %}）</span>
     </div>
+    {%- comment -%}
+      税込併記 (T-942)。税込額は `plans.yml` の `price_incl_display` (規則は
+      `src/lib/pricing.js::taxIncluded`、一致は `site-copy-t942.test.js` が強制)。
+      写しを持たないプラン (Free) は税別表記だけになる。
+    {%- endcomment -%}
     {%- comment -%}
       価格の直下の注記 (T-298)。Enterprise の「+ 維持管理費用 / 月」のように、
       月額に**加算される項目があること**を金額のすぐ下で示す。金額そのものは

@@ -29,6 +29,25 @@
 export const formatYen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
 
 /**
+ * 税別の金額に消費税を足した税込額 (1 円未満切り捨て、T-942)。
+ *
+ * 料金カードの税込併記の規則。`_data/plans.yml` の `price_incl_display` はこの値の写しで、
+ * `site-copy-t942.test.js` が一致を強制する (Liquid には桁区切りが無いため写しを持つ)。
+ * 浮動小数の誤差を避けるため整数演算で求める。
+ *
+ * @param {number} price       税別の金額 (円、0 以上)
+ * @param {number} ratePercent 税率 (%、0 以上)
+ * @returns {number}
+ */
+export function taxIncluded(price, ratePercent) {
+  if (!Number.isFinite(price) || price < 0) throw new RangeError(`不正な金額: ${price}`);
+  if (!Number.isFinite(ratePercent) || ratePercent < 0) {
+    throw new RangeError(`不正な税率: ${ratePercent}`);
+  }
+  return Math.floor((Math.round(price) * (100 + ratePercent)) / 100);
+}
+
+/**
  * 同一プランの契約可能本数。
  *
  * **0 や欠落を 0 に倒すと「1 本も契約できない」になる**ので必ず 1 以上に丸める。

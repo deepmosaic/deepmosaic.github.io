@@ -112,7 +112,7 @@ macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
 
 通貨 / Currency: {{ site.data.plans.currency }}（{{ site.data.plans.tax_note }}）
 {% for t in site.data.plans.tiers %}{% if t.public %}
-### {{ t.name }} — {{ site.data.plans.currency_symbol }}{{ t.price_display }}
+### {{ t.name }} — {{ site.data.plans.currency_symbol }}{{ t.price_display }}{% if t.price_incl_display %}（税込 {{ site.data.plans.currency_symbol }}{{ t.price_incl_display }}）{% endif %}
 
 {{ t.summary }}
 {%- comment -%}
