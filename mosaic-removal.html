@@ -69,6 +69,8 @@ schemas:
         {%- endfor %}
       </ul>
       <p class="mt-5 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ E.name_origin.ja }}</p>
+      {%- comment -%} T-943: 同名の OSS との区別。リンクは張らない (上の封じ込め設計の注意を参照)。 {%- endcomment %}
+      <p class="mt-3 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ E.oss_distinction.ja }}</p>
     </div>
 
     <div>

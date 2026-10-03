@@ -13,7 +13,7 @@ description: 特定商取引法に基づく表示。販売事業者・連絡先�
   <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 rich-prose">
 
     <h1 class="text-3xl font-bold text-ink mb-6">特定商取引法に基づく表記</h1>
-    <p>最終更新日: 2020-7-1</p>
+    <p>最終更新日: 2026-10-03</p>
 
     <p>「特定商取引に関する法律」第11条（通信販売についての広告）に基づき以下に明示いたします。</p>
 
@@ -24,13 +24,22 @@ description: 特定商取引法に基づく表示。販売事業者・連絡先�
             <th scope="row" class="px-4 py-3 font-medium text-left align-top">販売事業者</th>
             <td class="px-4 py-3 align-top">Deepmosaic合同会社</td>
           </tr>
-          <!--<tr>
-            <th scope="row">運営責任者</th>
-            <td>高田茂臣</td>
-          </tr>-->
+          {%- comment -%}
+            T-943: 運営責任者を表示する (氏名は見積書の dashboard `company.ts` の REPRESENTATIVE と同じ)。
+          {%- endcomment %}
+          <tr class="border-b border-edge even:bg-panel">
+            <th scope="row" class="px-4 py-3 font-medium text-left align-top">運営責任者</th>
+            <td class="px-4 py-3 align-top">高田茂臣</td>
+          </tr>
           {%- comment -%}
             TICKET-SITE-21: 郵便番号 / 所在地 / 電話番号の行は削除した (ユーザー判断)。
-          {%- endcomment -%}
+            T-943: 住所・電話番号そのものは印字せず、請求があれば遅滞なく開示する旨だけを書く
+            (特定商取引法第 11 条ただし書の省略。請求書・見積書も住所を印字しない T-933 の方針と同じ)。
+          {%- endcomment %}
+          <tr class="border-b border-edge even:bg-panel">
+            <th scope="row" class="px-4 py-3 font-medium text-left align-top">所在地・電話番号</th>
+            <td class="px-4 py-3 align-top">ご請求があれば遅滞なく開示いたします。下記のメールアドレスまでご連絡ください。</td>
+          </tr>
           <tr class="border-b border-edge even:bg-panel">
             <th scope="row" class="px-4 py-3 font-medium text-left align-top">メールアドレス</th>
             <td class="px-4 py-3 align-top">support@deepmosaic.co.jp</td>

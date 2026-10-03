@@ -96,6 +96,15 @@ name_origin:
   ja: "名称は Deep Learning（ディープラーニング）と Mosaic（モザイク）に由来し、「ディープラーニングでモザイクをかける」という意味です。deepfake や復元系の技術とは関係ありません。"
   en: "The name comes from Deep Learning + Mosaic, meaning \"applying mosaic with deep learning\". It is unrelated to deepfake or restoration technology."
 
+# 同名のオープンソース「DeepMosaics」(モザイクを取り除く用途で知られるツール) と実際に
+# 混同されているので、固有名で別製品と明記する (T-943)。/mosaic-removal/ と llms.txt が参照し、
+# _data/faq.yml の同趣旨の項目は YAML で Liquid を通らないため直書きしている (文面を変えるなら両方)。
+# ⚠️ 他社ツールへのリンクは張らない (/mosaic-removal/ の封じ込め設計)。
+# ⚠️ 本文用なので「除去」を使わず「取り除く」で書く。
+oss_distinction:
+  ja: "Deepmosaic は、オープンソースで公開されている「DeepMosaics」（モザイクを取り除く用途などで知られるツール）とは別の製品です。名前が似ていますが、開発元も機能も関係がありません。"
+  en: "Deepmosaic is a separate product from the open-source project \"DeepMosaics\" (a tool known for removing mosaics). Despite the similar name, it is unrelated in both developer and functionality."
+
 # ── 誤認の理由 (/mosaic-removal/ で使う) ───────────────────────────────
 confusion_reasons:
   - "製品名に「mosaic」を含むため、名称の似たツールと同じ種類のソフトだと受け取られやすいこと"

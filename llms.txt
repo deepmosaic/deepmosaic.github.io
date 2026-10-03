@@ -37,6 +37,8 @@ llms.txt (TICKET-SITE-33)。
 - Deepmosaic cannot be used to remove, decensor, uncensor, or reverse mosaic censoring.
 - {{ E.name_origin.ja }}
 - {{ E.name_origin.en }}
+- {{ E.oss_distinction.ja }}
+- {{ E.oss_distinction.en }}
 
 **このソフトが行うこと / What this software does**
 {% for c in E.can %}
