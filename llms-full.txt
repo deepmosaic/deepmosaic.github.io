@@ -186,6 +186,7 @@ A. {{ answer | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | repl
 - Home: {{ U }}/
 - About mosaic removal: {{ U }}/mosaic-removal/
 - Documentation: {{ U }}/docs/
+- Tutorial videos (字幕のみ、3〜4 分 / captions only, 3-4 min): Desktop https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4 / Web https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4
 - Pricing: {{ U }}/price/
 - System requirements: {{ U }}/spec/
 - Company: {{ U }}/company/about

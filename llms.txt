@@ -69,6 +69,7 @@ llms.txt (TICKET-SITE-33)。
 ## ドキュメント / Documentation
 
 - [ドキュメント / User guide]({{ U }}/docs/): Desktop 版のインストールから書き出しまでの全機能の手順 / the full Desktop workflow from install to export
+- [チュートリアル動画 / Tutorial videos]({{ U }}/docs/#about): 基本の使い方 2 本 (字幕のみ、3〜4 分、人の声なし) Desktop 版 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4 / Web 版 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4 / two basic how-to videos (captions only, 3-4 min, no narration)
 - [画面の構成 / Screen layout]({{ U }}/docs/#layout): メニュー・プロフィールメニュー・フッター / menus, profile menu, footer
 - [ログインとライセンス / Login and license]({{ U }}/docs/#license): 無料枠・同時起動 1 台・オフライン時 / free tier, one device at a time, offline behaviour
 - [AI 検出 / AI detection]({{ U }}/docs/#detect): 検出対象は男性器・女性器・人間の顔 (検出オプションで個別に ON / OFF) / detection targets: male genitalia, female genitalia and human faces (each can be turned on or off). 検出・解析と、GPU 機で標準で有効なモザイクの精緻化 (四角い枠ではなく物体の形に沿った輪郭にモザイクをかける。設定なし、CUDA 無しは四角い枠) / detection, analysis and, on GPU machines, shape-following mosaic refinement that is on by default: the mosaic follows the object outline instead of the rectangle (no toggle; falls back to rectangles without CUDA)
