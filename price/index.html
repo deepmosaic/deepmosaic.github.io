@@ -59,7 +59,7 @@ schemas:
       <ul class="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-[1.9] text-ink-2">
         <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>計測の単位は、検出が完了した動画の再生時間です。</span></li>
         <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>検出が完了したときに加算されます。エンコード（書き出し）は加算対象ではありません。</span></li>
-        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>ライセンスサーバーへ送信するのは使用量（動画の秒数）とファイルのハッシュ値のみで、ファイル名・映像・検出結果の座標は送信しません。</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>ライセンスサーバーへ送信するのは使用量（動画の秒数）、ファイルのハッシュ値、端末識別子のハッシュ値のみで、ファイル名・映像・検出結果の座標は送信しません。</span></li>
       </ul>
       <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
         詳細は<a href="/docs#usage" class="text-accent-soft hover:underline">ドキュメントの「使用時間の計測」</a>をご覧ください。

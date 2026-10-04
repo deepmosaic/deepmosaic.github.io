@@ -86,7 +86,7 @@ test('料金と込み時間が新デザインの確定値と一致する', () =>
   assert.equal(byCode('enterprise').min_seats, 1);
 
   // Free はアプリの FREE_USAGE_LIMIT_SECONDS = 2h と一致させる (T-013 で 6h→5h、T-954 で 5h→2h =
-  // 2026-10-03 のユーザー決定: 未ログイン 30 分 / ログイン 2 時間 / 端末の上限 4 時間)。
+  // 2026-10-03 のユーザー決定: 未ログイン 30 分 / ログイン 2 時間 / 端末の上限 4 時間、T-964 (2026-10-04) で端末の上限は 2 時間)。
   // **Supabase の `plan_catalog.included_minutes` が正**で、CI の
   // `plan-catalog.test.js` が本番と突き合わせる (ローカルでは skip。本番の migration (T-954) の適用まで CI では落ちる)
   assert.equal(byCode('free').included_hours, 2);

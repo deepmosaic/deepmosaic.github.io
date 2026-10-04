@@ -91,7 +91,7 @@ tiers:
     price: 0
     price_display: "0"
     # 累計 (月次リセットではない)。desktop `auth/env.rs::FREE_USAGE_LIMIT_SECONDS` = 2h と一致
-    # (T-013 で 6h→5h、T-954 で 5h→2h。未ログインは 3h→30 分、端末の上限は 10h→4h)。
+    # (T-013 で 6h→5h、T-954 で 5h→2h。未ログインは 3h→30 分、端末の上限は 10h→4h、T-964 で 4h→2h)。
     # **Supabase の `plan_catalog.included_minutes` が正**で、
     # `src/lib/plan-catalog.test.js` が CI で突き合わせる (ローカルでは skip される)
     included_hours: 2
@@ -104,6 +104,7 @@ tiers:
     summary: "まずは無料で試せます"
     bullets:
       - "累計 2 時間分の動画インポート（登録なしは 30 分）"
+      - "1 台の PC では合計 2 時間まで（アカウントを作り直しても同じ）"
       - "クレジットカードの登録は不要"
       - "無料分の終了後も既存プロジェクトの編集・書き出しは継続できます"
     cta:
