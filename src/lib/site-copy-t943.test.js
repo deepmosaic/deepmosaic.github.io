@@ -2,9 +2,11 @@
 //
 //   node --test src/lib/site-copy-t943.test.js
 //
-//   - 特定商取引法に基づく表記 (`company/asct.html`) に「運営責任者」と、住所・電話番号を
-//     「請求があれば遅滞なく開示」する旨の文と、最終更新日を載せる。住所・電話番号そのものは
-//     印字しない (TICKET-SITE-21 / T-933 の方針)。
+//   - 特定商取引法に基づく表記 (`company/asct.html`) に「運営責任者」と、電話番号を
+//     「請求があれば遅滞なく開示」する旨の文と、最終更新日を載せる。電話番号そのものは印字しない。
+//     T-1032 (2026-10-12) で住所は公開に戻した。所在地は `_data/company.yml` を参照し、電話番号だけを
+//     請求があれば開示する (値の検査は site-copy-t1032.test.js)。
+//     旧: 住所・電話番号とも印字しない (TICKET-SITE-21 / T-933 の方針)。
 //   - 同名のオープンソース「DeepMosaics」(モザイクを取り除く用途で知られるツール) とは別製品で
 //     あることを `/mosaic-removal/`・FAQ・`llms.txt` の 3 面に固有名で書く。文面の出所は
 //     `_data/entity.yml` の `oss_distinction` (FAQ は YAML で Liquid を通らないので同じ趣旨を直書き)。
@@ -71,24 +73,32 @@ test('特商法: 運営責任者の行がコメントアウトされずに表示
 	assert.equal(value, '高田茂臣')
 })
 
-test('特商法: 所在地・電話番号は請求があれば遅滞なく開示する旨の行がある', () => {
+test('特商法: 電話番号は請求があれば遅滞なく開示する旨の行がある', () => {
 	// Act
-	const value = rowValue(read('company/asct.html'), '所在地・電話番号')
+	const value = rowValue(read('company/asct.html'), '電話番号')
 
 	// Assert
-	assert.ok(value, '所在地・電話番号の行が無い')
+	assert.ok(value, '電話番号の行が無い')
 	assert.match(value, /請求があれば/)
 	assert.match(value, /遅滞なく開示/)
 })
 
-test('特商法: 住所と電話番号そのものは印字しない', () => {
+test('特商法: 所在地は _data/company.yml を参照する', () => {
+	// Act (rowValue は Liquid を展開しないので式がそのまま残る)
+	const value = rowValue(read('company/asct.html'), '所在地')
+
+	// Assert
+	assert.ok(value, '所在地の行が無い')
+	assert.match(value, /site\.data\.company\.postal_code/)
+	assert.match(value, /site\.data\.company\.address/)
+})
+
+test('特商法: 電話番号そのものは印字しない', () => {
 	// Act
 	const text = textOf(read('company/asct.html'))
 
 	// Assert
-	assert.doesNotMatch(text, /〒/)
 	assert.doesNotMatch(text, /\d{2,4}-\d{2,4}-\d{3,4}/, '電話番号らしき数字列がある')
-	assert.doesNotMatch(text, /(都|道|府|県)\S{1,6}(市|区|町|村)/, '所在地らしき表記がある')
 })
 
 test('特商法: 最終更新日は ISO 形式で 2020-7-1 の古い日付ではない', () => {

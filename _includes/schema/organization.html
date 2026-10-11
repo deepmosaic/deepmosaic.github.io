@@ -1,6 +1,6 @@
 {%- comment -%}
 JSON-LD: Organization (TICKET-SITE-05)。全ページに出力する。
-会社情報の出所は 1 箇所にまとめる (company/asct.html と食い違わせない)。
+住所・社名の出所は `_data/company.yml` (T-1032)。メールの出所は `_data/inquiry.yml` の support_email。
 
 TICKET-SITE-32: `@id` を付けた。SoftwareApplication の `publisher` からこの ID を
 参照することで、アプリと会社が 1 つのエンティティグラフとして結びつく。
@@ -29,6 +29,14 @@ TICKET-SITE-32: `@id` を付けた。SoftwareApplication の `publisher` から�
     "@type": "ContactPoint",
     "email": "support@deepmosaic.co.jp",
     "contactType": "customer service"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "postalCode": {{ site.data.company.postal_code | jsonify }},
+    "addressRegion": {{ site.data.company.address_region | jsonify }},
+    "addressLocality": {{ site.data.company.address_locality | jsonify }},
+    "streetAddress": {{ site.data.company.street_address | jsonify }},
+    "addressCountry": "JP"
   }
 }
 </script>

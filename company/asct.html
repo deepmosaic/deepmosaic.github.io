@@ -32,12 +32,16 @@ description: 特定商取引法に基づく表示。販売事業者・連絡先�
             <td class="px-4 py-3 align-top">高田茂臣</td>
           </tr>
           {%- comment -%}
-            TICKET-SITE-21: 郵便番号 / 所在地 / 電話番号の行は削除した (ユーザー判断)。
-            T-943: 住所・電話番号そのものは印字せず、請求があれば遅滞なく開示する旨だけを書く
-            (特定商取引法第 11 条ただし書の省略。請求書・見積書も住所を印字しない T-933 の方針と同じ)。
+            TICKET-SITE-21 / T-943 で非印字にした住所は T-1032 (2026-10-12) で公開に戻した。値は
+            `_data/company.yml`。電話番号は引き続き印字せず、請求があれば遅滞なく開示する (特定商取引法第 11 条ただし書による省略。
+            施行規則の該当条番号は要確認)。
           {%- endcomment %}
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">所在地・電話番号</th>
+            <th scope="row" class="px-4 py-3 font-medium text-left align-top">所在地</th>
+            <td class="px-4 py-3 align-top">〒{{ site.data.company.postal_code }} {{ site.data.company.address }}</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <th scope="row" class="px-4 py-3 font-medium text-left align-top">電話番号</th>
             <td class="px-4 py-3 align-top">ご請求があれば遅滞なく開示いたします。下記のメールアドレスまでご連絡ください。</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
