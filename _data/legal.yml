@@ -1,0 +1,6 @@
+# 法務文書の版の単一真実源 (T-1033、計画 W0-1)。
+# - version = company/eula.html と company/terms.html の「最終更新日」= desktop `src/lib/legal/version.ts` の LEGAL_VERSION
+#   = web の verbatim。アプリはこの値で同意の版を記録し、旧版の同意者には再同意を求める。
+# - 値は公開日に関係なく固定 (2026-10-12)。改定時は eula / terms / ここ / desktop / web / installer の eula.txt を同時に。
+# - 書式は `key: "value"` の 1 階層だけ (テストの極小パーサが読む)。
+version: "2026-10-12"

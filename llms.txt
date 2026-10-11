@@ -105,4 +105,5 @@ llms.txt (TICKET-SITE-33)。
 - [利用規約 / Terms of service]({{ U }}/company/terms)
 - [プライバシーポリシー / Privacy policy]({{ U }}/company/privacy)
 - [クッキーポリシー / Cookie policy]({{ U }}/company/cookie)
+- [使用許諾契約書 / End user license agreement]({{ U }}/company/eula)
 - [特定商取引法に基づく表示 / Japanese commercial transactions notice]({{ U }}/company/asct)
