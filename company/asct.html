@@ -21,14 +21,14 @@ description: 特定商取引法に基づく表示。販売事業者・連絡先�
       <table class="w-full border-collapse text-left">
         <tbody>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">販売事業者</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">販売事業者</th>
             <td class="px-4 py-3 align-top">Deepmosaic合同会社</td>
           </tr>
           {%- comment -%}
             T-943: 運営責任者を表示する (氏名は見積書の dashboard `company.ts` の REPRESENTATIVE と同じ)。
           {%- endcomment %}
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">運営責任者</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">運営責任者</th>
             <td class="px-4 py-3 align-top">高田茂臣</td>
           </tr>
           {%- comment -%}
@@ -37,49 +37,49 @@ description: 特定商取引法に基づく表示。販売事業者・連絡先�
             施行規則の該当条番号は要確認)。
           {%- endcomment %}
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">所在地</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">所在地</th>
             <td class="px-4 py-3 align-top">〒{{ site.data.company.postal_code }} {{ site.data.company.address }}</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">電話番号</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">電話番号</th>
             <td class="px-4 py-3 align-top">ご請求があれば遅滞なく開示いたします。下記のメールアドレスまでご連絡ください。</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">メールアドレス</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">メールアドレス</th>
             <td class="px-4 py-3 align-top">support@deepmosaic.co.jp</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">販売価額</th>
-            <td class="px-4 py-3 align-top">月額料金での請求。価額については<a href="/price">料金ページ</a>を参照。法人向けの個別案件の一時費用は、見積書及び取引条件書に定める金額・支払期日（銀行振込）によります。</td>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">販売価額</th>
+            <td class="px-4 py-3 align-top">月額料金での請求。価額については<a href="/price">料金ページ</a>を参照。法人様の個別案件の一時費用は、見積書及び取引条件書に定める金額・支払期日（銀行振込）によります。</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">商品代金以外の必要料金</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">商品代金以外の必要料金</th>
             <td class="px-4 py-3 align-top">消費税、振込手数料</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">支払いの時期及び方法</th>
-            <td class="px-4 py-3 align-top">口座振り込み、クレジットカードによるお支払となります。各クレジットカード会社の定める時期でのお支払いとなります。法人向け（Enterprise）のご契約は、毎月 1 日に当月分をご請求します（初月はご利用開始日から月末までの日割り。口座振り込みの場合のお支払期日は、請求書の発行から 30 日以内）。法人向けの個別案件の一時費用は、見積書及び取引条件書に定める金額・支払期日（銀行振込）によります。</td>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">支払いの時期及び方法</th>
+            <td class="px-4 py-3 align-top">口座振り込み、クレジットカードによるお支払となります。各クレジットカード会社の定める時期でのお支払いとなります。法人様のご契約は、毎月 1 日に当月分をご請求します（初月はご利用開始日から月末までの日割り。口座振り込みの場合のお支払期日は、請求書の発行から 30 日以内）。法人様の個別案件の一時費用は、見積書及び取引条件書に定める金額・支払期日（銀行振込）によります。</td>
           </tr>
           <!-- T-1037: 特商法施行規則のソフトウェアの動作環境の表示 (号番号要確認) -->
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">動作環境</th>
-            <td class="px-4 py-3 align-top">デスクトップ版は Windows 10 / 11（64bit）に対応しています。詳しい動作環境と Web 版の対応ブラウザは<a href="/spec">動作環境</a>のページに記載しています。</td>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">動作環境</th>
+            <td class="px-4 py-3 align-top">対応する OS（Windows 10 / 11（64bit））、ブラウザその他の動作環境は<a href="/spec">動作環境</a>のページに記載しています。</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">役務の提供の時期</th>
-            <td class="px-4 py-3 align-top">デスクトップ版は、ダウンロード後ただちにご利用いただけます（無料でご利用いただける範囲は登録不要です）。Web 版は、アカウントの登録（ログイン）後ただちにご利用いただけます。有料プランは、決済の完了後ただちにご利用いただけます。</td>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">役務の提供の時期</th>
+            <td class="px-4 py-3 align-top">ダウンロード又はログイン後、ただちにご利用いただけます。有料プランは決済完了後ただちにご利用いただけます。</td>
           </tr>
           <!-- T-1037: 特商法 15 条の 3 (通信販売の返品特約の表示)・11 条。要確認 -->
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">返品・キャンセルに関する特約</th>
-            <td class="px-4 py-3 align-top">本サイトで販売する商品・サービスについては、購入手続き完了後の返品またはキャンセルをお受けいたしません。商品・サービスに不具合がある場合は、<a href="/company/eula">使用許諾契約書</a>および<a href="/company/terms">利用規約</a>の定めに従って対応します。法人向け（Enterprise）のご契約は、見積書および取引条件書の定めが優先します。</td>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">返品・キャンセルに関する特約</th>
+            <td class="px-4 py-3 align-top">本サイトで販売する商品・サービスについては、購入手続き完了後の返品またはキャンセルをお受けいたしません。商品・サービスに不具合がある場合は、<a href="/company/eula">使用許諾契約書</a>および<a href="/company/terms">利用規約</a>の定めに従って対応します。法人様のご契約は、見積書および取引条件書の定めが優先します。</td>
           </tr>
           <tr class="border-b border-edge even:bg-panel">
-            <th scope="row" class="px-4 py-3 font-medium text-left align-top">解約条件</th>
+            <th scope="row" class="min-w-[10rem] px-4 py-3 font-medium text-left align-top">解約条件</th>
             <td class="px-4 py-3 align-top">
               <span>契約期間内であれば、いつでも解約することができます。<br>
                 個人向けプランは、アプリのプロフィールメニューの「プラン管理」から開く決済ポータルで解約できます。解約後も、お支払い済みの契約期間の末日までは有料プランをご利用いただけ、以後の請求は停止します。<br>
-                法人向け（Enterprise）の請求書払いのご契約は、メール（support@deepmosaic.co.jp）でお申し出ください。解約のお申し出を受けた月の末日をもってサービスの提供を終了し、請求を停止します。<br>
+                法人様の請求書払いのご契約は、メール（support@deepmosaic.co.jp）でお申し出ください。解約のお申し出を受けた月の末日をもってサービスの提供を終了し、請求を停止します。<br>
                 途中解約による返金は承っておりません。</span>
             </td>
           </tr>

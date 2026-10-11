@@ -3,8 +3,8 @@
 //   node --test src/lib/site-copy-t1037.test.js
 //
 //   - h1 を title / ja.json / フッターと同じ「特定商取引法に基づく表示」に揃える (旧: 「表記」)。
-//   - 役務の提供の時期: デスクトップ版はダウンロード後 (無料の範囲は登録不要)、Web 版はログイン後、
-//     有料プランは決済の完了後。旧文「登録後、ただちに利用が可能です」は実態と合わない。
+//   - 役務の提供の時期: ダウンロード又はログイン後ただちに、有料プランは決済完了後
+//     (T-1061 で配布形態の区別をやめた)。旧文「登録後、ただちに利用が可能です」は実態と合わない。
 //   - 解約条件: 実在しない「マイページ」をやめ、プロフィールメニューの「プラン管理」→ 決済ポータル
 //     (`_includes/docs/02-account.html`)。「月の末日」で終わるのは法人の請求書払いだけで、個人向けは
 //     支払済みの契約期間の末日まで有料プランのまま (docs の「解約の予約」)。
@@ -96,14 +96,14 @@ test('特商法: h1 と title は「特定商取引法に基づく表示」で�
 	assert.doesNotMatch(h1[1], /表記/)
 })
 
-test('特商法: 役務の提供の時期はダウンロード後 / 決済の完了後で、旧文が無い', () => {
+test('特商法: 役務の提供の時期はダウンロード又はログイン後 / 決済完了後で、旧文が無い', () => {
 	// Act
 	const value = rowValue(read(ASCT), '役務の提供の時期')
 
 	// Assert
 	assert.ok(value, '役務の提供の時期の行が無い')
-	assert.match(value, /ダウンロード後/)
-	assert.match(value, /決済の完了後/)
+	assert.match(value, /ダウンロード又はログイン後/)
+	assert.match(value, /決済完了後/)
 	assert.doesNotMatch(value, /登録後、ただちに利用が可能です/)
 })
 
@@ -118,9 +118,9 @@ test('特商法: 解約条件はプロフィールメニューの決済ポータ
 	assert.match(value, /決済ポータル/)
 	// 「月の末日」で終わるのは法人の請求書払いの段落だけ (個人向けは支払済みの契約期間の末日まで)。
 	const paragraphs = rowHtml(read(ASCT), '解約条件').split(/<br\s*\/?>/).map(textOf)
-	const corporate = paragraphs.find((p) => p.includes('法人向け'))
+	const corporate = paragraphs.find((p) => p.includes('法人様'))
 	const personal = paragraphs.find((p) => p.includes('個人向け'))
-	assert.ok(corporate && personal, '個人向けと法人向けの段落が無い')
+	assert.ok(corporate && personal, '個人向けと法人様の段落が無い')
 	assert.match(corporate, /月の末日/)
 	assert.doesNotMatch(personal, /月の末日/)
 	assert.doesNotMatch(value, /個人向け[^。]*月の末日/)

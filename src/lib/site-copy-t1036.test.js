@@ -3,9 +3,11 @@
 //   node --test src/lib/site-copy-t1036.test.js
 //
 //   - 実装の無い「位置情報」「広告の配信」「ターゲティング広告の情報収集モジュール」「SNS 連携」を消す。
-//   - 実際に送っているもの (アプリの動作記録の常時送信 / Sentry / Auth0・Stripe / 外国の保存先) と
+//   - 実際に送っているもの (アプリの動作記録の常時送信 / エラー診断 / 認証・決済 / 外国の保存先) と
 //     安全管理措置を 12〜16 項として「問い合わせ窓口」の前に新設する (窓口は 17 項、変更手続は 18 項)。
 //   - 3-3 にアプリ内の同意 (使用許諾契約書・利用規約、版の記録) を書く。
+//   - T-1061 (2026-10-11): 企業名・保存先の国の細部・保存期間・配布形態の区別を書かない方針に改めた。
+//     不在の検査は `site-copy-t1061.test.js` が持つ。ここでは各項の存在する内容だけを見る。
 //   - 3-1 の文言と 10・11 項の検査は `site-copy-t964.test.js` が持つ (ここでは再掲しない)。
 //
 // 読み取りはこのファイル内で完結させる (`site-copy-t943.test.js` / `site-copy-t964.test.js` と同じ流儀)。
@@ -101,7 +103,7 @@ test('項番は 1〜18 で、12〜18 項の見出しが新しい並びになっ�
 	}
 })
 
-test('12 項: 動作記録は同意の有無にかかわらず送り、映像は送らず、保存期間 7日 / 90日 を書く', () => {
+test('12 項: 動作記録は同意の有無にかかわらず送り、映像は送らず、保存期間は書かない (T-1061)', () => {
 	// Act
 	const s = sectionOf(privacy(), 12)
 
@@ -110,41 +112,39 @@ test('12 項: 動作記録は同意の有無にかかわらず送り、映像は
 	assert.match(s, /同意の有無にかかわらず|常時/)
 	assert.match(s, /映像/)
 	assert.match(s, /送信しません|送信しない/)
-	assert.match(s, /7日/)
-	assert.match(s, /90日/)
+	assert.doesNotMatch(s, /7日|90日/)
 })
 
-test('13 項: エラー診断はデスクトップ版が Sentry に送り、Web 版は送信しない', () => {
+test('13 項: エラー診断は外部のエラー診断サービス (米国) に送り、ファイル名とパスは伏せる', () => {
 	// Act
 	const s = sectionOf(privacy(), 13)
 
 	// Assert
 	assert.ok(s)
-	assert.match(s, /Sentry/)
-	assert.match(s, /デスクトップ版/)
-	assert.match(s, /Web ?版[^。]*送信しません/)
+	assert.match(s, /外部のエラー診断サービス（米国）/)
+	assert.match(s, /ファイル名及びファイルのパスは伏せます/)
 })
 
-test('14 項: 認証は Auth0、決済は Stripe で、パスワードとカード番号を当社は保持しない', () => {
+test('14 項: 認証は外部の認証サービス、決済は決済代行サービスで、パスワードとカード番号を当社は保持しない', () => {
 	// Act
 	const s = sectionOf(privacy(), 14)
 
 	// Assert
 	assert.ok(s)
-	assert.match(s, /Auth0/)
-	assert.match(s, /Stripe/)
+	assert.match(s, /外部の認証サービス/)
+	assert.match(s, /決済代行サービス/)
 	assert.match(s, /パスワード/)
 	assert.match(s, /カード[^。]*保持しません/)
 })
 
-test('15 項: 保存先の事業者と所在国 (大韓民国・米国) を表で示す', () => {
+test('15 項: 保存先のサービスの種類と所在国 (米国) を表で示す', () => {
 	// Act
 	const s = sectionOf(privacy(), 15)
 	const raw = rawSectionOf(privacy(), 15)
 
 	// Assert
 	assert.ok(s)
-	for (const word of ['大韓民国', '米国', 'Supabase', 'Cloudflare', 'Google']) {
+	for (const word of ['米国', 'データベース', '認証', '決済', 'Google Analytics']) {
 		assert.ok(s.includes(word), `15 項に「${word}」が無い`)
 	}
 	assert.match(raw, /<th/)
