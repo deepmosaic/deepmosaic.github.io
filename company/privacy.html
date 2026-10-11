@@ -13,7 +13,7 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
 <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 rich-prose">
 
 <h1 class="text-3xl font-bold text-ink mb-2">プライバシーポリシー</h1>
-<p class="text-sm text-ink-3 mb-8">最終更新日: 2026-10-04（制定: 2019-06-01）</p>
+<p class="text-sm text-ink-3 mb-8">最終更新日: 2026-10-12（制定: 2019-06-01）</p>
 
 <p>Deepmosaic合同会社（以下「当社」といいます。）は、当社の提供するサービス（以下「本サービス」といいます。）における、ユーザーについての個人情報を含む利用者情報の取扱いについて、以下のとおりプライバシーポリシー（以下「本ポリシー」といいます。）を定めます。</p>
 
@@ -33,12 +33,13 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
         <li>その他当社が定める入力フォームにユーザーが入力する情報</li>
       </ol>
     </ul>
-    <li>ユーザーが本サービスの利用において、他のサービスと連携を許可することにより、当該他のサービスからご提供いただく情報</li>
-    <p>ユーザーが、本サービスを利用するにあたり、ソーシャルネットワークサービス等の外部サービスとの連携を許可した場合には、その許可の際にご同意いただいた内容に基づき、以下の情報を当該外部サービスから収集します。</p>
+    <!-- T-1036: 2026-10-11 時点でソーシャル接続 (Google 等) の設定はコードに無い。有効にしたら外部のアカウント名を書くか再点検する。 -->
+    <li>ユーザーが本サービスの利用において、外部の認証サービスを介してログインすることにより、当該サービスからご提供いただく情報</li>
+    <p>当社は、本サービスのログインの機能を外部の認証サービス（Auth0）を通じて提供しています。ユーザーが同サービスでアカウントを登録し、またはログインした際に、以下の情報を同サービスから受け取ります。</p>
     <ul>
       <ol style="list-style-type: square">
-        <li>当該外部サービスでユーザーが利用するID、氏名、メールアドレス</li>
-        <li>その他当該外部サービスのプライバシー設定によりユーザーが連携先に開示を認めた情報</li>
+        <li>認証サービス上のユーザー識別子、メールアドレス</li>
+        <li>外部のアカウントでログインした場合は、その際にユーザーが開示を認めた氏名その他の情報</li>
       </ol>
     </ul>
     <li>ユーザーが本サービスを利用するにあたって、当社が収集する情報</li>
@@ -48,7 +49,8 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
         <li>端末情報</li>
         <li>ログ情報</li>
         <li>Cookie及び匿名ID</li>
-        <li>位置情報</li>
+        <li>端末識別子（ハッシュ化した値）</li>
+        <li>アプリケーションの動作記録（12項に定めるもの）</li>
       </ol>
     </ul>
   </ol>
@@ -75,16 +77,6 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
         <li>端末情報</li>
         <li>ログ情報</li>
         <li>Cookie及び匿名ID</li>
-        <li>位置情報</li>
-      </ol>
-    </ul>
-    <li>当社または第三者の広告の配信または表示のため</li>
-    <ul>
-      <ol style="list-style-type: square">
-        <li>端末情報</li>
-        <li>ログ情報</li>
-        <li>Cookie及び匿名ID</li>
-        <li>位置情報</li>
       </ol>
     </ul>
     <li>その他マーケティングに利用するため</li>
@@ -103,13 +95,15 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
 <ul>
   <ol>
     <li>端末情報</li>
-    <li>位置情報</li>
   </ol>
 </ul>
+<p>また、12項から14項に定める情報は、本サービスの提供の前提となるため、3-1の事前の同意取得の対象とせず、3-3に定める同意をもって取得します。</p>
 <p>3-2 ユーザーは、本サービスの所定の設定を行うことにより、利用者情報の全部または一部についてその利用の停止を求めることができ、この場合、当社は速やかに、当社の定めるところに従い、その利用を停止します。なお利用者情報の項目によっては、その収集または利用が本サービスの前提となるため、当社所定の方法により本サービスを退会した場合に限り、当社はその収集を停止します。</p>
+<!-- T-1036: アプリ内のクリックラップ同意 (desktop T-1040 / web T-1043)。同意した文書の版 (2026-10-12) を記録し、改定時は再同意。 -->
+<p>3-3 当社は、デスクトップ版の初回起動時及びWeb版の初回利用時に、アプリケーション内の画面で使用許諾契約書及び利用規約への同意を求め、あわせて本ポリシーをご案内します。当社は、同意の有無と同意した文書の版を記録し、これらの文書を改定した場合には改めて同意を求めることがあります。</p>
 
 <h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">4.外部送信、第三者提供、情報収集モジュールの有無</h2>
-<p>利用者情報を利用したターゲティング広告の配信のため、本サービスには情報収集モジュールが組み込まれる場合があります。これに伴い、情報収集モジュール提供者への利用者情報の提供を行う場合があります。</p>
+<p>当社ウェブサイトは、利用状況の把握のため Google Analytics を利用しており、閲覧に関する情報が Google LLC に送信されます（詳しくは8項及び<a href="/company/cookie">クッキーポリシー</a>をご覧ください）。本サービスのアプリケーションには、広告を配信する目的の情報収集モジュールは組み込まれていません。アプリケーションから当社が取得する情報と送信先は12項から15項に定めます。</p>
 
 <h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">5.第三者提供</h2>
 <p>当社は、利用者情報のうち、個人情報については、個人情報保護法その他の法令に基づき開示が認められる場合を除くほか、あらかじめユーザーの同意を得ないで第三者に提供しません。但し、次に掲げる場合はこの限りではありません。</p>
@@ -117,7 +111,6 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
   <ol>
     <li>当社が利用目的の達成に必要な範囲内において個人情報の取扱いの全部または一部を委託する場合</li>
     <li>合併その他の事由による事業の承継に伴って個人情報が提供される場合</li>
-    <li>第4項の定めに従って、情報収集モジュール提供者へ個人情報が提供される場合</li>
     <li>国の機関もしくは地方公共団体またはその委託を受けた者が法令の定める事務を遂行することに対して協力する必要がある場合であって、ユーザーの同意を得ることによって当該事務の遂行に支障を及ぼすおそれがある場合</li>
     <li>別途定めに従って共同利用する場合</li>
     <li>その他、個人情報保護法その他の法令で認められる場合</li>
@@ -133,7 +126,7 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
 <p>7-3 個人情報保護法その他の法令により、当社が訂正等または利用停止等の義務を負わない場合は、前2項の規定は適用されません。</p>
 
 <h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">8.Google Analyticsやその他解析ツールの利用について</h2>
-<p>当社は、本サービスにおいて、ユーザーの動向を調査する為にGoogle Analyticsを用い、統計的な利用情報を取得しています。Google Analyticsの詳細に関しては、次のリンクからご確認ください。<a href="http://www.google.com/analytics/" target="_blank" rel="noopener noreferrer">http://www.google.com/analytics/</a></p>
+<p>当社は、当社ウェブサイトにおいて、ユーザーの動向を調査するために Google LLC が提供する Google Analytics 4 を用い、統計的な利用情報を取得しています。詳しくは<a href="/company/cookie">クッキーポリシー</a>をご覧ください。Google Analytics の詳細は次のリンクからご確認ください。<a href="https://marketingplatform.google.com/about/analytics/" target="_blank" rel="noopener noreferrer">https://marketingplatform.google.com/about/analytics/</a></p>
 
 
 <h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">9.ダウンロード経路の記録について</h2>
@@ -159,7 +152,96 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
 <h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">11.サンプルの動画の提供について</h2>
 <p>当社は、本サービスをお試しいただくため、アプリの初回利用時にサンプルの動画（顔の検出のみ）を自動で追加することがあります。サンプルの動画には、ユーザーの動画や情報は含まれません。サンプルは通常のプロジェクトと同様に削除でき、削除した後に再び追加されることはありません。</p>
 
-<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">12.問い合わせ窓口</h2>
+<!-- T-1036: 12〜16 項を新設 (2026-10-12)。事実の出典は docs_draft/notes_T-1036.md。内部の仕組みの固有名は書かない。 -->
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">12.アプリケーションの動作記録について</h2>
+<p>当社は、本サービスの提供、不具合の調査及び改善のため、デスクトップ版及びWeb版のアプリケーションの動作記録を当社のサーバーに送信・保存します。動作記録は本サービスの提供の前提となるため、同意の有無にかかわらず送信し、3-3に定める同意をもって取得します。動作記録には、次の情報が含まれます。</p>
+<ul>
+  <ol style="list-style-type: square">
+    <li>端末識別子（ハッシュ化した値）</li>
+    <li>OS、CPU、メモリ、GPU等のご利用のPCの情報</li>
+    <li>動画の長さ、解像度、形式、ファイルサイズ及びファイルのハッシュ値</li>
+    <li>検出の設定、処理時間及び処理の結果</li>
+    <li>主要な操作の記録</li>
+    <li>検出処理のログ（ファイルのパス、ユーザー名、メールアドレス等を伏せたうえで送信します）</li>
+  </ol>
+</ul>
+<p>当社は、動画の映像・音声・フレーム画像、ファイル名及びフォルダのパスを送信しません。</p>
+<!-- T-1036: 保存期間の出典は desktop worker-supabase-proxy の保持 sweep (詳細 7 日 / その他 90 日、対象は検出ログのみ)。実行の記録・操作履歴に期限は無いので断定しない。 -->
+<p>検出処理のログのうち詳細なものは7日、その他のログは90日を経過した後に削除します。実行の記録その他の動作記録は、本サービスの提供及び改善に必要な期間保存します。アカウントを削除（退会）した場合、これらの記録はアカウントとの紐づけを外し、個人に紐づかない形で保存されることがあります。</p>
+
+<!-- T-1036: Web 版は 2026-10-11 時点で Sentry を組み込んでいない。組み込んだら本項を改定する。停止の UI は無いため停止方法は書かない。 -->
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">13.エラー診断レポートについて</h2>
+<p>当社は、不具合の調査のため、デスクトップ版のアプリケーションでエラーが起きたときに、エラーの種類、発生箇所の記録（スタックトレース）、アプリケーションのバージョン及びOSの情報を、Functional Software, Inc.（米国）が提供するエラー診断サービス Sentry に送信します。送信の際、ファイル名及びファイルのパスは伏せます。</p>
+<p>Web版はエラー診断レポートを送信しません。</p>
+
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">14.認証と決済について</h2>
+<p>14-1 本サービスのログインの機能は、Okta, Inc. が提供する認証サービス Auth0 を通じて提供します。当社は、ユーザーのパスワードを受け取らず、保持しません。</p>
+<p>14-2 本サービスの決済は、Stripe, Inc. 及びその関係会社が提供する決済サービス Stripe が処理します。クレジットカード番号は当社のサーバーを経由せず、当社はクレジットカード番号を保持しません。当社が Stripe から受け取るのは、メールアドレス、契約の状態、支払の結果等の情報です。</p>
+
+<!-- T-1036: 個人情報保護法 28 条 (外国にある第三者への提供)、施行規則 17 条、通則ガイドラインの外的環境の把握。要確認 -->
+<!-- T-1036: Auth0 テナントの保管リージョンはコードから確かめられないため「サービスの設定による」とした。GitHub は Sentry からの転記を確かめられなかったため載せない。 -->
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">15.保存先・委託先及び外国にある第三者への提供について</h2>
+<p>当社は、利用者情報の保存・処理を次の事業者に委託しており、その一部は外国にあるサーバーで取り扱われます。</p>
+<div class="overflow-x-auto">
+  <table class="w-full border-collapse text-left">
+    <thead>
+      <tr class="border-b border-edge">
+        <th scope="col" class="px-4 py-3 font-medium text-left align-top">事業者</th>
+        <th scope="col" class="px-4 py-3 font-medium text-left align-top">用途</th>
+        <th scope="col" class="px-4 py-3 font-medium text-left align-top">所在国</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Supabase, Inc.</td>
+        <td class="px-4 py-3 align-top">データベース</td>
+        <td class="px-4 py-3 align-top">米国（データを保存するサーバーは大韓民国）</td>
+      </tr>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Cloudflare, Inc.</td>
+        <td class="px-4 py-3 align-top">配信、アプリケーションのサーバー、ファイルの保管</td>
+        <td class="px-4 py-3 align-top">米国</td>
+      </tr>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Okta, Inc.（Auth0）</td>
+        <td class="px-4 py-3 align-top">認証</td>
+        <td class="px-4 py-3 align-top">米国（データの保管場所はサービスの設定によります）</td>
+      </tr>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Stripe, Inc.</td>
+        <td class="px-4 py-3 align-top">決済</td>
+        <td class="px-4 py-3 align-top">米国</td>
+      </tr>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Functional Software, Inc.（Sentry）</td>
+        <td class="px-4 py-3 align-top">エラー診断（デスクトップ版のみ）</td>
+        <td class="px-4 py-3 align-top">米国</td>
+      </tr>
+      <tr class="border-b border-edge even:bg-panel">
+        <td class="px-4 py-3 align-top">Google LLC</td>
+        <td class="px-4 py-3 align-top">当社ウェブサイトのアクセス解析</td>
+        <td class="px-4 py-3 align-top">米国</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+<p>各国の個人情報の保護に関する制度については、個人情報保護委員会が公表している情報をご参照ください。当社は、委託先との契約、アクセスできる者の制限その他の措置により、委託先における利用者情報の適切な取扱いを確保します。</p>
+
+<!-- T-1036: 個人情報保護法 32 条 1 項 4 号 (公表事項としての安全管理措置)・施行令 10 条 1 号。要確認 -->
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">16.安全管理措置について</h2>
+<p>当社は、利用者情報の漏えい、滅失または毀損の防止その他の安全管理のため、次の安全管理措置を講じています。</p>
+<ul>
+  <ol style="list-style-type: square">
+    <li>組織的安全管理措置: 利用者情報の取扱いに関する規程を定め、取り扱う担当者を限定しています。</li>
+    <li>人的安全管理措置: 担当者に対し、利用者情報の適切な取扱いについて周知しています。</li>
+    <li>物理的安全管理措置: 利用者情報を取り扱う機器の盗難・紛失を防ぐ措置を講じています。</li>
+    <li>技術的安全管理措置: アクセス制御、通信の暗号化及び管理者の権限の分離を行い、アプリケーションに利用者情報の管理権限を持たせない構成としています。</li>
+    <li>委託先の監督: 利用者情報の取扱いを委託する場合は、委託先を適切に選定し、監督します。</li>
+    <li>外的環境の把握: 外国において利用者情報を取り扱う場合は、当該外国の個人情報の保護に関する制度を把握したうえで、安全管理措置を講じます。</li>
+  </ol>
+</ul>
+
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">17.問い合わせ窓口</h2>
 <p>ご意見、ご質問、苦情のお申出その他利用者情報の取扱いに関するお問い合わせは、下記の窓口までお願い致します。</p>
 <ul>
   <ol style="list-style-type: square">
@@ -169,8 +251,8 @@ description: Deepmosaicのプライバシーポリシー。取得する情報と
   </ol>
 </ul>
 
-<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">13.プライバシーポリシーの変更手続</h2>
-<p>当社は、利用者情報の取扱いに関する運用状況を適宜見直し、継続的な改善に努めるものとし、必要に応じて、本ポリシーを変更することがあります。変更した場合には、当社所定の方法でユーザーに通知いたします。また、法令上ユーザーの同意が必要となるような内容の変更の場合は、当社所定の方法でユーザーの同意を得るものとします。</p>
+<h2 class="text-xl font-semibold text-ink mt-8 mb-3 border-b border-edge pb-2">18.プライバシーポリシーの変更手続</h2>
+<p>当社は、利用者情報の取扱いに関する運用状況を適宜見直し、継続的な改善に努めるものとし、必要に応じて、本ポリシーを変更することがあります。変更した場合には、変更後の本ポリシーを当社ウェブサイトに掲載して公表します。また、法令上ユーザーの同意が必要となるような内容の変更の場合は、当社所定の方法でユーザーの同意を得るものとします（アプリケーション内で同意を求める方法を含みます。）。</p>
 
 </div>
 </section>
