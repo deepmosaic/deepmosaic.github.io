@@ -111,6 +111,24 @@ test('第8条 2 項・第10条 3 項・第12条 2 項: 「一切の責任を負�
 	}
 })
 
+test('T-1038: 第5条 2 項・第13条 4 項の「一切…責任を負いません」にも故意又は重過失の除外を付け、除外の無い全部免除を残さない', () => {
+	const html = read(TERMS)
+	for (const label of ['第5条（', '第13条（']) {
+		// Act
+		const block = articleBlock(html, label)
+
+		// Assert
+		assert.ok(block, `${label} が無い`)
+		assert.match(block, /当社の故意又は重過失による場合を除き、一切の?責任を負いません/, label)
+	}
+	// 規約全体で「一切…責任を負いません」の直前には必ず除外が付く
+	const text = textOf(html)
+	const all = count(text, /一切の?責任を負いません/)
+	const excluded = count(text, /当社の故意又は重過失による場合を除き、[^。]*一切の?責任を負いません/)
+	assert.equal(excluded, all, '除外の無い全部免除が残っている')
+	assert.equal(all, 5)
+})
+
 test('第16条: 定型約款の変更要件と効力発生日の周知を書き、みなし同意を残さない', () => {
 	// Arrange
 	const raw = read(TERMS)
