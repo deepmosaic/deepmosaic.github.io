@@ -74,7 +74,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">再生 / コマ送り</div>
-        <div class="kv-val">先頭へ（<kbd>Home</kbd>）/ 1 コマ戻る（<kbd>←</kbd>）/ 再生・一時停止（<kbd>Space</kbd>）/ 1 コマ進む（<kbd>→</kbd>）/ 末尾へ（<kbd>End</kbd>）。<kbd>Shift</kbd> を押しながらの矢印で 10 コマ移動。マウスホイールでもコマ送りできます</div>
+        <div class="kv-val">先頭へ（<kbd>Home</kbd>）/ 1 コマ戻る（<kbd>←</kbd>）/ 再生・一時停止（<kbd>Space</kbd>）/ 1 コマ進む（<kbd>→</kbd>）/ 末尾へ（<kbd>End</kbd>）。<kbd>PageUp</kbd> / <kbd>PageDown</kbd> で 10 コマ移動。BBox を選択中に <kbd>Shift</kbd> を押しながら <kbd>→</kbd> を押すと、その枠の形を引き継いだまま 1 コマずつ進みます（下の「検出枠の操作」の「形を引き継いでコマ送り」）。マウスホイールでもコマ送りできます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">シーク</div>
@@ -113,7 +113,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">連続削除（消しゴム）</div>
-        <div class="kv-val">映像の上で右ボタンを押したままドラッグすると消しゴムになります。既定では円に触れた枠をそのフレームから削除します。ツールバーの消しゴムボタンで、消し方（触れた BBox を削除 / 触れた部分だけ削除）、形（円 / 角丸四角）、大きさ（8〜120px）を選べます。「触れた部分だけ削除」では、削った跡が枠の形（多角形）として残り、手動で追加した枠が 2 つに割れたときは片ごとに別の枠になります。押したまま再生したりホイールでコマ送りしたりすると、流れていくフレームの枠も続けて消せます（右ボタンを動かさずに離したときは、いつもの右クリックメニューが開きます）</div>
+        <div class="kv-val">映像の上で <kbd>E</kbd> キーを押しながら右ボタンを押したままドラッグすると消しゴムになります。既定では円に触れた枠をそのフレームから削除します。ツールバーの消しゴムボタンで、消し方（触れた BBox を削除 / 触れた部分だけ削除）、形（円 / 角丸四角）、大きさ（8〜120px）を選べます。「触れた部分だけ削除」では、削った跡が枠の形（多角形）として残り、手動で追加した枠が 2 つに割れたときは片ごとに別の枠になります。押したまま再生したりホイールでコマ送りしたりすると、流れていくフレームの枠も続けて消せます（<kbd>E</kbd> を押していない右ドラッグや、右ボタンを動かさずに離したときは、いつもの右クリックメニューが開きます）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ID ごと削除（チップの ✕）</div>
@@ -142,6 +142,10 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       <div class="kv-row">
         <div class="kv-key">モザイク設定の引き継ぎ</div>
         <div class="kv-val">検出された枠に重ねて、または近く（隙間が画面の短辺の 5% 以内）に枠を追加すると、その検出枠に効いているモザイク設定（種類・ぼかし・不透明度・粒の大きさ）を写します。粒の大きさは、その検出枠と同じ見た目になるように固定されます。写した設定は<a href="#edit-mosaic">モザイク設定</a>の「ID 別」タブでいつでも変えられます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">形を引き継いでコマ送り（<kbd>Shift</kbd>+<kbd>→</kbd>）</div>
+        <div class="kv-val">枠をクリックして選択し、<kbd>Shift</kbd> を押しながら <kbd>→</kbd> を押すと、<kbd>Shift</kbd> を押し始めた時点の位置・大きさ・形のまま 1 コマずつ進み、進んだ先のフレームのその枠を上書きします。<kbd>Shift</kbd> を離すまでが 1 つの操作で、<kbd>Ctrl+Z</kbd> 1 回でまとめて戻せます。進んだ先にその枠が無いフレームは飛ばします</div>
       </div>
     </div>
     <p>検出枠の選択・追加・消しゴムは、再生ヘッドが元の動画（検出元）の区間にあるときだけ使えます。<a href="#edit-media">取り込んだ素材</a>の区間は AI 検出の対象外のため、枠はありません。</p>
@@ -255,7 +259,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">形の選択</div>
-        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>E</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの下段「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを選べます</div>
+        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>W</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの下段「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを選べます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">bbox追加（1f / ∞）</div>
@@ -263,7 +267,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">消しゴム</div>
-        <div class="kv-val">右ドラッグの消しゴムの設定（消し方: 触れた BBox を削除 / 触れた部分だけ削除、形: 円 / 角丸四角、大きさ: 8〜120px）。ボタンを押しても消しゴムにはならず、消すのは常に右ドラッグです</div>
+        <div class="kv-val"><kbd>E</kbd>+右ドラッグの消しゴムの設定（消し方: 触れた BBox を削除 / 触れた部分だけ削除、形: 円 / 角丸四角、大きさ: 8〜120px）。ボタンを押しても消しゴムにはならず、消すのは常に <kbd>E</kbd>+右ドラッグです</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">モザイク設定（<kbd>G</kbd>）</div>
@@ -421,8 +425,10 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="speed_down"><td><kbd>,</kbd></td><td>再生速度を下げる</td></tr>
           <tr data-shortcut="speed_up"><td><kbd>.</kbd></td><td>再生速度を上げる</td></tr>
           <tr data-shortcut="blank_only_toggle"><td><kbd>B</kbd></td><td>空白のみ再生（bbox のあるフレームをスキップ）</td></tr>
-          <tr data-shortcut="step_fwd"><td rowspan="6">フレーム移動</td><td><kbd>→</kbd></td><td>1 コマ進む（<kbd>Shift</kbd> で 10 コマ）</td></tr>
-          <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>1 コマ戻る（<kbd>Shift</kbd> で 10 コマ）</td></tr>
+          <tr data-shortcut="step_fwd"><td rowspan="8">フレーム移動</td><td><kbd>→</kbd></td><td>1 コマ進む（BBox を選択中に <kbd>Shift</kbd> を押しながらだと、その枠の形を引き継ぎながら 1 コマ進む）</td></tr>
+          <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>1 コマ戻る</td></tr>
+          <tr data-shortcut="step_fwd_10"><td><kbd>PageDown</kbd></td><td>10 コマ進む</td></tr>
+          <tr data-shortcut="step_back_10"><td><kbd>PageUp</kbd></td><td>10 コマ戻る</td></tr>
           <tr data-shortcut="go_start"><td><kbd>Home</kbd></td><td>先頭へ</td></tr>
           <tr data-shortcut="go_end"><td><kbd>End</kbd></td><td>末尾へ</td></tr>
           <tr data-shortcut="jump_prev_empty"><td><kbd>[</kbd></td><td>前の欠落フレームへ</td></tr>
@@ -435,7 +441,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
           <tr data-shortcut="bbox_add_single"><td rowspan="8">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
-          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>E</kbd></td><td>追加する / 描く bbox の形を楕円に（もう一度押すと四角に戻ります）</td></tr>
+          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>W</kbd></td><td>追加する / 描く bbox の形を楕円に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する / 描く bbox の形を多角形に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
@@ -476,7 +482,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="mouse_anchor_ctrl_click"><td><kbd>Ctrl</kbd>+クリック</td><td>多角形の頂点を <kbd>Ctrl</kbd>+クリックして削除（3 点未満にはなりません）</td></tr>
           <tr data-shortcut="mouse_edge_click_add"><td>クリック</td><td>選択中の多角形の辺をクリックして頂点を追加</td></tr>
           <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
-          <tr data-shortcut="mouse_eraser"><td>右ドラッグ</td><td>連続削除（消しゴム）。ツールバーの消しゴムボタンで「触れた BBox を削除 / 触れた部分だけ削除」「円 / 角丸四角」「大きさ」を選べます。押したまま再生 / コマ送りしても続きます</td></tr>
+          <tr data-shortcut="mouse_eraser"><td><kbd>E</kbd>+右ドラッグ</td><td>連続削除（消しゴム）。ツールバーの消しゴムボタンで「触れた BBox を削除 / 触れた部分だけ削除」「円 / 角丸四角」「大きさ」を選べます。押したまま再生 / コマ送りしても続きます</td></tr>
         </tbody>
       </table>
     </div>
