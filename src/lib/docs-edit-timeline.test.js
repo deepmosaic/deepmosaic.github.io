@@ -7,7 +7,7 @@
 //   1. 目次 (`_data/docs_toc.yml` の desktop) は**追加のみ** — T-513 より前の節 ID (契約の 20 個を含む) は
 //      1 つも消えず、新しい 8 個 (NEW_SECTIONS) が目次と本文の両方にある
 //   2. ショートカット表 (`#shortcuts`) の行は desktop `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` から
-//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 57 個と、ID・分類・キーが並び順まで一致する
+//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 67 個と、ID・分類・キーが並び順まで一致する
 //      (下の EDIT_SHORTCUTS_FIXTURE が写し。desktop 側の割当を変えたら、ここと表を同時に直す)
 //   3. タイムライン編集の各機能 (CHANGELOG T-513 の列挙) に本文が触れている
 //   4. T-496 で撮る新しいスクリーンショット 8 枚 (NEW_SCREENSHOTS) を参照している
@@ -78,10 +78,11 @@ function shortcutRows(sectionHtml) {
 
 // ── desktop の単一情報源の写し ─────────────────────────────────────────────
 //
-// 写し元: desktop リポ `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` (desktop ca03c450 = T-632 時点、66 個)。
-// 並びもそのまま。group が 'アノテーション' の 9 個 (annotation_ok … annotation_close) は機能が
+// 写し元: desktop リポ `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` (T-1251 時点 = desktop 2318757a + T-1251 の
+// carry_lock、76 個)。並びもそのまま。group が 'アノテーション' の 9 個 (annotation_ok … annotation_close) は機能が
 // 無効化されている (T-246) ので docs に載せない = ここにも写さない。
-// 形: [id, group, keys] (keys は `ShortcutDef.keys` そのまま)。
+// 形: [id, group, keys] (keys は `ShortcutDef.keys` そのまま)。例外は carry_lock の 1 個だけで、desktop の
+// `['Shift ×2']` は表のキー欄 (`<kbd>Shift</kbd> ×2`) を keyTokens が空白で割るので ['Shift', '×2'] と写す。
 const EDIT_SHORTCUTS_FIXTURE = [
 	['play_pause', '再生', ['Space']],
 	['jkl_transport', '再生', ['J', 'K', 'L']],
@@ -91,6 +92,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['blank_only_toggle', '再生', ['B']],
 	['step_fwd', 'フレーム移動', ['→']],
 	['step_back', 'フレーム移動', ['←']],
+	['carry_lock', 'フレーム移動', ['Shift', '×2']],
+	['step_fwd_10', 'フレーム移動', ['PageDown']],
+	['step_back_10', 'フレーム移動', ['PageUp']],
 	['go_start', 'フレーム移動', ['Home']],
 	['go_end', 'フレーム移動', ['End']],
 	['jump_prev_empty', 'フレーム移動', ['[']],
@@ -103,7 +107,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['class_menu_toggle', 'ズーム・表示', ['C']],
 	['bbox_add_single', 'BBox 編集', ['1']],
 	['bbox_add_persistent', 'BBox 編集', ['2']],
-	['bbox_shape_ellipse', 'BBox 編集', ['E']],
+	['avoid_add_single', 'BBox 編集', ['3']],
+	['avoid_add_persistent', 'BBox 編集', ['4']],
+	['bbox_shape_ellipse', 'BBox 編集', ['W']],
 	['bbox_shape_polygon', 'BBox 編集', ['O']],
 	['delete_bbox', 'BBox 編集', ['Delete']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
@@ -144,14 +150,14 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['mouse_anchor_ctrl_click', 'マウス', ['Ctrl', 'クリック']],
 	['mouse_edge_click_add', 'マウス', ['クリック']],
 	['mouse_context_menu', 'マウス', ['右クリック']],
-	['mouse_eraser', 'マウス', ['右ドラッグ']],
+	['mouse_eraser', 'マウス', ['E', '右ドラッグ']],
 ].map(([id, group, keys]) => ({ id, group, keys }))
 
 /**
- * 表の行数 (= 写しの数)。desktop の 66 個 − 無効化済みの 9 個。凡例専用の「マウス」の 10 個は数に含む
- * (owner が無いだけで凡例にも表にも載る)。
+ * 表の行数 (= 写しの数)。desktop の 76 個 − 無効化済みの 9 個。凡例専用の「マウス」の 16 個と carry_lock は
+ * 数に含む (owner が無いだけで凡例にも表にも載る)。
  */
-const SHORTCUT_ROW_COUNT = 62
+const SHORTCUT_ROW_COUNT = 67
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [

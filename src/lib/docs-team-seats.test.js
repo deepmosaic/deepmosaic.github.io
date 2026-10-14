@@ -111,3 +111,18 @@ test('お見積り時のアカウント数を下限とする旧文言が残っ�
 		'seats_floor 由来の下限の説明が残っている',
 	)
 })
+
+// T-1252: 銀行振込の組織は Stripe の subscription を持たないので、Worker `org-manage.ts` の
+// `handleSetSeats` が 409 `no_subscription` で弾く。アプリ内で即時に増減できるように書かない。
+test(`「${SEAT_CHANGE_KEY}」は導入相談への連絡を案内し、アプリ内の即時反映や日割りを約束しない`, () => {
+	// Arrange
+	const [row] = kvValues(html, SEAT_CHANGE_KEY)
+	assert.ok(row, `${SEAT_CHANGE_KEY} の行が無い`)
+
+	// Act
+	const text = textOf(row)
+
+	// Assert
+	assert.match(text, /導入相談/, `連絡先が書かれていない: ${text}`)
+	assert.doesNotMatch(text, /即時に反映|日割り/, `銀行振込の組織でできない約束が残っている: ${text}`)
+})

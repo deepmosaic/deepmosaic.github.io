@@ -35,7 +35,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">保存状態</div>
-        <div class="kv-val">編集は操作の約 1 秒後に自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます。エンコードの開始時にも未保存分が保存されます</div>
+        <div class="kv-val">編集は操作の約 1 秒後に自動保存されます。「保存中」「未保存」「保存済」がリアルタイムに表示され、失敗時は「保存失敗」と出ます。エンコードの開始時、編集ページを離れるとき、アプリを閉じるときにも未保存分が保存されます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">サイドバー</div>
@@ -50,6 +50,10 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
         <div class="kv-val">ボタンにマウスを乗せると、すぐに（約 0.15 秒で）その機能の説明とショートカットキーがツールチップで表示されます</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">読み込み中の表示</div>
+        <div class="kv-val">編集ページを開くと、検出結果がそろうまで「検出結果を読み込んでいます」と進捗が表示され、最初のフレームから枠が載った状態でプレイヤーが表示されます。以前のバージョンで検出したプロジェクトを初めて開いたときは「検出結果を新しい保存形式に変換しています」と表示されます（変換は 1 回だけです）</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">詳細データがありません</div>
         <div class="kv-val">検出結果のファイルが見つからないときに表示されます（プロジェクトフォルダの移動や削除など）。この画面の「プロジェクトを削除」で一覧から取り除けます</div>
       </div>
@@ -65,7 +69,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
   {% include docs-h2.html kicker="編集" title="プレイヤーとタイムライン" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
-    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザ作成（黄）。枠の上のラベル（チップ）には「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザ」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
+    <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザー作成（黄）/ 回避マスク（青緑）。枠の上のラベル（チップ）には「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザー」、回避マスクは「回避」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
@@ -74,7 +78,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">再生 / コマ送り</div>
-        <div class="kv-val">先頭へ（<kbd>Home</kbd>）/ 1 コマ戻る（<kbd>←</kbd>）/ 再生・一時停止（<kbd>Space</kbd>）/ 1 コマ進む（<kbd>→</kbd>）/ 末尾へ（<kbd>End</kbd>）。<kbd>PageUp</kbd> / <kbd>PageDown</kbd> で 10 コマ移動。BBox を選択中に <kbd>Shift</kbd> を押しながら <kbd>→</kbd> を押すと、その枠の形を引き継いだまま 1 コマずつ進みます（下の「検出枠の操作」の「形を引き継いでコマ送り」）。マウスホイールでもコマ送りできます</div>
+        <div class="kv-val">先頭へ（<kbd>Home</kbd>）/ 1 コマ戻る（<kbd>←</kbd>）/ 再生・一時停止（<kbd>Space</kbd>）/ 1 コマ進む（<kbd>→</kbd>）/ 末尾へ（<kbd>End</kbd>）。<kbd>PageUp</kbd> / <kbd>PageDown</kbd> で 10 コマ移動。マウスホイールでもコマ送りでき、<kbd>Shift</kbd>+ホイールで 10 コマ移動します。BBox を選択中に <kbd>Shift</kbd>+<kbd>→</kbd>（または <kbd>Shift</kbd>+ホイール上）で進むと、その枠の形を引き継いだまま 1 コマずつ進みます（下の「検出枠の操作」の「形を引き継いでコマ送り」）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">シーク</div>
@@ -101,7 +105,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">選択</div>
-        <div class="kv-val">枠をクリックすると太枠と 8 つのハンドルが表示されます</div>
+        <div class="kv-val">枠をクリックすると太枠と 8 つのハンドルが表示されます。あわせて、エッジぼかしが届く範囲が枠の外側に点線で表示されます（Premiere Pro のマスクの境界のぼかしと同じく、輪郭の外側に設定値の半分の幅。エッジぼかしが 0 のとき、モザイク対象外のトラック、オーバーレイ非表示（<kbd>H</kbd>）のときは出ません）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">移動 / サイズ変更</div>
@@ -121,7 +125,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">右クリックメニュー</div>
-        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、「この BBox を削除」、検出した枠では「この ID をすべて削除」（チップの ✕ と同じ）。連続 bbox に軌跡があるときは「移動軌跡をクリア」</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、「この BBox を削除」、検出した枠では「この ID をすべて削除」（チップの ✕ と同じ）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">追跡 ID の統合</div>
@@ -132,8 +136,16 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
         <div class="kv-val">対象から外したトラックがあると「N トラックをモザイク除外中です」と常時表示されます。「すべてモザイク対象に戻す」で一括で戻せます。除外した箇所は書き出してもモザイクがかかりません</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">プレビューの余白と枠外</div>
+        <div class="kv-val">プレビューでは映像の上下左右に余白（各辺およそ 15%、暗いグレー）があり、映像の境目に細い枠線が引かれます。枠は余白へはみ出す位置まで動かしたり広げたりでき、人物が画面の外へ出ていく場面でも楕円などの形を潰さずに置けます。はみ出した部分は書き出されませんが、映像の内側はその形のまま映像の端までモザイクがかかります。新しく描く枠は映像と重なる必要があり、余白だけをドラッグしても描けません</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">画面の端で切れた検出枠</div>
+        <div class="kv-val">画面の端にかかって切れた検出枠は、端に触れる前後のフレームの大きさをもとに枠の外まで自動で補われます。顔が画面の外へ出ていく場面でも、モザイクの形（楕円など）が端で潰れず、プレビューと書き出しの両方に反映されます。この補完はバージョン 2.8.1 以降で検出した動画に付きます</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">枠を描く（左ドラッグ）</div>
-        <div class="kv-val">映像の空いている所を左ドラッグすると、ツールバーの形の選択で選んでいる形（四角 / 楕円 / 多角形）の枠を描けます。多角形はクリックで点を置き、始点のクリック / <kbd>Enter</kbd> / ダブルクリックで閉じます。描いた枠は既定で以降のフレームにも続く連続 bbox で、形の選択メニューの「描いた BBox」で「このフレームのみ」に変えられます。拡大中にフレームを動かすときは <kbd>Ctrl</kbd>+左ドラッグ（中ボタンドラッグでも可）です</div>
+        <div class="kv-val">映像の空いている所を左ドラッグすると、ツールバーの形の選択で選んでいる形（四角 / 楕円 / 多角形）の枠を描けます。多角形はクリックで点を置き、始点のクリック / <kbd>Enter</kbd> / ダブルクリックで閉じます。描いた枠は既定で以降のフレームにも続く連続 bbox で、形の選択メニューの「描いた BBox」で「このフレームのみ」に、「描いた BBox の種類」で「回避マスク」に変えられます。余白だけをドラッグしても枠は描けません（映像と重なるように描きます）。拡大中にフレームを動かすときは <kbd>Ctrl</kbd>+左ドラッグ（中ボタンドラッグでも可）です</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">手動で追加した枠の表示</div>
@@ -145,7 +157,11 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">形を引き継いでコマ送り（<kbd>Shift</kbd>+<kbd>→</kbd>）</div>
-        <div class="kv-val">枠をクリックして選択し、<kbd>Shift</kbd> を押しながら <kbd>→</kbd> を押すと、<kbd>Shift</kbd> を押し始めた時点の位置・大きさ・形のまま 1 コマずつ進み、進んだ先のフレームのその枠を上書きします。<kbd>Shift</kbd> を離すまでが 1 つの操作で、<kbd>Ctrl+Z</kbd> 1 回でまとめて戻せます。進んだ先にその枠が無いフレームは飛ばします</div>
+        <div class="kv-val">枠をクリックして選択し、<kbd>Shift</kbd> を押しながら <kbd>→</kbd>（またはホイールを上へ）で進むと、<kbd>Shift</kbd> を押し始めた時点の位置・大きさ・形のまま 1 コマずつ進み、進んだ先のフレームのその枠を上書きします。引き継ぎ中の枠のチップには「[引き継ぎ中]」と表示されます。<kbd>Shift</kbd> を離すまでが 1 つの操作で、<kbd>Ctrl+Z</kbd> 1 回でまとめて戻せます。進んだ先にその枠が無いフレームは飛ばし、1 フレームも書けなかったときは「進んだ先のフレームにこの BBox が無く、形を引き継げませんでした」と表示されます。<kbd>Shift</kbd>+<kbd>←</kbd> は引き継がずに 1 コマ戻ります。再生ボタンでの再生、<kbd>PageDown</kbd> の 10 コマ移動、1 フレームのみの手動の枠、取り込んだ素材の区間では引き継ぎません</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">引き継ぎの固定（<kbd>Shift</kbd> ×2）</div>
+        <div class="kv-val">枠を選択して <kbd>Shift</kbd> を素早く 2 回押すと、<kbd>Shift</kbd> を離しても引き継ぎが続く「固定」になり、チップに「[引き継ぎ: 固定]」と表示されます。固定中は <kbd>Shift</kbd> なしの <kbd>→</kbd> やホイール上でも形を引き継いで進みます（<kbd>PageDown</kbd> と再生ボタンでは引き継ぎません）。もう一度 <kbd>Shift</kbd> を素早く 2 回押すか、<kbd>Esc</kbd> で解除します。固定中に別の枠を選び直すと、次に進んだときからその枠の形を引き継ぎます。日本語入力（IME）などのソフトが <kbd>Shift</kbd> の単押しを使っている環境では、固定にならないことがあります</div>
       </div>
     </div>
     <p>検出枠の選択・追加・消しゴムは、再生ヘッドが元の動画（検出元）の区間にあるときだけ使えます。<a href="#edit-media">取り込んだ素材</a>の区間は AI 検出の対象外のため、枠はありません。</p>
@@ -154,7 +170,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       <figcaption class="mt-2 text-[12.5px] text-ink-4">枠の右クリックメニュー</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">タイムライン</h3>
-    <p>タイムラインは上から、ツールバー、目盛り、<a href="#edit-scenes">シーン（カット）の帯</a>、テキスト・クリップ・音声のレーン（<a href="#timeline-edit">クリップの編集</a>）、検出クラスごとの行の順に並びます。クラスの行には検出のある区間が帯で描かれ、行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは書き出す映像の時間で並ぶので、クリップをトリムしたり動かしたりすると、検出の帯も一緒に動きます。</p>
+    <p>タイムラインは上から、ツールバー、目盛り、<a href="#edit-scenes">シーン（カット）の帯</a>、テキスト・クリップ・音声のレーン（<a href="#timeline-edit">クリップの編集</a>）、検出クラスごとの行の順に並びます。クラスの行には検出のある区間が帯で描かれ、手動で追加した枠は「ユーザー」、回避マスクは「回避」の行に並びます。行頭の {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} で追跡 ID ごとの行に展開できます。モザイク対象から外したトラックは薄く表示されます。タイムラインは書き出す映像の時間で並ぶので、クリップをトリムしたり動かしたりすると、検出の帯も一緒に動きます。</p>
     <p>タイムラインは <kbd>Ctrl</kbd>+ホイール、またはツールバー左端の拡大・縮小ボタンで最大 16 倍まで拡大できます。高さの変更と折りたたみは<a href="#timeline-edit">クリップの編集</a>を参照してください。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-timeline.webp" alt="タイムライン。シーン帯と、クラス行を展開した追跡 ID ごとの行" width="1188" height="305" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -174,7 +190,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">パン（表示位置の移動）</div>
-        <div class="kv-val">中ボタン（ホイール）ドラッグ。拡大中は枠の無い余白の左ドラッグでも動かせます</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+左ドラッグ、または中ボタン（ホイール）ドラッグ。拡大していないとき（等倍）は動きません。空いている所の左ドラッグは枠の描画になります</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">リセット</div>
@@ -191,7 +207,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
 <section id="edit-bbox" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="検出枠の追加（1f と ∞）" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>検出されなかった箇所には、ツールバーの「1f」「∞」で枠を手動で追加できます。追加した枠は現在のフレームの中央に「ユーザ」クラス（黄）で置かれるので、ドラッグで位置と大きさを合わせます。手動の枠にも<a href="#edit-mosaic">モザイク設定</a>（ID 別を含む）がそのまま適用されます。</p>
+    <p>検出されなかった箇所には、ツールバーの「1f」（＋の入った四角に 1f）と「∞」（∞ の入った四角）のボタンで枠を手動で追加できます。追加した枠は現在のフレームの中央に「ユーザー」クラス（黄）で置かれるので、ドラッグで位置と大きさを合わせます。手動の枠にも<a href="#edit-mosaic">モザイク設定</a>（ID 別を含む）がそのまま適用されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">1f（<kbd>1</kbd>）</div>
@@ -210,7 +226,35 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
         <div class="kv-val">「現在のフレームをリセット」（<kbd>Ctrl+Z</kbd>）は現在のフレームの編集を元に戻します。∞ の枠を削除で終わらせた直後に押すと、まず終端の確定が解除されます</div>
       </div>
     </div>
-    <p>枠の追加・移動・削除はすべて自動保存され、<a href="#edit-encode">エンコード</a>に反映されます。<a href="#premiere">Premiere Pro 連携</a>に渡るのは検出結果とエッジのぼかしの値だけで、この画面での枠の編集（移動・形の変更・削除など）は渡りません。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">回避マスク（モザイクをかけない範囲）</h3>
+    <p>重なったモザイクの一部だけを外したいとき（顔の横の手元だけ見せたい、など）は、回避マスクを置きます。回避マスクの内側にはモザイクがかからず、元の映像のまま表示・書き出しされます。追尾はしないので、動く対象には位置をドラッグで合わせてください。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f 回避マスク（<kbd>3</kbd>）</div>
+        <div class="kv-val">このフレームだけに置きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ 連続 回避マスク（<kbd>4</kbd>）</div>
+        <div class="kv-val">置いたフレームから先のフレームに続けます（終わらせ方は連続 bbox と同じで、終わらせたいフレームで削除します）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">形と描画</div>
+        <div class="kv-val">ツールバーの形の選択で選んだ形（四角 / 楕円 / 多角形）で置かれます。形の選択メニューの「描いた BBox の種類」を「回避マスク」にすると、左ドラッグで回避マスクを描けます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">表示</div>
+        <div class="kv-val">枠とチップは青緑の「回避」で、タイムラインの「回避」の行に並びます。モザイク適用プレビュー（<kbd>M</kbd>）で、モザイクが打ち抜かれた見た目を確認できます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">縁のぼかし</div>
+        <div class="kv-val">回避マスクの縁は、手動の枠と同じエッジぼかしの設定でなじませます。サイズ（bbox 拡張率）は効きません</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro</div>
+        <div class="kv-val">回避マスクは <a href="#premiere">Premiere Pro 連携</a>には渡りません</div>
+      </div>
+    </div>
+    <p>枠の追加・移動・削除はすべて自動保存され、<a href="#edit-encode">エンコード</a>に反映されます。<a href="#premiere">Premiere Pro 連携</a>に渡るのは検出結果とエッジのぼかしの値だけで、この画面での枠の編集（移動・形の変更・削除・回避マスクなど）は渡りません。</p>
   </div>
 </section>
 
@@ -243,15 +287,15 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
 <section id="edit-toolbar" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="編集ツールバー" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>プレイヤーの下の操作列には、左から<b>再生コントロール</b>（先頭へ / 1 コマ戻る / 再生 / 1 コマ進む / 末尾へ / 空白のみ再生 / 対象クラスと欠落フレームジャンプ / ミュート / オーバーレイの表示切替 / プレビュー切替）、<b>編集ツールバー</b>、時刻の順に並びます。幅が足りないときはツールバーと時刻が 2 段目に折り返します。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
+    <p>プレイヤーの下の操作列には、左から<b>再生コントロール</b>（先頭へ / 1 コマ戻る / 再生 / 1 コマ進む / 末尾へ / 空白のみ再生 / 欠落フレームジャンプ / ミュート / オーバーレイの表示切替 / プレビュー切替）、<b>編集ツールバー</b>（形の選択 / bbox 追加 / 回避マスク追加 / 消しゴム / モザイク設定 / リセット / ラベル / 再生速度 / ショートカット一覧）、時刻の順に並びます。幅が足りないときはツールバーと時刻が 2 段目に折り返します。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">空白のみ再生（<kbd>B</kbd>）</div>
         <div class="kv-val">再生コントロールの「末尾へ」の右。検出枠を含むフレームを自動でスキップし、bboxの無いフレームだけを連続再生します。見落としの確認に便利です</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">対象クラスと欠落フレームジャンプ</div>
-        <div class="kv-val">「空白のみ再生」の右。クラスの選択（全クラス / 局部 / 男性顔 / 女性顔）はプレビューとタイムラインに表示する枠を絞り込み、その右の 2 つのボタンで、そのクラスの検出が無いフレームへ前後にジャンプします。絞り込みは表示だけで、書き出しには影響しません。ショートカット: <kbd>[</kbd> / <kbd>]</kbd></div>
+        <div class="kv-key">欠落フレームジャンプ</div>
+        <div class="kv-val">「空白のみ再生」の右の 2 つのボタンで、検出が無いフレームへ前後にジャンプします（ショートカット: <kbd>[</kbd> / <kbd>]</kbd>）。対象のクラスは、ツールバーの「ラベル」メニューの下段「絞り込み」で選んだクラスです</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">プレビュー切替（<kbd>M</kbd>）</div>
@@ -259,37 +303,41 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">形の選択</div>
-        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>W</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの下段「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを選べます</div>
+        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>W</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを、「描いた BBox の種類」で「モザイク」か「回避マスク」かを選べます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">bbox追加（1f / ∞）</div>
-        <div class="kv-val">現在のフレーム中央に、形の選択で選んでいる形の枠を追加します。「1f」はこのフレームのみ、「∞」は以降のフレームすべてに連続表示。追加後はドラッグで調整（<a href="#edit-bbox">検出枠の操作</a>）。ショートカット: <kbd>1</kbd> / <kbd>2</kbd></div>
+        <div class="kv-val">現在のフレーム中央に、形の選択で選んでいる形の枠を追加します。「1f」（＋の四角に 1f）はこのフレームのみ、「∞」（∞ の入った四角）は以降のフレームすべてに連続表示。画面の幅が狭いときはアイコンだけになります。追加後はドラッグで調整（<a href="#edit-bbox">検出枠の追加</a>）。ショートカット: <kbd>1</kbd> / <kbd>2</kbd></div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">回避マスク追加（1f / ∞）</div>
+        <div class="kv-val">bbox 追加の右の点線の四角のボタン。現在のフレーム中央に、形の選択で選んでいる形の回避マスク（モザイクをかけない範囲）を置きます。「1f」はこのフレームのみ、「∞」（∞ の入った点線の四角）は以降のフレームに連続（<a href="#edit-bbox">回避マスク</a>）。ショートカット: <kbd>3</kbd> / <kbd>4</kbd></div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">消しゴム</div>
         <div class="kv-val"><kbd>E</kbd>+右ドラッグの消しゴムの設定（消し方: 触れた BBox を削除 / 触れた部分だけ削除、形: 円 / 角丸四角、大きさ: 8〜120px）。ボタンを押しても消しゴムにはならず、消すのは常に <kbd>E</kbd>+右ドラッグです</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">モザイク設定（<kbd>G</kbd>）</div>
         <div class="kv-val">モザイク設定パネルを開きます（<a href="#edit-mosaic">次章</a>）</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">現在のフレームをリセット</div>
         <div class="kv-val">現在のフレームの編集（枠の追加・移動・削除）を検出結果の状態に戻します。ショートカット: <kbd>Ctrl+Z</kbd></div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">全編集リセット</div>
         <div class="kv-val">枠の編集・モザイク設定・シーン・人物の統合などすべての編集を破棄します（確認ダイアログ付き・取り消し不可）</div>
       </div>
-      <div class="kv-row kv-alt">
-        <div class="kv-key">クラス表示（<kbd>C</kbd>）</div>
-        <div class="kv-val">書き出しの対象にする検出クラスをドロップダウンで選びます（例: 局部だけを書き出す）。プレビューの絞り込み（対象クラス）とは別の設定です</div>
-      </div>
       <div class="kv-row">
+        <div class="kv-key">ラベル（<kbd>C</kbd>）</div>
+        <div class="kv-val">ボタンには選択の要約（例:「全 2 ラベル」「顔 · 男性顔」）が表示されます。メニューの上段「表示する（書き出しにも効く）」は局部 / 顔のチェックで、外したラベルはプレビューにも書き出しにも出ません（例: 局部だけを書き出す）。下段「絞り込み（表示と欠落ジャンプのみ）」は全クラス / 局部 / 男性顔 / 女性顔から選び、プレビューとタイムラインに表示する枠と欠落フレームジャンプの対象を絞ります（書き出しには影響しません）</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">再生速度</div>
         <div class="kv-val">0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">{% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} ショートカット一覧</div>
         <div class="kv-val">マウスを乗せると<a href="#shortcuts">キーボードショートカットの凡例</a>が表示されます</div>
       </div>
@@ -304,7 +352,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
 <section id="edit-mosaic" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="モザイク設定パネル" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>モザイクの見た目を4つの適用範囲（タブ）で設定できます。優先順位は <b>ID別 &gt; クラス別 &gt; シーン別 &gt; 全て</b> で、狭い範囲の設定が優先されます。パネルはヘッダーをドラッグで自由な位置に移動でき、開いたまま編集を続けられます。値を変えると、モザイク適用プレビュー（<kbd>M</kbd>）にその場で反映されます。</p>
+    <p>モザイクの見た目を4つの適用範囲（タブ）で設定できます。優先順位は <b>ID別 &gt; クラス別 &gt; シーン別 &gt; 全て</b> で、狭い範囲の設定が優先されます。パネルはヘッダーをドラッグで自由な位置に移動でき、右下の角をドラッグすると大きさを変えられます（角を選んで矢印キーでも調整、ダブルクリックで既定の大きさ）。開いたまま編集を続けられます。値を変えると、モザイク適用プレビュー（<kbd>M</kbd>）にその場で反映されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">適用範囲タブ</div>
@@ -334,7 +382,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">エッジぼかし</div>
-        <div class="kv-val">モザイク領域のふちをぼかして背景となじませます（0〜64px）。既定: 6px。Premiere Pro のマスクの「マスクの境界のぼかし」と同じ意味で、輪郭を中心に内側と外側へ半分ずつぼかします（値は内外を合わせた幅です）</div>
+        <div class="kv-val">モザイク領域のふちをぼかして背景となじませます（0〜64px）。既定: 6px。Premiere Pro のマスクの「マスクの境界のぼかし」と同じ意味で、輪郭を中心に内側と外側へ半分ずつぼかします（値は内外を合わせた幅です）。プレイヤーで枠を選択すると、ぼかしが届く外側の範囲が点線で表示されます。回避マスクの縁も同じ値でなじませます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ピクセルサイズ自動</div>
@@ -372,7 +420,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
 <section id="edit-persons" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="人物ギャラリー" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ヘッダーの「人物ギャラリー」（<kbd>P</kbd>）を開くと、検出された顔が人物ごとにまとめて表示されます。人物単位でモザイクの ON / OFF や性別の修正ができ、同じ人物が別々に検出されている場合は 1 つに統合できます。パネルはドラッグで移動できます。</p>
+    <p>ヘッダーの「人物ギャラリー」（<kbd>P</kbd>）を開くと、検出された顔が人物ごとにまとめて表示されます（顔らしさが低い検出は人物に含めず「その他」に回します）。人物単位でモザイクの ON / OFF や性別の修正ができ、同じ人物が別々に検出されている場合は 1 つに統合できます。パネルはドラッグで移動できます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">人物カード</div>
@@ -388,11 +436,15 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">人物の統合</div>
-        <div class="kv-val">カードを別のカードにドラッグ&amp;ドロップすると同一人物として統合されます。統合したカードには「統合を解除」が表示されます</div>
+        <div class="kv-val">カードを別のカード（「その他」のカードを含む）にドラッグ&amp;ドロップすると同一人物として統合されます。統合したカードには「統合を解除」が表示されます。タイムラインや右クリックメニューで統合した追跡 ID も、人物ギャラリーでは 1 人として表示されます</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">その他（小さい顔など）</div>
-        <div class="kv-val">人物としてまとめられなかった顔のトラックが並びます。ここでも 1 件ずつモザイクの ON / OFF を切り替えられます</div>
+        <div class="kv-key">その他</div>
+        <div class="kv-val">人物としてまとめられなかった顔のトラックは「その他 N 件（短い出現 a・小さい顔 b・顔らしさが低い c・判定不能 d）」に折りたたまれます。押すと理由ごとに並び、60 件ずつ「さらに表示」で続きを出せます。ここでも 1 件ずつモザイクの ON / OFF を切り替えられ、別のカードへドラッグ&amp;ドロップして統合できます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">人物を再集計</div>
+        <div class="kv-val">長い動画などで同じ人物がまとまっていないときは、パネルの「人物を再集計」で動画の顔をもう一度まとめ直せます。数分かかることがあり、その間は「人物を再集計しています」と進捗が表示されます（途中で閉じることはできません）。2 回目以降は動画を読み直さないため、短い時間で終わります。人物にまとまっていない顔が多いときは「長い動画では人物にまとまっていないことがあります」と案内が出ます。ボタンは、対応した検出エンジン（2.7.2 以降）で扱えるプロジェクトのときだけ表示されます（Web 版にはありません）</div>
       </div>
     </div>
     <p>旧バージョンで検出したプロジェクトでは「この動画は旧バージョンで検出されています。人物一覧を使うには再検出してください。」と表示されます。その場合は動画を読み込み直して検出してください。</p>
@@ -410,6 +462,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
     <ul>
       <li>「タイムライン」の行は、タイムラインを表示しているときに効きます（折りたたみ中は効きません）。取り消しは検出枠の <kbd>Ctrl+Z</kbd> と別で、タイムライン編集は <kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+Y</kbd> です</li>
       <li><kbd>Delete</kbd> は、最後に操作した場所で対象が変わります。プレイヤー（映像）を最後に触ったときは選択中の検出枠を、タイムラインを最後に触ったときは選択中のクリップ・テキスト・音声トラックを削除します</li>
+      <li><kbd>Shift</kbd> を素早く 2 回押すと形の引き継ぎを固定し、もう一度 2 回か <kbd>Esc</kbd> で解除します。日本語入力（IME）などが <kbd>Shift</kbd> の単押しを使う環境では効かないことがあります</li>
     </ul>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-shortcuts.webp" alt="編集ページでショートカットの凡例を表示した状態" width="1280" height="1100" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -425,8 +478,9 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="speed_down"><td><kbd>,</kbd></td><td>再生速度を下げる</td></tr>
           <tr data-shortcut="speed_up"><td><kbd>.</kbd></td><td>再生速度を上げる</td></tr>
           <tr data-shortcut="blank_only_toggle"><td><kbd>B</kbd></td><td>空白のみ再生（bbox のあるフレームをスキップ）</td></tr>
-          <tr data-shortcut="step_fwd"><td rowspan="8">フレーム移動</td><td><kbd>→</kbd></td><td>1 コマ進む（BBox を選択中に <kbd>Shift</kbd> を押しながらだと、その枠の形を引き継ぎながら 1 コマ進む）</td></tr>
+          <tr data-shortcut="step_fwd"><td rowspan="9">フレーム移動</td><td><kbd>→</kbd></td><td>1 コマ進む（BBox を選択中に <kbd>Shift</kbd> を押しながらだと、その枠の形を引き継いで 1 コマ進む。引き継ぎを固定しているときは <kbd>Shift</kbd> なしでも引き継ぐ）</td></tr>
           <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>1 コマ戻る</td></tr>
+          <tr data-shortcut="carry_lock"><td><kbd>Shift</kbd> ×2</td><td>形の引き継ぎを固定 / 解除（<kbd>Shift</kbd> を素早く 2 回。固定中は <kbd>Shift</kbd> なしの <kbd>→</kbd> とホイールでも引き継ぎます。<kbd>Esc</kbd> でも解除）</td></tr>
           <tr data-shortcut="step_fwd_10"><td><kbd>PageDown</kbd></td><td>10 コマ進む</td></tr>
           <tr data-shortcut="step_back_10"><td><kbd>PageUp</kbd></td><td>10 コマ戻る</td></tr>
           <tr data-shortcut="go_start"><td><kbd>Home</kbd></td><td>先頭へ</td></tr>
@@ -438,9 +492,11 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="frame_zoom_reset"><td><kbd>0</kbd></td><td>ズームをリセット</td></tr>
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
-          <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>クラス表示メニューを開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="8">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>ツールバーの「ラベル」メニュー（表示するラベルと絞り込み）を開閉</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="10">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
+          <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>このフレームのみに回避マスクを追加</td></tr>
+          <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>以降のフレームに連続で回避マスクを追加</td></tr>
           <tr data-shortcut="bbox_shape_ellipse"><td><kbd>W</kbd></td><td>追加する / 描く bbox の形を楕円に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する / 描く bbox の形を多角形に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
@@ -467,7 +523,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>エンコードダイアログを開く</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>プロジェクトフォルダを開く</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Premiere Pro へインポート</td></tr>
-          <tr data-shortcut="mouse_wheel_step"><td rowspan="16">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ。枠を選択中に <kbd>Shift</kbd> を押しながら上へ回すと、<kbd>Shift</kbd>+<kbd>→</kbd> と同じく形を引き継いで 1 コマ進む）</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="16">マウス</td><td>ホイール</td><td>フレーム送り / 戻し（<kbd>Shift</kbd> で 10 コマ。枠を選択中は <kbd>Shift</kbd> を押しながら上へ回すと <kbd>Shift</kbd>+<kbd>→</kbd> と同じく形を引き継いで 1 コマ進み、下へ回すと 1 コマ戻ります。引き継ぎを固定しているときは <kbd>Shift</kbd> なしで上へ回しても引き継ぎます）</td></tr>
           <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+ホイール</td><td>カーソル位置を中心にフレームを拡大縮小</td></tr>
           <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+左ドラッグ</td><td>フレームをパン（拡大中だけ動きます。中ボタンドラッグでも可）</td></tr>
           <tr data-shortcut="mouse_draw"><td>左ドラッグ</td><td>空き領域を左ドラッグして、形の選択で選んでいる形（四角 / 楕円 / 多角形）の bbox を描く。多角形はクリックで点を置き、始点 / <kbd>Enter</kbd> / ダブルクリックで閉じます。短いタップは選択解除</td></tr>
@@ -481,7 +537,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
           <tr data-shortcut="mouse_anchor_alt_click"><td><kbd>Alt</kbd>+クリック</td><td>多角形の頂点を <kbd>Alt</kbd>+クリックして角に戻す</td></tr>
           <tr data-shortcut="mouse_anchor_ctrl_click"><td><kbd>Ctrl</kbd>+クリック</td><td>多角形の頂点を <kbd>Ctrl</kbd>+クリックして削除（3 点未満にはなりません）</td></tr>
           <tr data-shortcut="mouse_edge_click_add"><td>クリック</td><td>選択中の多角形の辺をクリックして頂点を追加</td></tr>
-          <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
+          <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 形の変更 / 削除）。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
           <tr data-shortcut="mouse_eraser"><td><kbd>E</kbd>+右ドラッグ</td><td>連続削除（消しゴム）。ツールバーの消しゴムボタンで「触れた BBox を削除 / 触れた部分だけ削除」「円 / 角丸四角」「大きさ」を選べます。押したまま再生 / コマ送りしても続きます</td></tr>
         </tbody>
       </table>

@@ -7,9 +7,9 @@
 // 実装 (Worker の支払リンク発行) より広く書くと存在しない導線を売ることになる。
 //
 //   - 3 プランとも「支払方法」を明示する契約は T-252 から (ラベル表記も揃える)。
-//   - Enterprise は見積 → 支払リンクで、カード払いと請求書払い (銀行振込またはカード、T-419) の
-//     どちらも選べる (`_includes/docs/07-team.html` の「お支払い方法」と同じ内容)。
-//     T-333 でユーザー指定の並列表記に変更した。
+//   - Enterprise は T-333 / T-419 でカード払いと請求書払いを並べていたが、T-1215 (2026-10-14) で
+//     法人は Stripe を使わなくなり、請求書による銀行振込だけになった (T-1252 で追従。
+//     `_includes/docs/07-team.html` の「お支払い方法」と同じ内容)。
 //
 // plans.yml の読み取りは `plans-yml.js` を通す — 読み手を 2 つ持つと
 // 「片方だけ直して片方が古い」が起きる (同モジュール冒頭の注記を参照)。
@@ -55,29 +55,27 @@ for (const code of PAID_CODES) {
 
     // Assert
     assert.equal(rows.length, 1, `${code} の ${PAYMENT_LABEL} 行が ${rows.length} 個ある`);
-    assert.match(rows[0].value, /クレジットカード/);
+    // 個人向け (Light / Pro) はカード、Enterprise は請求書による銀行振込 (T-1215 / T-1252)。
+    assert.match(rows[0].value, code === 'enterprise' ? /銀行振込/ : /クレジットカード/);
   });
 }
 
-test('Enterprise の支払方法はカード払いと請求書払い (銀行振込) を並べる', () => {
+// T-1252: T-1215 で法人の見積はすべて Stripe を使わなくなった (支払リンク・カードの自動更新・日割りなし)。
+// 月額は月次請求書 (`invoice_monthly`) による銀行振込だけ (`_includes/docs/07-team.html` の「お支払い方法」)。
+test('Enterprise の支払方法は請求書払い (銀行振込) だけを書く', () => {
   // Arrange
   const [row] = paymentRows('enterprise');
 
-  // Act / Assert — ユーザー指定の文言 (T-333)。
-  assert.equal(row.value, 'クレジットカード払い、請求書払い（銀行振込またはクレジットカード）');
+  // Act / Assert
+  assert.equal(row.value, '請求書払い（銀行振込）');
 });
 
-test('Enterprise の支払方法にカードだけ / 請求書だけの欠落が無い', () => {
+test('Enterprise の請求の行に日割り・毎月 1 日の自動請求が残っていない', () => {
   // Arrange
-  const [row] = paymentRows('enterprise');
+  const [row] = loadSpecs('enterprise').filter((s) => s.label === '請求');
+  assert.ok(row, 'Enterprise に「請求」の行が無い');
 
-  // Act
-  const card = row.value.indexOf('クレジットカード');
-  const invoice = row.value.indexOf('請求書払い');
-
-  // Assert
-  assert.ok(card >= 0, 'クレジットカード払いが書かれていない');
-  assert.ok(invoice >= 0, '請求書払いが書かれていない');
-  assert.ok(card < invoice, 'カード払いを先に書く (料金ページの並びの指定)');
-  assert.match(row.value, /銀行振込/);
+  // Act / Assert
+  assert.doesNotMatch(row.value, /日割り|毎月 1 日/, `Stripe 経路の請求の説明が残っている: ${row.value}`);
+  assert.match(row.value, /ご利用月ごと/);
 });

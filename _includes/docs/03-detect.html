@@ -21,6 +21,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">ホーム画面に動画ファイルを直接ドロップします。複数同時にドロップでき、動画以外のファイルは自動的に無視されます</div>
       </div>
     </div>
+    <p>サンプル以外の動画をまだ 1 本も読み込んでいないときは、一覧の下に「動画を追加して始めましょう」の枠が表示されます。動画ファイルをドラッグ&amp;ドロップするか、「動画を選択」から選んでください（メニューの「動画ファイルを選択」と同じです）。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/import-menu.webp" alt="「ファイル」メニューを開いたホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">「ファイル」メニュー。画面へのドラッグ&amp;ドロップでも読み込めます。処理結果の保存先は「プロジェクトフォルダを選択」で変更します</figcaption>
@@ -35,6 +36,10 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       <img src="/assets/img/screenshots/home.webp" alt="ホーム画面（処理済み動画一覧）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">ホーム画面（処理済み動画一覧）。ドラッグ&amp;ドロップはこの画面が受け口になります</figcaption>
     </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">サンプルプロジェクト</h3>
+    <p>無料プラン（未ログインを含む）でホーム画面に動画が 1 本も無いときは、サンプルの動画が自動で追加され、「サンプル」バッジ付きのカードとして並びます（「サンプルの動画を追加しました」と表示されます）。サンプルは顔だけを検出した結果で、編集や書き出しをそのまま試せます。編集ページには「このサンプルは顔の検出です。局部の検出はご自身の動画でお試しください」と表示されます。サンプルを再検出しても検出可能時間は減りません。削除すると再び追加されることはありません。有料プランでは追加されません。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">基本の使い方のカード</h3>
+    <p>無料プランでは「すべての動画」の先頭に「基本の使い方 (3 分)」のカードが表示されます（大アイコン表示では一覧の最初のマスに入り、サンプルなどの動画はその右に並びます）。クリックするとアプリ内で動画が再生されます（<kbd>Esc</kbd> で閉じます）。カードの「表示しない」で非表示にでき、その後は画面右下のアイコンから再生できます（押した直後にアイコンが光って場所を知らせます）。有料プランではカードは表示されません。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">表示形式</h3>
     <p>一覧の右上で表示形式を3つから選べます。選んだ表示形式は次回以降も引き継がれます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
@@ -48,7 +53,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       </div>
       <div class="kv-row">
         <div class="kv-key">詳細</div>
-        <div class="kv-val">表形式。名前・状態・追加日・長さ・解像度・検出数・タグ・プロジェクトIDが列に並び、列見出しをクリックすると並べ替えられます</div>
+        <div class="kv-val">表形式。名前・状態・追加日・長さ・解像度・検出数・タグが列に並び、列見出しをクリックすると並べ替えられます（プロジェクト ID はカードのメニューの「プロジェクトIDをコピー」で取得できます）</div>
       </div>
     </div>
     <figure class="my-4">
@@ -63,24 +68,40 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
     <p>カードをクリックすると<a href="#edit-overview">編集ページ</a>が開きます。カード右上の {% include icon.html name="Menu" class="inline h-3.5 w-3.5 align-[-2px]" %} メニューには次の項目があります。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
+        <div class="kv-key">編集画面を開く</div>
+        <div class="kv-val"><a href="#edit-overview">編集ページ</a>を開きます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">プロジェクトIDをコピー</div>
+        <div class="kv-val">お問い合わせなどで使うプロジェクト ID をクリップボードにコピーします</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">名前を変更</div>
+        <div class="kv-val">一覧と編集ページに表示する名前を変えます（元の動画のファイル名は変わらず、ファイルも移動しません）</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">プロジェクトフォルダを開く</div>
         <div class="kv-val">この動画のプロジェクトフォルダをエクスプローラーで開きます</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">PremiereProにインポート</div>
         <div class="kv-val">検出結果を Adobe Premiere Pro に送ります（<a href="#premiere">Premiere Pro 連携</a>）</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">プロジェクトをエクスポート</div>
         <div class="kv-val">プロジェクトを 1 つの zip にまとめます（<a href="#project-io">プロジェクトの書き出しと取り込み</a>）</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">プロジェクトをコピー</div>
         <div class="kv-val">検出結果・編集データ・タイムライン素材を含めて複製し、新しいプロジェクト ID を付けます。元動画がプロジェクト外にある場合は同じファイルを参照します（コピーされません）</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">削除</div>
-        <div class="kv-val">プロジェクトフォルダごと削除します（確認あり・取り消し不可）。エンコード中のプロジェクトを削除すると、そのエンコードも中止されます</div>
+        <div class="kv-val">プロジェクトフォルダごと削除します（確認あり・取り消し不可）。エンコード中のプロジェクトを削除すると、そのエンコードも中止されます。ほかのアプリが使用中で消せなかったフォルダは「N 件のフォルダは使用中のため、次回起動時に削除します」と表示され、次回起動時に削除されます</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">フォルダへ移動・タグ</div>
+        <div class="kv-val">サイドバーのフォルダへ移動したり、タグを付け外ししたりできます（「他のフォルダ」の動画では使えません）</div>
       </div>
     </div>
     <figure class="my-4">
@@ -92,6 +113,13 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       <img src="/assets/img/screenshots/home-select-mode.webp" alt="選択モードでカードを 1 件選んだホーム画面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">選択モード。複数のプロジェクトをまとめて削除できます</figcaption>
     </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ホーム画面のお知らせ</h3>
+    <p>ホーム画面の一覧の上に、必要なときだけ次のお知らせが表示されます。</p>
+    <ul>
+      <li>「検出結果を新しい保存形式に変換しています (n / N)」: 以前のバージョンで検出したプロジェクトを新しい保存形式（<code>project.db</code>）に変換しています。失敗すると「変換に失敗したプロジェクトが N 件あります」と表示されるので「再試行」を押してください</li>
+      <li>「使われていないプロジェクトフォルダ N 件 (X GB)」: 検出を中止・失敗したときに残ったフォルダです（ホームには表示されていません）。「一覧を見る」から削除するフォルダを選んで削除できます。「閉じる」で隠せます</li>
+      <li>「このプロジェクトは前回の起動で問題を起こしました」: 前回の起動中にアプリが落ちた、またはデータが壊れていたプロジェクトは、開かずに分けてあります。「検査」で問題が無ければ元に戻り、「修復」で直前の保存内容からの復元を試みます</li>
+    </ul>
   </div>
 </section>
 
@@ -117,26 +145,30 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">離れた複数の区間を指定できます。重なった範囲や連続した範囲は自動で1つにまとめられ、開始と終了が逆でも入れ替えて解釈されます。2つ以上あるときは {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %} で個別に削除でき、すべて削除すると動画全体に戻ります</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">所要時間の目安</div>
+        <div class="kv-val">検出範囲の下に「所要時間の目安: 約 N 分（高精度モデル / この PC の実測 N fps）」が表示されます。この PC の動作確認と過去の検出の実測から計算します。実測がまだ無いときは「所要時間の目安は、動作確認または初回の検出が終わると表示されます」、長くかかりそうなときは「長くなりそうです — 検出範囲を絞ると短縮できます」と表示されます。GPU が無い PC では CPU で処理するため、実時間の 10 倍以上かかることがあります。検出可能時間に上限があるプランでは「時間枠は動画全体の長さで消費されます (範囲指定でも同じ)」も併記されます</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">検出対象</div>
         <div class="kv-val">「局部」「男性の顔」「女性の顔」から選びます（初期値は3つともON）。ここでの選択は保存され、次回以降の読み込みでも引き継がれます</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">ピクセルサイズ自動</div>
         <div class="kv-val">モザイクの粒の大きさを対象物のサイズに連動させます（初期値ON）。大きく映るカットでは粒を大きく、小さく映るカットでは細かく自動調整し、カット内・同一の対象内では粒度を一定に保ちます。ON のときはその下の「細かさ（対象物の分割数）」（8〜64、初期値 16）で粒の基準を決めます。対象物の代表サイズをこの数で割った値が粒の 1 辺になるので、大きいほど細かくなります。ここで決めた値は新しい検出の初期値で、検出後に編集ページの<a href="#edit-mosaic">モザイク設定</a>からいつでも変更できます</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">検出後の処理</div>
         <div class="kv-val">「検出後そのままエンコードまで一括実行する」を ON にすると、検出の完了後に確認なしで書き出しまで進みます（<a href="#batch">一括実行</a>）</div>
       </div>
-      <div class="kv-row">
-        <div class="kv-key">GPU表示（右上）</div>
-        <div class="kv-val">検出に使うGPU名です。CUDA対応GPUが認識されていれば高精度モデル、認識されていなければCPU向けの軽量モデルが<b>自動で</b>選ばれます（手動選択はありません）</div>
-      </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">GPU表示（右上）</div>
+        <div class="kv-val">検出に使うGPU名です。CUDA対応GPUが認識され、ログインしていれば高精度モデル、それ以外は軽量モデルが<b>自動で</b>選ばれます（手動選択はありません）。GPU 機でも、高精度モデルの取得中は「高精度モデルを準備中 — 今回は軽量モデルで検出します」、未ログインのときは「高精度モデルの利用にはログインが必要です — 今回は軽量モデルで検出します」（「ログイン」ボタンつき）と「開始」の上に表示され、その回は軽量モデルで検出します</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">モデルの確認</div>
         <div class="kv-val">画面を開くとモデルファイルの有無を確認し、不足していれば自動でダウンロードします。確認が終わるまで「開始」は押せません。失敗したときは「再試行」で取り直します</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">モザイクの精緻化</div>
         <div class="kv-val">検出した枠の中で物体の形に沿った輪郭を AI が作り、四角い枠ではなくその形にモザイクをかけます。<b>CUDA 対応の NVIDIA GPU がある環境では標準で有効</b>で、ON / OFF の設定はありません。離れた部位は別々の輪郭になり、編集ページではその形のまま扱えます（四角に戻したいときは編集ページの右クリック「形を変更」）。所要時間は長くなります（GPU 機で動画 1 分あたり約 +107 秒の目安）。<b>CUDA 対応の NVIDIA GPU が無い環境では使えません。</b>その場合は「GPUが利用できない場合は、物体の形状に合わせた検出機能が利用できません」と表示され、四角い枠でモザイクをかけます</div>
       </div>
@@ -184,7 +216,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
 <section id="detect" class="scroll-mt-24">
   {% include docs-h2.html kicker="読み込みと検出" title="AI検出" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析 → モザイクの精緻化」の 5 段階（モザイクの精緻化を使わないときは 4 段階）で進み、全体進捗・処理速度（fps）・残り時間が表示されます。使う段は開始した時点から全部表示されます。処理の一時停止・再開・中断も可能です。複数の動画を読み込んだ場合は、この画面で待ち行列の状況も確認できます。</p>
+    <p><a href="#detect-options">検出オプション</a>で「開始」を押すと、AIが動画内の対象物体を自動検出します。処理は「準備 → 前処理 → 検出 → 解析 → モザイクの精緻化」の 5 段階（モザイクの精緻化を使わないときは 4 段階）で進み、全体進捗・処理速度（fps）・残り時間が表示されます。使う段は開始した時点から全部表示されます。処理の一時停止・再開・キャンセルができます。複数の動画を読み込んだ場合の待ち行列は、メニューバーの「<a href="#queue">キュー</a>」で確認できます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/detect.webp" alt="検出進捗画面（5段階ステッパー + ステップごとの所要時間 + 進捗バー）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">検出進捗画面（ステッパー + ステップごとの所要時間 + 進捗バー。モザイクの精緻化を使うときは 5 段）</figcaption>
@@ -200,17 +232,23 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       </div>
       <div class="kv-row">
         <div class="kv-key">キャンセル</div>
-        <div class="kv-val">「検出を中止しますか？」の確認後に中止します。進行状況は失われます。待機中の動画があるときは「この動画のみ中止」（次の動画へ進む）と「すべて中止」を選べます</div>
+        <div class="kv-val">「検出を中止しますか？」の確認後に中止します。進行状況は失われ、その検出のために作られたプロジェクトフォルダも削除されます（後から再開はできません。途中で止めて後で続けたいときは「一時停止」を使ってください）。待機中の動画があるときは「この動画のみ中止」（次の動画へ進む）と「すべて中止」を選べます</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">閉じる</div>
-        <div class="kv-val">画面を閉じても検出は続きます。画面右下に小さな進捗表示（ミニプレイヤー）が残り、クリックで検出画面に戻れます。ミニプレイヤーからも一時停止とキャンセルができます</div>
+        <div class="kv-key">バックグラウンドで実行</div>
+        <div class="kv-val">画面を閉じてホーム画面に戻ります。検出はそのまま続き、進捗はメニューバーの「<a href="#queue">キュー</a>」で確認できます。画面右上の「_」（縮小）を押した場合は、画面右下に小さな進捗表示（ミニプレイヤー）が残り、クリックで検出画面に戻れます。ミニプレイヤーからも一時停止とキャンセルができます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">完了</div>
-        <div class="kv-val">「処理が完了しました」と表示され、ホーム画面にカードが追加されます。<a href="#batch">一括実行</a>のときはエンコードがキューに入ります</div>
+        <div class="kv-val">「処理が完了しました」と表示され、ホーム画面にカードが追加されます。「ホームに戻る」で一覧へ戻ります。ログイン済みの無料プランでは「残り … · プランを見る」も表示されます。<a href="#batch">一括実行</a>のときは「検出が完了しました」と表示され、エンコードがキューに入ります（「エンコードの進捗を見る」で確認できます）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ログ</div>
+        <div class="kv-val">画面の右側に検出のログが表示されます（初期状態は折りたたみ）。レベル・ステップ・文字で絞り込めるほか、「表示中の行をコピー」「ログフォルダを開く」が使えます。更新が止まると「N 秒間 応答がありません」と表示されます。完了後やエラーのときは「ステップ別の所要時間」の表が表示されます。不具合のお問い合わせでは、このログを添えていただくと調査が早く進みます</div>
       </div>
     </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">中断した検出の再開と破棄</h3>
+    <p>アプリの終了や PC の停止などで途中で止まった検出は、次回起動時にホーム画面の「すべての動画」の上に「中断した検出」として並び、左のサイドバーにも件数つきの「中断した検出」の行が表示されます。カードには「中断 (DETECT 42 %)」のように止まった段と進み具合が出ます。「再開」を押すと、はじめからではなく止まった位置の近くから検出を続けます。「破棄」を押すと確認の後、検出の途中経過とプロキシ動画を削除します（元の動画は削除しません）。元の動画が見つからない・変わった、編集済み、新しい版のアプリで作られた などの理由で再開できないときは、カードに理由が表示され「再開」は押せません（「エンジンを更新すると再開できます」と出たときは<a href="#update">アップデート</a>を適用してください）。</p>
     <p>処理中はステップごとの進み具合と所要時間の目安が表示されます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/detect-cancel.webp" alt="検出中に「キャンセル」を押したときの確認ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -223,6 +261,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
       T-870 (ユーザー決定 2026-10-02): 施策④-5 を覆してトップの HERO にも同じ図を戻した。
       docs のこの折りたたみは検出オプションの説明への導線として残す。
     {%- endcomment -%}
+    <p>画面の端で切れて映っている対象は、検出のときに枠の外まで形を補って記録します。書き出しでは画面の中だけにモザイクが描かれるので、フレームアウトしていく対象でもモザイクの形が画面の端で潰れません（<a href="#edit-player">プレイヤーとタイムライン</a>）。</p>
     <details class="my-4 rounded-[10px] border border-edge bg-panel-2">
       <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">対応する検出対象を見る</summary>
       <div class="px-4 pb-4">
@@ -255,7 +294,7 @@ batch / queue は TICKET-SITE-44 で追加。定義表は `.kv` 部品 (src/app.
         <div class="kv-val">同じアカウントで<a href="/docs/web/">Web 版</a>が処理を実行中のときは「Web 版で処理を実行中のため、新しいジョブは完了を待ってから開始されます」と表示され、Desktop 側のジョブは待機します</div>
       </div>
     </div>
-    <p>ウィンドウを閉じてもキューは残ります。アプリを終了すると実行中の検出は中止されますが、キューに残ったエンコードは次回起動時に再開できません（改めて編集ページから開始してください）。</p>
+    <p>ウィンドウを閉じてもキューは残ります。アプリを終了すると実行中の検出は中断され、次回起動時にホーム画面の「中断した検出」から再開できます（<a href="#detect">AI検出</a>）。キューに残ったエンコードは次回起動時に再開できません（改めて編集ページから開始してください）。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/queue.webp" alt="キューのモーダル。検出の実行中の行にステップと進捗が表示されている" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">キュー（検出の実行中）</figcaption>

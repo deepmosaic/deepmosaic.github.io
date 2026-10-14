@@ -100,25 +100,39 @@ test('組織コードはご契約が有効になったときの案内メール�
 	assert.match(activation, /案内メール/, `組織コードの届け方 (案内メール) が無い: ${activation}`)
 })
 
-test('組織コードはお支払いのリンクより後に出てくる (契約前には渡らない)', () => {
+// T-1252: T-1215 で法人は Stripe の支払リンクを使わなくなった。注文書 → 注文請書 → 月次請求書 (銀行振込) →
+// 最初の入金の記録で有効化 (`activate-transfer`、T-1211 / T-1221)。組織コードは入金より後にだけ出てくる。
+test('組織コードはご注文とご入金より後に出てくる (契約前には渡らない)', () => {
 	// Arrange / Act
-	const payment = sectionText.indexOf('お支払いのリンク')
+	const order = sectionText.indexOf('注文書でご注文')
+	const payment = sectionText.indexOf('銀行振込')
 	const code = sectionText.indexOf('組織コード')
 
 	// Assert
-	assert.ok(payment >= 0, 'お支払いのリンクの説明が無い')
+	assert.ok(order >= 0, '注文書でのご注文の説明が無い')
+	assert.ok(payment >= 0, '銀行振込の説明が無い')
 	assert.ok(code >= 0, '組織コードの説明が無い')
-	assert.ok(payment < code, '組織コードがお支払いのリンクより前に出てくる (見積時に渡るように読める)')
+	assert.ok(order < code && payment < code, '組織コードがご注文・ご入金より前に出てくる (見積時に渡るように読める)')
 })
 
-test('契約が有効になる条件は「カードのお支払い」または「請求書の発行」', () => {
+test('契約が有効になる条件は「ご入金の確認」(請求書の発行やカードのお支払いではない)', () => {
 	// Arrange
 	const activation = steps.find((li) => li.includes('ご契約が有効'))
 	assert.ok(activation, '契約が有効になる手順が無い')
 
 	// Act / Assert
-	assert.match(activation, /お支払い/, `カードのお支払いに触れていない: ${activation}`)
-	assert.match(activation, /請求書の発行/, `請求書の発行に触れていない: ${activation}`)
+	assert.match(activation, /ご入金を確認/, `ご入金の確認に触れていない: ${activation}`)
+	assert.doesNotMatch(activation, /請求書の発行|カードでのお支払い/, `Stripe 経路の有効化条件が残っている: ${activation}`)
+})
+
+test('お見積書の手順に 1 アカウントあたりの検出時間と取引条件書・注文書がある', () => {
+	// Arrange
+	const quoteStep = steps.find((li) => li.includes('お見積書'))
+	assert.ok(quoteStep, 'お見積書を説明する手順が無い')
+
+	// Act / Assert
+	assert.match(quoteStep, /1 アカウントあたりの検出時間/, `検出時間の記載に触れていない: ${quoteStep}`)
+	assert.match(quoteStep, /取引条件書と注文書/, `同送する帳票に触れていない: ${quoteStep}`)
 })
 
 test('案内メールのアドレスでログインすると管理者になり、他のメンバーは組織コード欄から参加する', () => {

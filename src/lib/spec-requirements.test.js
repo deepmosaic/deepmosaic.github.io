@@ -129,7 +129,8 @@ test('entity.yml の software_requirements は spec.yml と同じ容量表記を
   assert.ok(!APPROX_SIZE.test(requirements), `旧表記が残っている: ${requirements}`);
 });
 
-test('docs 第 6 章の容量表記も spec.yml に揃っている (2 箇所)', () => {
+// T-1252: 動作環境の節にもストレージの行を足した (spec.yml の GPU / ストレージ行の写し) ので 3 箇所。
+test('docs 第 6 章の容量表記も spec.yml に揃っている (3 箇所)', () => {
   // Arrange
   assert.ok(storageSize !== '', 'spec.yml から容量の正を読めていない');
   const text = textOf(readFileSync(OPS_DOC, 'utf8'));
@@ -138,7 +139,11 @@ test('docs 第 6 章の容量表記も spec.yml に揃っている (2 箇所)', 
   const hits = text.match(new RegExp(storageSize, 'g')) ?? [];
 
   // Assert
-  assert.equal(hits.length, 2, `${storageSize} の記載が ${hits.length} 箇所 (保存先の表とアンインストールの 2 箇所)`);
+  assert.equal(
+    hits.length,
+    3,
+    `${storageSize} の記載が ${hits.length} 箇所 (保存先の表・アンインストール・動作環境の 3 箇所)`,
+  );
   assert.ok(!APPROX_SIZE.test(text), '旧表記 (約 nnGB) が docs に残っている');
 });
 
