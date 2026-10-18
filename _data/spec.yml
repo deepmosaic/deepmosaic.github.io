@@ -11,7 +11,7 @@ windows:
   - key: "メモリ"
     val: "8GB 以上（16GB 推奨）"
   - key: "GPU"
-    val: "NVIDIA CUDA 対応 GPU + 最新ドライバ<br>GPU が無い場合も CPU モードで動作しますが、処理速度は大幅に低下します"
+    val: "NVIDIA GeForce RTX 3000 シリーズ以上 (CUDA 対応) + 最新ドライバ<br>RTX 3000 シリーズ未満の GPU は動作未確認です。GPU が無い場合も CPU モードで動作しますが、処理速度は大幅に低下します"
   - key: "ドライバ"
     val: "NVENC ハードウェアエンコードを使う場合は 570 以上"
   # ⚠️ WebView2 の「ランタイム」行は T-333 で撤去した。インストーラが自動導入するため

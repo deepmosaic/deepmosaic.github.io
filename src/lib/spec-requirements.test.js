@@ -26,6 +26,7 @@ const HERE = dirname(fileURLToPath(import.meta.url));
 const SPEC_YML = join(HERE, '..', '..', '_data', 'spec.yml');
 const ENTITY_YML = join(HERE, '..', '..', '_data', 'entity.yml');
 const OPS_DOC = join(HERE, '..', '..', '_includes', 'docs', '06-ops.html');
+const FAQ_YML = join(HERE, '..', '..', '_data', 'faq.yml');
 
 /**
  * `_data/spec.yml` のトップレベルの節 (`windows:` / `network:` …) を
@@ -154,4 +155,53 @@ test('初回セットアップの通信の説明は「実行ファイル等」�
 
   // Act / Assert
   assert.equal(rows[0].val, '実行ファイル等のダウンロードに通信が必要です');
+});
+
+// T-1296: GPU の要件は「RTX 3000 シリーズ以上、それ未満は動作未確認」。
+// 正は spec.yml の GPU 行で、06-ops / entity.yml (JSON-LD) / faq.yml はその手書きの写し。
+const GPU_TIER = 'NVIDIA GeForce RTX 3000 シリーズ以上';
+const UNVERIFIED = /(RTX 3000 シリーズ未満|それ未満)の GPU は動作未確認です/;
+
+test('spec.yml の GPU 行は RTX 3000 シリーズ以上と、それ未満は動作未確認であることを書く', () => {
+  // Arrange / Act
+  const gpu = windows.filter((r) => r.key === 'GPU');
+
+  // Assert
+  assert.equal(gpu.length, 1, `GPU 行が ${gpu.length} 個ある`);
+  assert.ok(gpu[0].val.includes(GPU_TIER), `GPU 行に「${GPU_TIER}」が無い: ${gpu[0].val}`);
+  assert.match(gpu[0].val, UNVERIFIED);
+  assert.match(gpu[0].val, /CPU モードで動作しますが、処理速度は大幅に低下します/);
+});
+
+test('docs 第 6 章の動作環境も RTX 3000 シリーズ以上・それ未満は動作未確認と書く', () => {
+  // Arrange
+  const text = textOf(readFileSync(OPS_DOC, 'utf8'));
+  const [gpuLine] = text.match(/^\s*GPU: .*$/m) ?? [];
+  assert.ok(gpuLine, '動作環境の GPU 行が見つからない');
+
+  // Act / Assert
+  assert.ok(gpuLine.includes(GPU_TIER), `「${GPU_TIER}」が無い: ${gpuLine}`);
+  assert.match(gpuLine, UNVERIFIED);
+});
+
+test('entity.yml の software_requirements は RTX 3000 シリーズ以上を推奨し、WebView2 を挙げない', () => {
+  // Arrange
+  const entity = readFileSync(ENTITY_YML, 'utf8');
+  const [, requirements] = entity.match(/^software_requirements: "(.*)"$/m) ?? [];
+  assert.ok(requirements, 'entity.yml に software_requirements が無い');
+
+  // Act / Assert
+  assert.ok(requirements.includes(`${GPU_TIER}を推奨`), `GPU の推奨が揃っていない: ${requirements}`);
+  assert.ok(!requirements.includes('WebView2'), `WebView2 が残っている: ${requirements}`);
+});
+
+test('FAQ の「GPU は必須ですか？」も RTX 3000 シリーズ以上を推奨し、それ未満は動作未確認と答える', () => {
+  // Arrange
+  const faq = readFileSync(FAQ_YML, 'utf8');
+  const [, answer] = faq.match(/- q: "GPU は必須ですか？[^"]*"\r?\n\s+a: "(.*)"/) ?? [];
+  assert.ok(answer, 'FAQ に「GPU は必須ですか？」の回答が無い');
+
+  // Act / Assert
+  assert.ok(answer.includes(`${GPU_TIER}を推奨します`), `GPU の推奨が揃っていない: ${answer}`);
+  assert.match(answer, UNVERIFIED);
 });
