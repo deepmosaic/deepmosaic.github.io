@@ -172,6 +172,7 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
       <li>検出結果の枠とピクセルサイズの粒度、全体のエッジのぼかしの値が反映されます。編集ページでの枠の追加・移動・削除・形の変更・モザイク除外・回避マスクは渡りません（書き出し（エンコード）には反映されます）</li>
       <li>同時に重なる対象が多い場合はトラックが増えます（最大 15 トラック）</li>
     </ul>
+    <p>モザイク設定で「反転 (外側にかける)」を ON にした枠があるプロジェクトは送信しません（Premiere Pro では反転を再現できず、外側が隠れないまま出力されるため）。そのときは「「反転 (外側にかける)」の設定が N 件あるため送信を中止しました。Premiere Pro では反転を再現できず、外側が隠れないまま出力されます。反転を外すか、このアプリで書き出してください」と表示されるので、反転を外すか、このアプリで書き出してください。</p>
     <p>取り込んだ後は、通常の Premiere Pro の編集として位置や粒度を調整できます。送信から一定時間応答が無い場合は「タイムアウト」と表示されるので、Premiere Pro でプラグインのパネルが開いていることを確認してからやり直してください。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/premiere-setup.webp" alt="Premiere Pro へインポートを押したときの案内ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
