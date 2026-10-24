@@ -18,12 +18,17 @@ T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/d
     T-485 (メニューの「組織コードで参加」は撤去)
 ⚠️ プロジェクトの zip 書き出し・取り込みは web では**まだモック** (`api/project-io.ts`、
    HOME の「プロジェクトをエクスポート」は「W-6xx で実装予定」の通知だけ)。提供済みと書かないこと。
+
+T-1444 (2026-10-24): Web 版はお試し用 (ユーザー決定)。無料プランは 1 本 web_app.trial_minutes 分まで
+(全長で判定、開始前に Desktop 版へ案内)。有料 (Light / Pro) と組織のプールは免除。根拠は web の
+plan/web-trial.ts と BFF の WEB_TRIAL_MAX_SECONDS (既定 600 秒)。分数は _data/site.yml から読み、直書きしない。
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
 <section id="about" class="scroll-mt-24">
   {% include docs-h2.html kicker="Web 版" title="はじめに" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>Web 版は、インストール不要でブラウザから使える Deepmosaic です。動画の読み込みから AI 検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでを、<b>すべてお使いの PC のブラウザの中で</b>処理します。映像・音声・フレーム画像・検出結果がサーバーに送られることはありません。通信するのは、ログインとプランの確認、AI モデルの取得、利用状況の記録（処理時間や動画の形式・長さなどの数値）とエラーの報告だけです（<a href="/company/privacy/">プライバシーポリシー</a>）。</p>
+    <p><b>Web 版はお試し用です。</b>1 本 {{ site.data.site.web_app.trial_minutes }} 分までの動画を処理できます。それより長い動画、多数の動画、1.9GB を超える動画は Desktop 版をご利用ください（<a href="#requirements">動画の長さ</a>）。有料プラン（Light / Pro）と組織（Enterprise）のアカウントでは、この長さの制限はありません。</p>
     <p>アカウントとプラン、無料枠の時間は Desktop 版と共通です。検出対象（局部 / 男性の顔 / 女性の顔）と編集ページの機能も同じなので、操作の詳細は <a href="/docs/">Desktop 版のガイド</a>を参照してください。このページでは Web 版に固有の要件と違いをまとめます。</p>
     {% if site.data.site.web_app.enabled %}<p>Web 版は <a href="{{ site.data.site.web_app.url }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> から開けます。</p>{% endif %}
   </div>
@@ -55,10 +60,14 @@ T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/d
         <div class="kv-val">1 本あたり約 1.9GB まで。超える場合は「ブラウザ版で扱える上限 (約 1.9GB) を超えています。デスクトップ版をご利用ください。」と表示されます</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">動画の長さ</div>
+        <div class="kv-val">無料プランでは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで（動画の全長で判定します）。超える動画は検出を開始する前に Desktop 版のご案内が表示され、処理されません。有料プラン（Light / Pro）と組織（Enterprise）のアカウントでは制限はありません</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">動画の形式</div>
         <div class="kv-val">mp4 / mov / m4v（ブラウザが再生できるコーデック、通常は H.264）。MKV / WebM / AVI / WMV / FLV / TS / MPEG は「この形式はブラウザ版では未対応です。mp4 (H.264) に変換してからお試しください。」と表示されます</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">メモリ</div>
         <div class="kv-val">長尺・高解像度の動画では多くのメモリを使います。他のタブや重いアプリを閉じてからの実行をおすすめします</div>
       </div>
@@ -70,7 +79,7 @@ T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/d
   {% include docs-h2.html kicker="Web 版" title="始め方" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <ol>
-      <li><b>ログインします。</b>Web 版はログインが必須です。トップページの「ブラウザで試す」から開くとログイン画面が表示されるので「ログイン」を押します。アカウントをお持ちでない方は「新規登録」から無料で作成できます</li>
+      <li><b>ログインします。</b>Web 版はログインが必須です。トップページの「ブラウザでお試し」から開くとログイン画面が表示されるので「ログイン」を押します。アカウントをお持ちでない方は「新規登録」から無料で作成できます</li>
       <li><b>初回はモデルを取得します。</b>AI モデルがブラウザ内にダウンロードされます（進捗が表示されます）。2 回目以降はブラウザ内のモデルをそのまま使います</li>
       <li><b>動画を読み込みます。</b>画面へのドラッグ&amp;ドロップ、またはメニューの「ファイル」から選びます。動画はブラウザ内にコピーされ、ホーム画面にプロジェクトとして並びます。最初に動画を読み込むときは、使用許諾契約書と利用規約への同意を確認する画面が出ます（同意しないと読み込みは中止されます）。同意はブラウザごとに記録されるため、別のブラウザでは改めて確認されます</li>
       <li><b>検出オプションを設定して開始します。</b>検出範囲・検出対象・ピクセルサイズ自動・一括実行は Desktop 版と同じです（<a href="/docs/#detect-options">検出オプション</a>）。検出はフローティングウィンドウで進み、その間も他の操作ができます</li>
@@ -143,6 +152,10 @@ T-511 (2026-09-23): web に入った 3 機能の節を足した (目次 `_data/d
       <div class="kv-row">
         <div class="kv-key">オフライン</div>
         <div class="kv-val">ログインの確認に通信が必要なため、オフラインでは「サーバーに接続できません」と表示され利用できません。Desktop 版はセットアップ後にオフラインでも検出・編集・書き出しができます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">動画の長さ</div>
+        <div class="kv-val">Web 版はお試し用のため、無料プランでは 1 本 {{ site.data.site.web_app.trial_minutes }} 分までの動画だけ処理できます（有料プランと組織のアカウントは制限なし）。Desktop 版では 1 本の長さに制限はありません（無料枠の時間は共通です）。長い動画や多数の動画は Desktop 版をご利用ください</div>
       </div>
     </div>
   </div>

@@ -88,7 +88,7 @@ llms.txt (TICKET-SITE-33)。
 - [データの保存場所 / Where data is stored]({{ U }}/docs/#data)
 - [トラブルシューティング / Troubleshooting]({{ U }}/docs/#trouble)
 - [組織の管理 / Organization management]({{ U }}/docs/#team): Enterprise のメンバー招待・権限・アカウント数・請求書 / inviting members, roles, seat count and invoices on Enterprise
-- [Web 版の使い方 / Web (browser) edition guide]({{ U }}/docs/web/): 対応ブラウザ・約 1.9GB 上限・Desktop 版との違い / supported browsers, the ~1.9 GB limit, differences from Desktop
+- [Web 版の使い方 / Web (browser) edition guide]({{ U }}/docs/web/): お試し用 (無料プランは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで)・対応ブラウザ・約 1.9GB 上限・Desktop 版との違い / trial use (Free plan: up to {{ site.data.site.web_app.trial_minutes }} minutes per video), supported browsers, the ~1.9 GB limit, differences from Desktop
 
 ## 料金と動作環境 / Pricing and system requirements
 

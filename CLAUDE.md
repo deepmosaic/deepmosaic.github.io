@@ -107,6 +107,8 @@ npm run build && bundle exec jekyll build
 - **対話部品は Svelte 5 アイランド** (`src/islands/*.svelte`)。`src/main.js` が `[data-island="…"]` 要素にマウントする（プログレッシブ・エンハンスメント: JS 無効でも動作）。jQuery / lity は撤去済み。back-to-top と scroll-reveal は `main.js` の素の JS。
 - **DL 計測の目印は `data-dl` 属性** (TICKET-SITE-37)。`src/main.js` の `initDownloadTracking()` が
   `a[data-dl]` **だけ**を見て href に `utm_*` / `ref` を載せ、GA4 の `file_download` を送る。
+  Web 版への導線 (DL ではない) は `data-dl` の id の末尾を `-webapp` にすると `web_app_open` で送られる
+  (`attribution.js` の `ga4EventNameFor`、T-1444)。Web 版の導線を足すときはこの命名に揃える。
   **DL ボタンを増やしたら `data-dl` を必ず付ける**（付け忘れると計測から静かに漏れる。CI が
   ページ単位で存在をチェックする）。値は GA4 の `link_id` になるので置き場所ごとに変える。
   純ロジックは `src/lib/attribution.js`（DOM に触らない。`node --test` で検証）。

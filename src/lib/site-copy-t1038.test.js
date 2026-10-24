@@ -114,7 +114,10 @@ test('版: legal.yml の version = EULA の最終更新日 = 利用規約の最�
 
 // --- 3. 6 ページの日付 ---
 
-test('最終更新日: 6 ページすべてが ISO で MIN_DATE 以降、かつ同じ日付', () => {
+// T-1444 (2026-10-24): プライバシーポリシーだけ §9 に 1 文を足して最終更新日を進めた (版 = legal.yml / EULA /
+// 利用規約は変えない)。以後は「版に連動する eula / terms と、それ以外の 4 ページが ISO で MIN_DATE 以降」を見る。
+// 6 ページ同日の縛りは、個別の改定のたびに無関係なページの日付を動かすことになるので外した。
+test('最終更新日: 6 ページすべてが ISO で MIN_DATE 以降 (同日は版の eula / terms だけ、上の版のテスト)', () => {
 	// Act
 	const dates = SLUGS.map((s) => [s, lastUpdated(read(pageOf(s)))])
 
@@ -125,7 +128,14 @@ test('最終更新日: 6 ページすべてが ISO で MIN_DATE 以降、かつ�
 		assert.match(date, ISO_DATE, slug)
 		assert.ok(date >= MIN_DATE, `${slug}: ${date} < ${MIN_DATE}`)
 	}
-	assert.equal(new Set(dates.map(([, d]) => d)).size, 1, JSON.stringify(dates))
+})
+
+test('最終更新日: privacy を除く 5 ページは同日 (個別に改定したページ以外の日付がずれていない)', () => {
+	// Act
+	const dates = new Set(SLUGS.filter((s) => s !== 'privacy').map((s) => lastUpdated(read(pageOf(s)))))
+
+	// Assert
+	assert.equal(dates.size, 1, `日付が揃っていない: ${[...dates].join(', ')}`)
 })
 
 // --- 4. permalink ---

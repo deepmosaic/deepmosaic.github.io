@@ -52,9 +52,15 @@ hero:
 # 2026-08-17: 導線を一旦非表示 (enabled: false)。
 # 2026-08-30 (TICKET-SITE-41): 再表示。Web 版は統合キュー / スロット待機 (web T-138〜T-148)
 # を備えた状態で公開再開。非表示に戻すときは false にするだけ。
+#
+# T-1444 (2026-10-24): Web 版はお試し用。無料プランは 1 本 trial_minutes 分までの動画だけ処理できる
+# (有料プランと組織のプールは免除)。hero / DL CTA / docs/web / llms の文言はここから読む。
+# **SSOT は web の BFF の var `WEB_TRIAL_MAX_SECONDS` (既定 600 秒 = 10 分)。ここは文言用の写し。
+# ずれたら両方直すこと** (src/lib/site-copy-t1444.test.js が 10 を固定している)。
 web_app:
   enabled: true
   url: "https://app.deepmosaic.co.jp/"
+  trial_minutes: 10
 
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
 # 「現状の1本あたりコスト」の既定 ¥24,000 は 時給¥3,000 × 8時間 の試算。

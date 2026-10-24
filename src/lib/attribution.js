@@ -361,8 +361,26 @@ export function decorateDownloadUrl(href, record, first = null) {
   return url.toString();
 }
 
+/** Web 版への導線 (`data-dl="hero-webapp"` / `"cta-webapp"`) の id の末尾。 */
+const WEB_APP_DL_SUFFIX = '-webapp';
+
 /**
- * GA4 の `file_download` に渡すパラメータ。
+ * `a[data-dl]` のクリックを GA4 に送るときのイベント名 (T-1444)。
+ *
+ * Web 版への導線はファイル DL ではなくページ遷移なので、`file_download` に混ぜると
+ * Desktop 版の DL 数が水増しされる。id が `-webapp` で終わるものだけ `web_app_open` に分ける。
+ * パラメータは `ga4FileDownloadParams` を共用する (link_id で導線を区別できる)。
+ * 文字列でない値・欠けた値は従来どおり `file_download`。
+ *
+ * @param {unknown} id `data-dl` の値
+ * @returns {'web_app_open' | 'file_download'}
+ */
+export function ga4EventNameFor(id) {
+  return typeof id === 'string' && id.endsWith(WEB_APP_DL_SUFFIX) ? 'web_app_open' : 'file_download';
+}
+
+/**
+ * GA4 の `file_download` (と `web_app_open`) に渡すパラメータ。
  *
  * **名前は Google の公式パラメータに揃える。** 揃えておけば標準ディメンションに乗り、
  * カスタムディメンションの登録 (上限 50・反映まで 24〜48h・遡及なし) が要らない。

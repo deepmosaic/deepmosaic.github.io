@@ -193,13 +193,14 @@ test('リンク: クッキーポリシーへ案内し、http の旧 Google Analy
 	assert.ok(!html.includes('http://www.google.com/analytics/'))
 })
 
-test('最終更新日は 2026-10-12、送信内容の一覧から「初回に同意をお伺いします」を消す', () => {
+test('最終更新日は 2026-10-12 以降、送信内容の一覧から「初回に同意をお伺いします」を消す', () => {
 	// Act
 	const date = lastUpdated(privacy())
 	const disclosure = stripYamlComments(read('_data/disclosure.yml'))
 
-	// Assert
-	assert.equal(date, '2026-10-12')
+	// Assert (T-1444 で §9 に 1 文を足して 2026-10-24 に進めた。以後は 2026-10-12 以降であればよい)
+	assert.match(date, /^\d{4}-\d{2}-\d{2}$/)
+	assert.ok(date >= '2026-10-12', date)
 	assert.ok(!disclosure.includes('初回に同意をお伺いします'))
 	assert.match(disclosure, /使用許諾契約書・利用規約への同意時にご案内します/)
 })

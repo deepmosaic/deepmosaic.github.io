@@ -57,9 +57,12 @@ schemas:
         initDownloadTracking が utm_*/ref を href に載せ直すので、Web 版側は着地 URL の
         クエリを読めば worker の /download 計測と同じ形で流入経路を突き合わせられる。
         `download` 属性は付けない (ファイル DL ではなくページ遷移)。
+        T-1444: Web 版はお試し用。分数は site.yml の web_app.trial_minutes から読む (直書きしない)。
+        id が `-webapp` で終わるので GA4 には file_download ではなく web_app_open で送られる
+        (src/lib/attribution.js の ga4EventNameFor)。
       {%- endcomment -%}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザで試す（インストール不要）</a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザでお試し（{{ site.data.site.web_app.trial_minutes }} 分までの動画・インストール不要）</a>
       {%- endif %}
       <a href="/docs" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
     </div>

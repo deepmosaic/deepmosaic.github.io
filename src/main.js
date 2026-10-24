@@ -47,6 +47,7 @@ function initBackToTop() {
 import {
   attributionFromLanding,
   decorateDownloadUrl,
+  ga4EventNameFor,
   ga4FileDownloadParams,
   firstTouchFromLanding,
   mergeAttribution,
@@ -174,10 +175,11 @@ function initDownloadTracking() {
     if (lastSent !== null && lastSent.dl === a.dataset.dl && now - lastSent.at < 500) return;
     lastSent = { dl: a.dataset.dl, at: now };
 
-    // **gtag が無くても装飾は続ける。** 計測が落ちてもダウンロードは壊さない
+    // **gtag が無くても装飾は続ける。** 計測が落ちてもダウンロードは壊さない。
+    // Web 版への導線 (`*-webapp`) は file_download に混ぜず web_app_open で送る (T-1444)
     window.gtag?.(
       'event',
-      'file_download',
+      ga4EventNameFor(a.dataset.dl),
       ga4FileDownloadParams({
         href: a.href,
         text: a.textContent,

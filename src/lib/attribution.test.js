@@ -16,6 +16,7 @@ import {
   attributionFromLanding,
   decorateDownloadUrl,
   externalReferrerOrigin,
+  ga4EventNameFor,
   ga4FileDownloadParams,
   mergeAttribution,
   parseStoredAttribution,
@@ -250,6 +251,26 @@ test('ga4FileDownloadParams は欠けた値でも落ちない', () => {
   assert.equal(p.link_text, '', 'text 無し');
   assert.equal(p.link_id, '', 'id 無し');
   assert.equal(p.file_name, 'not a url', 'パースできなければ href をそのまま');
+});
+
+// ── ga4EventNameFor (T-1444) ────────────────────────────────────────────────
+
+test('ga4EventNameFor は -webapp で終わる id を web_app_open にする', () => {
+  assert.equal(ga4EventNameFor('hero-webapp'), 'web_app_open');
+  assert.equal(ga4EventNameFor('cta-webapp'), 'web_app_open');
+});
+
+test('ga4EventNameFor はそれ以外の DL ボタンを file_download のままにする', () => {
+  for (const id of ['hero', 'cta', 'header', 'footer', 'price-free', 'webapp-hero', 'hero-webapps', 'hero-WEBAPP']) {
+    assert.equal(ga4EventNameFor(id), 'file_download', id);
+  }
+});
+
+test('ga4EventNameFor は欠けた値・文字列でない値を file_download にする', () => {
+  for (const id of [undefined, null, '', 42, {}]) {
+    assert.equal(ga4EventNameFor(id), 'file_download', String(id));
+  }
+  assert.equal(ga4EventNameFor('-webapp'), 'web_app_open', '接頭辞なしでも末尾で判定');
 });
 
 // ── 保存層のエンベロープ (T-007) ────────────────────────────────────────────
