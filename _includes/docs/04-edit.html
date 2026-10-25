@@ -121,15 +121,15 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row">
         <div class="kv-key">ID ごと削除（チップの ✕）</div>
-        <div class="kv-val">検出した枠のチップの右端にある ✕ を押すと、その ID の枠を全フレームからまとめて削除します。削除するフレーム数を示した確認が出ます。手動で追加した枠のチップには ✕ は出ません</div>
+        <div class="kv-val">検出した枠のチップの右端にある ✕ を押すと、その ID の枠を全フレームからまとめて削除します。削除するフレーム数を示した確認が出ます。手動で追加した枠のチップには ✕ は出ませんが、右クリックメニューの「この ID をすべて削除」で同じことができます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">右クリックメニュー</div>
-        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にかける)」（下の「反転」）、「この BBox を削除」、検出した枠では「この ID をすべて削除」（チップの ✕ と同じ）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。キーと前後に反映の「動き」の項目は<a href="#edit-track">追跡と前後に反映</a>を参照してください</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にモザイク)」「反転 (外側にぼかし)」（下の「反転」）、「この BBox を削除」、「この ID をすべて削除」（検出した枠ではチップの ✕ と同じ。手動で追加した連続 bbox / 1 フレームの枠 / 回避マスクでは、その枠を全フレームからまとめて消します。検出した ID に統合した連続 bbox があれば一緒に消え、確認にその件数が出ます。どちらも <kbd>Ctrl+Z</kbd> 1 回で戻せます）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。キーと前後に反映は<a href="#edit-track">追跡と前後に反映</a>を参照してください</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">反転（外側にかける）</div>
-        <div class="kv-val">枠を右クリックして「反転 (外側にかける)」を選ぶと、その ID の枠の外側にモザイクがかかり、枠の内側は元の映像のまま残ります。見せたい所だけを残して背景を隠したいときに使います。反転中の枠のメニューは「反転を解除 (内側にかける)」になり、選ぶと元に戻ります。<a href="#edit-mosaic">モザイク設定パネル</a>の「ID 別」タブでも切り替えられます。回避マスクには出ません</div>
+        <div class="kv-val">枠を右クリックして「反転 (外側にモザイク)」または「反転 (外側にぼかし)」を選ぶと、その ID の枠の外側にモザイク（またはぼかし）がかかり、枠の内側は元の映像のまま残ります。見せたい所だけを残して背景を隠したいときに使います。反転中の枠のメニューは「反転を解除 (内側にかける)」になり、選ぶと元に戻ります。<a href="#edit-mosaic">モザイク設定パネル</a>の「ID 別」タブでも切り替えられ、同じタブの「種類」でモザイクとぼかしを変えられます。回避マスクには出ません</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">ID の統合</div>
@@ -340,12 +340,12 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
         <div class="kv-val">選択中の枠の今の位置を、動かさずにキーにします</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">右クリックの「動き」</div>
-        <div class="kv-val">枠の右クリックメニューの「動き」で、キーの間の動き（直線 / なめらか / 保持（次のキーまで止める））と、前後に反映する範囲（このフレームだけ / 前後 1 秒（標準）/ 前後のキーまで）を選べます。「動きのグラフを開く」では X・Y・幅・高さの動きをグラフで確かめられ、「この ID の補正を解除」で反映した補正を外せます</div>
+        <div class="kv-key">反映する範囲</div>
+        <div class="kv-val">直したフレームの前後 1 秒です。キーの間の動きは、なめらかにつながります（枠の右クリックメニューの「動き」の項目（動きの種類 / 範囲 / グラフ / 補正の解除）は開発用の設定で、製品版では表示されません）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">反映するもの</div>
-        <div class="kv-val">前後に配るのは枠の位置と大きさです。多角形の頂点を動かしたり曲げたりした形は、そのフレームだけに効きます</div>
+        <div class="kv-val">枠の位置と大きさに加えて、多角形の形も配ります。<kbd>Shift</kbd>+左ドラッグで頂点を選んで曲げると、同じ頂点数の形を持つ前後のフレームに同じ向きの曲がりが（離れるほど小さく）配られ、頂点数が違うフレームは位置と大きさだけが動きます。手で置いた ∞ 連続 bbox は位置と大きさだけです</div>
       </div>
     </div>
   </div>
@@ -396,7 +396,7 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">形の選択</div>
-        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>W</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを、「描いた BBox の種類」で「モザイク」か「回避マスク」かを選べます</div>
+        <div class="kv-val">ツールバーの先頭。追加する / 描く枠の形（四角 / 楕円 / 多角形）を選びます（<kbd>W</kbd> で楕円、<kbd>O</kbd> で多角形、もう一度押すと四角）。メニューの「描いた BBox」で、描いた枠を「以降も」続けるか「このフレームのみ」にするかを、「描いた BBox の種類」で「モザイク」か「回避マスク」かを選べます。ここで切り替えた値はこの編集中だけ効き、起動時の初期値はサイドバーの「設定」で選びます（<a href="#edit-sidebar">サイドバーとドロワー</a>）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">bbox追加（1f / ∞）</div>
@@ -416,11 +416,11 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
       </div>
       <div class="kv-row">
         <div class="kv-key">{% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %} 追跡（<kbd>X</kbd>）</div>
-        <div class="kv-val">プレビュー切替の右。追跡モードの ON / OFF。ON の間、再生 / <kbd>→</kbd> / ホイール上で進むと ∞ 連続 bbox が対象を追います（<a href="#edit-track">追跡と前後に反映</a>）</div>
+        <div class="kv-val">プレビュー切替の右。追跡モードの ON / OFF。ON の間、再生 / <kbd>→</kbd> / ホイール上で進むと ∞ 連続 bbox が対象を追います（<a href="#edit-track">追跡と前後に反映</a>）。編集ページを開いたときは OFF です（サイドバーの「設定」で ON にしておけます）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">前後に反映（<kbd>Shift+F</kbd>）</div>
-        <div class="kv-val">モザイク設定の左。手で直した枠を前後のフレームになじませるかどうか。既定は ON です（<a href="#edit-track">追跡と前後に反映</a>）</div>
+        <div class="kv-val">モザイク設定の左。手で直した枠を前後のフレームになじませるかどうか。既定は ON です（サイドバーの「設定」で変えられます。<a href="#edit-track">追跡と前後に反映</a>）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">現在のフレームをリセット</div>
@@ -503,7 +503,7 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
       </div>
       <div class="kv-row">
         <div class="kv-key">反転 (外側にかける)</div>
-        <div class="kv-val">「ID 別」タブだけに出ます。ON にすると、選んだ ID の枠の外側にモザイクがかかり、枠の内側は元の映像のまま残ります（既定は OFF）。反転した枠が同じ画面に複数あるときは、どれかの枠の内側に入る所を残します。枠の右クリックメニューの「反転 (外側にかける)」と同じ設定です（<a href="#edit-player">検出枠の操作</a>）。回避マスクの ID では出ません</div>
+        <div class="kv-val">「ID 別」タブだけに出ます。ON にすると、選んだ ID の枠の外側にモザイク（「種類」がぼかしのときはぼかし）がかかり、枠の内側は元の映像のまま残ります（既定は OFF）。反転した枠が同じ画面に複数あるときは、どれかの枠の内側に入る所を残します。枠の右クリックメニューの「反転 (外側にモザイク)」「反転 (外側にぼかし)」と同じ設定です（<a href="#edit-player">検出枠の操作</a>）。回避マスクの ID では出ません</div>
       </div>
     </div>
     <p>各項目は右端の {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} ボタンで既定値に戻せます。「全て」タブの「この設定を既定にする」を押すと、その内容が<b>次に検出する動画</b>の初期設定になります（この動画の設定は変わりません）。</p>
@@ -689,10 +689,14 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
         <div class="kv-val">テキスト〜トランジションのうち、直前に開いていた項目のドロワーを開閉します（初回は「透かし」）</div>
       </div>
       <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} 設定</div>
+        <div class="kv-val">サイドバー下段の歯車で、編集の初期値を選ぶ「設定」を開きます。描いた BBox の持続（以降も / このフレームのみ）・形（四角 / 楕円 / 多角形）・種類（モザイク / 回避マスク）、HUD（枠とチップ）の表示、消しゴムの消し方・形・大きさ、前後に反映の ON / OFF、編集ページを開いたとき追跡モードを ON にするか。変えた値はすぐ保存され、アプリを起動したときの初期値になります（編集中にツールバーで切り替えた値は保存しません）。「既定に戻す」で出荷時の値に戻ります。サイドバーを最小化しているときは出ません</div>
+      </div>
+      <div class="kv-row">
         <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 配置</div>
         <div class="kv-val">サイドバーの末尾のボタンで、サイドバーとドロワーを画面の左右どちらに置くかを切り替えます</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">ドロワーの幅</div>
         <div class="kv-val">ドロワーのプレイヤー側の縁をドラッグすると、240〜520px の範囲で幅を変えられます。縁を選んで <kbd>←</kbd> / <kbd>→</kbd> キーでも 16px ずつ調整でき、ダブルクリックで既定の 300px に戻ります</div>
       </div>
