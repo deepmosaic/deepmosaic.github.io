@@ -300,6 +300,18 @@ schemas:
           <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ClipboardCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">信頼度でフィルタ</h3></div>
           <p class="text-[13px] leading-[1.9] text-ink-2">指定した信頼度以上の検出だけを表示・モザイク対象にできます。誤検出を整理してから確認に入れます。</p>
         </div>
+        {%- comment -%}
+          T-1470 (req1025): 追跡と反転のカード。公開は desktop のリリース時 (feat/req1025-docs)。
+          技術名・追跡器の名前は書かない (アプリの文言と同じ「追跡」「反転」)。
+        {%- endcomment -%}
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Crosshair" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">追跡</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">手で置いた枠が、再生に合わせて対象を自動で追います。複数の枠を同時に追え、見失った所で枠が終わります。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FlipHorizontal2" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">反転</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">枠の内側ではなく外側にモザイクをかけられます。見せたい所だけを残し、背景を隠せます。</p>
+        </div>
       </div>
     </div>
   </div>

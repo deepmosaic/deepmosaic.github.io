@@ -187,7 +187,7 @@ A. {{ answer | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | repl
 - About mosaic removal: {{ U }}/mosaic-removal/
 - Documentation: {{ U }}/docs/
 - Web edition guide: {{ U }}/docs/web/ (お試し用、無料プランは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで / trial use, Free plan: up to {{ site.data.site.web_app.trial_minutes }} minutes per video)
-- Tutorial videos (字幕のみ、3〜4 分 / captions only, 3-4 min): Desktop https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4 / Web https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4
+- Tutorial videos (字幕のみ、3〜4 分 / captions only, 3-4 min): Desktop https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4 / Web https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4{% comment %}TODO T-1469: 長さ{% endcomment %}
 - Pricing: {{ U }}/price/
 - System requirements: {{ U }}/spec/
 - Company: {{ U }}/company/about

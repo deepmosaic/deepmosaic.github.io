@@ -7,7 +7,7 @@
 //   1. 目次 (`_data/docs_toc.yml` の desktop) は**追加のみ** — T-513 より前の節 ID (契約の 20 個を含む) は
 //      1 つも消えず、新しい 8 個 (NEW_SECTIONS) が目次と本文の両方にある
 //   2. ショートカット表 (`#shortcuts`) の行は desktop `src/lib/edit-shortcuts.ts` の `EDIT_SHORTCUTS` から
-//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 67 個と、ID・分類・キーが並び順まで一致する
+//      無効化済みの 1 群 (owner / group が annotation の 9 個) を除いた 72 個 (T-1470 時点) と、ID・分類・キーが並び順まで一致する
 //      (下の EDIT_SHORTCUTS_FIXTURE が写し。desktop 側の割当を変えたら、ここと表を同時に直す)
 //   3. タイムライン編集の各機能 (CHANGELOG T-513 の列挙) に本文が触れている
 //   4. T-496 で撮る新しいスクリーンショット 8 枚 (NEW_SCREENSHOTS) を参照している
@@ -83,6 +83,10 @@ function shortcutRows(sectionHtml) {
 // 無効化されている (T-246) ので docs に載せない = ここにも写さない。
 // 形: [id, group, keys] (keys は `ShortcutDef.keys` そのまま)。例外は carry_lock の 1 個だけで、desktop の
 // `['Shift ×2']` は表のキー欄 (`<kbd>Shift</kbd> ×2`) を keyTokens が空白で割るので ['Shift', '×2'] と写す。
+// T-1470 (req1025): req1024 の範囲選択と曲げ (mouse_vertex_marquee / mouse_vertex_bend、T-1430) と、実験機能の
+// motion_key_here / motion_fusion_toggle (motion / f14) / tracking_mode_toggle (track) を足した (72 個)。後の 3 個は desktop では
+// フラグが ON のときだけ `EDIT_SHORTCUTS` に入る (bbox_rotate_ccw の直後、この並び)。docs は desktop のリリースで有効にする前提で
+// 載せる (サイトの公開は desktop のリリース時)。フラグを OFF のまま出すときは、この 3 行と表の 3 行を外す。
 const EDIT_SHORTCUTS_FIXTURE = [
 	['play_pause', '再生', ['Space']],
 	['jkl_transport', '再生', ['J', 'K', 'L']],
@@ -115,6 +119,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
 	['bbox_rotate_ccw', 'BBox 編集', ['Shift', 'Q']],
+	['motion_key_here', 'BBox 編集', ['F']],
+	['motion_fusion_toggle', 'BBox 編集', ['Shift', 'F']],
+	['tracking_mode_toggle', 'BBox 編集', ['X']],
 	['mosaic_panel_open', 'ツール', ['G']],
 	['scene_split', 'ツール', ['Ctrl', 'K']],
 	['timeline_clip_split', 'タイムライン', ['Ctrl', 'Shift', 'K']],
@@ -149,15 +156,17 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['mouse_anchor_alt_click', 'マウス', ['Alt', 'クリック']],
 	['mouse_anchor_ctrl_click', 'マウス', ['Ctrl', 'クリック']],
 	['mouse_edge_click_add', 'マウス', ['クリック']],
+	['mouse_vertex_marquee', 'マウス', ['Shift', '左ドラッグ']],
+	['mouse_vertex_bend', 'マウス', ['ドラッグ']],
 	['mouse_context_menu', 'マウス', ['右クリック']],
 	['mouse_eraser', 'マウス', ['E', '右ドラッグ']],
 ].map(([id, group, keys]) => ({ id, group, keys }))
 
 /**
- * 表の行数 (= 写しの数)。desktop の 76 個 − 無効化済みの 9 個。凡例専用の「マウス」の 16 個と carry_lock は
+ * 表の行数 (= 写しの数)。desktop の 81 個 (実験フラグ ON) − 無効化済みの 9 個 = 72 (T-1470)。凡例専用の「マウス」の 18 個と carry_lock は
  * 数に含む (owner が無いだけで凡例にも表にも載る)。
  */
-const SHORTCUT_ROW_COUNT = 67
+const SHORTCUT_ROW_COUNT = 72
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
