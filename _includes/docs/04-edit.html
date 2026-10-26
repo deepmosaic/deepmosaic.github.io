@@ -125,7 +125,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">右クリックメニュー</div>
-        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にモザイク)」「反転 (外側にぼかし)」（下の「反転」）、「この BBox を削除」、「この ID をすべて削除」（検出した枠ではチップの ✕ と同じ。手動で追加した連続 bbox / 1 フレームの枠 / 回避マスクでは、その枠を全フレームからまとめて消します。検出した ID に統合した連続 bbox があれば一緒に消え、確認にその件数が出ます。どちらも <kbd>Ctrl+Z</kbd> 1 回で戻せます）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。キーと前後に反映は<a href="#edit-track">追跡と前後に反映</a>を参照してください</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にモザイク)」「反転 (外側にぼかし)」（下の「反転」）、「この BBox を削除」、「この ID をすべて削除」（検出した枠ではチップの ✕ と同じ。手動で追加した連続 bbox / 1 フレームの枠 / 回避マスクでは、その枠を全フレームからまとめて消します。検出した ID に統合した連続 bbox があれば一緒に消え、確認にその件数が出ます。どちらも <kbd>Ctrl+Z</kbd> 1 回で戻せます）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。キーは<a href="#edit-track">追跡とキー</a>を参照してください</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">反転（外側にかける）</div>
@@ -281,9 +281,9 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
 追跡器の名前・技術名は書かない (アプリの表示と同じ「高精度の追跡」「標準の追跡」)。公開は desktop のリリース時。
 {%- endcomment -%}
 <section id="edit-track" class="scroll-mt-24">
-  {% include docs-h2.html kicker="編集" title="追跡と前後に反映" %}
+  {% include docs-h2.html kicker="編集" title="追跡とキー" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>「追跡」は、手で置いた ∞ 連続 bbox を、再生に合わせて対象の動きへ自動で合わせる機能です。「前後に反映」は、手で直した枠を前後のフレームになじませる機能です。どちらも操作列のボタンで ON / OFF を切り替えます。</p>
+    <p>「追跡」は、手で置いた ∞ 連続 bbox を、再生に合わせて対象の動きへ自動で合わせる機能です。操作列のボタンで ON / OFF を切り替えます。「キー」は、手で直したフレームを動きの基準にし、キーとキーの間を自動でつなぐ仕組みです。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">追跡</h3>
     <ol>
       <li><b>枠を置きます。</b>∞ 連続 bbox（<kbd>2</kbd>）を置くか描いて、対象に合わせます（<a href="#edit-bbox">検出枠の追加</a>）</li>
@@ -324,28 +324,19 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
         <div class="kv-val">「追跡には新しい検出エンジンが必要です」と表示されたときは、<a href="#update">アップデート</a>を適用してください</div>
       </div>
     </div>
-    <h3 class="mt-6 text-[16px] font-bold text-ink">前後に反映</h3>
-    <p>操作列のモザイク設定ボタンの左にあるボタン（<kbd>Shift+F</kbd>）で切り替えます。<b>既定は ON</b> です。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">キー</h3>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
-        <div class="kv-key">AI の枠を直したとき</div>
-        <div class="kv-val">ON のとき、AI が検出した枠を手で動かしたり大きさを変えたりすると、直したフレームの前後（標準は前後 1 秒）の枠がなめらかになじみます。シーンの切り替わり、枠の無い区間、ほかに手で直したフレームではそこで止まります。OFF のときは直したフレームだけが変わります</div>
+        <div class="kv-key">∞ 連続 bbox を直したとき</div>
+        <div class="kv-val">追跡していない ∞ 枠は、手で直したフレームが「キー」になり、前のキーとの間が自動でなめらかにつながります。追跡した ∞ 枠を追跡モード OFF のまま直したときは、直したフレームだけが変わります</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">∞ 連続 bbox を直したとき</div>
-        <div class="kv-val">追跡していない ∞ 枠は、手で直したフレームが「キー」になり、前のキーとの間が自動でつながります。追跡した ∞ 枠を追跡モード OFF のまま直したときは、前後に反映が ON なら AI の枠と同じく前後になじみます</div>
-      </div>
-      <div class="kv-row">
         <div class="kv-key">キー（<kbd>F</kbd>）</div>
         <div class="kv-val">選択中の枠の今の位置を、動かさずにキーにします</div>
       </div>
-      <div class="kv-row kv-alt">
-        <div class="kv-key">反映する範囲</div>
-        <div class="kv-val">直したフレームの前後 1 秒です。キーの間の動きは、なめらかにつながります（枠の右クリックメニューの「動き」の項目（動きの種類 / 範囲 / グラフ / 補正の解除）は開発用の設定で、製品版では表示されません）</div>
-      </div>
       <div class="kv-row">
-        <div class="kv-key">反映するもの</div>
-        <div class="kv-val">枠の位置と大きさに加えて、多角形の形も配ります。<kbd>Shift</kbd>+左ドラッグで頂点を選んで曲げると、同じ頂点数の形を持つ前後のフレームに同じ向きの曲がりが（離れるほど小さく）配られ、頂点数が違うフレームは位置と大きさだけが動きます。手で置いた ∞ 連続 bbox は位置と大きさだけです</div>
+        <div class="kv-key">AI の枠を直したとき</div>
+        <div class="kv-val">直したフレームだけが変わります（枠の右クリックメニューの「動き」の項目は開発用の設定で、製品版では表示されません）</div>
       </div>
     </div>
   </div>

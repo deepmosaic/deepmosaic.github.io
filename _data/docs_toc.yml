@@ -33,7 +33,7 @@ desktop:
       - { id: edit-zoom, label: 拡大・縮小とパン }
       - { id: edit-bbox, label: 検出枠の追加 }
       # T-1470 (req1025): 新規追加の ID。本文は 04-edit.html の edit-bbox の次
-      - { id: edit-track, label: 追跡と前後に反映 }
+      - { id: edit-track, label: 追跡とキー }
       - { id: edit-scenes, label: シーン（カット） }
       - { id: edit-toolbar, label: 編集ツールバー }
       - { id: edit-mosaic, label: モザイク設定パネル }
