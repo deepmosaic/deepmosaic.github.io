@@ -62,4 +62,4 @@ formats:
   - key: "読み込み"
     val: "MP4 / AVI / MKV / MOV / WMV / FLV / WebM / TS / M2TS / M4V / MPG / MPEG"
   - key: "書き出し"
-    val: "MP4 (H.264 / H.265) / MOV (ProRes 422 / 422 HQ) / WebM (VP9 / AV1) / MKV (H.264 / H.265) / AVI (H.264)"
+    val: "MP4 (H.264 / H.265) / MOV (ProRes 422 / 422 HQ) / WebM (VP9 / AV1) / MKV (H.264 / H.265) / AVI (H.264) / MOV (DV / DNxHR / CineForm)"

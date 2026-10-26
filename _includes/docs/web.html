@@ -99,11 +99,11 @@ T-1470 (req1025): web 2.8.6 は本番ビルドで追跡 / 前後に反映 (+ キ
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">検出</div>
-        <div class="kv-val">同じ（検出対象 3 種、検出範囲、ピクセルサイズ自動と細かさ、一括実行、シーンの自動判定）。<b>モザイクの精緻化は 2.6.1 から Web 版でも有効</b>です（WebGPU の shader-f16 に対応した GPU とブラウザのとき。関連ファイルとして精緻化用のモデル約 175 MB を追加で取得します）。対応しない環境では四角い枠でモザイクをかけます。処理速度は Desktop 版の半分以下が目安です。<b>検出した枠の軌跡の自動補正（<a href="/docs/#detect">AI検出</a>）は Desktop 版のみ</b>で、Web 版の検出には付きません</div>
+        <div class="kv-val">同じ（検出対象 3 種と既存のモザイク、検出範囲、ピクセルサイズ自動と細かさ、一括実行、シーンの自動判定）。<b>モザイクの精緻化は 2.6.1 から Web 版でも有効</b>です（WebGPU の shader-f16 に対応した GPU とブラウザのとき。関連ファイルとして精緻化用のモデル約 175 MB を追加で取得します）。対応しない環境では四角い枠でモザイクをかけます。処理速度は Desktop 版の半分以下が目安です。<b>検出した枠の軌跡の自動補正（<a href="/docs/#detect">AI検出</a>）は Desktop 版のみ</b>で、Web 版の検出には付きません</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">編集ページ</div>
-        <div class="kv-val">同じ（枠の編集と描画、1f / ∞ の追加と回避マスク、<kbd>E</kbd>+右ドラッグの消しゴムの消し方・形・大きさ、形の引き継ぎ（<kbd>Shift</kbd>+<kbd>→</kbd> / <kbd>Shift</kbd>+ホイール上、<kbd>Shift</kbd> ×2 の固定）、ラベルの表示と絞り込み、選択中の枠のぼかし範囲の点線、<kbd>Shift</kbd>+左ドラッグでの多角形の頂点の範囲選択と曲げ、右クリックの「反転 (外側にかける)」、ID の統合（枠の右クリックの「ID を統合…」とタイムラインの ID の行の右クリック、連続 bbox の統合、統合の解除）、前後に反映（既定 ON、<kbd>Shift+F</kbd>）、プレビューの余白と枠外へのモザイク、モザイク設定の 4 タブと引き継ぎ、シーン、人物ギャラリー、ズーム、ショートカット、タイムライン編集）。<b>人物ギャラリーの「人物を再集計」は Desktop 版のみ</b>です。<a href="/docs/#edit-track">追跡</a>（<kbd>X</kbd>）も使えますが、Web 版の追跡は「標準の追跡」だけです（GPU を使う「高精度の追跡」は Desktop 版のみ）。サイドバーの最小化（<kbd>Ctrl+Shift+B</kbd>）はブラウザのブックマークバーの表示切替と重なるため、効かないときはサイドバーの最小化ボタンを使ってください。タイムライン編集の違いは<a href="#timeline">タイムライン編集</a>を参照してください</div>
+        <div class="kv-val">同じ（枠の編集と描画、1f / ∞ の追加と回避マスク、<kbd>E</kbd>+右ドラッグの消しゴムの消し方・形・大きさ、形の引き継ぎ（<kbd>Shift</kbd>+<kbd>→</kbd> / <kbd>Shift</kbd>+ホイール上、<kbd>Shift</kbd> ×2 の固定）、ラベルの表示と絞り込み、選択中の枠のぼかし範囲の点線、<kbd>Shift</kbd>+左ドラッグでの多角形の頂点の範囲選択と曲げ、右クリックの「反転 (外側にかける)」、ID の統合（枠の右クリックの「ID を統合…」とタイムラインの ID の行の右クリック、連続 bbox の統合、統合の解除）、前後に反映（既定 ON、<kbd>Shift+F</kbd>）、プレビューの余白と枠外へのモザイク、モザイク設定の 4 タブと引き継ぎ、シーン、人物ギャラリー、ズーム、ショートカット、タイムライン編集）。<b>人物ギャラリーの「人物を再集計」は Desktop 版のみ</b>です。<a href="/docs/#edit-track">追跡</a>（<kbd>X</kbd>）も使えますが、Web 版の追跡は「標準の追跡」だけです（GPU を使う「高精度の追跡」は Desktop 版のみ）。サイドバーの最小化（<kbd>Ctrl+Shift+B</kbd>）はブラウザのブックマークバーの表示切替と重なるため、効かないときはサイドバーの最小化ボタンを使ってください。タイムライン編集の違いは<a href="#timeline">タイムライン編集</a>を参照してください        <div class="kv-val">同じ（枠の編集と描画、1f / ∞ の追加と回避マスク、<kbd>E</kbd>+右ドラッグの消しゴムの消し方・形・大きさ、形の引き継ぎ（<kbd>Shift</kbd>+<kbd>→</kbd> / <kbd>Shift</kbd>+ホイール上、<kbd>Shift</kbd> ×2 の固定）、ラベルの表示と絞り込み、選択中の枠のぼかし範囲の点線、プレビューの余白と枠外へのモザイク、モザイク設定の 4 タブと引き継ぎ（ID 別の反転を含む）、シーン、人物ギャラリー、ズーム、ショートカット、タイムライン編集）。</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">ホーム画面の分類</div>
@@ -111,7 +111,7 @@ T-1470 (req1025): web 2.8.6 は本番ビルドで追跡 / 前後に反映 (+ キ
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">書き出し形式</div>
-        <div class="kv-val">MP4 (H.264) / WebM (VP9) / WebM (AV1) の 3 種類。H.265・ProRes・MKV・AVI は Desktop 版のみ。ブラウザが対応しない形式を選ぶと MP4 (H.264) に切り替わります</div>
+        <div class="kv-val">MP4 (H.264) / WebM (VP9) / WebM (AV1) の 3 種類。H.265・ProRes・DV・DNxHR・CineForm・MKV・AVI は Desktop 版のみ。ブラウザが対応しない形式を選ぶと MP4 (H.264) に切り替わります</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">解像度 / フレームレート / ビットレート</div>
@@ -119,7 +119,7 @@ T-1470 (req1025): web 2.8.6 は本番ビルドで追跡 / 前後に反映 (+ キ
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">タイムコード</div>
-        <div class="kv-val">同じ（埋め込みと文字サイズ・位置・色・表示形式の設定）</div>
+        <div class="kv-val">同じ（埋め込みと文字サイズ・位置・色・表示形式の設定）。ファイルへのタイムコードの記録は Desktop 版のみ</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">GPU エンコード</div>

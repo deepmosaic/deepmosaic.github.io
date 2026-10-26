@@ -10,11 +10,11 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">フォーマット</div>
-        <div class="kv-val">MP4 (H.264) / MP4 (H.265 / HEVC) / MOV (ProRes 422) / MOV (ProRes 422 HQ) / WebM (VP9) / WebM (AV1) / MKV (H.264) / MKV (H.265) / AVI (H.264)</div>
+        <div class="kv-val">MP4 (H.264) / MP4 (H.265 / HEVC) / MOV (ProRes 422) / MOV (ProRes 422 HQ) / WebM (VP9) / WebM (AV1) / MKV (H.264) / MKV (H.265) / AVI (H.264) / MOV (DV) / MOV (DNxHR SQ) / MOV (DNxHR HQ) / MOV (DNxHR HQX 10bit) / MOV (CineForm)</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">解像度</div>
-        <div class="kv-val">元動画と同じ / 4K DCI (4096x2160) / 4K UHD (3840x2160) / QHD (2560x1440) / Full HD (1920x1080) / HD (1280x720) / SD (854x480)</div>
+        <div class="kv-val">元動画と同じ / 4K DCI (4096x2160) / 4K UHD (3840x2160) / QHD (2560x1440) / Full HD (1920x1080) / HD (1280x720) / SD (854x480) / SD NTSC (720x480) / SD PAL (720x576)（DV 用）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">フレームレート</div>
@@ -22,7 +22,7 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">ビットレート</div>
-        <div class="kv-val">自動（品質ベース CRF 18）/ 50 / 20 / 10 / 5 / 2 Mbps</div>
+        <div class="kv-val">自動（品質ベース CRF 18）/ 50 / 20 / 10 / 5 / 2 Mbps。DV / DNxHR / CineForm ではビットレートは形式で決まるため選べません</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">タイムコード</div>
@@ -44,6 +44,10 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
         <div class="kv-key">警告</div>
         <div class="kv-val">モザイクの対象が 1 つも無い（検出が無い、すべて除外した等）ときは「モザイクが 1 つも適用されません。」と表示されます。書き出し前に<a href="#review">検出漏れの確認</a>を行ってください</div>
       </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">タイムコードの記録</div>
+        <div class="kv-val">「付けない」（既定）/「元動画のタイムコードを引き継ぐ」/「指定値」から選び、書き出したファイルにタイムコードの情報を記録します（映像には描きません）。映像に焼き込む「タイムコードを埋め込む」とは別の設定で、併用できます。指定値は <span class="font-mono text-[12.5px]">HH:MM:SS:FF</span> の形で入力し、ドロップフレームは <span class="font-mono text-[12.5px]">HH:MM:SS;FF</span> の形で 29.97 / 59.94 fps のときだけ使えます。形が合わないときは開始前に知らせます。「元動画のタイムコードを引き継ぐ」はフレームレートが「元動画と同じ」のときだけ使えます。元動画にタイムコードが無ければ <span class="font-mono text-[12.5px]">00:00:00:00</span> から始まり、タイムラインの先頭が元動画の途中から始まるときは、その位置のタイムコードから始まります。MKV ではタイムコードはタグとしてだけ残り、読まない編集ソフトがあるので MOV を推奨します。この設定はその回だけで、次回の初期値にはなりません</div>
+      </div>
     </div>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-encode.webp" alt="エンコード設定ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -51,6 +55,8 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
     </figure>
     <p>モザイクの粒の大きさは、書き出す解像度に対して自主規制基準（長辺÷100、最小 4px）を下回らないよう自動で調整されます。4K の素材を Full HD で書き出す場合も、出力後の映像でこの基準を満たします。</p>
     <p><a href="#edit-bbox">回避マスク</a>を置いた範囲はモザイクがかからず元の映像のまま書き出され、縁はエッジぼかしでなじみます。画面の端にかかる枠は、枠の外へはみ出した形のまま映像の端までモザイクがかかります（端で形が潰れません）。</p>
+    <p>「MOV (ProRes 422)」は ProRes 422 で書き出します。「MOV (ProRes 422 HQ)」より画質（ビットレート）が低いぶん、ファイルは小さくなります（目安で約 2/3）。以前のバージョンでは「MOV (ProRes 422)」を選んでも 422 HQ で書き出されていました。これまでと同じ画質が必要なときは「MOV (ProRes 422 HQ)」を選んでください。</p>
+    <p>「MOV (DV)」で書き出せるのは 720×480（29.97 fps）と 720×576（25 fps）だけです。「MOV (DNxHR …)」と「MOV (CineForm)」は幅と高さが偶数の動画だけ、「MOV (CineForm)」はさらに幅が 16 の倍数で高さが 32 以上の動画だけ書き出せます（それ以外は開始時に理由が表示されます）。これらの形式はどれも入れ物が MOV で、ファイルは H.264 の数十倍の大きさになるので、保存先の空き容量に注意してください。</p>
   </div>
 </section>
 
@@ -171,6 +177,7 @@ timecode / encode-progress / project-io は TICKET-SITE-46 で追加。
       <li>検出結果の枠とピクセルサイズの粒度、全体のエッジのぼかしの値が反映されます。編集ページでの枠の追加・移動・削除・形の変更・モザイク除外・回避マスクは渡りません（書き出し（エンコード）には反映されます）</li>
       <li>同時に重なる対象が多い場合はトラックが増えます（最大 15 トラック）</li>
     </ul>
+    <p>モザイク設定で「反転 (外側にかける)」を ON にした枠があるプロジェクトは送信しません（Premiere Pro では反転を再現できず、外側が隠れないまま出力されるため）。そのときは「「反転 (外側にかける)」の設定が N 件あるため送信を中止しました。Premiere Pro では反転を再現できず、外側が隠れないまま出力されます。反転を外すか、このアプリで書き出してください」と表示されるので、反転を外すか、このアプリで書き出してください。</p>
     <p>取り込んだ後は、通常の Premiere Pro の編集として位置や粒度を調整できます。送信から一定時間応答が無い場合は「タイムアウト」と表示されるので、Premiere Pro でプラグインのパネルが開いていることを確認してからやり直してください。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/premiere-setup.webp" alt="Premiere Pro へインポートを押したときの案内ダイアログ" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
