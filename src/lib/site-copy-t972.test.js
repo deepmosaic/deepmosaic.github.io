@@ -34,8 +34,15 @@ function stripComments(source) {
 const textOf = (html) => stripComments(html).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ')
 
 const BASE = 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial'
+// T-1539 (2026-10-27): Desktop 版は 3 本 (検出編 / 編集編 / エンコード・申し込み編)、Web 版は 1 本のまま。
 const VIDEOS = [
-	{ label: 'Desktop 版', mp4: `${BASE}/tutorial-desktop-basic.mp4`, png: `${BASE}/tutorial-desktop-basic.png` },
+	{ label: 'Desktop 版 ① 検出編', mp4: `${BASE}/tutorial-desktop-1-detect.mp4`, png: `${BASE}/tutorial-desktop-1-detect.png` },
+	{ label: 'Desktop 版 ② 編集編', mp4: `${BASE}/tutorial-desktop-2-edit.mp4`, png: `${BASE}/tutorial-desktop-2-edit.png` },
+	{
+		label: 'Desktop 版 ③ エンコード・申し込み編',
+		mp4: `${BASE}/tutorial-desktop-3-export.mp4`,
+		png: `${BASE}/tutorial-desktop-3-export.png`,
+	},
 	{ label: 'Web 版', mp4: `${BASE}/tutorial-web-basic.mp4`, png: `${BASE}/tutorial-web-basic.png` },
 ]
 const HEADING = '動画で見る基本の使い方'
@@ -61,10 +68,10 @@ test('#about に見出し「動画で見る基本の使い方」があり「作�
 	assert.ok(h < text.indexOf('作業の流れ'), '動画は「作業の流れ」より前に置く')
 })
 
-test('#about に動画が Desktop 版 → Web 版の順で 2 本ある', () => {
+test('#about に動画が Desktop 版 3 本 → Web 版の順で 4 本ある', () => {
 	const section = aboutSection()
 	const videos = videosOf(section)
-	assert.equal(videos.length, 2)
+	assert.equal(videos.length, VIDEOS.length)
 	VIDEOS.forEach((v, i) => {
 		assert.ok(videos[i].body.includes(`src="${v.mp4}"`), `${v.label} の mp4 の URL`)
 		assert.ok(videos[i].attrs.includes(`poster="${v.png}"`), `${v.label} の poster の URL`)
@@ -96,15 +103,15 @@ test('<video> の中にフォールバックの <img> を書かず、mp4 への�
 test('各動画に figcaption の説明が 1 つずつある', () => {
 	const figures = [...aboutSection().matchAll(/<figure\b[\s\S]*?<\/figure>/g)].map((m) => m[0])
 	const withVideo = figures.filter((f) => f.includes('<video'))
-	assert.equal(withVideo.length, 2)
+	assert.equal(withVideo.length, VIDEOS.length)
 	for (const f of withVideo) assert.equal((f.match(/<figcaption\b/g) ?? []).length, 1)
 })
 
-test('llms.txt / llms-full.txt に動画 2 本の URL と「字幕のみ」の 1 行がある', () => {
+test('llms.txt / llms-full.txt に動画 4 本の URL と「字幕のみ」の 1 行がある', () => {
 	for (const file of ['llms.txt', 'llms-full.txt']) {
 		const lines = read(file).split('\n').filter((l) => l.includes(VIDEOS[0].mp4))
 		assert.equal(lines.length, 1, `${file} の動画の行は 1 行`)
-		assert.ok(lines[0].includes(VIDEOS[1].mp4), `${file} に Web 版の URL`)
+		for (const v of VIDEOS.slice(1)) assert.ok(lines[0].includes(v.mp4), `${file} に ${v.label} の URL`)
 		assert.match(lines[0], /字幕のみ/)
 	}
 })

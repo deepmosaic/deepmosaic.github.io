@@ -18,7 +18,8 @@ desktop 2.4.0 の公開で T-515 が外した。再び置くときは `src/lib/d
     <p>Deepmosaicは、AI（ディープラーニング）による物体検出で動画のモザイク処理を自動化するWindowsデスクトップアプリケーションです。動画の読み込みからAI検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでをアプリ内で完結できます。<b>本ソフトウェアはモザイクを「かける」ためのものであり、すでにモザイクがかかった映像からモザイクを取り除いたり、元の映像を復元したりする機能はありません。</b></p>
     <p>このページは Windows 版（Deepmosaic Desktop）の使い方ガイドです。インストール不要でブラウザから使える Web 版については<a href="/docs/web/">Web 版の使い方</a>をご覧ください（<a href="#web">Desktop 版との違い</a>もこのページ末尾にまとめています）。</p>
     {%- comment -%}
-      T-972: チュートリアル動画 2 本 (人の声なし・字幕のみ、3〜4 分)。URL は R2 の公開プロキシの
+      T-972: チュートリアル動画 (人の声なし・字幕のみ)。T-1539 (2026-10-27) で Desktop 版を 3 本 (検出編 / 編集編 /
+      エンコード・申し込み編) に分けた。Web 版は 1 本のまま。URL は R2 の公開プロキシの
       media/tutorial/ で固定 (実体は 2.7.1 のリリース時に置く)。自動再生しない (autoplay / muted /
       loop を付けない)。<video> の中にフォールバックの <img> を書かない (check-docs.mjs が <img> の
       実在と寸法を検査するため、remote の poster を <img> にすると落ちる)。節 ID の契約を守るため
@@ -26,13 +27,19 @@ desktop 2.4.0 の公開で T-515 が外した。再び置くときは `src/lib/d
     {%- endcomment -%}
     <h3 class="mt-6 text-[16px] font-bold text-ink">動画で見る基本の使い方</h3>
     <figure class="my-4">
-      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4" type="video/mp4">動画を再生できない場合は <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-basic.mp4">こちら</a> から開いてください。</video>
-      <!-- TODO T-1469: 長さ -->
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop 版: 動画の読み込みから AI 検出、編集、書き出しまでの基本の流れ（字幕のみ、約 3〜4 分）</figcaption>
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4" type="video/mp4">動画を再生できない場合は <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4">こちら</a> から開いてください。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop 版 ① 検出編: 動画の取り込みから AI 検出まで（字幕のみ、約 1 分半）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4" type="video/mp4">動画を再生できない場合は <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4">こちら</a> から開いてください。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop 版 ② 編集編: モザイクの追加・修正・追跡（字幕のみ、約 2 分半）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4" type="video/mp4">動画を再生できない場合は <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4">こちら</a> から開いてください。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop 版 ③ エンコード・申し込み編: 書き出しとプラン（字幕のみ、約 1 分）</figcaption>
     </figure>
     <figure class="my-4">
       <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4" type="video/mp4">動画を再生できない場合は <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4">こちら</a> から開いてください。</video>
-      <!-- TODO T-1469: 長さ -->
       <figcaption class="mt-2 text-[12.5px] text-ink-4">Web 版: ブラウザでの読み込みから AI 検出、編集、書き出しまでの基本の流れ（字幕のみ、約 3〜4 分）</figcaption>
     </figure>
     <h3 class="mt-6 text-[16px] font-bold text-ink">作業の流れ</h3>
