@@ -23,7 +23,9 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
-const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
+// Windows の作業ツリー (core.autocrlf=true) ではデータが CRLF になる。パーサーは `\n` 前提なので改行をそろえる
+// (そろえないと項目を 1 件も読めず、Linux の CI では通るのに手元でだけ落ちる)
+const read = (rel) => readFileSync(join(ROOT, rel), 'utf8').replace(/\r\n/g, '\n')
 
 /** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は検査対象外)。 */
 function stripComments(source) {
