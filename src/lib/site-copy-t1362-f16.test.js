@@ -1,4 +1,5 @@
-// T-1362 [exp:f16]: 検出オプションの「既存のモザイク」とラベル「既存モザイク」の docs を固定する
+// T-1362 [exp:f16]: 検出オプションの「モザイク」(素材にすでにかかっているモザイク) とラベル「モザイク」の docs を固定する
+// (T-1547 / T-1558: アプリの表示名を「既存のモザイク」「既存モザイク」から「モザイク」に変えたのに合わせた)
 // (desktop T-1346 / T-1354 / T-1370、web T-1347 / T-1373)。
 //
 //   node --test src/lib/site-copy-t1362-f16.test.js
@@ -88,7 +89,7 @@ const colorParagraph = () =>
 
 /** このコミットで足した文の一覧 (検査の対象)。 */
 function addedTexts() {
-	const rows = kvRowsWith(detectOptions(), '既存のモザイク')
+	const rows = kvRowsWith(detectOptions(), 'モザイク')
 	return [
 		kvRow(detectOptions(), '検出対象'),
 		rows?.at(-1)?.val ?? '',
@@ -105,46 +106,49 @@ test('陽性対照: GUARD の検査は固有名詞を拾い、境界の外は拾
 	assert.deepEqual(guardHits('HiTech'), [])
 })
 
-test('検出対象の行に「既存のモザイク」があり、初期値は OFF', () => {
+test('検出対象の行に「モザイク」があり、初期値は OFF', () => {
 	const val = kvRow(detectOptions(), '検出対象')
 	assert.ok(val, '検出対象の行が無い')
-	assert.ok(val.includes('「既存のモザイク」'), val)
-	assert.ok(val.includes('「既存のモザイク」以外の3つがON'), val)
-	assert.ok(val.includes('「既存のモザイク」はOFF'), val)
+	assert.ok(val.includes('「モザイク」'), val)
+	assert.ok(val.includes('「モザイク」以外の3つがON'), val)
+	assert.ok(val.includes('「モザイク」はOFF'), val)
+	assert.ok(!val.includes('既存'), `旧名が残っている: ${val}`)
 })
 
-test('検出オプションの kv の最後の行が「既存のモザイク」で、kv-alt が交互', () => {
-	const rows = kvRowsWith(detectOptions(), '既存のモザイク')
+test('検出オプションの kv の最後の行が「モザイク」で、kv-alt が交互', () => {
+	const rows = kvRowsWith(detectOptions(), 'モザイク')
 	assert.ok(rows && rows.length >= 2, '検出オプションの kv が見つからない')
 	const last = rows.at(-1)
 	const prev = rows.at(-2)
-	assert.equal(last.key, '既存のモザイク')
-	for (const w of ['既存モザイク', '多角形', 'ID 別', '上から']) {
+	assert.equal(last.key, 'モザイク')
+	for (const w of ['すでにかかっている', 'ラベル「モザイク」', '多角形', 'ID 別', '上から']) {
 		assert.ok(last.val.includes(w), `「${w}」が無い: ${last.val}`)
 	}
 	assert.notEqual(last.cls, prev.cls, 'kv-alt が直前の行と交互になっていない')
 })
 
-test('既存のモザイクの行に語彙ポリシーの語と固有名詞が無い', () => {
-	const last = kvRowsWith(detectOptions(), '既存のモザイク').at(-1)
+test('モザイクの行に語彙ポリシーの語と固有名詞が無い', () => {
+	const last = kvRowsWith(detectOptions(), 'モザイク').at(-1)
 	for (const w of REMOVAL_WORDS) assert.ok(!last.val.includes(w), `「${w}」がある: ${last.val}`)
 	assert.deepEqual(guardHits(last.val), [])
 })
 
-test('編集ページの色の段落とラベル（C）の行に「既存モザイク」がある', () => {
+test('編集ページの色の段落とラベル（C）の行に「モザイク」がある', () => {
 	const color = colorParagraph()
 	assert.ok(color, '色の段落が見つからない')
-	assert.ok(color.includes('既存モザイク（紫'), color)
+	assert.ok(color.includes('モザイク（紫'), color)
+	assert.ok(!color.includes('既存モザイク'), `旧名が残っている: ${color}`)
 	const label = kvRow(editSection('edit-toolbar'), 'ラベル（C）')
 	assert.ok(label, 'ラベル（C）の行が無い')
-	assert.ok(label.includes('「既存モザイク」'), label)
+	assert.ok(label.includes('「モザイク」'), label)
+	assert.ok(!label.includes('既存モザイク'), `旧名が残っている: ${label}`)
 })
 
-test('Web 版の差分表の検出の行に「既存のモザイク」があり、「同じ」で始まる', () => {
+test('Web 版の差分表の検出の行に「モザイク」があり、「同じ」で始まる', () => {
 	const val = kvRow(webDiff(), '検出')
 	assert.ok(val, '検出の行が無い')
 	assert.ok(val.startsWith('同じ'), val)
-	assert.ok(val.includes('既存のモザイク'), val)
+	assert.ok(val.includes('「モザイク」'), val)
 })
 
 test('足した文に内部の語・固有名詞が無い', () => {
