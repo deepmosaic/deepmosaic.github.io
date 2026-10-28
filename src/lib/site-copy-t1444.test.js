@@ -213,8 +213,9 @@ test('privacy §9: ブラウザでログインしてインストーラーを DL 
 	)
 })
 
-test('privacy: 最終更新日は 2026-10-24 (版 = legal.yml / EULA / 利用規約は 2026-10-12 のまま)', () => {
-	assert.match(read('company/privacy.html'), /最終更新日: 2026-10-24（制定: 2019-06-01）/)
+// T-1572 (2026-10-28) で 10 項を改定して 2026-10-28 に進めた (版は据え置き・再同意なし、T-1444 と同じ)
+test('privacy: 最終更新日は 2026-10-28 (版 = legal.yml / EULA / 利用規約は 2026-10-12 のまま)', () => {
+	assert.match(read('company/privacy.html'), /最終更新日: 2026-10-28（制定: 2019-06-01）/)
 	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-10-12"?/)
 	assert.match(read('company/eula.html'), /最終更新日: 2026-10-12/)
 	assert.match(read('company/terms.html'), /最終更新日: 2026-10-12/)
