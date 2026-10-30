@@ -70,6 +70,7 @@ edit-join-menu (新規、edit-effects の置き換え) / edit-fade / edit-transi
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>プレイヤーには検出枠（bbox）がクラス別の色でオーバレイ表示されます。枠はドラッグで位置・サイズを直接編集できます。コマ送り・シークに対応し、下部のタイムラインには検出の分布とシーン（カット）の帯が描画され、クリックで任意のフレームへジャンプできます。</p>
     <p>検出クラスは色分けされます: 局部（赤）/ 男性顔（青）/ 女性顔（ピンク）/ ユーザー作成（黄）/ 回避マスク（青緑）/ モザイク（紫、素材にすでにかかっているモザイク。検出オプションの「モザイク」を ON にして検出したプロジェクトだけ）。枠の上のラベル（チップ）には「クラス名 #ID（3 文字のコード） 信頼度%」が表示され、手動で追加した枠は「ユーザー」、回避マスクは「回避」、モザイクの対象から外したトラックには「[モザイク除外]」が付きます。</p>
+    <p>モザイク（紫）の枠は多角形（最大 255 点）で、ほかの多角形の枠と同じく点を動かして形を直せます（下の「頂点の範囲選択と曲げ」、<a href="#detect-mosaic">すでにかかっているモザイクを見つけて、かけ直す</a>）。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/edit-player.webp" alt="検出枠のオーバーレイ付きプレイヤーとタイムライン。枠の内側がモザイクの適用範囲になる" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">bboxオーバレイ付きプレイヤーとタイムライン</figcaption>
@@ -448,7 +449,7 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">適用範囲タブ</div>
-        <div class="kv-val">全て（グローバル既定）/ クラス別（局部・顔など）/ ID別（追跡された個々の対象）/ シーン別（カット単位）。ID 別とシーン別では対象をプルダウンで選びます。オーバライド中の範囲には「オーバライド中」と表示され、「クリア」で個別に解除できます</div>
+        <div class="kv-val">全て（グローバル既定）/ クラス別（局部・顔など。<a href="#detect-mosaic">すでにかかっているモザイク</a>の枠があるプロジェクトでは「モザイク」も出ます）/ ID別（追跡された個々の対象）/ シーン別（カット単位）。ID 別とシーン別では対象をプルダウンで選びます。オーバライド中の範囲には「オーバライド中」と表示され、「クリア」で個別に解除できます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">信頼度しきい値</div>

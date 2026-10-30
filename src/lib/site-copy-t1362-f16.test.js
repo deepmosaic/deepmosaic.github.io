@@ -144,11 +144,67 @@ test('編集ページの色の段落とラベル（C）の行に「モザイク�
 	assert.ok(!label.includes('既存モザイク'), `旧名が残っている: ${label}`)
 })
 
-test('Web 版の差分表の検出の行に「モザイク」があり、「同じ」で始まる', () => {
+// T-1625: Desktop 版は「モザイク」を ON にすると局部・顔と排他、Web 版は併用できる。差があるので「同じ」ではなく「ほぼ同じ」で始め、差を書く
+test('Web 版の差分表の検出の行は「ほぼ同じ」で始まり、「モザイク」の併用 / 排他の差を書く', () => {
 	const val = kvRow(webDiff(), '検出')
 	assert.ok(val, '検出の行が無い')
-	assert.ok(val.startsWith('同じ'), val)
+	assert.ok(val.startsWith('ほぼ同じ'), val)
 	assert.ok(val.includes('「モザイク」'), val)
+	assert.ok(val.includes('Web 版は「モザイク」を局部・顔と併用できます'), val)
+	assert.ok(val.includes('Desktop 版は排他'), val)
+})
+
+// ── T-1625: 「モザイク」(すでにかかっているモザイク) の小節 #detect-mosaic ─────────────────
+
+const detectMosaic = () => {
+	const sec = sectionOf(stripComments(read('_includes/docs/03-detect.html')), 'detect-mosaic')
+	assert.ok(sec, '#detect-mosaic 節が見つからない')
+	return sec
+}
+/** 「取り除く機能ではありません」の否定文。語彙ポリシーの例外はこの 1 文だけ。 */
+const NOT_REMOVAL = '取り除く機能ではありません'
+/** 画面に出る進捗の段名の引用 (engine の段名と揃えて変えない)。旧名の検査の例外はこの引用だけ。 */
+const STEP_NAME_QUOTE = '「既存のモザイクを検出」'
+
+test('#detect-mosaic の節が本文にあり、目次にも同じ ID がある', () => {
+	const html = stripComments(read('_includes/docs/03-detect.html'))
+	assert.ok(html.includes('<section id="detect-mosaic"'), '本文に節が無い')
+	assert.ok(html.indexOf('<section id="detect-options"') < html.indexOf('<section id="detect-mosaic"'), '#detect-options の後に無い')
+	assert.match(read('_data/docs_toc.yml'), /\{ id: detect-mosaic, label: [^}]+\}/)
+})
+
+test('#detect-mosaic は手順・結果の見方・制約・所要の 4 つの小見出しを持ち、上からかけ直すことを書く', () => {
+	const text = textOf(detectMosaic())
+	for (const h of ['手順', '結果の見方', '制約', '所要の目安']) {
+		assert.ok(detectMosaic().includes(`<h3 class="mt-6 text-[16px] font-bold text-ink">${h}</h3>`), `小見出し「${h}」が無い`)
+	}
+	for (const w of ['上から', 'すでにかかっている', 'ラベル「モザイク」', '多角形', 'ID 別', '「[モザイク除外]」', '元の映像に戻すことはできません']) {
+		assert.ok(text.includes(w), `「${w}」が無い`)
+	}
+	for (const w of ['ぼかし', '黒塗り', '4K', '半透明', '1〜2 フレーム', 'GPU の無い PC', '約 9 分', '約 31 分', '1.1〜1.2 倍', '1.5〜1.6 倍']) {
+		assert.ok(text.includes(w), `制約・所要の「${w}」が無い`)
+	}
+	assert.ok(text.includes('#edit-overview') || detectMosaic().includes('href="#edit-overview"'), '#edit-overview への案内が無い')
+	assert.ok(detectMosaic().includes('href="#edit-toolbar"'), '#edit-toolbar への案内が無い')
+})
+
+test('#detect-mosaic は「取り除く」を否定文でだけ使い、語彙ポリシーの語・旧名・固有名詞・内部の語が無い', () => {
+	const text = textOf(detectMosaic())
+	assert.ok(text.includes(NOT_REMOVAL), `否定文「${NOT_REMOVAL}」が無い`)
+	const rest = text.split(NOT_REMOVAL).join('')
+	for (const w of REMOVAL_WORDS) assert.ok(!rest.includes(w), `「${w}」がある`)
+	const own = text.split(STEP_NAME_QUOTE).join('')
+	for (const w of ['既存モザイク', '既存のモザイク', ...INTERNAL_WORDS]) assert.ok(!own.includes(w), `「${w}」がある`)
+	assert.deepEqual(guardHits(text), [])
+})
+
+test('検出オプションの「モザイク」の行から #detect-mosaic へ送り、検出対象の行に Desktop 版の排他を書く', () => {
+	const last = kvRowsWith(detectOptions(), 'モザイク').at(-1)
+	assert.ok(detectOptions().includes('href="#detect-mosaic"'), '#detect-mosaic へのリンクが無い')
+	assert.ok(last.val.includes('詳しくは'), last.val)
+	const target = kvRow(detectOptions(), '検出対象')
+	assert.ok(target.includes('モザイクの枠だけを検出します。局部・顔の検出とモザイクの初期設定は使いません'), target)
+	assert.ok(kvRow(detectOptions(), '所要時間の目安').includes('(モザイクの走査 / 目安 N fps)'))
 })
 
 test('足した文に内部の語・固有名詞が無い', () => {

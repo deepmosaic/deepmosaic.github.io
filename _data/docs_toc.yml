@@ -23,6 +23,8 @@ desktop:
     items:
       - { id: import, label: 動画の読み込み }
       - { id: detect-options, label: 検出オプション }
+      # T-1625 (req1030c): 新規追加の ID。本文は 03-detect.html の detect-options の次
+      - { id: detect-mosaic, label: すでにかかっているモザイク }
       - { id: batch, label: 一括実行 }
       - { id: detect, label: AI検出 }
       - { id: queue, label: キュー }
