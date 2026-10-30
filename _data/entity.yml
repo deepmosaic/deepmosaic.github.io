@@ -69,6 +69,9 @@ can:
     en: "Automatically detect genitalia and faces in video with AI and track them across frames"
   - ja: "検出した領域にモザイク（ブロック状）またはぼかしをかける"
     en: "Apply mosaic (pixelation) or Gaussian blur to the detected regions"
+  # T-1624: 検出オプションの「モザイク」。cannot[0] (取り除くこと) と対比になるよう「かけ直す」と書く。
+  - ja: "素材にすでにかかっているモザイクの位置と範囲を見つけ、その上から新しいモザイクをかけ直す"
+    en: "Locate mosaics already present in the footage and re-apply a fresh mosaic over the same area"
   - ja: "粒度・不透明度・ふちのなじませ・検出枠の拡張率を設定で固定する"
     en: "Fix the granularity, opacity, edge feathering and box expansion ratio in settings"
   - ja: "検出結果を人が確認・修正する（検出枠の追加・削除・移動、信頼度によるフィルタ）"

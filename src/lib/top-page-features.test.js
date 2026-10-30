@@ -359,6 +359,94 @@ test('MOSAIC 節に四角い枠と形に沿ったモザイクの比較画像が�
 	assert.match(text, /Pexels/, '素材 (Pexels) の表記が無い')
 })
 
+// ── すでにかかっているモザイクの検出 (T-1624、req1030c) ──────────────────────────
+//
+// 検出オプションの「モザイク」の紹介の節。「取り除く・元に戻す」機能と誤解されないよう、否定文を
+// 同じ節に置き、「除去」「解除」「復元」と旧名・内部の語を置かない (site-copy-t1362-f16.test.js と同じ方針)。
+
+const EXISTING_MOSAIC_NEGATION = 'モザイクを取り除いたり、元の映像に戻したりすることはできません。見つけた範囲に新しくモザイクをかけ直す機能です。'
+const EXISTING_MOSAIC_BANNED = ['除去', '解除', '復元', '既存モザイク', '既存のモザイク', '実験', 'フラグ', 'SAM', 'CUDA', 'WebGPU', 'ONNX', 'wasm']
+
+test('EXISTING MOSAIC の節が RELIABILITY の後・MOSAIC の前にあり、id="existing-mosaic" を持つ', () => {
+	// Arrange
+	const section = markedSection(index, 'EXISTING MOSAIC')
+	assert.ok(section, 'index.html に <!-- EXISTING MOSAIC --> の節が無い')
+
+	// Act
+	const at = index.indexOf('<!-- EXISTING MOSAIC -->')
+
+	// Assert
+	assert.match(section, /<section\s[^>]*id="existing-mosaic"/, '節に id="existing-mosaic" が無い (hero の「詳しく」のリンク先)')
+	assert.ok(index.indexOf('<!-- RELIABILITY -->') < at, 'RELIABILITY より前にある')
+	assert.ok(at < index.indexOf('<!-- MOSAIC -->'), 'MOSAIC より後ろにある')
+	assert.match(stripComments(markedSection(index, 'HERO') ?? ''), /href="#existing-mosaic"/, 'hero の検出対象の説明から節へのリンクが無い')
+})
+
+test('EXISTING MOSAIC の比較画像 2 枚は WebP で実在し、alt / width / height / lazy と素材の表記を持つ', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'EXISTING MOSAIC') ?? '')
+	const imgs = images(section)
+
+	// Act
+	const srcs = imgs.map((img) => img.src)
+
+	// Assert
+	assert.deepEqual(srcs, ['/assets/img/samples/mosaic-detect-1-found.webp', '/assets/img/samples/mosaic-detect-2-reapplied.webp'])
+	for (const img of imgs) {
+		assert.ok(existsSync(assetPath(img.src)), `画像が無い: ${img.src}`)
+		assert.ok(img.alt, `alt が無い: ${img.src}`)
+		assert.equal(img.width, '1280', `width: ${img.src}`)
+		assert.equal(img.height, '720', `height: ${img.src}`)
+		assert.equal(img.loading, 'lazy', `hero 以外は lazy にする: ${img.src}`)
+	}
+	assert.equal((section.match(/<figure\b/g) ?? []).length, 2, '画像は <figure> 2 つで組む')
+	assert.match(textOf(section), /素材: 当社のサンプル動画/, '素材の出典の表記が無い')
+})
+
+test('EXISTING MOSAIC の節に否定文・3 つの要点・docs へのリンクがあり、禁止語が無い', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'EXISTING MOSAIC') ?? '')
+	const text = textOf(section)
+	const points = ['位置と範囲', 'ブロック状のモザイク', '粒の大きさを推定', 'かけ直', '「ID 別」', '多角形', '編集ページ', 'Desktop 版・Web 版の両方']
+
+	// Act
+	const missing = points.filter((w) => !text.includes(w))
+	const banned = EXISTING_MOSAIC_BANNED.filter((w) => text.includes(w) || section.includes(w))
+
+	// Assert
+	assert.ok(text.includes(EXISTING_MOSAIC_NEGATION), `否定文が無い: ${text}`)
+	assert.deepEqual(missing, [], `触れていない要点: ${missing.join(' / ')}`)
+	assert.deepEqual(banned, [], `節に置かない語がある: ${banned.join(' / ')}`)
+	assert.match(section, /href="\/docs\/#detect-mosaic"/, 'docs の #detect-mosaic へのリンクが無い')
+})
+
+test('すでにかかっているモザイクが description・hero・できること・FAQ・llms に入っている', () => {
+	// Arrange
+	const description = index.split(/\r?\n/).find((l) => l.startsWith('description:')) ?? ''
+	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
+	const entity = stripYamlComments(read('_data', 'entity.yml'))
+	const faq = stripYamlComments(read('_data', 'faq.yml'))
+	const faqQ = 'すでにモザイクがかかっている動画はどうなりますか？'
+
+	// Act
+	const faqAt = faq.indexOf(faqQ)
+	const removalQAt = faq.indexOf('モザイクを除去することはできますか？')
+	const faqAnswer = faq.slice(faqAt).match(/\n\s+a:\s*"([^"]*)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(description, /人間の顔、すでにかかっているモザイクの位置/, `description: ${description}`)
+	assert.match(heroText, /すでにかかっているモザイクの位置も見つけられます/, 'hero の検出対象の説明に無い')
+	assert.match(entity, /素材にすでにかかっているモザイクの位置と範囲を見つけ、その上から新しいモザイクをかけ直す/, 'entity.yml の can に無い')
+	assert.match(entity, /Locate mosaics already present in the footage/, 'entity.yml の can (en) に無い')
+	assert.ok(faqAt > removalQAt && removalQAt >= 0, 'FAQ は「モザイクを除去することはできますか？」の後に置く')
+	assert.match(faqAnswer, /取り除いたり元の映像に戻したりすることはできません/, `FAQ の回答に否定文が無い: ${faqAnswer}`)
+	for (const w of ['除去', '解除', '復元', '実験']) assert.ok(!faqAnswer.includes(w), `FAQ の回答に「${w}」がある`)
+	for (const file of ['llms.txt', 'llms-full.txt']) {
+		assert.match(read(file), /すでにかかっているモザイクの位置 \(上からかけ直す。取り除くことはできない\)/, `${file} の検出対象に無い`)
+		assert.match(read(file), /mosaics already present in the footage \(re-applied over, never removed\)/, `${file} の検出対象 (en) に無い`)
+	}
+})
+
 // ── 表記: 「チーム」→「組織」(T-484) ───────────────────────────────────────────
 
 test('トップ (本文・部品・TRUST BAR・FAQ のデータ) と導入相談ページに「チーム」が無い', () => {

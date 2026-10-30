@@ -43,6 +43,8 @@ const VIDEOS = [
 		mp4: `${BASE}/tutorial-desktop-3-export.mp4`,
 		png: `${BASE}/tutorial-desktop-3-export.png`,
 	},
+	// T-1624 (2026-10-30): Desktop 版の 4 本目 (④ モザイク検出編) を ③ の後・Web 版の前に足した。
+	{ label: 'Desktop 版 ④ モザイク検出編', mp4: `${BASE}/tutorial-desktop-4-mosaic.mp4`, png: `${BASE}/tutorial-desktop-4-mosaic.png` },
 	{ label: 'Web 版', mp4: `${BASE}/tutorial-web-basic.mp4`, png: `${BASE}/tutorial-web-basic.png` },
 ]
 const HEADING = '動画で見る基本の使い方'
@@ -68,7 +70,7 @@ test('#about に見出し「動画で見る基本の使い方」があり「作�
 	assert.ok(h < text.indexOf('作業の流れ'), '動画は「作業の流れ」より前に置く')
 })
 
-test('#about に動画が Desktop 版 3 本 → Web 版の順で 4 本ある', () => {
+test('#about に動画が Desktop 版 4 本 → Web 版の順で 5 本ある', () => {
 	const section = aboutSection()
 	const videos = videosOf(section)
 	assert.equal(videos.length, VIDEOS.length)
@@ -107,7 +109,7 @@ test('各動画に figcaption の説明が 1 つずつある', () => {
 	for (const f of withVideo) assert.equal((f.match(/<figcaption\b/g) ?? []).length, 1)
 })
 
-test('llms.txt / llms-full.txt に動画 4 本の URL と「字幕のみ」の 1 行がある', () => {
+test('llms.txt / llms-full.txt に動画 5 本の URL と「字幕のみ」の 1 行がある', () => {
 	for (const file of ['llms.txt', 'llms-full.txt']) {
 		const lines = read(file).split('\n').filter((l) => l.includes(VIDEOS[0].mp4))
 		assert.equal(lines.length, 1, `${file} の動画の行は 1 行`)

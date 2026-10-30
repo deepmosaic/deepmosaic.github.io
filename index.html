@@ -8,7 +8,7 @@ seo_title: 動画にモザイクを自動でかけるAIソフト｜Deepmosaic
 # `description` はランキング要因ではなくスニペット専用の面なので、ここにだけ
 # 「除去」を置いて SERP 段階で誤認ユーザーを濾過する (語彙ポリシー: _data/entity.yml)。
 # 否定句は先頭から約 37 全角の位置に置いている (末尾だと切り詰めで消えるため)。
-description: Deepmosaicは動画内の対象をAIが自動検出してモザイクをかけるWindowsアプリ。モザイクの除去・解除はできません。検出対象は男性器・女性器・人間の顔。処理はすべてお使いのPC内で完結し映像は外部に送信しません。Adobe Premiere Pro連携に対応。
+description: Deepmosaicは動画内の対象をAIが自動検出してモザイクをかけるWindowsアプリ。モザイクの除去・解除はできません。検出対象は男性器・女性器・人間の顔、すでにかかっているモザイクの位置。処理はすべてお使いのPC内で完結し映像は外部に送信しません。Adobe Premiere Pro連携に対応。
 schemas:
   - software-application
   - faq
@@ -45,7 +45,7 @@ schemas:
     {%- endcomment -%}
     <figure id="hero-detectable" class="mx-auto mt-8 max-w-[660px]">
       <img src="/assets/img/detectable-objects.webp" alt="検出支援できる物体: 男性器・女性器・人間の顔" width="960" height="540" decoding="async" class="mx-auto block w-[min(288px,100%)] rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">検出支援できる物体: 男性器・女性器・人間の顔（<a href="/docs/#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF）</figcaption>
+      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">検出支援できる物体: 男性器・女性器・人間の顔（<a href="/docs/#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF）。すでにかかっているモザイクの位置も見つけられます（<a href="#existing-mosaic" class="text-accent-soft hover:underline">詳しく</a>）</figcaption>
     </figure>
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
@@ -314,6 +314,50 @@ schemas:
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+{%- comment -%}
+  EXISTING MOSAIC (T-1624、req1030c)。素材にすでにかかっているモザイクを見つけ、その上から Deepmosaic の
+  モザイクをかけ直す機能 (検出オプションの「モザイク」)。**取り除く・元に戻す機能ではない**ことを
+  同じ節の目立つ位置に書く。本文に「除去」「解除」「復元」「既存モザイク」「実験」と技術の固有名を置かない
+  (top-page-features.test.js が固定)。画像は Desktop 版のチュートリアル ④ と同じサンプル動画 (当社で顔に
+  モザイクを焼いたもの) を 1280x720 に縮めて WebP 化したもの。左 = 見つけた範囲 (紫の多角形の枠)、
+  右 = 推定した粒が「ID 別」のモザイク設定に入っている画面。かけ直した結果は元のモザイクと見分けが
+  つかないので載せない (ファイル名の reapplied は spec のまま)。手順・制約・Desktop / Web の差は docs の
+  #detect-mosaic (T-1625) が正本。
+{%- endcomment -%}
+<!-- EXISTING MOSAIC -->
+<section id="existing-mosaic" class="scroll-mt-20 border-t border-hair py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="EXISTING MOSAIC" title="すでにかかっているモザイクを見つけて、かけ直せます" sub="素材にもともと入っているブロック状のモザイクの位置と範囲を自動で見つけ、その上から Deepmosaic のモザイクをかけ直します。粒の大きさをそろえ直したい素材や、提出先の基準に合わせて粒を変えたい素材に使えます。" %}
+    <p class="mx-auto mb-8 max-w-[760px] rounded-[10px] border border-edge bg-panel-2 px-4 py-3 text-center text-[14px] font-bold leading-[1.9] text-ink">モザイクを取り除いたり、元の映像に戻したりすることはできません。見つけた範囲に新しくモザイクをかけ直す機能です。</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-1-found.webp" alt="編集ページ。素材の人物の顔にもともとかかっているモザイクを見つけ、紫の多角形の枠（ラベル「モザイク」）で囲んでいる" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">見つけた範囲（紫の多角形の枠）</figcaption>
+      </figure>
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-2-reapplied.webp" alt="同じプロジェクトのモザイク設定。「ID 別」タブに、推定した粒の大きさ（最小セル・最大セルともに 10 px）が入っている" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">推定した粒が「ID 別」の設定に入る（ここで粒を変えられる）</figcaption>
+      </figure>
+    </div>
+    <p class="mt-2 text-[12px] text-ink-4">素材: 当社のサンプル動画（顔にモザイクを焼いたもの）</p>
+    <ul class="mt-8 grid gap-4 md:grid-cols-3">
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">位置と範囲を自動で見つける</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">素材にもともと入っているブロック状のモザイクを、検出オプションの「モザイク」を ON にして検出するだけで見つけます。</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">粒を推定して上からかけ直す</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">元のモザイクの粒の大きさを推定し、その上から Deepmosaic のモザイクをかけ直します。粒はモザイク設定の「ID 別」で変えられます。</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">枠は編集ページで直せる</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">見つけた範囲は多角形の枠で表示され、ほかの検出枠と同じように編集ページで直せます。</p>
+      </li>
+    </ul>
+    <p class="mt-6 text-[13px] leading-[1.9] text-ink-3">Desktop 版・Web 版の両方で使えます。両者の違い（局部・顔の検出と同時に使えるか）や、見つけにくいモザイク、所要時間の目安は<a href="/docs/#detect-mosaic" class="text-accent-soft hover:underline">ドキュメント</a>にまとめています。</p>
   </div>
 </section>
 

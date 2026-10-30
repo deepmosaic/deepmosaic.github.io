@@ -48,7 +48,7 @@ llms-full.txt は llms.txt 仕様の一部ではなく慣習。実効性は llms
 
 ### 検出対象 / Detection targets
 
-男性器・女性器・人間の顔 (検出オプションで個別に ON / OFF) / male genitalia, female genitalia and human faces (each can be turned on or off in the detection options)
+男性器・女性器・人間の顔、すでにかかっているモザイクの位置 (上からかけ直す。取り除くことはできない) (検出オプションで個別に ON / OFF) / male genitalia, female genitalia, human faces and mosaics already present in the footage (re-applied over, never removed) (each can be turned on or off in the detection options)
 
 ### できないこと / What it does NOT do
 {% for c in E.cannot %}
@@ -187,7 +187,7 @@ A. {{ answer | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | repl
 - About mosaic removal: {{ U }}/mosaic-removal/
 - Documentation: {{ U }}/docs/
 - Web edition guide: {{ U }}/docs/web/ (お試し用、無料プランは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで / trial use, Free plan: up to {{ site.data.site.web_app.trial_minutes }} minutes per video)
-- Tutorial videos (字幕のみ / captions only): Desktop ① 検出編 / detection https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4 / ② 編集編 / editing https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4 / ③ エンコード・申し込み編 / export and plans https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4 / Web https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4
+- Tutorial videos (字幕のみ / captions only): Desktop ① 検出編 / detection https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4 / ② 編集編 / editing https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4 / ③ エンコード・申し込み編 / export and plans https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4 / ④ モザイク検出編 / mosaic detection https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4 / Web https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4
 - Pricing: {{ U }}/price/
 - System requirements: {{ U }}/spec/
 - Company: {{ U }}/company/about
