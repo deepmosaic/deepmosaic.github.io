@@ -214,8 +214,11 @@ test('privacy §9: ブラウザでログインしてインストーラーを DL 
 })
 
 // T-1572 (2026-10-28) で 10 項を改定して 2026-10-28 に進めた (版は据え置き・再同意なし、T-1444 と同じ)
-test('privacy: 最終更新日は 2026-10-28 (版 = legal.yml / EULA / 利用規約は 2026-10-12 のまま)', () => {
-	assert.match(read('company/privacy.html'), /最終更新日: 2026-10-28（制定: 2019-06-01）/)
+test('privacy: 最終更新日は 2026-10-28 以降 (版 = legal.yml / EULA / 利用規約は 2026-10-12 のまま)', () => {
+	// T-1656 (2026-10-31) で最終更新日だけ進めた。日付の固定は site-copy-t1656.test.js が持つ
+	const date = read('company/privacy.html').match(/最終更新日: (\d{4}-\d{2}-\d{2})（制定: 2019-06-01）/)
+	assert.ok(date, '最終更新日が無い')
+	assert.ok(date[1] >= '2026-10-28', `最終更新日が古い: ${date[1]}`)
 	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-10-12"?/)
 	assert.match(read('company/eula.html'), /最終更新日: 2026-10-12/)
 	assert.match(read('company/terms.html'), /最終更新日: 2026-10-12/)

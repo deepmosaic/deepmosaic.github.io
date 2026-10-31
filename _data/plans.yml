@@ -94,8 +94,12 @@ tiers:
     # (T-013 で 6h→5h、T-954 で 5h→2h。未ログインは 3h→30 分、端末の上限は 10h→4h、T-964 で 4h→2h)。
     # **Supabase の `plan_catalog.included_minutes` が正**で、
     # `src/lib/plan-catalog.test.js` が CI で突き合わせる (ローカルでは skip される)
+    # 無料期間 7 日 (T-1656): 初めて起動した日から 7 日間か累計の上限のどちらか早い方で終わる。
+    # **Supabase の `plan_catalog.free_window_days` が正** (desktop `auth/env.rs::FREE_WINDOW_DAYS` = 7 は予備値)。
+    # docs / トップ / CTA / llms は Liquid で引く。bullets・FAQ・price の description は直書きなので一緒に直すこと。
     included_hours: 2
     included_basis: "cumulative"
+    free_window_days: 7
     max_contracts: 1 # 無料プランは追加契約の対象外
     overage_per_hour: null # 従量課金なし (無料枠を使い切ったら有料プランへ)
     trial_days: 0
@@ -103,10 +107,11 @@ tiers:
     public: true
     summary: "まずは無料で試せます"
     bullets:
-      - "累計 2 時間分の動画インポート（登録なしは 30 分）"
+      - "初めて起動した日から 7 日間、累計 2 時間分の動画インポートが無料（登録なしは 30 分）"
+      - "7 日間か累計 2 時間のどちらか早い方で無料期間は終わります"
       - "1 台の PC では合計 2 時間まで（アカウントを作り直しても同じ）"
       - "クレジットカードの登録は不要"
-      - "無料分の終了後も既存プロジェクトの編集・書き出しは継続できます"
+      - "無料期間の終了後も、既存プロジェクトの編集・書き出しは続けてご利用いただけます"
     cta:
       label: "無料でダウンロード"
       kind: "download"

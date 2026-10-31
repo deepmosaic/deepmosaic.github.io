@@ -22,7 +22,7 @@ params:
       {%- if include.sub -%}
         {{ include.sub }}
       {%- else -%}
-        累計{{ free_plan.included_hours }}時間分の動画インポートが無料。クレジットカード不要。<br>
+        初回起動から{{ free_plan.free_window_days }}日間、累計{{ free_plan.included_hours }}時間分の動画インポートが無料。クレジットカード不要。<br>
         セットアップ後はネットワークを切断した状態でも動作します。
       {%- endif -%}
     </p>

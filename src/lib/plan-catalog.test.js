@@ -50,6 +50,7 @@ function catalogFrom(tiers, mutate = () => {}) {
       seat_based: pooled,
       min_seats: t.min_seats ?? 1,
       max_contracts: t.max_contracts,
+      free_window_days: t.free_window_days ?? null,
       is_public: t.public,
       sort_order: 0,
     };
@@ -188,6 +189,32 @@ test('最低シート数のずれを検知する', () => {
   const { errors } = diffPlanCatalog(TIERS, plans);
   assert.equal(errors.length, 1);
   assert.match(errors[0], /最低シート数が食い違っている/);
+});
+
+test('無料期間の日数 (free_window_days) のずれを検知し、列が無ければ warning に留める', () => {
+  const site = byCode('free').free_window_days;
+  assert.equal(typeof site, 'number', 'plans.yml の free に free_window_days が無い');
+
+  const drifted = diffPlanCatalog(
+    TIERS,
+    catalogFrom(TIERS, (p) => {
+      find(p, 'free').free_window_days = site + 7;
+    }),
+  );
+  assert.equal(drifted.errors.length, 1);
+  assert.match(drifted.errors[0], /^free: 無料期間の日数が食い違っている/);
+  assert.match(drifted.errors[0], new RegExp(`サイト ${site} 日 / Supabase ${site + 7} 日`));
+  assert.match(drifted.errors[0], /plan_catalog\.free_window_days が正/);
+
+  // migration 前 / Worker が列を返さない: デプロイは止めない
+  const missing = diffPlanCatalog(
+    TIERS,
+    catalogFrom(TIERS, (p) => {
+      for (const plan of p) delete plan.free_window_days;
+    }),
+  );
+  assert.deepEqual(missing.errors, []);
+  assert.deepEqual(missing.warnings, ['free: plan_catalog に free_window_days が無い — この項目の突き合わせを飛ばした (スキーマ変更の可能性)']);
 });
 
 test('サイトにあって catalog に無いプランは落とす (実在しないプランの広告)', () => {

@@ -56,7 +56,7 @@ llms.txt (TICKET-SITE-33)。
 - 種別 / Type: Windows デスクトップアプリケーション（{{ E.os }}）/ Desktop application for {{ E.os }}
 - 処理場所 / Where processing happens: すべて利用者の PC 内。映像・音声・フレーム画像・検出座標・ファイル名は送信しません / Entirely on the user's own PC; video, audio, frames, detection coordinates and file names are never uploaded
 - 出力 / Output: モザイクを焼き込んだ動画ファイル、および Adobe Premiere Pro 用のモザイク情報 / A video with the mosaic burned in, plus mosaic data for Adobe Premiere Pro
-- 料金 / Pricing: 無料枠（累計 {{ free.included_hours }} 時間・クレジットカード不要）＋ 有料 3 プラン / Free tier plus three paid plans
+- 料金 / Pricing: 無料枠（初めて起動した日から {{ free.free_window_days }} 日間・累計 {{ free.included_hours }} 時間・クレジットカード不要）＋ 有料 3 プラン / Free tier ({{ free.free_window_days }} days from first launch, up to {{ free.included_hours }} hours cumulative) plus three paid plans
 - 最終更新 / Last updated: {{ site.time | date: '%Y-%m-%d' }}
 
 ## 製品 / Product

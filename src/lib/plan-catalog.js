@@ -23,6 +23,7 @@
 //   plans.yml `price`              ⇔ plan_catalog `monthly_price_jpy`
 //   plans.yml `max_contracts`      ⇔ plan_catalog `max_contracts`
 //   plans.yml `min_seats`          ⇔ plan_catalog `min_seats`
+//   plans.yml `free_window_days`   ⇔ plan_catalog `free_window_days` (無料プランだけ、T-1656)
 //
 // **比較は「分」で行う。** 時間に割ってから比べると 300 / 60 のように割り切れない値
 // (例: 90 分) で浮動小数の誤差が入り、一致しているのに落ちる / 逆に見逃す。
@@ -153,6 +154,18 @@ export function diffPlanCatalog(tiers, plans) {
     // min_seats は pooled プランだけが持つ。片方に無ければ compareField が warning にする
     if (tier.min_seats !== undefined) {
       compareField(out, tier.code, 'min_seats', '最低シート数', 'シート', tier.min_seats, plan.min_seats);
+    }
+    // free_window_days (T-1656) は無料プランだけが持つ。列が来ない (migration 前 / Worker が返さない) ときは warning
+    if (tier.free_window_days !== undefined) {
+      compareField(
+        out,
+        tier.code,
+        'free_window_days',
+        '無料期間の日数',
+        '日',
+        tier.free_window_days,
+        plan.free_window_days,
+      );
     }
   }
 

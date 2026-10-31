@@ -24,11 +24,14 @@ account / support は TICKET-SITE-44 で追加。
       未ログインの 30 分は desktop `auth/env.rs::ANONYMOUS_USAGE_LIMIT_SECONDS` (T-954 で 3 時間 → 30 分)。
       T-964: 端末の上限 2 時間 (4 時間 → 2 時間、Supabase `plan_catalog.device_ceiling_minutes` = 120) は
       plans.yml に値が無いので直書き。site-copy-t964.test.js が固定する。
+      T-1656: 無料期間の日数は `_data/plans.yml` の `free_window_days` から差し込む
+      (Supabase `plan_catalog.free_window_days` が正)。無料期間ができたので
+      「別途の無料トライアル期間は設けていません」は矛盾するため外した。site-copy-t1656.test.js が固定する。
     {%- endcomment -%}
-    <p>ダウンロードしてすぐ、ログインなしで累計30分までお試しいただけます。無料のアカウント登録で累計{{ free_plan.included_hours }}時間分までに増えます。無料分は 1 台の PC では、別のアカウントで登録し直しても合計 2 時間までです。クレジットカードを登録しなければ Free プランとしてご利用いただけるため、別途の無料トライアル期間は設けていません。個人向けプラン（Light / Pro）のお支払いはクレジットカードです（Enterprise は請求書による銀行振込です。<a href="#team">組織の管理</a>）。</p>
+    <p>無料でご利用いただけるのは、<strong>初めて起動した日から {{ free_plan.free_window_days }} 日間</strong>です。ダウンロードしてすぐ、ログインなしで累計30分までお試しいただけます。無料のアカウント登録で累計{{ free_plan.included_hours }}時間分までに増えます。無料分は 1 台の PC では、別のアカウントで登録し直しても合計 2 時間までです。{{ free_plan.free_window_days }} 日間か累計の上限のどちらか早い方で無料期間は終わります。クレジットカードの登録は不要です。個人向けプラン（Light / Pro）のお支払いはクレジットカードです（Enterprise は請求書による銀行振込です。<a href="#team">組織の管理</a>）。</p>
     <p>ログインすると、無料プランでも検出可能時間が増えるほか、NVIDIA GPU 搭載の PC では高精度モデルで検出できるようになります（未ログインのときは軽量モデルで検出します）。</p>
     <ul>
-      <li>無料: 累計{{ free_plan.included_hours }}時間分までの動画インポート（登録なしは30分／クレジットカードの登録は不要）</li>
+      <li>無料: 初回起動から {{ free_plan.free_window_days }} 日間・累計{{ free_plan.included_hours }}時間分までの動画インポート（登録なしは30分／クレジットカードの登録は不要）</li>
       <li>有料プラン: プランごとの込み時間は<a href="/price">料金ページ</a>をご覧ください</li>
     </ul>
     <p>超過料金は発生しません ── 枠が足りない場合は同じプランを追加でご契約いただけます（{% include contract-limits.html %}）。</p>
@@ -83,7 +86,11 @@ account / support は TICKET-SITE-44 で追加。
       </div>
       <div class="kv-row">
         <div class="kv-key">上限に達したとき</div>
-        <div class="kv-val">検出を開始しようとするとプランの変更（未ログインの場合はログイン）を促すダイアログが表示されます。進行中の検出やエンコードは止まりません</div>
+        <div class="kv-val">累計の上限に達したとき、または無料期間が終わったときは、検出を開始しようとするとプランの変更（未ログインの場合はログイン）を促すダイアログが表示されます。進行中の検出やエンコードは止まりません</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">無料期間の表示</div>
+        <div class="kv-val">画面下の残り時間に、無料期間の残り日数も表示されます</div>
       </div>
     </div>
   </div>
