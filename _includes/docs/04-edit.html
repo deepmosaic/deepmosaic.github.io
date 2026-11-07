@@ -574,7 +574,7 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
     <p>編集ページで使えるショートカットの一覧です。ツールバー右端の {% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} にマウスを乗せても同じ一覧が表示されます。文字入力中は無効です。</p>
     <ul>
       <li>「タイムライン」の行は、タイムラインを表示しているときに効きます（折りたたみ中は効きません）。取り消しは検出枠の <kbd>Ctrl+Z</kbd> と別で、タイムライン編集は <kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+Y</kbd> です</li>
-      <li><kbd>Delete</kbd> は、最後に操作した場所で対象が変わります。プレイヤー（映像）を最後に触ったときは選択中の検出枠を、タイムラインを最後に触ったときは選択中のクリップ・テキスト・音声トラックを削除します</li>
+      <li><kbd>Delete</kbd> は、最後に操作した場所で対象が変わります。プレイヤー（映像）を最後に触ったときは選択中の検出枠を、タイムラインを最後に触ったときは選択中のクリップ・テキスト・音声トラックを削除します。<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>（コピー / 貼り付け）も同じで、プレイヤーなら検出枠、タイムラインならクリップ・テキスト・音声トラックが対象です（サイドバーでテキストを選んだときもタイムラインを触ったことになります）</li>
       <li><kbd>Shift</kbd> を素早く 2 回押すと形の引き継ぎを固定し、もう一度 2 回か <kbd>Esc</kbd> で解除します。日本語入力（IME）などが <kbd>Shift</kbd> の単押しを使う環境では効かないことがあります</li>
     </ul>
     <figure class="my-4">
@@ -606,13 +606,15 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>ツールバーの「ラベル」メニュー（表示するラベルと絞り込み）を開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="13">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="15">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
           <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>このフレームのみに回避マスクを追加</td></tr>
           <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>以降のフレームに連続で回避マスクを追加</td></tr>
           <tr data-shortcut="bbox_shape_ellipse"><td><kbd>W</kbd></td><td>追加する / 描く bbox の形を楕円に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>追加する / 描く bbox の形を多角形に（もう一度押すと四角に戻ります）</td></tr>
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
+          <tr data-shortcut="bbox_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の bbox をコピー（最後にプレイヤーを操作したとき）</td></tr>
+          <tr data-shortcut="bbox_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした bbox を今のフレームに貼り付け（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
           <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>選択中の bbox を 15° 回転</td></tr>
           <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>選択中の bbox を -15° 回転（逆回り）</td></tr>
@@ -628,8 +630,8 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
           <tr data-shortcut="timeline_nudge_back"><td><kbd>Ctrl+←</kbd></td><td>選択中の要素を 1 フレーム前へ動かす</td></tr>
           <tr data-shortcut="timeline_nudge_fwd"><td><kbd>Ctrl+→</kbd></td><td>選択中の要素を 1 フレーム後ろへ動かす</td></tr>
           <tr data-shortcut="timeline_duplicate"><td><kbd>Ctrl+D</kbd></td><td>選択中の要素を複製</td></tr>
-          <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の要素をコピー</td></tr>
-          <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした要素を貼り付け（テキスト・音声は再生ヘッドの位置、クリップは選択中のクリップの後ろ）</td></tr>
+          <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の要素をコピー（最後にタイムラインを操作したとき）</td></tr>
+          <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした要素を貼り付け（テキスト・音声は再生ヘッドの位置、クリップは選択中のクリップの後ろ。最後にタイムラインを操作したとき）</td></tr>
           <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>選択中の要素を削除（最後にタイムラインを操作したとき）</td></tr>
           <tr data-shortcut="person_gallery_toggle"><td rowspan="8">ページ</td><td><kbd>P</kbd></td><td>人物ギャラリーを開閉</td></tr>
           <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>メディア（サイドバー）を開閉</td></tr>

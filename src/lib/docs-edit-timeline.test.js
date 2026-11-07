@@ -116,6 +116,8 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['bbox_shape_ellipse', 'BBox 編集', ['W']],
 	['bbox_shape_polygon', 'BBox 編集', ['O']],
 	['delete_bbox', 'BBox 編集', ['Delete']],
+	['bbox_copy', 'BBox 編集', ['Ctrl', 'C']],
+	['bbox_paste', 'BBox 編集', ['Ctrl', 'V']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
 	['bbox_rotate_ccw', 'BBox 編集', ['Shift', 'Q']],
@@ -165,8 +167,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
 /**
  * 表の行数 (= 写しの数)。desktop の 81 個 (実験フラグ ON) − 無効化済みの 9 個 = 72 (T-1470)。凡例専用の「マウス」の 18 個と carry_lock は
  * 数に含む (owner が無いだけで凡例にも表にも載る)。
+ * T-1827: BBox のコピー / 貼り付け (bbox_copy / bbox_paste、delete_bbox の直後) を足して 74。
  */
-const SHORTCUT_ROW_COUNT = 72
+const SHORTCUT_ROW_COUNT = 74
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
@@ -316,6 +319,23 @@ test('ショートカットの節は Delete の効き先 (最後に操作した�
 
 	// Act / Assert
 	assert.match(text, /最後に(操作|触)/, `Delete の効き先が書かれていない: ${text.slice(0, 200)}`)
+})
+
+test('Ctrl+C / Ctrl+V の行は効き先 (プレイヤー / タイムライン) を書き分けている (T-1827)', () => {
+	// Arrange
+	const section = sectionOf(edit, 'shortcuts') ?? ''
+	const rowText = (id) => {
+		const m = section.match(new RegExp(`<tr data-shortcut="${id}">([\\s\\S]*?)</tr>`))
+		return m ? textOf(m[1]) : ''
+	}
+
+	// Act / Assert
+	for (const id of ['bbox_copy', 'bbox_paste']) {
+		assert.match(rowText(id), /最後にプレイヤーを操作したとき/, `${id} の行に効き先が無い`)
+	}
+	for (const id of ['timeline_copy', 'timeline_paste']) {
+		assert.match(rowText(id), /最後にタイムラインを操作したとき/, `${id} の行に効き先が無い`)
+	}
 })
 
 // ── タイムライン編集の各機能 (CHANGELOG T-513 の列挙) ────────────────────────
