@@ -118,6 +118,8 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['delete_bbox', 'BBox 編集', ['Delete']],
 	['bbox_copy', 'BBox 編集', ['Ctrl', 'C']],
 	['bbox_paste', 'BBox 編集', ['Ctrl', 'V']],
+	['bbox_bridge', 'BBox 編集', ['Y']],
+	['bbox_bridge_cancel', 'BBox 編集', ['Esc']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
 	['bbox_rotate_ccw', 'BBox 編集', ['Shift', 'Q']],
@@ -168,8 +170,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
  * 表の行数 (= 写しの数)。desktop の 81 個 (実験フラグ ON) − 無効化済みの 9 個 = 72 (T-1470)。凡例専用の「マウス」の 18 個と carry_lock は
  * 数に含む (owner が無いだけで凡例にも表にも載る)。
  * T-1827: BBox のコピー / 貼り付け (bbox_copy / bbox_paste、delete_bbox の直後) を足して 74。
+ * T-1854: BBox A→B をつなぐ (bbox_bridge = Y、凡例専用の bbox_bridge_cancel = Esc、bbox_paste の直後) を足して 76。
  */
-const SHORTCUT_ROW_COUNT = 74
+const SHORTCUT_ROW_COUNT = 76
 
 /** T-513 で足した節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
@@ -336,6 +339,24 @@ test('Ctrl+C / Ctrl+V の行は効き先 (プレイヤー / タイムライン) 
 	for (const id of ['timeline_copy', 'timeline_paste']) {
 		assert.match(rowText(id), /最後にタイムラインを操作したとき/, `${id} の行に効き先が無い`)
 	}
+})
+
+test('Y の行はつなぐ操作 (2 回押す・右クリック・Ctrl+Z) と効き先を書き、Esc の行は解除 (T-1854)', () => {
+	// Arrange
+	const section = sectionOf(edit, 'shortcuts') ?? ''
+	const rowText = (id) => {
+		const m = section.match(new RegExp(`<tr data-shortcut="${id}">([\\s\\S]*?)</tr>`))
+		return m ? textOf(m[1]) : ''
+	}
+
+	// Act
+	const bridge = rowText('bbox_bridge')
+
+	// Assert
+	for (const word of ['つなぐ元', 'もう一度押す', '滑らかにつなぐ', 'ここからつなぐ', 'ここへつなぐ', 'Ctrl+Z', '最後にプレイヤーを操作したとき']) {
+		assert.ok(bridge.includes(word), `bbox_bridge の行に「${word}」が無い: ${bridge}`)
+	}
+	assert.match(rowText('bbox_bridge_cancel'), /つなぐ元を解除/)
 })
 
 // ── タイムライン編集の各機能 (CHANGELOG T-513 の列挙) ────────────────────────

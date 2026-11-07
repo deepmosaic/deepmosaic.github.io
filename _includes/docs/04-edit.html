@@ -606,7 +606,7 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>ツールバーの「ラベル」メニュー（表示するラベルと絞り込み）を開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="15">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="17">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
           <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>このフレームのみに回避マスクを追加</td></tr>
           <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>以降のフレームに連続で回避マスクを追加</td></tr>
@@ -615,6 +615,8 @@ MotionTrackMenu / `tracking/track-messages.ts` と CONTRACT-TRACK §12 / CONTRAC
           <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>選択中の bbox を削除（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="bbox_copy"><td><kbd>Ctrl+C</kbd></td><td>選択中の bbox をコピー（最後にプレイヤーを操作したとき）</td></tr>
           <tr data-shortcut="bbox_paste"><td><kbd>Ctrl+V</kbd></td><td>コピーした bbox を今のフレームに貼り付け（最後にプレイヤーを操作したとき）</td></tr>
+          <tr data-shortcut="bbox_bridge"><td><kbd>Y</kbd></td><td>選択中の bbox をつなぐ元にする。別のフレームで bbox を選んでもう一度押すと、2 つの間を滑らかにつなぐ連続 bbox を作ります（最後にプレイヤーを操作したとき。右クリックの「ここからつなぐ」「ここへつなぐ」でも同じ。<kbd>Ctrl+Z</kbd> 1 回で戻せます）</td></tr>
+          <tr data-shortcut="bbox_bridge_cancel"><td><kbd>Esc</kbd></td><td>つなぐ元を解除</td></tr>
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
           <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>選択中の bbox を 15° 回転</td></tr>
           <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>選択中の bbox を -15° 回転（逆回り）</td></tr>
