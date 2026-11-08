@@ -93,12 +93,13 @@ test('10 項: 3-1 の事前同意の例外と、開示・訂正等の窓口の�
 	assert.match(textOf(read('company/privacy.html')), /ただし、10項に定めるものを除きます/)
 })
 
-test('最終更新日は 2026-10-28 以降、版は 2026-10-12 のまま (再同意を求めない)', () => {
+// 版は T-1883 (2026-11-08) で 18 歳未満の号を足して上げた。privacy の改定では版を動かさないことを見る (値の固定は site-copy-t1883.test.js)
+test('最終更新日は 2026-10-28 以降、版は privacy の改定では動かさない (再同意を求めない)', () => {
 	// T-1656 (2026-10-31) で最終更新日だけ進めた。日付の固定は site-copy-t1656.test.js が持つ
 	const date = read('company/privacy.html').match(/最終更新日: (\d{4}-\d{2}-\d{2})（制定: 2019-06-01）/)
 	assert.ok(date, '最終更新日が無い')
 	assert.ok(date[1] >= '2026-10-28', `最終更新日が古い: ${date[1]}`)
-	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-10-12"?/)
+	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-11-08"?/)
 })
 
 test('docs / 送信内容の一覧: 退会で結び付けが消えること、ログイン中は結び付けることを書く (10 項と一致)', () => {

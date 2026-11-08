@@ -86,7 +86,8 @@ function zenkakuWidth(s) {
 }
 
 const EULA = 'company/eula.html'
-const LEGAL_VERSION = '2026-10-12'
+// T-1883 (2026-11-08) で 18 歳未満の号を足して版を上げた。版の改定の固定は site-copy-t1883.test.js
+const LEGAL_VERSION = '2026-11-08'
 /** 変更前のフッターの data-dl の個数 (DL ボタンを増減しない、計画 W0-6)。 */
 const FOOTER_DATA_DL_COUNT = 1
 
@@ -215,7 +216,7 @@ test('EULA: <ul> の直下に <ol> を入れない', () => {
 
 // --- 7. 版 ---
 
-test('版: EULA の最終更新日 = _data/legal.yml の version = 2026-10-12', () => {
+test('版: EULA の最終更新日 = _data/legal.yml の version = LEGAL_VERSION', () => {
 	// Act
 	const version = parseFlatYaml(read('_data/legal.yml')).version
 

@@ -71,7 +71,8 @@ function hrefsOf(html) {
 }
 
 /** 版の値。変えるときは desktop / web / installer の eula.txt と同時に (計画 W0-1)。 */
-const LEGAL_VERSION = '2026-10-12'
+// T-1883 (2026-11-08) で 18 歳未満の号を足して版を上げた。版の改定の固定は site-copy-t1883.test.js
+const LEGAL_VERSION = '2026-11-08'
 const MIN_DATE = '2026-10-12'
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/
 const SLUGS = ['about', 'terms', 'privacy', 'cookie', 'eula', 'asct']
@@ -97,7 +98,7 @@ test('ヘルパー: 陽性対照と陰性対照 (検査のすり抜けを防ぐ)
 
 // --- 2. 版の一致 ---
 
-test('版: legal.yml の version = EULA の最終更新日 = 利用規約の最終更新日 = 2026-10-12', () => {
+test('版: legal.yml の version = EULA の最終更新日 = 利用規約の最終更新日 = LEGAL_VERSION', () => {
 	// Arrange
 	const version = parseFlatYaml(read('_data/legal.yml')).version
 
@@ -130,11 +131,15 @@ test('最終更新日: 6 ページすべてが ISO で MIN_DATE 以降 (同日�
 	}
 })
 
-test('最終更新日: privacy を除く 5 ページは同日 (個別に改定したページ以外の日付がずれていない)', () => {
+// T-1883 (2026-11-08): 版を上げて eula / terms の日付が進んだ (上の版のテストが見る)。ここは版にも privacy の
+// 個別改定にも連動しない残りの 3 ページ (about / asct / cookie) が同日であることを見る。
+test('最終更新日: 個別に改定した privacy と版の eula / terms を除く 3 ページは同日', () => {
 	// Act
-	const dates = new Set(SLUGS.filter((s) => s !== 'privacy').map((s) => lastUpdated(read(pageOf(s)))))
+	const rest = SLUGS.filter((s) => !['privacy', 'eula', 'terms'].includes(s))
+	const dates = new Set(rest.map((s) => lastUpdated(read(pageOf(s)))))
 
 	// Assert
+	assert.equal(rest.length, 3)
 	assert.equal(dates.size, 1, `日付が揃っていない: ${[...dates].join(', ')}`)
 })
 

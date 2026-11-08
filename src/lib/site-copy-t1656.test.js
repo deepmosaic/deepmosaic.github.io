@@ -159,5 +159,6 @@ test('プライバシーポリシー 10 項: 利用開始日時を収集し、�
 test('利用規約・同意の版は変えない (再同意を出さない)', () => {
 	// 利用規約の既存文 (無料枠は累計で管理) がそのまま残っていること
 	assert.match(textOf(read('company/terms.html')), /累計で管理し/)
-	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-10-12"?/)
+	// 版は T-1883 (2026-11-08) で 18 歳未満の号を足して上げた。T-1656 では動かしていない (値の固定は site-copy-t1883.test.js)
+	assert.match(stripYamlComments(read('_data/legal.yml')), /version:\s*"?2026-11-08"?/)
 })

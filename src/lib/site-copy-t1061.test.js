@@ -9,7 +9,8 @@
 //   - 配布形態 (デスクトップ版 / Web 版) で区別して書かない。「当社が提供するソフトウェア」とまとめる。
 //   - 「法人向け（Enterprise）」は「法人様」と書く。
 //   - 特定商取引法に基づく表記の見出し列は狭くしない (`min-w-[10rem]`)。
-//   - 版 (legal.yml の version と eula / terms の最終更新日) は 2026-10-12 のまま。
+//   - 版 (legal.yml の version と eula / terms の最終更新日) は 2026-10-12 のまま
+//     (T-1883 で 18 歳未満の号を足して 2026-11-08 に上げた)。
 //
 // 読み取りはこのファイル内で完結させる (`site-copy-t943.test.js` と同じ流儀)。
 
@@ -43,7 +44,7 @@ const COMPANY_FILES = readdirSync(join(ROOT, 'company'))
 	.filter((name) => name.endsWith('.html'))
 	.map((name) => `company/${name}`)
 
-const LEGAL_VERSION = '2026-10-12'
+const LEGAL_VERSION = '2026-11-08'
 
 /** 各ページの本文 (コメント・タグを除く) のうち、パターンに一致した箇所を `file: 一致` で返す。 */
 function findIn(files, pattern) {
@@ -137,7 +138,7 @@ test('特商法の表: 見出し列 (th scope="row") はすべて min-w-[10rem] 
 	for (const m of ths) assert.match(m[1], /min-w-\[10rem\]/)
 })
 
-test('版: legal.yml の version と eula / terms の最終更新日は 2026-10-12 のまま', () => {
+test('版: legal.yml の version と eula / terms の最終更新日が LEGAL_VERSION にそろう', () => {
 	assert.match(read('_data/legal.yml'), new RegExp(`^version: "${LEGAL_VERSION}"$`, 'm'))
 	assert.equal(lastUpdated(read('company/eula.html')), LEGAL_VERSION)
 	assert.equal(lastUpdated(read('company/terms.html')), LEGAL_VERSION)
