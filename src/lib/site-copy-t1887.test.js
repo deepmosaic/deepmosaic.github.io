@@ -7,6 +7,7 @@
 //   - RTX 50 / 40 / 30 / 20 の各シリーズと GTX、GPU なしの行がある。
 //   - 推定の行は、速い GPU ほど倍率が小さい (同じシリーズ内で並びが逆転しない)。
 //   - FAQ の処理時間の回答は表の実測と同じ数値を使う。
+//   - T-1888: 表の説明と FAQ に「CPU の性能にも依存する」を書く。
 //
 // 読み取りはこのファイル内で完結させる (spec-requirements.test.js と同じ流儀)。
 
@@ -118,7 +119,7 @@ test('推定の行は、同じシリーズの上位ほど倍率が小さい', ()
 
 test('説明文は実測と推定の違い・条件 (1080p 30fps、形に沿ったモザイクを含む、書き出しは含まない) を書く', () => {
 	const note = scalar(spec, 'performance_note')
-	for (const re of [/実測/, /推定/, /1080p/, /30fps/, /書き出し/, /2026-10/]) assert.match(note, re)
+	for (const re of [/実測/, /推定/, /1080p/, /30fps/, /書き出し/, /2026-10/, /CPU の性能にも依存/]) assert.match(note, re)
 })
 
 test('FAQ の処理時間の回答は表と同じ数値 (旧値を出さない)', () => {
@@ -128,4 +129,5 @@ test('FAQ の処理時間の回答は表と同じ数値 (旧値を出さない)'
 	assert.doesNotMatch(a, /約 6 倍|約 13 倍|2〜6 倍/)
 	assert.match(a, /RTX 3070 Ti で約 2\.1 倍/)
 	assert.match(a, /RTX 5070 Ti で約 1\.1 倍/)
+	assert.match(a, /CPU の性能にも依存/) // T-1888
 })
