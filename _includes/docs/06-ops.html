@@ -178,3 +178,29 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
     <p>使い方と対応ブラウザ、Desktop 版との違いの一覧は<a href="/docs/web/">Web 版の使い方</a>にまとめています。{% if site.data.site.web_app.enabled %}Web 版は <a href="{{ site.data.site.web_app.url }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> から開けます。{% endif %}</p>
   </div>
 </section>
+
+{%- comment -%} T-1900: 同梱する第三者ソフトとライセンス。正本は desktop の src/lib/legal/third-party.ts (アプリの「このアプリについて」と同じ内容)。 {%- endcomment -%}
+<section id="licenses" class="scroll-mt-24">
+  {% include docs-h2.html kicker="運用" title="同梱する第三者ソフトとライセンス" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Desktop 版のインストーラには、次の第三者ソフトウェアを同梱しています。アプリの中では、プロフィールメニューの「このアプリについて」から同じ一覧と各ライセンスの全文を確認できます。</p>
+    <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.1（ffmpeg.exe / ffprobe.exe）</h3>
+    <ul>
+      <li>ライセンス: GNU General Public License version 3（GPL v3）。全文は <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
+      <li>ビルド: gyan.dev の 8.1.1 essentials ビルド（8.1.1-essentials_build-www.gyan.dev）。<code>--enable-gpl --enable-version3</code> で構成され、libx264・libx265・libxvid（いずれも GPL v2 以降）などのライブラリを含みます。</li>
+      <li>ソースコードの入手先: <a href="https://ffmpeg.org/releases/ffmpeg-8.1.1.tar.xz" target="_blank" rel="noopener noreferrer">https://ffmpeg.org/releases/ffmpeg-8.1.1.tar.xz</a>（FFmpeg 本体）、ビルドの構成と含まれるライブラリの版は <a href="https://www.gyan.dev/ffmpeg/builds/" target="_blank" rel="noopener noreferrer">https://www.gyan.dev/ffmpeg/builds/</a>。入手できない場合は<a href="#support">お問い合わせ</a>ください。</li>
+      <li>動画の読み込みと書き出しに使う別のプログラムとして同梱しており、Deepmosaic のアプリ本体にはリンクしていません。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime 1.26</h3>
+    <ul>
+      <li>提供元: Microsoft Corporation。ライセンス: MIT License。ソース: <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>検出モデルの推論に使います。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Microsoft Visual C++ 再頒布可能パッケージ</h3>
+    <ul>
+      <li>提供元: Microsoft Corporation。Microsoft Visual Studio のライセンス条項に定める再頒布可能コードとして、アプリの実行に必要なランタイム DLL（vcruntime140 / msvcp140 ほか）を同梱しています。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">GPU 高速化（NVIDIA）のコンポーネント</h3>
+    <p>NVIDIA 製の GPU で処理を速くするコンポーネント（CUDA / cuDNN ほか、約 2.4 GB）はインストーラに含めず、必要なときに当社の配信元から取得します。NVIDIA Corporation の使用許諾条件に従って取得・保存し、GPU での処理にだけ使います。取得しなくても機能は変わりません。</p>
+  </div>
+</section>

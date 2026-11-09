@@ -71,6 +71,8 @@ desktop:
       - { id: spec, label: 動作環境 }
       - { id: trouble, label: トラブルシューティング }
       - { id: web, label: Web 版について }
+      # T-1900: 新規追加の ID。本文は 06-ops.html の web の次
+      - { id: licenses, label: 同梱ソフトのライセンス }
   # T-263: Enterprise の組織機能 (T-255〜T-262)。**新規追加の ID** で、既存 20 個には
   # 触れていない。本文は `_includes/docs/07-team.html` (include は docs/index.html の末尾)。
   # T-510: 表示はアプリ (T-484) に合わせて「組織」。ID `team` はアプリ内ヘルプ / llms.txt が指すので変えない。
