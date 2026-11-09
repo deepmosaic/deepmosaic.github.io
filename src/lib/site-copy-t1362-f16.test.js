@@ -144,13 +144,13 @@ test('編集ページの色の段落とラベル（C）の行に「モザイク�
 	assert.ok(!label.includes('既存モザイク'), `旧名が残っている: ${label}`)
 })
 
-// T-1625: Desktop 版は「モザイク」を ON にすると局部・顔と排他、Web 版は併用できる。差があるので「同じ」ではなく「ほぼ同じ」で始め、差を書く
+// T-1625: Desktop 版は「モザイク」を ON にすると身体のプライバシー部位・顔と排他、Web 版は併用できる。差があるので「同じ」ではなく「ほぼ同じ」で始め、差を書く
 test('Web 版の差分表の検出の行は「ほぼ同じ」で始まり、「モザイク」の併用 / 排他の差を書く', () => {
 	const val = kvRow(webDiff(), '検出')
 	assert.ok(val, '検出の行が無い')
 	assert.ok(val.startsWith('ほぼ同じ'), val)
 	assert.ok(val.includes('「モザイク」'), val)
-	assert.ok(val.includes('Web 版は「モザイク」を局部・顔と併用できます'), val)
+	assert.ok(val.includes('Web 版は「モザイク」を身体のプライバシー部位・顔と併用できます'), val)
 	assert.ok(val.includes('Desktop 版は排他'), val)
 })
 
@@ -203,7 +203,7 @@ test('検出オプションの「モザイク」の行から #detect-mosaic へ�
 	assert.ok(detectOptions().includes('href="#detect-mosaic"'), '#detect-mosaic へのリンクが無い')
 	assert.ok(last.val.includes('詳しくは'), last.val)
 	const target = kvRow(detectOptions(), '検出対象')
-	assert.ok(target.includes('モザイクの枠だけを検出します。局部・顔の検出とモザイクの初期設定は使いません'), target)
+	assert.ok(target.includes('モザイクの枠だけを検出します。身体のプライバシー部位・顔の検出とモザイクの初期設定は使いません'), target)
 	assert.ok(kvRow(detectOptions(), '所要時間の目安').includes('(モザイクの走査 / 目安 N fps)'))
 })
 
