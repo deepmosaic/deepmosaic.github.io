@@ -15,13 +15,18 @@ JSON-LD: FAQPage (TICKET-SITE-05)。
 (TICKET-SITE-CONTRACT-SSOT)。`_data/faq.yml` は Liquid を通らないためプラン条件の
 実数はプレースホルダで書かれているが、**その差し込みをここにも書くと表示側と
 二重管理になる**ので、置換ロジックは共通の include だけが持つ。
+
+T-1922: ページの front matter に `faq_data: <データ名>` があれば `site.data.<データ名>.faq` を使う
+(`/subscribe/` が `_data/subscribe.yml` の FAQ を出す。表示側も同じ配列を `faq.html items=` に渡すこと)。
 {%- endcomment -%}
+{%- assign faq_src = site.data.faq -%}
+{%- if page.faq_data %}{%- assign faq_src = site.data[page.faq_data].faq -%}{%- endif -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "mainEntity": [
-    {%- for item in site.data.faq %}
+    {%- for item in faq_src %}
     {%- capture answer -%}{% include faq-answer.html a=item.a %}{%- endcapture %}
     {
       "@type": "Question",

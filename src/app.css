@@ -9,6 +9,7 @@
 @source "../*.html";
 @source "../docs/**/*.html";
 @source "../price/**/*.html";
+@source "../subscribe/**/*.html";
 @source "../company/**/*.html";
 @source "../enterprise/**/*.html";
 @source "../contact/**/*.html";

@@ -13,7 +13,8 @@
 
 params: なし
 
-プランごとの CTA は `plans.yml` の `cta` (kind = download / link)。`secondary_cta`
+プランごとの CTA は `plans.yml` の `cta` (kind = download / link)。T-1922: `subscribe` があればそちらが優先
+(「申し込む」→ `/subscribe/#plan-<code>`)。`secondary_cta`
 (label / href) があれば、主ボタンの下にテキストリンクを 1 本足す (T-263。カードのみで、
 Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談リンク 1 本に戻ったため、
 現在 `secondary_cta` を持つプランは無い** — 仕組みは汎用として残してある。
@@ -116,7 +117,14 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
     {%- endif %}
 
     <div class="mt-auto pt-6">
-      {%- if plan.cta.kind == "download" %}
+      {%- comment -%}
+        T-1922: `subscribe` があるプラン (Light / Pro) は申し込みページへ。Store 版のアプリには購入画面が無く、
+        T-1917 の「ダウンロードして申し込む」(Store) では申し込みがループしたため。配色は `cta.variant` に従う。
+        DL ではないので `data-dl` は付けない (Web 版への遷移の計測は `/subscribe/` のボタンが持つ)。
+      {%- endcomment -%}
+      {%- if plan.subscribe %}
+      <a href="/subscribe/#plan-{{ plan.code }}" class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full">{{ plan.subscribe.label }}</a>
+      {%- elsif plan.cta.kind == "download" %}
       {% include download-button.html label=plan.cta.label full=true variant=plan.cta.variant dl=plan.code %}
       {%- else %}
       <a href="{{ plan.cta.href }}" class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>

@@ -150,6 +150,14 @@ tiers:
       kind: "download"
       # Pro (featured) を主ボタンにして視線を集めるため、Light は副ボタン配色にする
       variant: "secondary"
+    # T-1922 (2026-11-11): 申し込みの導線。**あると料金カードの CTA は `cta` ではなくこちら**
+    # (「申し込む」→ `/subscribe/#plan-<code>`)。`/subscribe/` のボタンは Web 版の
+    # `<web_app.url>?checkout=<code>` を指す (Web 版のアカウントで Stripe Checkout へ。Store 版の
+    # アプリには購入画面が無い)。`code` は Supabase `plan_catalog.plan_code` と同じで、
+    # `self_serve` が true のプランだけに付ける (Enterprise は見積なので付けない)。
+    # `cta` は残してある (外せば T-1917 の「ダウンロードして申し込む」に戻る)。
+    subscribe:
+      label: "申し込む"
 
   - code: pro
     name: "Pro"
@@ -191,6 +199,9 @@ tiers:
     cta:
       label: "ダウンロードして申し込む"
       kind: "download"
+    # T-1922: 申し込みの導線 (light の `subscribe` のコメントを参照)
+    subscribe:
+      label: "申し込む"
 
   - code: enterprise
     name: "Enterprise"
