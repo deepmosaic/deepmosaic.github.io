@@ -2,7 +2,7 @@
 ---
 
 <!DOCTYPE html>
-<html lang="{{ site.data.lang.ja.my_lang }}">
+<html lang="{{ site.data.lang.ja.my_lang }}"{% if page.no_tracking %} data-no-tracking{% endif %}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -81,6 +81,15 @@ Google は無視する (ノイズ)。言語は <html lang> と og:locale が伝�
 <!-- Google Search Console -->
 <meta name="google-site-verification" content="6bC0ENR45CRbQoll9VBbhsvtL69oIJQ1CbenWwUsidU" />
 
+{%- comment -%}
+T-2090: `no_tracking: true` のページ (例: `/join/` = 法人の案内メールの着地点、URL のフラグメントに組織コード) は
+計測と第三者の読み込みを一切出さない: Google tag (gtag.js)・LINE の social plugin・Cloudflare Web Analytics を出さず、
+`<meta name="referrer" content="no-referrer">` を足し、`<html data-no-tracking>` で `src/main.js` の流入経路の記録
+(localStorage) も止める。既定 (未指定) のページの出力は変わらない。`noindex: true` / `sitemap: false` と併せて使う。
+{%- endcomment %}
+{% if page.no_tracking %}
+<meta name="referrer" content="no-referrer">
+{% else %}
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-6EKGBQ8QWS"></script>
 <script>
@@ -90,6 +99,7 @@ Google は無視する (ノイズ)。言語は <html lang> と og:locale が伝�
 
   gtag('config', 'G-6EKGBQ8QWS');
 </script>
+{%- endif %}
 
 {%- comment -%}
 TICKET-SITE-31: `og:image` をページ上書き可能にした (`page.og_image`)。将来
@@ -152,8 +162,10 @@ TICKET-SITE-05: 構造化データを `_includes/schema/*` に分離し、ペー
 {%- if page.schemas contains 'faq' %}{% include schema/faq.html %}{% endif -%}
 {%- if page.schemas contains 'breadcrumb' %}{% include schema/breadcrumb.html %}{% endif -%}
 
+{% unless page.no_tracking -%}
 <!-- LINE social plugin loader -->
 <script src="https://d.line-scdn.net/r/web/social-plugin/js/thirdparty/loader.min.js" async="async" defer="defer"></script>
+{%- endunless %}
 
 <!-- CSS: self-hosted Roboto + Tailwind/Svelte island styles (built by Vite → assets/dist/) -->
 <link href="/assets/css/fonts.css" rel="stylesheet" media="screen"/>
@@ -169,7 +181,7 @@ TICKET-SITE-05: 構造化データを `_includes/schema/*` に分離し、ペー
 <!-- Cloudflare Web Analytics (TICKET-SITE-39): zone 全体の自動注入 (RUM) を止めたので手動設置。
      app.deepmosaic.co.jp (Web 版) には入れない — CSP 違反 + 動画ファイル名入り URL が第三者へ渡る。
      token は公開値 (Dashboard → Web Analytics → deepmosaic.co.jp → サイトを管理)。 -->
-<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "aedf52894436452180c0ae694b54e87b"}'></script>
+{% unless page.no_tracking %}<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "aedf52894436452180c0ae694b54e87b"}'></script>{% endunless %}
 
 </head>
 <body>

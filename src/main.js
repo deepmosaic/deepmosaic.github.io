@@ -197,6 +197,72 @@ function initDownloadTracking() {
 }
 
 // ---------------------------------------------------------------------------
+// `/join/` (T-2090): 法人の案内メールのリンクの着地点。
+//
+// フラグメント (`#code=XXXX-XXXX-XXXX` / `#admin`) を読み、該当する案内だけを見せる。フラグメントは
+// サーバーへ送られないので、組織コードは配信元のログに残らない。解釈は `src/lib/join-hash.js` の純関数。
+//
+// - **自動では開かない。** ページを開いただけでアプリを起動しない (利用者が「アプリで開く」を押す)。
+// - DOM へは `textContent` と `setAttribute('href', …)` だけ。検証に通らない値は画面にも出さない。
+// ---------------------------------------------------------------------------
+import { joinAppUrl, parseJoinHash } from './lib/join-hash.js';
+
+const COPY_DONE = 'コピーしました。';
+const COPY_FAILED = 'コピーできませんでした。組織コードを選択してコピーしてください。';
+
+function renderJoin(root) {
+  const result = parseJoinHash(location.hash);
+  root.querySelectorAll('[data-join-view]').forEach((el) => {
+    el.hidden = el.dataset.joinView !== result.kind;
+  });
+  const open = root.querySelector('[data-join-open-code]');
+  const codeEls = root.querySelectorAll('[data-join-code]');
+  const copyStatus = root.querySelector('[data-join-copy-status]');
+  if (copyStatus) copyStatus.textContent = '';
+  if (result.kind === 'code') {
+    codeEls.forEach((el) => {
+      el.textContent = result.code;
+    });
+    open?.setAttribute('href', joinAppUrl(result.code));
+  } else {
+    // 前の表示 (hashchange 前) の値を残さない
+    codeEls.forEach((el) => {
+      el.textContent = '';
+    });
+    open?.removeAttribute('href');
+  }
+  return result;
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  throw new Error('clipboard unavailable');
+}
+
+function initJoinPage() {
+  const root = document.querySelector('[data-join]');
+  if (!root) return;
+  let current = renderJoin(root);
+  window.addEventListener('hashchange', () => {
+    current = renderJoin(root);
+  });
+  const copy = root.querySelector('[data-join-copy]');
+  const status = root.querySelector('[data-join-copy-status]');
+  copy?.addEventListener('click', async () => {
+    if (current.kind !== 'code') return;
+    try {
+      await copyText(current.code);
+      if (status) status.textContent = COPY_DONE;
+    } catch {
+      if (status) status.textContent = COPY_FAILED;
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
 // Svelte island mounts — each hydrates server-rendered (Jekyll) markup, so the
 // page works without JS and islands only add interactivity.
 // ---------------------------------------------------------------------------
@@ -220,9 +286,15 @@ function mountIslands(selector, Component) {
 function init() {
   initScrollReveal();
   initBackToTop();
+  initJoinPage();
   // **island のマウントより前**に済ませる。MobileNav が描画する DL リンクへは
   // `data-dl-attr` を props として渡すので、Svelte のスケジューリングに依存しない。
-  const { record: attribution, first: firstTouch } = initDownloadTracking();
+  // T-2090: 計測なしのページ (`<html data-no-tracking>`、レイアウトの `page.no_tracking`) では
+  // 流入経路を記録しない (localStorage に着地ページを書かない・リンクを装飾しない)。
+  const noTracking = document.documentElement.hasAttribute('data-no-tracking');
+  const { record: attribution, first: firstTouch } = noTracking
+    ? { record: null, first: null }
+    : initDownloadTracking();
   document.querySelectorAll('[data-island="mobile-nav"]').forEach((el) => {
     el.dataset.dlAttr = serializeAttribution(attribution);
     // **`data-dl-first` は保存層のエンベロープごと渡す。** MobileNav 側は

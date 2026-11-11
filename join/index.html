@@ -1,0 +1,86 @@
+---
+layout: default
+title: Deepmosaic を開く
+seo_title: Deepmosaic を開く｜Deepmosaic
+permalink: /join/
+description: 法人の案内メールのリンクから、Deepmosaic のアプリを開くためのページです。
+noindex: true
+sitemap: false
+no_tracking: true
+---
+
+{% include header.html %}
+
+{%- comment -%}
+  T-2090 (login1111, 2026-11-11): 法人の案内メールに入れる https リンクの着地点。
+  メール本文に `deepmosaic://` を直接書くとメールソフトが開けない / 警告を出すので、このページを挟む。
+
+  - メンバー用: /join/#code=XXXX-XXXX-XXXX → 「アプリで開く」= deepmosaic://join?code=XXXX-XXXX-XXXX
+  - 管理者用:   /join/#admin               → 「アプリで開く」= deepmosaic://login
+  - アプリ (desktop 2.13、T-2087〜T-2089) が受ける URL はこの 2 つだけ。
+  - 組織コードは URL の**フラグメント (#…)** に置く。フラグメントはサーバーへ送られない (リクエストにも Referer にも
+    載らない) ので、配信元のログに組織コードは残らない。読むのは `src/main.js` の initJoinPage (解釈は `src/lib/join-hash.js`)。
+  - **自動では開かない** (ページを開いただけでアプリを起動しない。利用者がボタンを押す)。
+  - プライバシー: front matter の `no_tracking: true` でレイアウトが計測 (Google tag / Cloudflare Web Analytics / LINE) を出さず、
+    referrer を送らない。`noindex: true` / `sitemap: false`。ナビゲーションには載せない。
+  - 3 つの表示 (code / admin / invalid) は既定ですべて hidden。JS が 1 つだけ出す。JS 無効のときは noscript の案内。
+  - 固定: `src/lib/join-hash.test.js` / `src/lib/site-copy-t2090.test.js` / `e2e/join.spec.ts`
+{%- endcomment -%}
+{%- assign store_url = site.data.lang.ja.app_download_link -%}
+
+<section class="pt-16 pb-20">
+  <div class="mx-auto w-[92%] max-w-[720px]" data-join>
+    <h1 class="text-[clamp(28px,4vw,38px)] font-bold tracking-[-0.02em] text-ink">Deepmosaic を開く</h1>
+
+    <div data-join-view="code" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">
+        組織コード <strong class="font-bold text-ink" data-join-code></strong> でアプリを開きます。
+      </p>
+      <div class="mt-6">
+        <a data-join-open-code class="btn-primary btn-lg w-full sm:w-auto">アプリで開く</a>
+      </div>
+      <ol class="mt-8 flex list-decimal flex-col gap-2 pl-6 text-[14px] leading-[1.9] text-ink-2">
+        <li>「アプリで開く」を押します。</li>
+        <li>ログイン画面の「エンタープライズプランの方はこちら」に組織コードが入っていることを確かめます。</li>
+        <li>「メールアドレスではじめる」または「パスワードで登録済みの方はこちら」からログインします。</li>
+      </ol>
+      <div class="card mt-8 p-5">
+        <p class="text-[13.5px] leading-[1.9] text-ink-2">アプリが開かないときは、組織コードをコピーして、アプリのログイン画面の「エンタープライズプランの方はこちら」に貼り付けてください。</p>
+        <div class="mt-3 flex flex-wrap items-center gap-3">
+          <code class="rounded-md border border-hair px-3 py-1.5 text-[15px] tracking-[0.06em] text-ink select-all" data-join-code></code>
+          <button type="button" class="btn-secondary" data-join-copy>コピー</button>
+          <span class="text-[13px] text-ink-4" role="status" aria-live="polite" data-join-copy-status></span>
+        </div>
+      </div>
+    </div>
+
+    <div data-join-view="admin" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">管理者としてログインします。</p>
+      <div class="mt-6">
+        <a href="deepmosaic://login" data-join-open-admin class="btn-primary btn-lg w-full sm:w-auto">アプリで開く</a>
+      </div>
+      <ol class="mt-8 flex list-decimal flex-col gap-2 pl-6 text-[14px] leading-[1.9] text-ink-2">
+        <li>「アプリで開く」を押します。</li>
+        <li>案内メールを受け取ったメールアドレスでログインします (組織コードは入力しません)。</li>
+      </ol>
+    </div>
+
+    <div data-join-view="invalid" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">リンクが正しくありません。メールのリンクをもう一度開くか、アプリを起動して組織コードを入力してください。</p>
+    </div>
+
+    <noscript>
+      <p class="mt-6 text-[15.5px] leading-[1.95] text-ink-2">このページを使うには JavaScript を有効にしてください。または、アプリを起動してログイン画面の「エンタープライズプランの方はこちら」に組織コードを入力してください。</p>
+    </noscript>
+
+    <div class="mt-12 border-t border-hair pt-8" data-join-install>
+      <h2 class="text-[17px] font-bold text-ink">アプリをまだ入れていない方</h2>
+      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">
+        <a href="{{ store_url }}" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-store>Microsoft Store で Deepmosaic を入手</a>してください。
+        入れた後に、もう一度このページの「アプリで開く」を押してください。
+      </p>
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}
