@@ -232,6 +232,7 @@ test('送信 payload は Worker の契約どおりの形で、正規化済みの
 
   expect(call.method).toBe('POST');
   expect(call.contentType).toContain('application/json');
+  // 会社の Web ページ (companyUrl、T-1958) は未入力ならキーごと載せない (旧サイトと同じボディ)
   expect(Object.keys(call.body).sort()).toEqual([
     'company',
     'email',
@@ -252,4 +253,72 @@ test('送信 payload は Worker の契約どおりの形で、正規化済みの
   expect(call.body).not.toHaveProperty('kind');
   // turnstile_site_key が空の間はトークンを作れないので、キーごと載せない
   expect(call.body).not.toHaveProperty('turnstileToken');
+});
+
+// ── 会社の Web ページ (companyUrl、T-1958) ──────────────────────────────────
+// 規則は Worker (T-1952) の写し。欄の名前が `website` でないのは、`website` がハニーポットだから。
+
+const COMPANY_URL_MESSAGE =
+  '会社の Web ページは URL の形式で入力してください (例: https://example.co.jp)';
+
+test('会社の Web ページは任意の URL 欄として会社名の次に出る', async ({ page }) => {
+  await openInquiryPage(page, INQUIRY_PATH);
+
+  const input = page.locator('#inq-companyUrl');
+  await expect(input).toHaveAttribute('type', 'url');
+  await expect(input).toHaveAttribute('inputmode', 'url');
+  await expect(input).toHaveAttribute('autocomplete', 'url');
+  await expect(input).toHaveAttribute('placeholder', 'https://example.co.jp');
+  await expect(input).not.toHaveAttribute('required', /.*/);
+  await expect(page.locator('label[for="inq-companyUrl"]')).toContainText('会社の Web ページ');
+  await expect(page.locator('label[for="inq-companyUrl"]')).toContainText('任意');
+
+  const ids = await inquiryForm(page)
+    .locator('input:not([type="hidden"]), textarea')
+    .evaluateAll((els) => els.map((el) => el.id));
+  expect(ids.indexOf('inq-companyUrl'), '会社名のすぐ後に置く').toBe(ids.indexOf('inq-company') + 1);
+});
+
+test('会社の Web ページが URL の形式でないと、その欄にエラーが出て送信されない', async ({ page }) => {
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
+  const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
+
+  await fillForm(page);
+  await page.locator('#inq-companyUrl').fill('ftp://example.com');
+  await submitButton(page).click();
+
+  await expect(page.locator('#inq-companyUrl-error')).toHaveText(COMPANY_URL_MESSAGE);
+  await expect(page.locator('#inq-companyUrl')).toHaveAttribute('aria-invalid', 'true');
+  await expect(page.locator('#inq-companyUrl')).toHaveAttribute(
+    'aria-describedby',
+    'inq-companyUrl-error',
+  );
+  await expect(page.locator('#inq-companyUrl')).toBeFocused();
+  expect(calls, '入力エラーのまま Worker を叩いてはいけない').toHaveLength(0);
+});
+
+test('スキームを省いた会社の Web ページは https:// を補って送られる', async ({ page }) => {
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
+  const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
+
+  await fillForm(page);
+  await page.locator('#inq-companyUrl').fill('example.co.jp');
+  await submitButton(page).click();
+
+  await expect(doneCard(page)).toBeVisible();
+  expect(calls).toHaveLength(1);
+  expect(calls[0]?.body['companyUrl']).toBe('https://example.co.jp/');
+  expect(calls[0]?.body['website'], 'ハニーポットは別の欄のまま空').toBe('');
+});
+
+test('会社の Web ページが未入力でも送れて、payload に companyUrl を載せない', async ({ page }) => {
+  const { endpoint } = await openInquiryPage(page, INQUIRY_PATH);
+  const calls = await stubInquiryEndpoint(page, endpoint, { status: 200, body: { ok: true } });
+
+  await fillForm(page);
+  await submitButton(page).click();
+
+  await expect(doneCard(page)).toBeVisible();
+  expect(calls).toHaveLength(1);
+  expect(calls[0]?.body).not.toHaveProperty('companyUrl');
 });

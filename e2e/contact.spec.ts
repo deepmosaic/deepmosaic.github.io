@@ -59,7 +59,8 @@ test('kind=general が島まで届き、メールアドレスとお問い合わ�
   for (const key of ['email', 'message']) {
     await expect(page.locator(`#inq-${key}`), `${key} が無い`).toHaveCount(1);
   }
-  for (const key of ['company', 'phone', 'seats']) {
+  // companyUrl (会社の Web ページ、T-1958) も Enterprise だけの任意項目
+  for (const key of ['company', 'companyUrl', 'phone', 'seats']) {
     await expect(page.locator(`#inq-${key}`), `${key} は general には出さない`).toHaveCount(0);
   }
   for (const key of RETIRED_GENERAL_FIELDS) {

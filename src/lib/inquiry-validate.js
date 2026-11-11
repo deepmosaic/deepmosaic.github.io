@@ -10,7 +10,7 @@
 //
 // | kind | ページ | 項目 |
 // |------|--------|------|
-// | `enterprise` (既定) | `/enterprise/inquiry/` | 会社名・氏名・メール・電話・アカウント数・ご相談内容 |
+// | `enterprise` (既定) | `/enterprise/inquiry/` | 会社名・氏名・メール・電話・アカウント数・ご相談内容・会社の Web ページ (任意、T-1958) |
 // | `general` | `/contact/` | メール・お問い合わせ内容 |
 //
 // general の氏名・件名・ご利用中のバージョンは T-516 (2026-09-23 ユーザー決定) で廃止した。
@@ -54,6 +54,8 @@ export const LIMITS = Object.freeze({
   seatsMin: 1,
   seatsMax: 10_000,
   message: 4000,
+  /** 会社の Web ページ (T-1958)。`https://` を補った後の長さで数える */
+  companyUrl: 500,
 });
 
 /**
@@ -64,6 +66,7 @@ export const LIMITS = Object.freeze({
  */
 export const FIELD_LABELS = Object.freeze({
   company: '会社名',
+  companyUrl: '会社の Web ページ',
   name: '氏名',
   email: 'メールアドレス',
   phone: '電話番号',
@@ -79,7 +82,7 @@ export const FIELD_NAMES = Object.freeze(Object.keys(FIELD_LABELS));
  * 画面の上から下の順に並べる。
  */
 const FIELD_ORDER = Object.freeze({
-  enterprise: Object.freeze(['company', 'name', 'email', 'phone', 'seats', 'message']),
+  enterprise: Object.freeze(['company', 'companyUrl', 'name', 'email', 'phone', 'seats', 'message']),
   general: Object.freeze(['email', 'message']),
 });
 
@@ -111,6 +114,7 @@ export function emptyFields(kind) {
   }
   return {
     company: '',
+    companyUrl: '',
     name: '',
     email: '',
     phone: '',
@@ -226,6 +230,61 @@ function singleLine(raw, key, min, max, labels = FIELD_LABELS) {
   return { ok: true, value };
 }
 
+const COMPANY_URL_FORMAT_MESSAGE = `${FIELD_LABELS.companyUrl}は URL の形式で入力してください (例: https://example.co.jp)`;
+
+/**
+ * 先頭のスキーム (`javascript:` など)。ドットを含む名前 (`example.com:8080` の `example.com`) は
+ * スキームではなくホストとみなし、`https://` を補う側に倒す (Worker と同一)。
+ */
+const SCHEME_RE = /^([A-Za-z][A-Za-z0-9+.-]*):/;
+
+function withDefaultScheme(value) {
+  const scheme = SCHEME_RE.exec(value)?.[1];
+  return scheme !== undefined && !scheme.includes('.') ? value : `https://${value}`;
+}
+
+/** ホスト名にドットが 1 つ以上あり、空のラベル (`a..b` / 末尾の `.`) が無い。 */
+function hasDottedHost(hostname) {
+  const labels = hostname.split('.');
+  return labels.length >= 2 && labels.every((label) => label !== '');
+}
+
+/** `new URL()` で解釈して http(s)・ドット付きのホスト・ユーザー情報なしを確かめ、`href` を返す。 */
+function parseHttpUrl(candidate) {
+  let url;
+  try {
+    url = new URL(candidate);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== 'http:' && url.protocol !== 'https:') return null;
+  if (url.username !== '' || url.password !== '') return null;
+  if (!hasDottedHost(url.hostname)) return null;
+  return url.href;
+}
+
+/**
+ * 会社の Web ページ (T-1958、enterprise だけの任意項目。Worker の T-1952 `companyUrlField` の写し)。
+ * 空 (trim 後) は未入力 = `null`。スキームが無ければ `https://` を補い、補った後の長さで上限を数える。
+ * 空白・制御文字・U+FFFD は `new URL()` に渡す前に弾く (URL の解釈はタブ・改行を黙って取り除き、
+ * 空白を `%20` にするため)。通ったら `URL#href` (ホストの小文字化・末尾の `/` の補完など) を返す。
+ *
+ * @param {unknown} raw
+ * @returns {{ ok: true, value: string | null } | { ok: false, message: string }}
+ */
+export function normalizeCompanyUrl(raw) {
+  const value = asString(raw).trim();
+  if (value === '') return { ok: true, value: null };
+  if (hasForbiddenChar(value) || /\s/.test(value)) return { ok: false, message: COMPANY_URL_FORMAT_MESSAGE };
+
+  const candidate = withDefaultScheme(value);
+  if (candidate.length > LIMITS.companyUrl) {
+    return { ok: false, message: `${FIELD_LABELS.companyUrl}は ${LIMITS.companyUrl} 文字以内で入力してください` };
+  }
+  const href = parseHttpUrl(candidate);
+  return href === null ? { ok: false, message: COMPANY_URL_FORMAT_MESSAGE } : { ok: true, value: href };
+}
+
 /**
  * フォームの値を検証し、送信用に正規化した値を返す。
  *
@@ -323,6 +382,11 @@ function validateEnterprise(src) {
 
   out.website = asString(src.website);
 
+  // 会社の Web ページ (T-1958) は任意。未入力なら fields にキーごと持たない (Worker と同じ)
+  const companyUrl = normalizeCompanyUrl(src.companyUrl);
+  if (!companyUrl.ok) errors.companyUrl = companyUrl.message;
+  else if (companyUrl.value !== null) out.companyUrl = companyUrl.value;
+
   if (Object.keys(errors).length > 0) return { ok: false, errors };
   return { ok: true, fields: out };
 }
@@ -353,6 +417,8 @@ function enterpriseBody(fields) {
     seats: fields.seats,
     message: fields.message,
     website: fields.website,
+    // T-1958: 未入力ならキーを載せない (旧サイトと同じボディのまま、Worker も未指定を未入力として扱う)
+    ...(typeof fields.companyUrl === 'string' && fields.companyUrl !== '' ? { companyUrl: fields.companyUrl } : {}),
   };
 }
 

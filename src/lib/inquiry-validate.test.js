@@ -402,7 +402,7 @@ test("emptyFields('general') は general の項目だけを持つ", () => {
 });
 
 test('fieldNames は kind ごとの並び (最初のエラーへフォーカスする順) を返す', () => {
-  assert.deepEqual(fieldNames('enterprise'), ['company', 'name', 'email', 'phone', 'seats', 'message']);
+  assert.deepEqual(fieldNames('enterprise'), ['company', 'companyUrl', 'name', 'email', 'phone', 'seats', 'message']);
   assert.deepEqual(fieldNames('general'), ['email', 'message']);
   assert.deepEqual(fieldNames('スパム'), fieldNames('enterprise'), '未知の kind は enterprise に倒す');
   assert.deepEqual(fieldNames(), fieldNames('enterprise'), '既定は enterprise');
@@ -472,4 +472,114 @@ test('未知の kind は enterprise として検証する (既定は旧サイト
     false,
     'general の入力は enterprise の規則では通らない (会社名・電話・アカウント数が無い)',
   );
+});
+
+// ── companyUrl (T-1958、Worker の T-1952 の写し) ────────────────────────────
+// 欄の名前は `companyUrl`。`website` はハニーポットなので使わない。
+// 境界値と不正な URL の表は Worker の test/inquiry.spec.ts (T-1952) と同じ。
+
+const COMPANY_URL_MESSAGE = '会社の Web ページは URL の形式で入力してください (例: https://example.co.jp)';
+
+/** `https://example.co.jp/` + `a…a` でちょうど `length` 文字の URL (末尾の / を補われない形)。 */
+function urlOfLength(length) {
+  const prefix = 'https://example.co.jp/';
+  return prefix + 'a'.repeat(length - prefix.length);
+}
+
+/** companyUrl だけを変えた enterprise の入力を検証し、通ったときの companyUrl を返す。 */
+function okCompanyUrl(raw) {
+  const r = validateInquiry({ ...VALID, companyUrl: raw });
+  assert.equal(r.ok, true, `ok になるはず: ${String(raw)}`);
+  return r.fields.companyUrl;
+}
+
+test('companyUrl: 上限は Worker と同じ 500 文字で、表示名は「会社の Web ページ」', () => {
+  assert.equal(LIMITS.companyUrl, 500);
+  assert.equal(FIELD_LABELS.companyUrl, '会社の Web ページ');
+  assert.ok(FIELD_NAMES.includes('companyUrl'), 'Worker が field: companyUrl を返したら欄に紐づける');
+});
+
+test('companyUrl: 正常な URL は URL#href に正規化する', () => {
+  assert.equal(okCompanyUrl('https://example.co.jp'), 'https://example.co.jp/');
+  assert.equal(okCompanyUrl('http://example.com/path?x=1'), 'http://example.com/path?x=1');
+  assert.equal(okCompanyUrl('  https://Example.CO.JP/about  '), 'https://example.co.jp/about');
+});
+
+test('companyUrl: スキームが無ければ https:// を補う (ポート付きも含む)', () => {
+  assert.equal(okCompanyUrl('example.co.jp'), 'https://example.co.jp/');
+  assert.equal(okCompanyUrl('www.example.co.jp:8443/a'), 'https://www.example.co.jp:8443/a');
+});
+
+test('companyUrl: 500 文字ちょうどは通り、501 文字は弾く', () => {
+  assert.equal(okCompanyUrl(urlOfLength(500)), urlOfLength(500));
+  const r = validateInquiry({ ...VALID, companyUrl: urlOfLength(501) });
+  assert.equal(r.ok, false);
+  assert.equal(r.errors.companyUrl, '会社の Web ページは 500 文字以内で入力してください');
+});
+
+test('companyUrl: 補った https:// を含めて 500 文字を超えるものは弾く', () => {
+  const bare = 'example.co.jp/' + 'a'.repeat(500 - 'https://example.co.jp/'.length + 1);
+  assert.ok(bare.length <= 500);
+  const r = validateInquiry({ ...VALID, companyUrl: bare });
+  assert.equal(r.ok, false);
+  assert.ok(r.errors.companyUrl);
+});
+
+test('companyUrl: 不正な URL はその欄だけに URL の形式の案内を出す', () => {
+  const bad = [
+    'ftp://example.com',
+    'javascript:alert(1)',
+    'data:text/html,hi',
+    'https://localhost',
+    'localhost',
+    'https://user:pass@example.com',
+    'https://user@example.com',
+    'https://exa mple.com',
+    'https://example.com/a b',
+    'https://example.com/\nabc',
+    'https://example.com/\tabc',
+    'https://example..com',
+    'https://example.com.',
+    'https://',
+    '://example.com',
+    'https://example.com/\u0000',
+    'https://example.com/�',
+  ];
+  for (const companyUrl of bad) {
+    const r = validateInquiry({ ...VALID, companyUrl });
+    assert.equal(r.ok, false, JSON.stringify(companyUrl));
+    assert.deepEqual(r.errors, { companyUrl: COMPANY_URL_MESSAGE }, JSON.stringify(companyUrl));
+  }
+});
+
+test('companyUrl: 未入力 (キー無し / null / 空文字 / 空白だけ) は通り、fields にも payload にも載せない', () => {
+  for (const input of [VALID, { ...VALID, companyUrl: null }, { ...VALID, companyUrl: '' }, { ...VALID, companyUrl: '   ' }]) {
+    const r = validateInquiry(input);
+    assert.equal(r.ok, true);
+    assert.equal('companyUrl' in r.fields, false);
+    assert.equal('companyUrl' in buildPayload(r.fields), false, '旧サイトと同じボディのまま');
+  }
+});
+
+test('companyUrl: 入力ありは正規化した値を payload に載せる', () => {
+  const r = validateInquiry({ ...VALID, companyUrl: 'example.co.jp' });
+  assert.deepEqual(buildPayload(r.fields), { ...VALID, companyUrl: 'https://example.co.jp/' });
+});
+
+test('companyUrl: general は読まない (不正な値でも弾かず、payload にも載せない)', () => {
+  for (const companyUrl of ['https://example.co.jp', 'ftp://bad']) {
+    const r = validateInquiry({ ...VALID_GENERAL, companyUrl }, 'general');
+    assert.equal(r.ok, true);
+    assert.deepEqual(Object.keys(buildPayload(r.fields, '', 'general')).sort(), ['email', 'kind', 'message', 'website']);
+  }
+  assert.equal(fieldNames('general').includes('companyUrl'), false);
+});
+
+test('companyUrl: describeFailure は Worker の field: companyUrl を欄に紐づける', () => {
+  const r = describeFailure({
+    status: 400,
+    data: { ok: false, code: 'invalid_input', field: 'companyUrl', message: COMPANY_URL_MESSAGE },
+  });
+  assert.equal(r.field, 'companyUrl');
+  assert.equal(r.message, COMPANY_URL_MESSAGE);
 });

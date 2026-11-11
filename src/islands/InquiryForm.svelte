@@ -3,7 +3,8 @@
   //
   // 1 つの島で 2 つのページを賄う。どちらの項目立てにするかは `data-kind` で決まる:
   //
-  //   kind="enterprise" (既定) … /enterprise/inquiry/  会社名・氏名・メール・電話・アカウント数・ご相談内容
+  //   kind="enterprise" (既定) … /enterprise/inquiry/  会社名・会社の Web ページ (任意)・氏名・メール・電話・
+  //                                                    アカウント数・ご相談内容
   //   kind="general"            … /contact/            メール・お問い合わせ内容のみ (T-516 で氏名・件名・
   //                                                    ご利用中のバージョンを廃止)
   //
@@ -299,6 +300,28 @@
           aria-describedby={describedBy('company', false)}
         />
         {#if fieldErrors.company}<p id="inq-company-error" class={ERROR}>{fieldErrors.company}</p>{/if}
+      </div>
+
+      <!-- 会社の Web ページ (T-1958、任意)。欄の名前は companyUrl (`website` はハニーポット)。
+           フォームは novalidate なので、形式の検査は inquiry-validate.js の自前の規則 (Worker の写し) -->
+      <div class="sm:col-span-2">
+        <label for="inq-companyUrl" class={LABEL}>
+          会社の Web ページ<span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
+        </label>
+        <input
+          id="inq-companyUrl"
+          name="companyUrl"
+          type="url"
+          class={inputClass('companyUrl')}
+          bind:value={fields.companyUrl}
+          autocomplete="url"
+          inputmode="url"
+          maxlength={LIMITS.companyUrl}
+          placeholder="https://example.co.jp"
+          aria-invalid={invalid('companyUrl')}
+          aria-describedby={describedBy('companyUrl', false)}
+        />
+        {#if fieldErrors.companyUrl}<p id="inq-companyUrl-error" class={ERROR}>{fieldErrors.companyUrl}</p>{/if}
       </div>
 
       <div>
