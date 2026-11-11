@@ -154,7 +154,8 @@ jobs:
           grep -q 'data-dl' _site/assets/dist/app.js \
             || { echo "::error::バンドルから DL 計測の配線が消えている"; fail=1; }
           # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
-          grep -q 'download/latest/windows?' _site/index.html \
+          # T-1917: DL 先は Microsoft Store の掲載ページ (旧 worker の /download/latest/windows も念のため見る)
+          grep -qE 'download/latest/windows\?|apps\.microsoft\.com/detail/9PDKMKWHN9RW\?' _site/index.html \
             && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
           # `download` は真偽属性ではない (T-231)。Svelte 5 で `download={!!x}` と書くと
           # `download="false"` が出力され、同一オリジンのリンクが "false.html" という名前の

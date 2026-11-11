@@ -2,11 +2,11 @@
 //
 // ## 何を守るのか
 //
-// - PC 幅 (lg = 1024px 以上): ヘッダーの一番右 (「無料でダウンロード」のさらに右) に「法人様はこちら」があり、
+// - PC 幅 (lg = 1024px 以上): ヘッダーの一番右 (「Microsoft Store で入手」のさらに右) に「法人様はこちら」があり、
 //   行き先が Enterprise の導入相談 `/enterprise/inquiry/` であること。
 // - md 幅 (768〜1023px): ドロワーが出ない幅なので、ヘッダーのボタンとして短い表示「法人様」で見えていること。
-//   ダウンロードも「ダウンロード」と短くする。読み上げ (aria-label) と textContent は「法人様はこちら」
-//   「無料でダウンロード」のまま (textContent は GA4 の link_text に入る、`src/main.js`)。
+//   ダウンロード (T-1917 で Store へ) も「Store で入手」と短くする。読み上げ (aria-label) と textContent は「法人様はこちら」
+//   「Microsoft Store で入手」のまま (textContent は GA4 の link_text に入る、`src/main.js`)。
 // - 767px 以下: ヘッダーのボタンは隠れ、ドロワー (`src/islands/MobileNav.svelte`) に同じ項目があり、
 //   タップで遷移すること。ドロワーの全リンクの「保存されずに遷移する」は `mobile-nav.spec.ts` が別途まとめて見る。
 // - 各幅: ロゴ・ナビ・ダウンロード・法人向けのボタンが横にはみ出さず、折り返し・重なりも起きないこと。
@@ -15,8 +15,8 @@ import { test, expect, devices, type Page } from '@playwright/test';
 const ENTERPRISE_LABEL = '法人様はこちら';
 const ENTERPRISE_SHORT_LABEL = '法人様';
 const ENTERPRISE_HREF = '/enterprise/inquiry/';
-const DOWNLOAD_LABEL = '無料でダウンロード';
-const DOWNLOAD_SHORT_LABEL = 'ダウンロード';
+const DOWNLOAD_LABEL = 'Microsoft Store で入手'; // T-1917: Store の掲載ページへ
+const DOWNLOAD_SHORT_LABEL = 'Store で入手';
 const HEADER_ROW = 'header > div';
 const DOWNLOAD_CTA = 'header a[data-dl="header"]';
 const ENTERPRISE_CTA = `${HEADER_ROW} > a[href="${ENTERPRISE_HREF}"]`;
@@ -28,7 +28,7 @@ const OVERLAP_TOLERANCE = 0.5;
 const HEADER_WIDTHS = [320, 767, 768, 800, 900, 1023, 1024, 1280] as const;
 /** Tailwind の md。ヘッダーのボタン (ダウンロード・法人向け) を出す最小幅 (px)。これ未満はドロワー。 */
 const MD_MIN_WIDTH = 768;
-/** Tailwind の lg。ボタンを長い表示 (「無料でダウンロード」「法人様はこちら」) にする最小幅 (px)。 */
+/** Tailwind の lg。ボタンを長い表示 (「Microsoft Store で入手」「法人様はこちら」) にする最小幅 (px)。 */
 const LG_MIN_WIDTH = 1024;
 
 interface Box {

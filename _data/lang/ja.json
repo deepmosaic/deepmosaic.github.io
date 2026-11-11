@@ -1,6 +1,8 @@
 {
   "url": "https://www.deepmosaic.co.jp",
-  "app_download_link": "https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows",
+  "app_download_link": "https://apps.microsoft.com/detail/9PDKMKWHN9RW",
+  "app_store_protocol_link": "ms-windows-store://pdp/?productid=9PDKMKWHN9RW",
+  "app_store_product_id": "9PDKMKWHN9RW",
   "importer_download_link": "https://github.com/deepmosaic/deepmosaic.github.io/releases/download/v1.0.3/deepmosaic.importer.zxp",
   "my_lang": "ja",
   "og_lang": "ja_JP",

@@ -4,7 +4,8 @@
 //
 //   - Desktop 版のインストーラに ffmpeg (GPL ビルド) / ONNX Runtime / Visual C++ 再頒布可能パッケージを同梱するので、
 //     ドキュメントに一覧・ライセンス・ソースの入手先を書く (正本は desktop の src/lib/legal/third-party.ts)。
-//   - ffmpeg は GPL v3、libx264 / libx265 (GPL)、ビルドの提供元 (gyan.dev) と版 (8.1.1)、ソースの URL を書く。
+//   - ffmpeg は GPL v3、libx264 / libx265 (GPL)、ビルドの提供元と版、ソースの URL を書く
+//     (T-1915 / T-1917 で gyan.dev 8.1.1 → BtbN 8.1.3 と当社 R2 の対応ソースに更新)。
 //   - 目次 (_data/docs_toc.yml の desktop「運用」) に licenses があり、本文の section id と揃う。
 //   - Premiere 連携には触れない (Store の開示事項と同じ方針)。
 //
@@ -45,9 +46,16 @@ test('ffmpeg: GPL v3・libx264 / libx265・提供元と版・ソースの入手�
 	assert.match(licenses, /GPL v3|GNU General Public License version 3/)
 	assert.match(licenses, /libx264/)
 	assert.match(licenses, /libx265/)
-	assert.match(licenses, /gyan\.dev/)
-	assert.match(licenses, /8\.1\.1/)
-	assert.match(licenses, /https:\/\/ffmpeg\.org\/releases\/ffmpeg-8\.1\.1\.tar\.xz/)
+	// T-1915 / T-1917: ビルドは BtbN の GPL ビルド (8.1.3)、対応ソースは当社の R2 (GPL v3 §6)。正本は desktop の third-party.ts
+	assert.match(licenses, /BtbN\/FFmpeg-Builds/)
+	assert.match(licenses, /autobuild-2026-10-31-12-59/)
+	assert.match(licenses, /8\.1\.3/)
+	assert.match(
+		licenses,
+		/https:\/\/deepmosaic-r2-proxy\.deepmosaic\.workers\.dev\/third-party\/ffmpeg\/autobuild-2026-10-31-12-59\/README\.txt/,
+	)
+	assert.match(licenses, /第 6 条/)
+	assert.doesNotMatch(licenses, /gyan\.dev|8\.1\.1/, '旧ビルド (gyan.dev 8.1.1) の記述が残っている')
 	assert.match(licenses, /https:\/\/www\.gnu\.org\/licenses\/gpl-3\.0/)
 })
 

@@ -4,9 +4,9 @@
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
   {%- comment -%}T-1940: md (768〜1023px) は詰めた間隔で 1 行に収める。
   T-1968: md ではドロワーが出ないので、法人向けのボタンも md 以上で出す。1 行に収めるため md の間だけ
-  ダウンロードは「ダウンロード」、法人向けは「法人様」と短く出す (lg 以上で「無料で」「はこちら」を足す)。
+  ダウンロード (T-1917 で Store へ) は「Store で入手」、法人向けは「法人様」と短く出す (lg 以上で「Microsoft 」「はこちら」を足す)。
   短くする部分を hidden lg:inline の span にしているのは、textContent (GA4 の link_text、main.js) と
-  読み上げを全幅で「無料でダウンロード」「法人様はこちら」のまま変えないため
+  読み上げを全幅で「Microsoft Store で入手」「法人様はこちら」のまま変えないため
   (外側の span はボタンの gap-2 が文字の途中に入らないように 1 つの flex 項目にまとめる)。
   md では Noto Sans JP の実寸で 768px に 21px 足りなかったので、行の間隔を gap-3、2 つのボタンの左右余白を px-3、
   ボタンどうしの間を 8px に詰める (lg 以上は従来どおり gap-7 / px-4 / 12px)。{%- endcomment -%}
@@ -26,9 +26,10 @@
 
     <div class="flex-1"></div>
 
-    <!-- Desktop download CTA -->
-    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
-      {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">無料で</span>ダウンロード</span>
+    <!-- Desktop download CTA (T-1917: Microsoft Store の掲載ページへ。ファイル DL ではないので download 属性は付けない。
+         T-1968 の出し分けに合わせ、md の間は「Store で入手」、lg 以上で「Microsoft 」を足す。textContent は全幅で「Microsoft Store で入手」) -->
+    <a href="{{ site.data.lang.ja.app_download_link }}" data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">Microsoft </span>Store で入手</span>
     </a>
 
     <!-- Desktop enterprise CTA (T-1940: ダウンロードより弱い secondary、ダウンロードとの間は詰める。T-1968: md 以上で出し、md では「法人様」) -->
@@ -39,7 +40,7 @@
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>

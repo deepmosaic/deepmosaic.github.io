@@ -1,8 +1,11 @@
 {%- comment -%}
 DL ボタン (DL URL の単一管理点)。
 
+T-1917: 配布は Microsoft Store だけ (サイト配布のインストーラは 2.11.1 で終了)。href は Store の掲載ページ
+(`_data/lang/ja.json` の `app_download_link`) で、ファイル DL ではないので `download` 属性は付けない。
+
 params:
-  label    (任意) 文言。既定「無料でダウンロード」
+  label    (任意) 文言。既定「Microsoft Store で無料入手」
   size     (任意) "large" で `btn-lg`
   full     (任意) 真値で幅 100%
   variant  (任意) "secondary" で副ボタン配色 (TICKET-SITE-20: 料金カードの非推奨プラン用)
@@ -12,10 +15,10 @@ params:
            (`src/main.js` の initDownloadTracking が `a[data-dl]` だけを見る)。
            GA4 の `link_id` になるので、置き場所ごとに違う値にする
 {%- endcomment -%}
-<a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
+<a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}"
    data-dl="{{ include.dl | default: 'cta' }}"
    href="{{ site.data.lang.ja.app_download_link }}">
   {% include icon.html name="Download" class="h-5 w-5" %}
-  {% if include.label %}{{ include.label }}{% else %}無料でダウンロード{% endif %}
+  {% if include.label %}{{ include.label }}{% else %}Microsoft Store で無料入手{% endif %}
 </a>
 {% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}

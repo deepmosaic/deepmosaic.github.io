@@ -102,13 +102,14 @@ test('06-ops の更新ダイアログは「今すぐ更新」「あとで」の 
 	assert.ok(!/スキップ/.test(text), `#update にスキップの記述が残っている: ${text}`)
 })
 
-test('01-intro のアップグレードは更新ダイアログの 2 択を案内し、スキップを書かない', () => {
+// T-1917: 配布が Microsoft Store だけになり、01-intro のアップグレードは Store の更新を案内する
+// (更新ダイアログの 2 択はインストーラ版の説明として 06-ops の #update にだけ残す)。
+test('01-intro のアップグレードは Microsoft Store の更新を案内し、スキップを書かない', () => {
 	// Arrange
 	const text = textOf(read('_includes/docs/01-intro.html'))
 
 	// Assert
-	assert.match(text, /「今すぐ更新」/)
-	assert.match(text, /「あとで」/)
+	assert.match(text, /Microsoft Store が配信/)
 	assert.ok(!/スキップ/.test(text), '01-intro にスキップの記述が残っている')
 })
 

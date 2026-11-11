@@ -323,6 +323,15 @@ export function parseFirstEnvelope(json, now) {
   return hasAny ? record : null;
 }
 
+/** 流入経路を載せない配布先のホスト (T-1917: Microsoft Store の掲載ページ)。 */
+const UNDECORATED_HOSTS = new Set(['apps.microsoft.com']);
+
+/** @param {URL} url */
+function isDecoratableUrl(url) {
+  if (url.protocol !== 'https:' && url.protocol !== 'http:') return false;
+  return !UNDECORATED_HOSTS.has(url.hostname.toLowerCase());
+}
+
 /**
  * DL リンクの href に流入経路を載せる。
  *
@@ -334,10 +343,14 @@ export function parseFirstEnvelope(json, now) {
  * 逆に `dm=0` を素の href へ焼き込むことはしない — JSON-LD の `downloadUrl` にも
  * 同じ URL が出るうえ、「付いていない = 不明」で必要な区別は足りる。
  *
+ * **第三者の配布先 (Microsoft Store) へは載せない** (T-1917)。流入元・着地ページは当社の
+ * worker が DL の記録と突き合わせるための値で、Store に渡しても使われず、第三者へ送るだけになる。
+ * http(s) 以外 (`ms-windows-store:` など) も触らない。GA4 の送信は呼び出し側で別に行う。
+ *
  * @param {string} href
  * @param {object|null} record last-touch
  * @param {object|null} [first] first-touch
- * @returns {string} 組み立てられなければ `href` をそのまま返す
+ * @returns {string} 組み立てられなければ・装飾の対象外なら `href` をそのまま返す
  */
 export function decorateDownloadUrl(href, record, first = null) {
   let url;
@@ -346,6 +359,7 @@ export function decorateDownloadUrl(href, record, first = null) {
   } catch {
     return href;
   }
+  if (!isDecoratableUrl(url)) return href;
   url.searchParams.set('dm', '1');
   if (record !== null) {
     if (record.s !== null) url.searchParams.set('utm_source', record.s);

@@ -57,35 +57,53 @@ desktop 2.4.0 の公開で T-515 が外した。再び置くときは `src/lib/d
   </div>
 </section>
 
+{%- comment -%}
+  T-1917: 配布は Microsoft Store だけ (ユーザー決定 2026-11-11)。サイト配布のインストーラ (NSIS) は 2.11.1 で終了。
+  Store 版 = MSIX。本体の更新は Store が配り、アプリ内の更新ダイアログは無い (desktop の T-1898)。
+  データの置き場は従来と同じ (W2 の実測: インストーラ版の %LOCALAPPDATA%\deepmosaic があれば Store 版もそれをそのまま使う)。
+{%- endcomment -%}
 <section id="install" class="scroll-mt-24">
   {% include docs-h2.html kicker="導入" title="インストール" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ダウンロードしたインストーラ（Deepmosaic Setup）を実行してください。管理者権限は不要で、現在のユーザーにインストールされます。動作にはWebView2ランタイムが必要ですが、Windows 10/11には標準搭載されています（無い環境ではインストーラが自動で導入します）。</p>
+    <p>Deepmosaic は Microsoft Store で配布しています。下のボタンから Microsoft Store の掲載ページを開き、「入手」（または「インストール」）を押してください。Microsoft Store アプリで「Deepmosaic」を検索しても見つかります。管理者権限は不要で、現在のユーザーにインストールされます。動作に必要な WebView2 ランタイムは Windows 10/11 に標準搭載されています。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
+        <div class="kv-key">入手先</div>
+        <div class="kv-val">Microsoft Store（<a href="{{ site.data.lang.ja.app_download_link }}" data-dl="docs-install-link">掲載ページ</a>。Microsoft Store アプリで直接開く場合は<a href="{{ site.data.lang.ja.app_store_protocol_link }}">こちら</a>）。無料で入手できます</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">対応 OS</div>
         <div class="kv-val">Windows 10 / 11（64 ビット）。macOS 版は開発中です（<a href="/spec">動作環境</a>）</div>
       </div>
-      <div class="kv-row kv-alt">
-        <div class="kv-key">インストーラの言語</div>
-        <div class="kv-val">日本語（言語の選択画面は出ません）。アプリも日本語 UI です</div>
-      </div>
       <div class="kv-row">
+        <div class="kv-key">言語</div>
+        <div class="kv-val">アプリは日本語 UI です</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">インストール先</div>
-        <div class="kv-val">現在のユーザーのアプリフォルダ。スタートメニューに「Deepmosaic」が登録されます</div>
-      </div>
-      <div class="kv-row kv-alt">
-        <div class="kv-key">アップグレード</div>
-        <div class="kv-val">アプリは起動時に新しいバージョンを確認し、更新があるとダイアログで「今すぐ更新」「あとで」を選べます（<a href="#update">アップデート</a>）。新しいインストーラを上書き実行して更新することもできます。設定や検出結果は引き継がれます。2.8.0 より前のバージョンで検出したプロジェクトは、更新後の初回起動時に新しい保存形式（プロジェクトフォルダ内の <code>project.db</code>）へ自動で変換されます。変換中はホーム画面に「検出結果を新しい保存形式に変換しています (n / N)」と表示されます</div>
+        <div class="kv-val">Windows が管理するアプリのフォルダ（変更できません）。スタートメニューに「Deepmosaic」が登録されます</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">アップグレード</div>
+        <div class="kv-val">新しいバージョンは Microsoft Store が配信し、自動で更新されます（<a href="#update">アップデート</a>）。設定や検出結果は引き継がれます。2.8.0 より前のバージョンで検出したプロジェクトは、更新後の初回起動時に新しい保存形式（プロジェクトフォルダ内の <code>project.db</code>）へ自動で変換されます。変換中はホーム画面に「検出結果を新しい保存形式に変換しています (n / N)」と表示されます</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">使用許諾契約書</div>
-        <div class="kv-val">インストーラの途中で使用許諾契約書が表示されます。内容を確認し、同意を選ぶと次へ進めます</div>
+        <div class="kv-val">初回起動時に「ご利用の前に」ダイアログで使用許諾契約書と利用規約への同意をお願いしています（<a href="#setup">初回セットアップ</a>）</div>
       </div>
     </div>
-    <div class="my-5">{% include download-button.html dl="docs-install" note="Windows 10 / 11（64bit）。ダウンロードしてすぐ、ログインなしでお試しいただけます" %}</div>
+    <div class="my-5">{% include download-button.html dl="docs-install" note="Windows 10 / 11（64bit）。Microsoft Store から無料で入手でき、ログインなしでお試しいただけます" %}</div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">インストーラ版（Deepmosaic Setup）をお使いの方へ</h3>
+    <p>Windows 向けインストーラ（Deepmosaic Setup）での配布は、バージョン 2.11.1 で終了しました。今後の更新は Microsoft Store 版でのみ提供します。インストール済みの 2.11.1 はそのままお使いいただけますが、新しい機能や修正を受け取るには Microsoft Store 版をインストールしてください。</p>
+    <ul>
+      <li><strong>データはそのまま引き継がれます</strong>: プロジェクトフォルダ、設定とログイン情報（<code>%USERPROFILE%\.deepmosaic</code>）、AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>）は Microsoft Store 版がそのまま使います。移行の作業は不要です（<a href="#data">データの保存場所</a>）</li>
+      <li><strong>無料枠とライセンスはアカウントに紐づいています</strong>: 同じアカウントでログインすれば、プランと残りの利用時間はそのまま引き継がれます</li>
+      <li><strong>Premiere Pro 連携</strong>: Microsoft Store 版で Premiere Pro 連携を使うには、プラグインの更新（0.1.21 以降）が必要です。Microsoft Store 版の「Premiere Pro へインポート」から案内に従って更新してください（<a href="#premiere">Premiere Pro 連携</a>）</li>
+      <li><strong>インストーラ版を削除する場合</strong>: Windows の「設定」→「アプリ」→「インストールされているアプリ」からアンインストールできます。インストーラ版のアンインストールは AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>）も削除するため、Microsoft Store 版は次回起動時にこれらを取得し直します。確認画面の「アプリのデータとプロジェクトフォルダを削除する」には<strong>チェックを入れないでください</strong>（Microsoft Store 版と共有している設定・検出結果・プロジェクトフォルダも削除されます）</li>
+    </ul>
   </div>
 </section>
+
 
 <section id="setup" class="scroll-mt-24">
   {% include docs-h2.html kicker="導入" title="初回セットアップ" %}
@@ -93,7 +111,7 @@ desktop 2.4.0 の公開で T-515 が外した。再び置くときは `src/lib/d
     <h3 class="mt-6 text-[16px] font-bold text-ink">使用許諾契約書への同意</h3>
     <p>初回起動時は、初回セットアップの前に「ご利用の前に」ダイアログが表示されます。使用許諾契約書と利用規約（ダイアログのリンクから全文を確認できます）を確認し、「使用許諾契約書および利用規約に同意する」にチェックを入れて「同意して続ける」を押すと、セットアップが始まります。「同意しない (終了)」を選ぶとアプリは終了します。使用許諾契約書・利用規約が改定されたときは、起動時に「使用許諾契約書・利用規約が改定されました」と表示されるので、改めて同意してください。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">データのダウンロード</h3>
-    <p>初回起動時、AI検出に必要なモデルデータと検出エンジンが自動でダウンロードされます（{{ spec_storage.val }}）。ダウンロード中は全体の進捗（%）と残り時間が表示され、完了するまで他の操作はできません。回線速度により数分〜十数分かかる場合があります。</p>
+    <p>検出エンジンと軽量の検出モデルはアプリに含まれています。初回起動時、AI検出に必要なモデルデータが自動でダウンロードされます（{{ spec_storage.val }}）。ダウンロード中は全体の進捗（%）と残り時間が表示され、完了するまで他の操作はできません。回線速度により数分〜十数分かかる場合があります。</p>
     <p>高精度モデルなど一部のデータは、ホーム画面に進んだ後にバックグラウンドで取得します。取得が終わるまでの検出は軽量モデルで行われ、検出オプション画面に「高精度モデルを準備中 (残り約 N MB) — 今回は軽量モデルで検出します」と表示されます。</p>
     <p>ダウンロードが終わると、検出とエンコードの動作確認（「動作確認中…」）が自動で実行されます。問題が見つかった場合は、該当するデータだけが自動で再ダウンロードされます。完了すると自動でホーム画面に移り、「インストールが完了しました」と表示されます（「続ける」を押す必要はありません）。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">セットアップ中にできないこと</h3>
@@ -118,7 +136,7 @@ desktop 2.4.0 の公開で T-515 が外した。再び置くときは `src/lib/d
       </div>
     </div>
     <h3 class="mt-6 text-[16px] font-bold text-ink">GPU 高速化の準備（NVIDIA GPU 搭載機のみ）</h3>
-    <p>NVIDIA GPU を認識した場合、初回セットアップの必須データを取り終えた時点から（動作確認と並行して）、バックグラウンドで GPU 用の実行環境（約 1.7 GB）を取得します。画面右下の「GPU 高速化」ウィジェットで進捗を確認でき、「GPU 高速化が有効になりました」と表示されればその後の検出が GPU で実行されます。取得に失敗した場合は「GPU 準備に失敗しました（検出時に自動取得します）」と表示され、次に検出を実行するときに自動で再取得します。取得が終わるまでの検出は CPU で実行されます。</p>
+    <p>NVIDIA GPU を搭載した PC では、プロフィールメニューの「このアプリについて」にある「GPU 高速化 (NVIDIA) を有効にする」をオンにすると、GPU 用の実行環境（NVIDIA 製のコンポーネント。約 1.7 GB をダウンロード、展開後 約 2.4 GB）を取得します。自動では取得しません。取得中は進捗が表示され、取得が終わるとその後の検出が GPU で実行されます。取得しない場合や取得が終わるまでの検出は CPU で実行されます（機能は変わりませんが、処理は遅くなります）。</p>
   </div>
 </section>
 

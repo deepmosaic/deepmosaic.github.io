@@ -226,6 +226,36 @@ test('decorateDownloadUrl は既存のクエリを壊さない', () => {
   assert.equal(q.get('utm_source'), 'x', '新しいパラメータも入る');
 });
 
+// T-1917: 配布は Microsoft Store。流入元・着地ページ・first-touch を第三者 (Store) の URL に載せない。
+// 当社の worker 宛て (DL) と Web 版宛ては従来どおり装飾する (陽性対照)。
+const STORE = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW';
+const FULL_RECORD = { s: 'twitter', m: 'social', c: 'launch', r: 'https://t.co' };
+const FULL_FIRST = { s: 'google', r: 'https://www.google.com', lp: '/price/' };
+
+test('decorateDownloadUrl は Microsoft Store の掲載ページには何も載せない (dm も付けない)', () => {
+  assert.equal(decorateDownloadUrl(STORE, FULL_RECORD, FULL_FIRST), STORE);
+  assert.equal(decorateDownloadUrl(STORE, null, null), STORE, 'record が null でも dm=1 を付けない');
+  const upper = 'https://APPS.MICROSOFT.COM/detail/9PDKMKWHN9RW';
+  assert.equal(decorateDownloadUrl(upper, FULL_RECORD, FULL_FIRST), upper, 'ホスト名の大小は問わない');
+});
+
+test('decorateDownloadUrl は ms-windows-store: など http(s) 以外の URL を触らない', () => {
+  const proto = 'ms-windows-store://pdp/?productid=9PDKMKWHN9RW';
+  assert.equal(decorateDownloadUrl(proto, FULL_RECORD, FULL_FIRST), proto);
+});
+
+test('decorateDownloadUrl は Store 以外 (当社の worker / Web 版) には従来どおり載せる', () => {
+  for (const base of [DL, 'https://app.deepmosaic.co.jp/']) {
+    const q = new URL(decorateDownloadUrl(base, FULL_RECORD, FULL_FIRST)).searchParams;
+    assert.equal(q.get('dm'), '1', base);
+    assert.equal(q.get('utm_source'), 'twitter', base);
+    assert.equal(q.get('lp'), '/price/', base);
+  }
+  // apps.microsoft.com を含むだけの別ホストは対象外にしない (完全一致)
+  const lookalike = 'https://apps.microsoft.com.example.net/x';
+  assert.equal(new URL(decorateDownloadUrl(lookalike, null)).searchParams.get('dm'), '1');
+});
+
 test('decorateDownloadUrl は href が URL でなければそのまま返す', () => {
   assert.equal(decorateDownloadUrl('not a url', { s: 'x', m: null, c: null, r: null }), 'not a url');
 });
