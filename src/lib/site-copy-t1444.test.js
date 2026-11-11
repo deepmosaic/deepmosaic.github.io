@@ -201,7 +201,8 @@ test('llms.txt / llms-full.txt: Web 版の行がお試し用 (N 分まで) を�
 test('privacy §9: ブラウザでログインしてインストーラーを DL したときのアカウント識別子の保存と突き合わせを書く', () => {
 	// Act
 	const html = stripComments(read('company/privacy.html'))
-	const start = html.indexOf('9.ダウンロード経路の記録について')
+	// T-1921 (2026-11-11): §9 は「入手経路の記録」に改め、インストーラー版の記述は 9-3 に残した
+	const start = html.indexOf('9.入手経路の記録について')
 	const end = html.indexOf('10.無料枠の管理', start)
 	const s9 = textOf(html.slice(start, end))
 

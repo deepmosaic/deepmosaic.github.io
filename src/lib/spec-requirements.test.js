@@ -148,13 +148,18 @@ test('docs 第 6 章の容量表記も spec.yml に揃っている (3 箇所)', 
   assert.ok(!APPROX_SIZE.test(text), '旧表記 (約 nnGB) が docs に残っている');
 });
 
-test('初回セットアップの通信の説明は「実行ファイル等」と書く (AI モデルに限らない)', () => {
+// T-1921: 配信ストア版は検出エンジン・動画処理ツールを同梱するので「実行ファイル等」から
+// 「AI モデル等のデータ」+ GPU 高速化の任意取得に改めた (旧: TICKET の「AI モデルに限らない」)。
+test('初回セットアップの通信の説明は「AI モデル等のデータ」と、GPU 高速化の任意取得を書く', () => {
   // Arrange
   const rows = network.filter((r) => r.key === '初回セットアップ');
   assert.equal(rows.length, 1, `初回セットアップ行が ${rows.length} 個ある`);
 
   // Act / Assert
-  assert.equal(rows[0].val, '実行ファイル等のダウンロードに通信が必要です');
+  assert.equal(
+    rows[0].val,
+    'AI モデル等のデータのダウンロードに通信が必要です（GPU 高速化を有効にした場合は、NVIDIA 製のコンポーネントもダウンロードします）',
+  );
 });
 
 // T-1296: GPU の要件は「RTX 3000 シリーズ以上、それ未満は動作未確認」。
