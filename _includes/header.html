@@ -2,18 +2,19 @@
 {%- capture contact_url -%}/contact/{%- endcapture -%}
 {%- assign u = page.url -%}
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
-  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-7">
+  {%- comment -%}T-1940: md (768〜1023px) は詰めた間隔で 1 行に収め、「法人様はこちら」は lg 以上だけに出す (md ではロゴ・ナビ・ダウンロードで幅を使い切るため){%- endcomment -%}
+  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-4 lg:gap-7">
 
-    <a href="/" class="flex items-center">
+    <a href="/" class="flex shrink-0 items-center">
       <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
     </a>
 
     <!-- Desktop nav -->
-    <nav class="ml-3 hidden gap-1 md:flex">
-      <a href="/" class="rounded-md px-3 py-1.5 text-sm {% if u == '/' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ホーム</a>
-      <a href="/price" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/price' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">料金</a>
-      <a href="/docs" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/docs' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ドキュメント</a>
-      <a href="/spec" class="rounded-md px-3 py-1.5 text-sm {% if u contains '/spec' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">動作環境</a>
+    <nav class="hidden gap-1 whitespace-nowrap md:flex lg:ml-3">
+      <a href="/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u == '/' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ホーム</a>
+      <a href="/price" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/price' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">料金</a>
+      <a href="/docs" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/docs' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ドキュメント</a>
+      <a href="/spec" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/spec' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">動作環境</a>
     </nav>
 
     <div class="flex-1"></div>
@@ -23,16 +24,22 @@
       {% include icon.html name="Download" class="h-4 w-4" %}無料でダウンロード
     </a>
 
+    <!-- Desktop enterprise CTA (T-1940: ダウンロードより弱い secondary、ダウンロードとの間は詰める) -->
+    <a href="/enterprise/inquiry/" class="btn-secondary hidden lg:-ml-4 lg:inline-flex">
+      {% include icon.html name="Building2" class="h-4 w-4" %}法人様はこちら
+    </a>
+
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}"}]'></div>
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price"},{"label":"ドキュメント","href":"/docs"},{"label":"動作環境","href":"/spec"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>
           <a href="/price" class="px-2 py-1 text-ink-2 hover:text-ink">料金</a>
           <a href="/docs" class="px-2 py-1 text-ink-2 hover:text-ink">ドキュメント</a>
           <a href="/spec" class="px-2 py-1 text-ink-2 hover:text-ink">動作環境</a>
+          <a href="/enterprise/inquiry/" class="px-2 py-1 text-ink-2 hover:text-ink">法人様はこちら</a>
         </nav>
       </noscript>
     </div>

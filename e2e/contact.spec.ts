@@ -67,7 +67,9 @@ test('kind=general が島まで届き、メールアドレスとお問い合わ�
   }
 
   // 導入相談 (Enterprise) への逃がし先は残す — 見積りの問い合わせがここで行き止まりにならない
-  await expect(page.locator('a[href="/enterprise/inquiry/"]')).toHaveCount(1);
+  // (全ページ共通のヘッダーの「法人様はこちら」(T-1940) と、body 直下へ portal されるモバイルの
+  //  ドロワーは数えない。ページ本文の section の中だけを見る)
+  await expect(page.locator('section a[href="/enterprise/inquiry/"]')).toHaveCount(1);
 });
 
 test('未入力のまま送信すると、必須 2 項目のエラーが aria 属性つきで出て送信はされない', async ({
