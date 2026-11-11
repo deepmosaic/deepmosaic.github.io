@@ -72,7 +72,7 @@ const REMOVED_WEB_ORG_LOGIN_LABEL = '組織コードを添えてログイン'
 const ORG_CODE_SHARE_WARNING = '組織コードを知っていれば誰でも参加できます。関係者以外には共有しないでください。'
 /** 未確認の既存アカウントでコードを入れたときの案内 (desktop login_rejection.rs の MSG_EXISTING_PASSWORD_ACCOUNT、T-2111) */
 const MSG_EXISTING_PASSWORD_ACCOUNT =
-	'このメールアドレスはパスワードで登録済みです。『パスワードで登録済みの方はこちら』からログインするか、パスワードを再設定してください。'
+	'このメールアドレスはパスワードで登録済みです。パスワードでログインするか、パスワードを再設定してください。'
 const OPEN_APP_LABEL = 'アプリで開く'
 const LICENSES_LABEL = 'ライセンス'
 
@@ -139,11 +139,12 @@ test('切り替えは 2.13 から、2 択とメール欄は廃止、既存の方
 	assert.match(text, /パスワードを再設定するとメールアドレスの確認も済むため、次からは確認コードでもログインできます/)
 	// 拒否の直後の desktop は existing_password_account で並びが入れ替わり (login-entry.ts authButtonsFor('password'))、
 	// 「パスワードで登録済みの方はこちら」は画面に出ない。画面にあるボタン名で案内する
+	// (案内文はボタン名に依らない文なので、食い違いを補う括弧書きは要らない)
 	assert.ok(
-		text.includes(`このとき Desktop 版ではボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になります`),
+		text.includes(`このとき Desktop 版ではボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になります。そこからパスワードでログインするか、`),
 		`未確認の場合の入れ替わりの説明が無い: ${text}`,
 	)
-	assert.ok(text.includes(`大きい「${SWAPPED_PRIMARY_LABEL}」からパスワードでログインしてください`), text)
+	assert.ok(!text.includes('この並びでは表示されません'), `不要になった括弧書きが残っている: ${text}`)
 	assert.ok(!text.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), `表示されないボタン名で案内している: ${text}`)
 	assert.match(text, /前回この PC でパスワードでログインした場合と、上の案内が表示された直後は、ボタンの並びが入れ替わり/)
 })
@@ -197,8 +198,8 @@ test('#trouble: 未確認の既存アカウントの案内が出た場合 (T-211
 	assert.ok(at >= 0, `#trouble に未確認の場合の項目が無い: ${troubleLogin}`)
 	const item = troubleLogin.slice(at, troubleLogin.indexOf('「他の端末でログイン中です」', at))
 	// 拒否の直後の desktop はボタンの並びが入れ替わり、「パスワードで登録済みの方はこちら」は表示されない
-	assert.ok(item.includes(`このとき Desktop 版ではログイン画面のボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になっています`), item)
-	assert.ok(item.includes(`大きい「${SWAPPED_PRIMARY_LABEL}」からパスワードでログインしてください`), item)
+	assert.ok(item.includes(`このとき Desktop 版ではログイン画面のボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になっています。そこからパスワードでログインするか、`), item)
+	assert.ok(!item.includes('この並びでは表示されません'), `不要になった括弧書きが残っている: ${item}`)
 	assert.ok(!item.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), `表示されないボタン名で案内している: ${item}`)
 	assert.match(item, /パスワードを再設定すると、メールアドレスの確認も済み、次からは「メールアドレスではじめる」でもログインできます/)
 })
