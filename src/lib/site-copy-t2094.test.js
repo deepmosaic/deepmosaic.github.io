@@ -3,7 +3,10 @@
 //   node --test src/lib/site-copy-t2094.test.js
 //
 //   - ログイン画面は 3 つの入口だけ (「新規登録」「ログイン」の 2 択とメールアドレスの入力欄は廃止)。
-//     コード方式 (メールに届く 6 桁の確認コード) は新しく登録する方、既存の利用者はパスワードのまま。切り替えは 2.13 から。
+//     コード方式 (メールに届く 6 桁の確認コード) は新しく登録する方の入口。切り替えは 2.13 から。
+//     T-2111 (案 B、2026-11-12): 既存の方もメールアドレスの確認が済んでいればコードで入れる (同じアカウントに連結される)。
+//     確認が済んでいない方はコードの入力後に MSG_EXISTING_PASSWORD_ACCOUNT が出る → パスワードでログインするか再設定。
+//     「既存の利用者はパスワードのまま」「パスワードで登録したメールアドレスではコードでログインできない」は誤りになったので書かない。
 //   - 法人: 案内メールのリンク →「アプリで開く」→ ログイン画面に組織コードが入った状態で開く → ログイン。管理者はコードを入れない。
 //   - メニューバー「ヘルプ」の旧「このアプリについて」は「ライセンス」。一覧はソフト名の行だけで、押すと中身が開く。
 //   - 公開文面の版の表記は「2.13」(help1111 のときに書いた 2.12 系の小版の表記を残さない)。
@@ -67,6 +70,9 @@ const SWAPPED_SECONDARY_LABEL = 'メールアドレスのコードではじめ�
 /** Web 版の LoginGate から外したボタン (最終レビュー、login1111)。docs に残さない */
 const REMOVED_WEB_ORG_LOGIN_LABEL = '組織コードを添えてログイン'
 const ORG_CODE_SHARE_WARNING = '組織コードを知っていれば誰でも参加できます。関係者以外には共有しないでください。'
+/** 未確認の既存アカウントでコードを入れたときの案内 (desktop login_rejection.rs の MSG_EXISTING_PASSWORD_ACCOUNT、T-2111) */
+const MSG_EXISTING_PASSWORD_ACCOUNT =
+	'このメールアドレスはパスワードで登録済みです。『パスワードで登録済みの方はこちら』からログインするか、パスワードを再設定してください。'
 const OPEN_APP_LABEL = 'アプリで開く'
 const LICENSES_LABEL = 'ライセンス'
 
@@ -112,6 +118,8 @@ test('コード方式は「メールに届く 6 桁の確認コード」でパ�
 	assert.match(code, /メールに届く 6 桁の確認コード/)
 	assert.match(code, /パスワードは要りません/)
 	assert.match(code, /初めての方（新しく登録する方）はこちら/)
+	// T-2111: 既存の方もメールアドレスの確認が済んでいればここから入れる (同じアカウントのまま)
+	assert.match(code, /パスワードで登録済みの方も、メールアドレスの確認が済んでいればこちらからログインできます/)
 	const password = kvValue(loginBlock, PASSWORD_LABEL)
 	assert.ok(password)
 	assert.match(password, /以前からパスワードでお使いの方は、これまでどおり/)
@@ -120,12 +128,27 @@ test('コード方式は「メールに届く 6 桁の確認コード」でパ�
 	assert.match(enterprise, /「組織コード」欄/)
 })
 
-test('切り替えは 2.13 から、既存の利用者はパスワードのまま、2 択とメール欄は廃止と書く', () => {
+test('切り替えは 2.13 から、2 択とメール欄は廃止、既存の方はパスワードでもコードでも入れると書く (T-2111)', () => {
 	const text = textOf(loginBlock)
 	assert.match(text, /2\.13 から、ログイン画面の入口はこの 3 つになりました/)
 	assert.match(text, /「新規登録」「ログイン」の 2 択とメールアドレスの入力欄は無くなり/)
-	assert.match(text, /すでにパスワードで登録している方はパスワードのまま/)
-	assert.match(text, /確認コードでのログインは新しく登録する方のための方式/)
+	assert.match(text, /すでにパスワードで登録している方は、これまでどおりパスワードでログインできるほか、メールアドレスの確認が済んでいれば「メールアドレスではじめる」から確認コードでもログインできます/)
+	assert.match(text, /今までと同じアカウントでログインします/)
+	// 確認が済んでいない場合: アプリの案内文と同じ文、パスワードでのログインか再設定で解決する
+	assert.ok(text.includes(`「${MSG_EXISTING_PASSWORD_ACCOUNT}」と表示されます`), `未確認の場合の案内文が無い: ${text}`)
+	assert.match(text, /パスワードを再設定するとメールアドレスの確認も済むため、次からは確認コードでもログインできます/)
+})
+
+test('T-2111: 誤りになった「既存の方はパスワードのまま」「コードではログインできない」を docs と /join/ に書かない', () => {
+	const pages = [...docsFiles.map((f) => [f, read(f)]), ['join/index.html', joinPage], ['_data/subscribe.yml', subscribeData]]
+	for (const [file, source] of pages) {
+		const text = textOf(source)
+		assert.doesNotMatch(text, /パスワードのまま/, `${file} に「パスワードのまま」が残っている`)
+		assert.doesNotMatch(text, /「メールアドレスではじめる」からはログインできません/, `${file} に旧い制約が残っている`)
+		assert.doesNotMatch(text, /パスワードでお使いの方には確認コードは届きません/, `${file} に旧い制約が残っている`)
+		assert.doesNotMatch(text, /新しく登録する方のための方式/, `${file} に旧い説明が残っている`)
+	}
+	assert.ok(textOf(account).includes('メールアドレスではじめる'), '陽性対照: 02-account.html が読めていない')
 })
 
 test('廃止した入口 (「新規登録」ボタン・「別のアカウントでログイン」・ダイアログの「ログイン」) を docs と申し込みページで案内しない', () => {
@@ -158,6 +181,14 @@ test('#trouble に「確認コードのメールが届かない場合」(迷惑�
 	assert.match(one, /再送信/)
 	assert.ok(one.includes(`「${PASSWORD_LABEL}」`), 'パスワードの入口へ案内していない')
 	assert.ok(one.includes(`「${SWITCH_TO_PASSWORD_LABEL}」`), '待っている画面の切り替えボタンの名前が無い')
+})
+
+test('#trouble: 未確認の既存アカウントの案内が出た場合 (T-2111) は、パスワードでのログインか再設定で解決すると書く', () => {
+	const at = troubleLogin.indexOf(`「${MSG_EXISTING_PASSWORD_ACCOUNT}」と表示された場合`)
+	assert.ok(at >= 0, `#trouble に未確認の場合の項目が無い: ${troubleLogin}`)
+	const item = troubleLogin.slice(at, troubleLogin.indexOf('「他の端末でログイン中です」', at))
+	assert.ok(item.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), item)
+	assert.match(item, /パスワードを再設定すると、メールアドレスの確認も済み、次からは「メールアドレスではじめる」でもログインできます/)
 })
 
 test('#trouble: パスワード前提の説明は「パスワードで登録済みの方」向けと明記する', () => {
@@ -205,6 +236,8 @@ test('Web 版の始め方と組織コードでの参加が LoginGate の文言�
 	const start = textOf(sectionOf(web, 'start') ?? '')
 	assert.ok(start.includes(`「${CODE_LABEL}」を押し、メールに届く 6 桁の確認コード`), `始め方: ${start}`)
 	assert.ok(start.includes(`「${PASSWORD_LABEL}」を押します`))
+	// T-2111: 既存の方もメールアドレスの確認が済んでいればコードで入れる
+	assert.ok(start.includes(`メールアドレスの確認が済んでいれば「${CODE_LABEL}」からもログインできます`), `始め方: ${start}`)
 	assert.ok(start.includes(`「${ENTERPRISE_LABEL}」の 3 つ`))
 	assert.doesNotMatch(start, /「ログイン」を押します/)
 	const org = kvValue(sectionOf(web, 'team') ?? '', '組織コードでの参加')
@@ -213,7 +246,8 @@ test('Web 版の始め方と組織コードでの参加が LoginGate の文言�
 	// 最終レビュー (login1111): Web 版も Desktop 版と同じ形。コードを入れてから上の 2 つのどちらかでログインする
 	// (「組織コードを添えてログイン」のボタンは無くなった。初めての人ではコード方式になり、パスワードの人が止まるため)
 	assert.ok(org.includes(`上の「${CODE_LABEL}」または「${PASSWORD_LABEL}」でログインします`), `組織コードでの参加: ${org}`)
-	assert.ok(org.includes(`以前からパスワードでお使いの方は「${PASSWORD_LABEL}」を選んでください`))
+	// T-2111: 既存の方は確認が済んでいればどちらでもよい。済んでいなければパスワードの方を選ぶ
+	assert.ok(org.includes(`メールアドレスの確認が済んでいない場合は「${PASSWORD_LABEL}」を選んでください`), `組織コードでの参加: ${org}`)
 	assert.ok(!textOf(web).includes(REMOVED_WEB_ORG_LOGIN_LABEL), `Web 版の docs に「${REMOVED_WEB_ORG_LOGIN_LABEL}」が残っている`)
 })
 
