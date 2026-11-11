@@ -137,6 +137,15 @@ test('切り替えは 2.13 から、2 択とメール欄は廃止、既存の方
 	// 確認が済んでいない場合: アプリの案内文と同じ文、パスワードでのログインか再設定で解決する
 	assert.ok(text.includes(`「${MSG_EXISTING_PASSWORD_ACCOUNT}」と表示されます`), `未確認の場合の案内文が無い: ${text}`)
 	assert.match(text, /パスワードを再設定するとメールアドレスの確認も済むため、次からは確認コードでもログインできます/)
+	// 拒否の直後の desktop は existing_password_account で並びが入れ替わり (login-entry.ts authButtonsFor('password'))、
+	// 「パスワードで登録済みの方はこちら」は画面に出ない。画面にあるボタン名で案内する
+	assert.ok(
+		text.includes(`このとき Desktop 版ではボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になります`),
+		`未確認の場合の入れ替わりの説明が無い: ${text}`,
+	)
+	assert.ok(text.includes(`大きい「${SWAPPED_PRIMARY_LABEL}」からパスワードでログインしてください`), text)
+	assert.ok(!text.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), `表示されないボタン名で案内している: ${text}`)
+	assert.match(text, /前回この PC でパスワードでログインした場合と、上の案内が表示された直後は、ボタンの並びが入れ替わり/)
 })
 
 test('T-2111: 誤りになった「既存の方はパスワードのまま」「コードではログインできない」を docs と /join/ に書かない', () => {
@@ -187,7 +196,10 @@ test('#trouble: 未確認の既存アカウントの案内が出た場合 (T-211
 	const at = troubleLogin.indexOf(`「${MSG_EXISTING_PASSWORD_ACCOUNT}」と表示された場合`)
 	assert.ok(at >= 0, `#trouble に未確認の場合の項目が無い: ${troubleLogin}`)
 	const item = troubleLogin.slice(at, troubleLogin.indexOf('「他の端末でログイン中です」', at))
-	assert.ok(item.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), item)
+	// 拒否の直後の desktop はボタンの並びが入れ替わり、「パスワードで登録済みの方はこちら」は表示されない
+	assert.ok(item.includes(`このとき Desktop 版ではログイン画面のボタンの並びが入れ替わり、大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になっています`), item)
+	assert.ok(item.includes(`大きい「${SWAPPED_PRIMARY_LABEL}」からパスワードでログインしてください`), item)
+	assert.ok(!item.includes(`「${PASSWORD_LABEL}」からパスワードでログインしてください`), `表示されないボタン名で案内している: ${item}`)
 	assert.match(item, /パスワードを再設定すると、メールアドレスの確認も済み、次からは「メールアドレスではじめる」でもログインできます/)
 })
 
