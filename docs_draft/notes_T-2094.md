@@ -23,6 +23,10 @@
   (リンク →「Deepmosaic を開く」の「アプリで開く」→ 組織コード入りのログイン画面 → ログイン。管理者はコードを入力しない。開かないときはコピーして貼り付け)、
   導入の流れの手順 6 に「管理者は組織コードを入力しません」。
 - `_includes/docs/web.html`: 始め方の手順 1 を新しい入口に、#team の組織コードでの参加を「エンタープライズプランの方はこちら」→「組織コードを添えてログイン」(LoginGate の実文言)。
+- 最終レビューの直し (login1111): `web.html` の組織コードでの参加を Desktop 版と同じ形 (コードを入れてから上の「メールアドレスではじめる」か
+  「パスワードで登録済みの方はこちら」でログイン) に。Web 版の LoginGate から「組織コードを添えてログイン」のボタンを外す変更 (web 側、別の担当) と対。
+  `02-account.html` (#license) と `06-ops.html` (#trouble) に「前回この PC でパスワードでログインした場合は大きいボタンが『パスワードでログイン』」を追記。
+  テスト (`site-copy-t2094.test.js`) を 15 件に。
 - `subscribe/index.html` STEP 2 と `_data/subscribe.yml` の FAQ: 「新規登録」→「メールアドレスではじめる」(Web 版のログイン画面の変更に追従。料金・条件は変えていない)。
 - 版の表記 `2.12.1` → `2.13`: `_includes/docs/01-intro.html`、`_data/spec.yml` のコメント、テストのコメント・名前 (`site-copy-help1111` / `site-copy-t1900` / `site-copy-t1917` / `spec-requirements`)。
 - テスト: 新規 `src/lib/site-copy-t2094.test.js` (14 件。変更前の原稿に当てると 13 件が落ちることを確認済み)。

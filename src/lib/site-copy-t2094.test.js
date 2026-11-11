@@ -61,7 +61,11 @@ const CODE_LABEL = 'メールアドレスではじめる'
 const PASSWORD_LABEL = 'パスワードで登録済みの方はこちら'
 const ENTERPRISE_LABEL = 'エンタープライズプランの方はこちら'
 const SWITCH_TO_PASSWORD_LABEL = 'パスワードでログインする'
-const WEB_ORG_LOGIN_LABEL = '組織コードを添えてログイン'
+/** 前回の方式がパスワードの人の並び (desktop login-entry.ts の authButtonsFor('password')) */
+const SWAPPED_PRIMARY_LABEL = 'パスワードでログイン'
+const SWAPPED_SECONDARY_LABEL = 'メールアドレスのコードではじめる'
+/** Web 版の LoginGate から外したボタン (最終レビュー、login1111)。docs に残さない */
+const REMOVED_WEB_ORG_LOGIN_LABEL = '組織コードを添えてログイン'
 const ORG_CODE_SHARE_WARNING = '組織コードを知っていれば誰でも参加できます。関係者以外には共有しないでください。'
 const OPEN_APP_LABEL = 'アプリで開く'
 const LICENSES_LABEL = 'ライセンス'
@@ -206,7 +210,20 @@ test('Web 版の始め方と組織コードでの参加が LoginGate の文言�
 	const org = kvValue(sectionOf(web, 'team') ?? '', '組織コードでの参加')
 	assert.ok(org)
 	assert.ok(org.includes(`ログイン画面の「${ENTERPRISE_LABEL}」を開き`))
-	assert.ok(org.includes(`「${WEB_ORG_LOGIN_LABEL}」を押します`))
+	// 最終レビュー (login1111): Web 版も Desktop 版と同じ形。コードを入れてから上の 2 つのどちらかでログインする
+	// (「組織コードを添えてログイン」のボタンは無くなった。初めての人ではコード方式になり、パスワードの人が止まるため)
+	assert.ok(org.includes(`上の「${CODE_LABEL}」または「${PASSWORD_LABEL}」でログインします`), `組織コードでの参加: ${org}`)
+	assert.ok(org.includes(`以前からパスワードでお使いの方は「${PASSWORD_LABEL}」を選んでください`))
+	assert.ok(!textOf(web).includes(REMOVED_WEB_ORG_LOGIN_LABEL), `Web 版の docs に「${REMOVED_WEB_ORG_LOGIN_LABEL}」が残っている`)
+})
+
+test('前回パスワードでログインした PC ではボタンが入れ替わる (大きいボタンが「パスワードでログイン」) と書く', () => {
+	const text = textOf(loginBlock)
+	assert.ok(
+		text.includes(`大きいボタンが「${SWAPPED_PRIMARY_LABEL}」、小さいボタンが「${SWAPPED_SECONDARY_LABEL}」になります`),
+		`#license に入れ替わりの説明が無い: ${text}`,
+	)
+	assert.ok(troubleLogin.includes(`ログイン画面の大きいボタンが「${SWAPPED_PRIMARY_LABEL}」になっています`), '#trouble に入れ替わりの説明が無い')
 })
 
 // ── 「ライセンス」(旧「このアプリについて」) ────────────────────────────────
