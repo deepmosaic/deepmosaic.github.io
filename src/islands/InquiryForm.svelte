@@ -399,7 +399,7 @@
         maxlength={LIMITS.message}
         placeholder={isGeneral
           ? '発生した操作、画面に出たメッセージ、お困りの内容などをご記入ください'
-          : '導入時期、対象となる映像の本数や尺、請求書払いのご希望など'}
+          : '導入時期、対象となる映像の本数や尺、請求書払いのご希望、自社システムへの導入のご相談など'}
         aria-invalid={invalid('message')}
         aria-describedby={describedBy('message', false)}
       ></textarea>
