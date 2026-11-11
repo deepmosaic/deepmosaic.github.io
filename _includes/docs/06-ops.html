@@ -62,7 +62,7 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
       </div>
       <div class="kv-row">
         <div class="kv-key"><code>%LOCALAPPDATA%\deepmosaic</code></div>
-        <div class="kv-val">AI モデル、GPU 用ランタイム（取得した場合）など（合計で 10GB程度）。初回セットアップと起動時の確認で自動管理されます。検出エンジンと動画処理ツールはアプリに含まれています。インストーラ版から Microsoft Store 版に切り替えた場合も、この場所をそのまま使います（Microsoft Store 版を新しく入れた PC では、Windows がアプリ専用の場所に振り替えて保存することがあります）</div>
+        <div class="kv-val">AI モデル、GPU 用ランタイム（NVIDIA 製 GPU 搭載機のみ）など（合計で 10GB程度）。初回セットアップと起動時の確認で自動管理されます。検出エンジンと動画処理ツールはアプリに含まれています。インストーラ版から Microsoft Store 版に切り替えた場合も、この場所をそのまま使います（Microsoft Store 版を新しく入れた PC では、Windows がアプリ専用の場所に振り替えて保存することがあります）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">書き出した動画</div>
@@ -136,7 +136,7 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
     <ul>
       <li>起動時にダウンロードが繰り返される場合: 回線を確認のうえアプリを再起動してください。破損したデータのみ自動で再取得されます。</li>
       <li>「整合性チェック失敗」が繰り返される場合: 「再ダウンロード」を試し、改善しなければ<a href="#support">お問い合わせ</a>ください。「セルフテスト失敗」「依存ランタイム不足」と表示される場合: 「サポートフォームを開く」から、表示されたメッセージを添えてご連絡ください（<a href="#setup">初回セットアップ</a>のエラー一覧）。</li>
-      <li>「GPU 準備に失敗しました（検出時に自動取得します）」と出る場合: そのまま検出を実行すると自動で再取得します。CPU でも検出はできますが速度は落ちます。</li>
+      <li>画面右下の「GPU 高速化」に「取得に失敗しました。「再試行」を押すか、次回の起動時にもう一度取得します」と出る場合: 回線を確認のうえ「再試行」を押すか、アプリを起動し直してください（次回の起動時に自動で取り直します）。取得が終わるまでは CPU で検出できますが、速度は落ちます。</li>
       <li>「Windows のセキュリティ機能が検出エンジンの起動を一時的にブロックしています」と出る場合: Windows のスマート アプリ コントロールなどが、取得したばかりの検出エンジンを安全性の確認が終わるまで数分間止めていることがあります。初回セットアップの画面は数分おきに自動で再試行するので、閉じずにお待ちください（「今すぐ再試行」でもう一度試すこともできます）。しばらく待っても続く場合は、Windows の設定 → アプリとブラウザー コントロール → スマート アプリ コントロール の状態をご確認のうえ、改善しなければ<a href="#support">お問い合わせ</a>ください。アップデートで検出エンジンが新しくなるときは、確認が終わるまで今の検出エンジンで動き続け、終わり次第自動で切り替わります。</li>
     </ul>
     <h3 class="mt-6 text-[16px] font-bold text-ink">ログインとプラン</h3>
@@ -196,7 +196,7 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
 <section id="licenses" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="同梱する第三者ソフトとライセンス" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>Desktop 版（Microsoft Store 版）のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、プロフィールメニューの「このアプリについて」から同じ一覧と各ライセンスの全文を確認できます。</p>
+    <p>Desktop 版（Microsoft Store 版）のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、メニューバーの「ヘルプ ▸ このアプリについて」から同じ一覧と各ライセンスの全文を確認できます。</p>
     <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.3（ffmpeg.exe / ffprobe.exe）</h3>
     <ul>
       <li>ライセンス: GNU General Public License version 3（GPL v3）。全文は <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
@@ -213,7 +213,16 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
     <ul>
       <li>提供元: Microsoft Corporation。Microsoft Visual Studio のライセンス条項に定める再頒布可能コードとして、アプリの実行に必要なランタイム DLL（vcruntime140 / msvcp140 ほか）を同梱しています。</li>
     </ul>
-    <h3 class="mt-6 text-[16px] font-bold text-ink">GPU 高速化（NVIDIA）のコンポーネント</h3>
-    <p>NVIDIA 製の GPU で処理を速くするコンポーネント（CUDA / cuDNN ほか、約 1.7 GB をダウンロード、展開後 約 2.4 GB）はアプリに含めず、「このアプリについて」の「GPU 高速化 (NVIDIA) を有効にする」をオンにしたときだけ当社の配信元から取得します。NVIDIA Corporation の使用許諾条件に従って取得・保存し、GPU での処理にだけ使います。取得しなくても機能は変わりません。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">初回に取得する第三者ソフト（NVIDIA 製 GPU 搭載機のみ）</h3>
+    <p>次のコンポーネントはアプリに含めず、NVIDIA 製 GPU を搭載したパソコンでだけ、初回に当社の配信元から自動で取得します（約 1.7 GB をダウンロード、展開後 約 2.4 GB）。NVIDIA 製 GPU の無いパソコンでは取得しません。取得が終わるまでは CPU で動き、機能は変わりません。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">NVIDIA CUDA / cuDNN ほか（GPU 高速化のコンポーネント）</h3>
+    <ul>
+      <li>提供元: NVIDIA Corporation。NVIDIA GPU 搭載機では、NVIDIA Corporation のソフトウェア (CUDA / cuDNN ほか) をその使用許諾条件に従って当社の配信元から取得し、このパソコンに保存します。取得したものは GPU での処理にだけ使います。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime の CUDA 実行プロバイダ</h3>
+    <ul>
+      <li>提供元: Microsoft Corporation。ライセンス: MIT License（同梱の ONNX Runtime と同じ）。ソース: <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>検出モデルの推論を NVIDIA 製 GPU で行うために、上の NVIDIA のコンポーネントと一緒に取得します。</li>
+    </ul>
   </div>
 </section>

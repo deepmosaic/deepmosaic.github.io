@@ -100,11 +100,12 @@ test('#install: Store で入手する手順・2 つのリンク・インスト�
 	assert.doesNotMatch(text, /ダウンロードしたインストーラ（Deepmosaic Setup）を実行/, '旧手順が残っている')
 })
 
-test('#setup: 検出エンジンはアプリに含まれ、GPU 高速化は利用者がオンにしたときだけ取得', () => {
+// T-1929 (desktop 2.12.1): GPU 高速化はスイッチを廃止し、NVIDIA 製 GPU 搭載機で自動取得 (site-copy-help1111.test.js)
+test('#setup: 検出エンジンはアプリに含まれ、GPU 高速化は NVIDIA 製 GPU 搭載機で自動取得', () => {
 	const setup = textOf(sectionOf(read('_includes/docs/01-intro.html'), 'setup') ?? '')
 	assert.match(setup, /検出エンジンと軽量の検出モデルはアプリに含まれています/)
-	assert.match(setup, /GPU 高速化 \(NVIDIA\) を有効にする/)
-	assert.match(setup, /自動では取得しません/)
+	assert.match(setup, /初回に高速化用のコンポーネント/)
+	assert.doesNotMatch(setup, /自動では取得しません/)
 	assert.doesNotMatch(setup, /モデルデータと検出エンジンが自動でダウンロード/)
 })
 
