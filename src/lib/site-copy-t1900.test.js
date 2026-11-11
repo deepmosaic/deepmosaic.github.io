@@ -66,7 +66,7 @@ test('ONNX Runtime (MIT) と Visual C++ 再頒布可能パッケージ (Microsof
 	assert.match(licenses, /Microsoft/)
 })
 
-// T-1929 (desktop 2.12.1): 任意取得 → NVIDIA 製 GPU 搭載機で初回に自動取得。詳細は site-copy-help1111.test.js
+// T-1929 (desktop 2.13): 任意取得 → NVIDIA 製 GPU 搭載機で初回に自動取得。詳細は site-copy-help1111.test.js
 test('GPU 高速化の NVIDIA コンポーネントは初回に取得する第三者ソフトとして書く', () => {
 	assert.match(licenses, /NVIDIA/)
 	assert.match(licenses, /約 2\.4 GB/)

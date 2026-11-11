@@ -1,9 +1,10 @@
-// T-1928 / T-1929 (desktop help1111、Store 版 2.12.1 から) の docs を固定する回帰テスト。
+// T-1928 / T-1929 (desktop help1111、Store 版 2.13 から) の docs を固定する回帰テスト。
 //
 //   node --test src/lib/site-copy-help1111.test.js
 //
-//   - T-1928: メニューバーに「ヘルプ」(このアプリについて / ドキュメント) を足し、プロフィールメニューから 2 項目を外した。
-//     「このアプリについて」への案内はメニューバーの「ヘルプ」から。初回セットアップ中も「ヘルプ」は使える。
+//   - T-1928: メニューバーに「ヘルプ」(ライセンス / ドキュメント) を足し、プロフィールメニューから 2 項目を外した。
+//     「ライセンス」への案内はメニューバーの「ヘルプ」から。初回セットアップ中も「ヘルプ」は使える。
+//     (T-2094 / desktop T-2093: 項目の表示名は旧「このアプリについて」→「ライセンス」。旧名の不在は site-copy-t2094.test.js)
 //     Store 版には「アップデートを確認」が無いので、ファイルメニューの説明は旧インストーラ版のみと書く。
 //   - T-1929: GPU 高速化のスイッチを廃止し、NVIDIA 製 GPU 搭載機では初回に自動取得 (GPU の無い PC は取得しない)。
 //     失敗時の文言は desktop の CudaRuntimeWidget.svelte の実文言 (「再試行」/ 次回の起動時に取り直す)。
@@ -63,10 +64,10 @@ test('ヘルパー: 陽性対照と陰性対照', () => {
 	assert.equal(textOf('{% comment %}x{% endcomment %}<p>y</p>'), 'y')
 })
 
-test('T-1928: メニューバー「ヘルプ」に「このアプリについて」と「ドキュメント」', () => {
+test('T-1928: メニューバー「ヘルプ」に「ライセンス」と「ドキュメント」', () => {
 	const help = afterHeading(layout, 'メニューバー「ヘルプ」')
 	assert.ok(help, '#layout に「メニューバー「ヘルプ」」の見出しが無い')
-	assert.match(help, /このアプリについて/)
+	assert.match(help, /ライセンス/)
 	assert.match(help, /ドキュメント/)
 	assert.match(help, /初回セットアップ中も使えます/)
 	// 並び: ファイル → キュー → ヘルプ → プロフィールメニュー
@@ -77,7 +78,7 @@ test('T-1928: メニューバー「ヘルプ」に「このアプリについて
 	assert.deepEqual([...order].sort((a, b) => a - b), order, '見出しの並びが違う')
 })
 
-test('T-1928: プロフィールメニューの項目に「ドキュメント」「このアプリについて」を並べない', () => {
+test('T-1928: プロフィールメニューの項目に「ドキュメント」「ライセンス」を並べない', () => {
 	const profile = afterHeading(layout, 'プロフィールメニュー（右上）')
 	assert.ok(profile)
 	assert.doesNotMatch(profile, /ドキュメント（このページを開きます）/, '旧記述が残っている')
@@ -86,13 +87,13 @@ test('T-1928: プロフィールメニューの項目に「ドキュメント」
 	assert.match(list, /お問い合わせ/)
 	assert.match(list, /ログアウト/)
 	assert.match(list, /テーマ/)
-	assert.doesNotMatch(list, /ドキュメント|このアプリについて/)
+	assert.doesNotMatch(list, /ドキュメント|ライセンス|このアプリについて/)
 	assert.match(profile, /メニューバーの「ヘルプ」にあります/)
 })
 
-test('T-1928: 「このアプリについて」への案内はメニューバーの「ヘルプ」から', () => {
-	assert.doesNotMatch(allDocsText, /プロフィールメニューの「このアプリについて」/, '旧記述が残っている')
-	assert.match(licensesText, /メニューバーの「ヘルプ ▸ このアプリについて」から/)
+test('T-1928: 「ライセンス」への案内はメニューバーの「ヘルプ」から', () => {
+	assert.doesNotMatch(allDocsText, /プロフィールメニューの「(このアプリについて|ライセンス)」/, '旧記述が残っている')
+	assert.match(licensesText, /メニューバーの「ヘルプ ▸ ライセンス」から/)
 })
 
 test('T-1928: 初回セットアップ中は「ファイル ▸ 終了」と「ヘルプ」だけ使える', () => {

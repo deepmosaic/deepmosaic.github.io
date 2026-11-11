@@ -141,7 +141,9 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
     </ul>
     <h3 class="mt-6 text-[16px] font-bold text-ink">ログインとプラン</h3>
     <ul>
-      <li>ブラウザで認証したのにアプリがログイン中のままになる場合: ダイアログの「キャンセル」で一度閉じ、もう一度「ログイン」を押してください。</li>
+      <li>ブラウザで認証したのにアプリがログイン中のままになる場合: ダイアログの「キャンセル」で一度閉じ、もう一度「メールアドレスではじめる」または「パスワードで登録済みの方はこちら」を押してください。</li>
+      <li>確認コードのメールが届かない場合（「メールアドレスではじめる」を選んだ方）: 迷惑メールフォルダをご確認ください。届くまで数分かかることがあるので、少し待ってから認証画面でコードを再送信してください。以前からパスワードでお使いの方には確認コードは届きません。待っている画面の「パスワードでログインする」、またはログイン画面の「パスワードで登録済みの方はこちら」からログインしてください（<a href="#license">ログインとライセンス</a>）。</li>
+      <li>パスワードを忘れた場合（パスワードで登録済みの方）: 「パスワードで登録済みの方はこちら」を押し、ブラウザの認証画面でパスワードを再設定してください。</li>
       <li>「他の端末でログイン中です」と出る場合: 同時に使える端末は 1 台です。「続行」でこの端末に切り替えられます（<a href="#license">ログインとライセンス</a>）。</li>
       <li>画面上部にオフラインの帯が出る場合: ローカルの機能はそのまま使えます。「再ログインしてください」と出たときだけ、プロフィールメニューからログインし直してください。</li>
       <li>プランを変更したのにアプリに反映されない場合: 反映には数十秒かかることがあります。「再確認」またはアプリの再起動で更新されます。</li>
@@ -192,15 +194,15 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
   </div>
 </section>
 
-{%- comment -%} T-1900 / T-1915 / T-1917: 同梱する第三者ソフトとライセンス。正本は desktop の src/lib/legal/third-party.ts と static/licenses/ffmpeg-NOTICE.txt (アプリの「このアプリについて」と同じ内容)。ffmpeg を差し替えたら両方とここを同時に直す。 {%- endcomment -%}
+{%- comment -%} T-1900 / T-1915 / T-1917: 同梱する第三者ソフトとライセンス。正本は desktop の src/lib/legal/third-party.ts と static/licenses/ffmpeg-NOTICE.txt (アプリのメニューバー「ヘルプ ▸ ライセンス」と同じ内容。T-2094 / desktop T-2093 で旧名から改称)。ffmpeg を差し替えたら両方とここを同時に直す。 {%- endcomment -%}
 <section id="licenses" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="同梱する第三者ソフトとライセンス" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>Desktop 版（Microsoft Store 版）のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、メニューバーの「ヘルプ ▸ このアプリについて」から同じ一覧と各ライセンスの全文を確認できます。</p>
+    <p>Desktop 版（Microsoft Store 版）のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、メニューバーの「ヘルプ ▸ ライセンス」から同じ一覧と各ライセンスの全文を確認できます。一覧にはソフト名の行だけが並び、行を押すと版・ライセンス・提供元・ソースの入手先などの中身が開きます。</p>
     <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.3（ffmpeg.exe / ffprobe.exe）</h3>
     <ul>
       <li>ライセンス: GNU General Public License version 3（GPL v3）。全文は <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
-      <li>版とビルド: n8.1.3-27-g8dca1586f4。ビルドは BtbN/FFmpeg-Builds（リリース autobuild-2026-10-31-12-59、win64-gpl-8.1）。<code>--enable-gpl --enable-version3</code> で構成され、libx264・libx265・libxvid（いずれも GPL v2 以降）をはじめとするライブラリを静的にリンクしています。リンクしたライブラリの一覧とそれぞれのライセンスは、アプリ内の「このアプリについて」（ffmpeg-NOTICE.txt）で確認できます。</li>
+      <li>版とビルド: n8.1.3-27-g8dca1586f4。ビルドは BtbN/FFmpeg-Builds（リリース autobuild-2026-10-31-12-59、win64-gpl-8.1）。<code>--enable-gpl --enable-version3</code> で構成され、libx264・libx265・libxvid（いずれも GPL v2 以降）をはじめとするライブラリを静的にリンクしています。リンクしたライブラリの一覧とそれぞれのライセンスは、アプリ内の「ヘルプ ▸ ライセンス」（ffmpeg-NOTICE.txt）で確認できます。</li>
       <li>ソースコードの入手先（GPL v3 第 6 条の対応ソース）: <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README.txt" target="_blank" rel="noopener noreferrer">https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README.txt</a> — FFmpeg 本体・静的にリンクした全ライブラリのソースとビルドの手順を無償で提供します（この FFmpeg を配布する間と、最後の配布から少なくとも 3 年間）。入手できない場合は<a href="#support">お問い合わせ</a>ください。</li>
       <li>動画の読み込みと書き出しに使う別のプログラムとして同梱しており、Deepmosaic のアプリ本体にはリンクしていません。Microsoft Store 版はパッケージの中身が読み取り専用・署名済みのため、同梱の FFmpeg をその場で差し替えることはできません（GPL に従って別途入手・改変した FFmpeg を使うことはできます）。</li>
     </ul>
