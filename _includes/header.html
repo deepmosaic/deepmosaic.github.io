@@ -2,8 +2,15 @@
 {%- capture contact_url -%}/contact/{%- endcapture -%}
 {%- assign u = page.url -%}
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
-  {%- comment -%}T-1940: md (768〜1023px) は詰めた間隔で 1 行に収め、「法人様はこちら」は lg 以上だけに出す (md ではロゴ・ナビ・ダウンロードで幅を使い切るため){%- endcomment -%}
-  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-4 lg:gap-7">
+  {%- comment -%}T-1940: md (768〜1023px) は詰めた間隔で 1 行に収める。
+  T-1968: md ではドロワーが出ないので、法人向けのボタンも md 以上で出す。1 行に収めるため md の間だけ
+  ダウンロードは「ダウンロード」、法人向けは「法人様」と短く出す (lg 以上で「無料で」「はこちら」を足す)。
+  短くする部分を hidden lg:inline の span にしているのは、textContent (GA4 の link_text、main.js) と
+  読み上げを全幅で「無料でダウンロード」「法人様はこちら」のまま変えないため
+  (外側の span はボタンの gap-2 が文字の途中に入らないように 1 つの flex 項目にまとめる)。
+  md では Noto Sans JP の実寸で 768px に 21px 足りなかったので、行の間隔を gap-3、2 つのボタンの左右余白を px-3、
+  ボタンどうしの間を 8px に詰める (lg 以上は従来どおり gap-7 / px-4 / 12px)。{%- endcomment -%}
+  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-3 lg:gap-7">
 
     <a href="/" class="flex shrink-0 items-center">
       <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
@@ -20,13 +27,13 @@
     <div class="flex-1"></div>
 
     <!-- Desktop download CTA -->
-    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex">
-      {% include icon.html name="Download" class="h-4 w-4" %}無料でダウンロード
+    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">無料で</span>ダウンロード</span>
     </a>
 
-    <!-- Desktop enterprise CTA (T-1940: ダウンロードより弱い secondary、ダウンロードとの間は詰める) -->
-    <a href="/enterprise/inquiry/" class="btn-secondary hidden lg:-ml-4 lg:inline-flex">
-      {% include icon.html name="Building2" class="h-4 w-4" %}法人様はこちら
+    <!-- Desktop enterprise CTA (T-1940: ダウンロードより弱い secondary、ダウンロードとの間は詰める。T-1968: md 以上で出し、md では「法人様」) -->
+    <a href="/enterprise/inquiry/" aria-label="法人様はこちら" class="btn-secondary hidden md:inline-flex md:-ml-1 md:px-3 lg:-ml-4 lg:px-4">
+      {% include icon.html name="Building2" class="h-4 w-4" %}<span>法人様<span class="hidden lg:inline">はこちら</span></span>
     </a>
 
     <!-- Mobile nav (Svelte island + noscript fallback) -->

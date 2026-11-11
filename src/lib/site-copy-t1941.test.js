@@ -5,8 +5,9 @@
 //   - 料金カード (`_data/plans.yml` の enterprise の `note` → `/price/` とトップの PRICING 節) に
 //     「御社のシステム・サービスへの導入（組み込み）もご相談ください。内容に応じて別途お見積りします。」
 //   - トップの「組織で使う（Enterprise）」カードにも同じ趣旨の 1 文。
-//   - 導入相談ページ (`/enterprise/inquiry/`) のリード文・description と、フォームの「ご相談内容」の
-//     placeholder に「自社システムへの導入のご相談」を例として入れる。
+//   - 導入相談ページ (`/enterprise/inquiry/`) のリード文・description に「御社のシステム・サービスへの
+//     導入のご相談」を入れる (T-1968: 料金カード・トップと同じ「御社」の言い方にそろえる)。
+//   - フォームの「ご相談内容」の placeholder は利用者が書く欄の例なので「自社システムへの導入のご相談」のまま。
 //   - 提供していない機能 (API・SDK・オンプレなど) を具体名で広告しない。企業名は出さない。
 //   - 相談の CTA (`/enterprise/inquiry/`) と「維持管理費用」の注記は残す (CI の grep も見ている)。
 //
@@ -25,6 +26,9 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 
 const CARD_NOTE = '御社のシステム・サービスへの導入（組み込み）もご相談ください。内容に応じて別途お見積りします。'
+/** 導入相談ページのリード文・description (サイトから呼びかける文) の言い方 (T-1968)。 */
+const INQUIRY_LEAD = '御社のシステム・サービスへの導入のご相談'
+/** フォームの placeholder (利用者自身が書く欄の例) の言い方。 */
 const INQUIRY_EXAMPLE = '自社システムへの導入のご相談'
 /** 提供していない導入形態の具体名。新しい文に出たら「無い機能の広告」になる。 */
 const UNOFFERED = [/API/i, /SDK/i, /オンプレ/, /ライブラリ/, /OEM/i]
@@ -78,14 +82,16 @@ test('トップの「組織で使う（Enterprise）」カードに導入の相�
 	assertNoUnofferedFeature(card.replace(/<[^>]+>/g, ''), 'トップの Enterprise カード')
 })
 
-test('導入相談ページ: リード文と description に自社システムへの導入のご相談がある', () => {
+test('導入相談ページ: リード文と description は「御社のシステム・サービスへの導入のご相談」で、「自社」と書かない', () => {
 	const page = read('enterprise/inquiry/index.html')
 	const description = descriptionOf(page)
-	assert.ok(description.includes(INQUIRY_EXAMPLE), `description: ${description}`)
+	assert.ok(description.includes(INQUIRY_LEAD), `description: ${description}`)
+	assert.ok(!description.includes('自社'), `description に「自社」がある: ${description}`)
 	assertNoUnofferedFeature(description, '導入相談ページの description')
 
 	const lead = page.slice(page.indexOf('<h1'), page.indexOf('</section>'))
-	assert.ok(lead.includes(INQUIRY_EXAMPLE), '導入相談ページのリード文に例が無い')
+	assert.ok(lead.includes(INQUIRY_LEAD), '導入相談ページのリード文に「御社のシステム・サービスへの導入のご相談」が無い')
+	assert.ok(!lead.includes('自社'), '導入相談ページのリード文に「自社」がある')
 	assertNoUnofferedFeature(lead.replace(/<[^>]+>|\{\{[^}]+\}\}/g, ''), '導入相談ページのリード文')
 })
 

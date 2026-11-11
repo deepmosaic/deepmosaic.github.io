@@ -7,7 +7,7 @@
 //   (`href="/enterprise/inquiry/"`) と「維持管理費用」の注記が残っていること
 //   (`.github/workflows/jekyll.yml` の grep と同じ固定を、カード単位で見る)。
 // - トップの「組織で使う（Enterprise）」カードにも同じ趣旨の 1 文があること。
-// - 導入相談ページのリード文に「自社システムへの導入のご相談」があること。
+// - 導入相談ページのリード文に「御社のシステム・サービスへの導入のご相談」があること (T-1968 で「自社」から言い換え)。
 //
 // 文言そのものの細かい検査 (提供していない機能の具体名を出さない など) は
 // `src/lib/site-copy-t1941.test.js` が見る。ここは Liquid → HTML の継ぎ目だけを確かめる。
@@ -47,7 +47,9 @@ test('トップの「組織で使う（Enterprise）」カードに導入の相�
   await expect(card.locator(`a[href="${INQUIRY_HREF}"]`)).toHaveCount(1);
 });
 
-test('導入相談ページのリード文に自社システムへの導入のご相談がある', async ({ page }) => {
+test('導入相談ページのリード文に御社のシステム・サービスへの導入のご相談がある', async ({ page }) => {
   await page.goto(INQUIRY_HREF, { waitUntil: 'domcontentloaded' });
-  await expect(page.locator('h1 + p')).toContainText('自社システムへの導入のご相談');
+  const lead = page.locator('h1 + p');
+  await expect(lead).toContainText('御社のシステム・サービスへの導入のご相談');
+  await expect(lead).not.toContainText('自社');
 });
