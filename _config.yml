@@ -35,6 +35,8 @@ exclude:
   # T-286: E2E は公開物ではない。除外しないと spec / 設定が _site に複製されて配信される
   - e2e
   - playwright.config.ts
+  # T-2199 (i18n1112): サイトの多言語化の道具と用語集の写しを公開しない
+  - scripts/i18n
 
 # Default front matter
 defaults:
@@ -42,3 +44,6 @@ defaults:
       path: ""
     values:
       layout: default
+      # T-2199 (i18n1112): ja のページの言語。英中のページは front matter に lang: en / zh-tw を直接書く
+      # (path: "en" の defaults は enterprise/ にも前方一致で当たるので置かない)
+      lang: ja

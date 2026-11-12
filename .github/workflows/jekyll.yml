@@ -196,6 +196,8 @@ jobs:
             [ -e "_site/$leaked" ] \
               && { echo "::error::_site/$leaked が配信対象に入っている — _config.yml の exclude を確認すること"; fail=1; } || true
           done
+          # T-2199 (i18n1112): 多言語化のビルド出力の検査 (scripts/i18n/checks/*.mjs。ja のページの不変の検査は基点が要るので CI に載せない)
+          node scripts/i18n/check-site.mjs _site || fail=1
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
           # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /

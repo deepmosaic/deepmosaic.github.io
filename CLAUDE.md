@@ -40,7 +40,9 @@ npm run build && bundle exec jekyll build
 | `_config.yml` | Jekyll 設定 (サイト全体) |
 | `_layouts/` | テンプレート (`default.html`) |
 | `_includes/` | パーツ (`header.html`, `footer.html`, `download-button.html`, `spec-table.html`) |
-| `_data/` | YAML データ (lang/i18n) |
+| `_data/` | YAML データ |
+| `_data/lang/` | 言語の辞書 `ja.json` (変えない) / `en.json` / `zh-tw.json` (i18n、下の節) |
+| `_data/l10n/` | 英中の部品・データの文 `<en\|zh-tw>/<name>.yml` (1 ファイル 1 チケット) |
 | `_site/` | Jekyll ビルド出力 (gitignore 対象) |
 | `src/` | フロントエンド source: `app.css` (Tailwind v4), `main.js`, `islands/*.svelte` (Svelte 5) |
 | `assets/dist/` | Vite ビルド出力 `app.css` / `app.js` (gitignore 対象・CI 再生成) |
@@ -51,13 +53,40 @@ npm run build && bundle exec jekyll build
 | `price/` | 価格ページ |
 | `index.html` / `404.html` | トップページ / 404 |
 | `mosaic-removal.html` | `/mosaic-removal/`。「モザイク除去」誤認の封じ込めページ |
+| `en/` / `zh-tw/` | 英語 / 繁体字中国語のページ (`/en/…`・`/zh-tw/…`。W7 で作る。front matter に `lang`・`source`・`source_hash` が必須) |
+| `scripts/i18n/` | 多言語化の検査の道具 (ja-identity・check-site・parity・source_hash・用語集の写し)。公開しない |
 | `CNAME` | カスタムドメイン |
 | `BingSiteAuth.xml` / `sitemap.xml` / `robots.txt` | SEO |
 | `llms.txt` / `llms-full.txt` | AI 向けのサイト概要 (`layout: null` 必須) |
 
 ### i18n
 
-`_data/lang/` 配下の YAML で多言語対応。Liquid テンプレートで `site.data.lang.<lang>.<key>` 参照。
+多言語化 (i18n1112、2026-11-12〜。T-2199 で土台、W7 で英中のページを作る)。**日本語が正本**で、英語と繁体字中国語 (台湾向け) の写しを足す。**ja のページの出力は 1 バイトも変えない** (ja-identity で毎チケット検査)。
+
+- **URL**: ja は今のまま (`/`・`/price/` …)。英語は `/en/…`、繁体字は `/zh-tw/…`。対象は `/`・`/price/`・`/spec/`・`/subscribe/`・`/mosaic-removal/`・`/contact/`・`/enterprise/inquiry/`・`/join/`・`/company/about`・`/404.html` (英中の 404 は `/en/404.html`・`/zh-tw/404.html`)。自動のリダイレクトはしない。
+- **対象外 (日本語のページだけ)**: docs (`/docs/`・`/docs/web/`・`_includes/docs`)、法務 (`/company/{terms,privacy,cookie,eula,asct}`、`_data/legal.yml`)、`llms.txt` / `llms-full.txt` / `robots.txt`、`feed.xml`。英中のページからこれらへのリンクは日本語のページへ向け、`{% include ja-link.html … %}` で「日本語のページ」の印を付ける。
+- **`page.lang`**: ja は `_config.yml` の defaults (`path: ""` の `values` の `lang: ja`) で決まる。**英中のページは front matter に `lang: en` / `lang: zh-tw` を必ず書く**。`scope: { path: "en" }` の defaults は置かない (Jekyll の前方一致で `enterprise/` にも当たる)。英中のページの front matter は `lang`・`permalink` (`/en/` / `/zh-tw/` で始まる)・`ja_url`・`source` (元の ja のファイル)・`source_hash`・`title`・`seo_title`・`description` ほか ja と同じ値。
+- **辞書**: `_data/lang/ja.json` は**変えない**。`_data/lang/{en,zh-tw}.json` は ja.json の全キーの訳 + 英中だけのキー (`url_prefix`・`json_ld_lang` など。ja では nil になるので `| default:` か ja の分岐で今の出力を保つ)。Liquid では `site.data.lang[page.lang]`・`site.data.l10n[page.lang].<name>` (ハイフンがあるので添字で引く)。
+- **部品・データの文**: `_data/l10n/<en|zh-tw>/<name>.yml` に置き、1 ファイルを 1 チケットが持つ (`plans`・`faq`・`subscribe` = T-2201 / `spec`・`disclosure`・`mosaic`・`entity` = T-2202 / `nav` = T-2204 / `parts` = T-2205 / `inquiry_form` = T-2206。持ち物の境界はこの表のとおりで、他のチケットの持ち物は編集しない)。数値・URL・コード・並びの正は ja のデータだけ。データの写し (`plans` ほか) は先頭に `_source` / `_source_hash` を持つ。訳のあるページの台帳は `_data/i18n_pages.yml` (hreflang を出すページ)。
+- **ja のソースの日本語の直書きは残す**: 既存の node テストが include のソースの日本語・href・Liquid の式を照合しているため、共通部品は行内の `{% if page.lang == 'ja' %}原文{% else %}{{ 訳 }}{% endif %}` か `{{ tx.x | default: 元の式 }}` で英中の値だけを引く。header / footer は英中用の写し `_includes/header-intl.html` / `_includes/footer-intl.html` を include する。アイランドと JS は `<html lang>` を読む (`src/lib/site-lang.js`) か、同じファイルの中の 3 言語の表 (`const TEXT = { ja, en, 'zh-tw' }`、ja は今の文字列のまま)。
+- **英中の見た目の直し**は `:root:not(:lang(ja))` の下だけ (ja の CSS を変えない)。
+- **検査の道具** (`scripts/i18n/`、`_config.yml` の exclude で公開しない。依存なし):
+
+  ```bash
+  # ja のページ (en/・zh-tw/ 以外の全 .html) が基点の _site とバイト一致 (許した差分 = ?v=<数字>・hreflang の link・og:locale:alternate・data-i18n-switch の要素だけ除く)。0 = 一致 / 1 = 差分 / 2 = 使い方
+  node scripts/i18n/ja-identity.mjs <基点の _site> _site
+  # ビルド出力の検査 (scripts/i18n/checks/*.mjs を名前の順に実行。CI の Verify build output からも呼ぶ)。0 = OK / 1 = エラー / 2 = ディレクトリが無い
+  node scripts/i18n/check-site.mjs _site
+  # ja のソースを直したら英中も直してから、英中のページ / l10n の hash を書き直す
+  node scripts/i18n/accept-site.mjs en/price/index.html zh-tw/price/index.html _data/l10n/en/plans.yml
+  # 基点の _site を作る (リーダーがウェーブの開始時に 1 回。チケットでは実行しない)
+  bash scripts/i18n/build-site-base.sh <commit> <出力の _site>
+  ```
+
+  - `source-hash.mjs`: ja のソースの正規化 (CRLF・コメント・行末の空白・空行を除く) の sha256。`src/lib/i18n-site-tools.test.js` が英中の全ページと l10n の hash の一致を検査する (`npm test`)。
+  - `parity.mjs`: ja と英中のソースの構造 (`id`・`data-dl`・`data-island`・`data-*` の名前・`<img src>`・include の並び) の一致。各ページのチケットの node テストが使う。
+  - `checks/ja-lang.mjs`: `<html lang>` と `og:locale` (ja `ja`/`ja_JP`、en `en`/`en_US`、zh-tw `zh-Hant-TW`/`zh_TW`)。`checks/lang-text.mjs` (W7 で作る): 英中のページの見える文に仮名・簡体字・禁止語が無いこと。用語集の写しは `scripts/i18n/glossary.json`。
+  - 検査を足すときは `scripts/i18n/checks/<名前>.mjs` (`export default function check(ctx)` がエラーの文字列の配列を返す) を足すだけ。node テストは `src/lib/i18n-site-<名前>.test.js` (`_site` を読まない)。
 
 ## Conventions
 
@@ -239,7 +268,7 @@ sleep 3 && curl -s http://localhost:4000/ | grep -q "<html"
 - [ ] 全ページに front matter (`layout` / `title` / `description`) があるか
 - [ ] `<title>` が全角 30 文字以内か (超えるなら `seo_title` を書く)
 - [ ] Liquid 構文エラーがないか (`{{ }}` / `{% %}`)
-- [ ] i18n 文字列を `_data/lang/` 経由で参照しているか (ハードコード禁止)
+- [ ] 英中の文は `_data/lang/{en,zh-tw}.json` / `_data/l10n/<lang>/` から引き、ja の直書きは変えていないか (ja-identity が通る)
 - [ ] 製品説明の文言を `_data/entity.yml` 経由で参照しているか (直書き禁止)
 - [ ] 「モザイク処理」を方向を明示せずに単独で使っていないか (語彙ポリシー)
 - [ ] レスポンシブ (モバイル) でレイアウトが崩れていないか
