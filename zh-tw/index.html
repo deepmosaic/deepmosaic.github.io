@@ -1,0 +1,456 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/
+ja_url: /
+source: index.html
+source_hash: "e38ef64f28867d169a3ad9c3bad00d8e460c1431356e048d1e5d4dadd44e48f1"
+title: 讓馬賽克作業只剩最終確認
+seo_title: 自動為影片加上馬賽克的 AI 軟體｜Deepmosaic
+description: Deepmosaic 是由 AI 自動偵測影片中的對象並加上馬賽克的 Windows 應用程式。無法去掉或解除馬賽克。偵測對象為男性身體部位、女性身體部位、人的臉部，以及影片中既有馬賽克的位置。所有處理都在您的電腦上完成，影像不會傳送到外部。支援與 Adobe Premiere Pro 整合。
+schemas:
+  - software-application
+  - faq
+---
+
+{%- comment -%}
+  T-2208 (i18n1112 I18N-710): 繁体字中国語 (台湾) のトップ。index.html (ja) の写しで、構造 (id・data-dl・data-island・img の src・include の並び・data-*) は ja と同じ
+  (src/lib/i18n-site-top-zh.test.js が scripts/i18n/parity.mjs で検査する。en/index.html とも include の並びまで同じ)。ja の各節のコメント (経緯・理由) は index.html を見ること。
+  - 原文は ja の index.html (en から訳さない)。ページ固有の文 (hero・stats・各節の見出しと本文) はここに直接書く。データの文は site.data.l10n['zh-tw'].* から引く (ハイフンのため添字。Jekyll の include の引数には添字を書けないので、変数 ZH に入れてから ZH.* で引く)。
+  - 数値・URL・設定のデータ (site.data.site.web_app.*・site.data.plans.tiers・site.data.site.roi.*) は ja のデータのまま。
+  - docs へのリンクは ja-link.html (日本語のページの印を付ける)。訳のあるページへは /zh-tw/ の接頭辞。
+  - アプリの画面・日本語の文字が写った画像の alt / figcaption には（日文介面）を添える (設計書 §10.4)。
+  - 金額は「8,940 日圓／月」の形 (¥ を使わない、設計書 §15-11)。
+  - 除去の語は否定の注記 (data-i18n-allow="mosaic_removal" の要素) の中だけ。ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign S = site.data.site -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+
+{% include header.html %}
+
+<!-- HERO -->
+<section class="relative overflow-hidden pt-[88px] pb-24">
+  <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-[-260px] h-[600px] w-[900px] -translate-x-1/2" style="background:radial-gradient(ellipse at center,rgba(79,139,232,.16),transparent 65%)"></div>
+  <div class="relative mx-auto w-[92%] max-w-[1120px] text-center">
+    <div class="kicker mb-3.5">為影片加上馬賽克的 AI 軟體</div>
+    <h1 class="mx-auto max-w-[820px] text-[clamp(38px,5.4vw,60px)] font-bold leading-[1.25] tracking-[-0.02em] text-ink">讓馬賽克作業<br><span class="text-accent">只剩最終確認</span></h1>
+    <p class="mx-auto mt-[22px] max-w-[660px] text-[17px] leading-[2] text-ink-2">這是一款由 AI 自動偵測影片中的對象，並為該範圍加上馬賽克的 Windows 應用程式。所有處理都在您的電腦上完成，您只需確認與修正偵測結果。</p>
+
+    <figure id="hero-detectable" class="mx-auto mt-8 max-w-[660px]">
+      <img src="/assets/img/detectable-objects.webp" alt="可協助偵測的物體：男性身體部位、女性身體部位、人的臉部（日文介面）" width="960" height="540" decoding="async" class="mx-auto block w-[min(288px,100%)] rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">可協助偵測的物體：男性身體部位、女性身體部位、人的臉部（日文介面）。可在{% include ja-link.html href="/docs/#detect-options" label="偵測選項" class="text-accent-soft hover:underline" %}中個別開啟或關閉。也能找出影片中既有馬賽克的位置（<a href="#existing-mosaic" class="text-accent-soft hover:underline">詳細說明</a>）</figcaption>
+    </figure>
+
+    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
+      <a href="{{ site.data.lang[page.lang].app_download_link }}" data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}從 Microsoft Store 免費取得</a>
+      {%- if site.data.site.web_app.enabled %}
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}在瀏覽器中試用（影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘，免安裝）</a>
+      {%- endif %}
+      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}查看說明文件{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" %}
+    </div>
+    <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11（64 位元）</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}自首次啟動起 {{ free_plan.free_window_days }} 天內，最多 {{ free_plan.included_hours }} 小時免費</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}不需信用卡</span>
+    </div>
+    <p class="mx-auto mt-3 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4" data-i18n-allow="mosaic_removal">{{ ZH.entity.not_removal_note }}</p>
+
+    <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
+      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="以 Deepmosaic 匯出的影片，呈現自動偵測的結果" class="block w-full">
+        <source src="/assets/videos/hero-shape.webm" type="video/webm">
+        <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="Deepmosaic Desktop 的編輯畫面。正在預覽 AI 偵測到的臉部已加上馬賽克的狀態，下方排列著偵測區段的時間軸（日文介面）" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
+      </video>
+    </div>
+    <p class="mx-auto mt-3 max-w-[720px] text-[12.5px] leading-[1.8] text-ink-4">自動偵測的結果（素材：Pexels）。</p>
+    <script>if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { var heroVideo = document.getElementById('hero-video'); if (heroVideo) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); } }</script>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section class="border-y border-hair bg-surface-alt">
+  <div class="mx-auto grid w-[92%] max-w-[1120px] gap-px md:grid-cols-3">
+    <div class="px-6 py-9 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Lock" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">不將影像傳送到外部的完全本機處理</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">我們以清單公開會傳送與不會傳送的內容。即使在中斷網路連線的狀態下，偵測、編輯與匯出也能運作。</p>
+    </div>
+    <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Grid3x3" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">靈活的編輯功能</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">可切換馬賽克／模糊，並調整馬賽克格大小、偵測框的擴展率與邊緣羽化。設定可在整體、依類別、依追蹤 ID、依場景 4 個層級覆寫。</p>
+    </div>
+    <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ListChecks" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">確認與修正的工具一應俱全</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">跳至偵測中斷的影格，新增、刪除、移動偵測框，依信賴度篩選。只需修正您在意的地方。</p>
+    </div>
+  </div>
+</section>
+
+{% include what-is.html %}
+
+{%- comment -%}
+  STATS: 値とラベルはページに直接書く (l10n を作らない、spec)。並びと accent は ja のデータ (site.yml の stats) と同じ添字で引く。
+  ja の stats を増減・並べ替えたらここも直す (src/lib/i18n-site-top-zh.test.js が件数と数字を突き合わせる)。
+{%- endcomment -%}
+{%- assign stats_values = "0 位元組|100,000+|12 種格式|4 個階段" | split: "|" -%}
+{%- assign stats_labels = "影像資料的對外傳送量|訓練用圖片資料|支援讀取的格式|偵測流程" | split: "|" -%}
+<!-- STATS -->
+<section class="border-b border-hair bg-surface-alt">
+  <div class="mx-auto grid w-[92%] max-w-[1120px] grid-cols-2 gap-6 py-11 md:grid-cols-4">
+    {%- for s in S.stats %}
+    <div class="text-center">
+      <div class="text-2xl font-bold tracking-[-0.01em] sm:text-[30px] {% if s.accent %}text-accent{% else %}text-ink{% endif %}">{{ stats_values[forloop.index0] }}</div>
+      <div class="mt-1 text-[12.5px] text-ink-3">{{ stats_labels[forloop.index0] }}</div>
+    </div>
+    {%- endfor %}
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="COMPARISON" title="手動作業、外包與 Deepmosaic 的比較" sub="比較馬賽克處理的不同進行方式。費用與所需時間會因案件而有很大差異，因此這裡只整理判斷的依據。" %}
+    <div class="scroll-x">
+      <table class="w-full min-w-[720px] border-collapse text-left">
+        <thead>
+          <tr class="border-b border-edge-strong bg-th">
+            <th class="p-4 text-[13px] font-bold text-ink-body">項目</th>
+            <th class="p-4 text-[13px] font-bold text-ink-body">手動作業（公司內部）</th>
+            <th class="p-4 text-[13px] font-bold text-ink-body">外包</th>
+            <th class="p-4 text-[13px] font-bold text-accent">Deepmosaic</th>
+          </tr>
+        </thead>
+        <tbody class="text-[13.5px] leading-[1.9] text-ink-2">
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">作業方式</td>
+            <td class="p-4">以肉眼看完整部影片並追蹤對象</td>
+            <td class="p-4">下單 → 等待交件 → 驗收</td>
+            <td class="p-4 bg-accent/5">由 AI 偵測並追蹤整部影片，並加上馬賽克。人只需確認與修正</td>
+          </tr>
+          <tr class="border-b border-hair bg-row-alt">
+            <td class="p-4 font-bold text-ink-body">處理期間的人力占用</td>
+            <td class="p-4">需要作業人員全程盯著</td>
+            <td class="p-4">中間需等待 2～5 天</td>
+            <td class="p-4 bg-accent/5">無人值守。完成後可從確認步驟繼續</td>
+          </tr>
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">未公開素材帶出外部</td>
+            <td class="p-4">不會發生</td>
+            <td class="p-4 text-danger">會發生</td>
+            <td class="p-4 bg-accent/5">不會發生（在電腦內完成）</td>
+          </tr>
+          <tr class="border-b border-hair bg-row-alt">
+            <td class="p-4 font-bold text-ink-body">變更設定後重新作業</td>
+            <td class="p-4">每次都要重做</td>
+            <td class="p-4">重新委託、重新交件</td>
+            <td class="p-4 bg-accent/5">同一素材可重做任意次數</td>
+          </tr>
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">確認漏偵測</td>
+            <td class="p-4">以肉眼看完整部影片</td>
+            <td class="p-4">以肉眼看完整部交件影片</td>
+            <td class="p-4 bg-accent/5">可直接跳至偵測中斷的地方</td>
+          </tr>
+          <tr>
+            <td class="p-4 font-bold text-ink-body">費用的形式</td>
+            <td class="p-4">作業時間 × 人事費用</td>
+            <td class="p-4">影片數 × 委託單價</td>
+            <td class="p-4 bg-accent/5">每月固定費用</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+      處理速度在很大程度上取決於 GPU 的效能與素材的解析度。實測值刊登於<a href="/zh-tw/spec/" class="text-accent-soft hover:underline">系統需求</a>。
+    </p>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="roi" class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="CALCULATOR" title="依作業量試算費用" sub="輸入每月的影片數與長度，即可試算使用時數、適合的方案，以及與目前成本的差額。" %}
+    {%- assign roi_plans = site.data.plans.tiers | where: "public", true -%}
+    <div data-island="roi"
+         data-plans='{{ roi_plans | jsonify }}'
+         data-default-cost="{{ S.roi.default_cost_per_video }}"
+         data-manual-multiplier="{{ S.roi.manual_work_multiplier }}"></div>
+    {%- comment -%}
+      JS 無効時のフォールバック。数値は ja と同じ確定値 (Light×3 = 月 15 時間 / 8,940 日圓)。ja の数値を変えたらここも変える。
+    {%- endcomment -%}
+    <noscript>
+      <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
+        試算需要瀏覽器的 JavaScript。每月 6 部影片 × 2 小時（每月 12 小時）時，以 Light 訂閱 3 份（每月 15 小時），固定為 8,940 日圓／月（{{ ZH.plans.tax_note }}）。各方案包含的時數刊登於<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格頁面</a>。
+      </div>
+    </noscript>
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+      「手動作業的估計」是以完成長度的 {{ S.roi.manual_work_multiplier }} 倍計算的<strong class="text-ink-3">暫定值</strong>。並非根據實測的數值。目前的成本請輸入您自己的實際數值。
+    </p>
+  </div>
+</section>
+
+<!-- RELIABILITY -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="RELIABILITY" title="所有偵測結果都能親手修正" sub="AI 的偵測並不完美。因此我們把「能夠修正」放在產品的核心。透過新增、刪除、移動偵測框，變更馬賽克格大小，以及跳至偵測中斷的影格，只需修正您在意的地方。" %}
+    <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
+      <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
+        <img src="/assets/img/screenshots/edit-overview.webp" alt="編輯頁面。AI 的偵測框疊在播放器上，下方的時間軸依偵測類別排列著區段。馬賽克會加在這些框的內側（日文介面）" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ArrowUpFromLine" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">跳至缺漏的影格</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">按 <kbd class="rounded border border-edge bg-panel-2 px-1 font-mono text-[11px]">[</kbd> <kbd class="rounded border border-edge bg-panel-2 px-1 font-mono text-[11px]">]</kbd> 即可在偵測中斷的影格之間前後移動。更容易追查最常見的漏偵測模式。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Maximize2" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">安全邊距</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">可將偵測框從中心放大或縮小 0.5～2 倍。可選擇保留餘裕、不貼著邊緣的做法。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="LayoutGrid" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">可選擇套用範圍</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">可在整體／依類別／依追蹤 ID／依場景 4 個層級覆寫設定。範圍越小的設定越優先。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ClipboardCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">依信賴度篩選</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">可只顯示信賴度達指定值以上的偵測結果，並只對其加上馬賽克。可先整理誤判再開始確認。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Crosshair" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">追蹤</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">手動放置的框會隨著播放自動追蹤對象。可同時追蹤多個框，框會在跟丟對象的地方結束。</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FlipHorizontal2" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">反轉</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">可將馬賽克加在框的外側而不是內側。只留下想呈現的部分，隱藏背景。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXISTING MOSAIC -->
+<section id="existing-mosaic" class="scroll-mt-20 border-t border-hair py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="EXISTING MOSAIC" title="找出影片中既有的馬賽克，並重新套用" sub="自動找出素材中原本就有的方塊狀馬賽克的位置與範圍，並在其上重新套用 Deepmosaic 的馬賽克。適用於想重新統一馬賽克格大小的素材，或想依提交對象的標準變更馬賽克格的素材。" %}
+    <p class="mx-auto mb-8 max-w-[760px] rounded-[10px] border border-edge bg-panel-2 px-4 py-3 text-center text-[14px] font-bold leading-[1.9] text-ink">無法去掉馬賽克，也無法還原成原本的影像。這是在找到的範圍上重新套用新馬賽克的功能。</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-1-found.webp" alt="編輯頁面。找出素材中人物臉部原本就有的馬賽克，並以紫色的多邊形框（標籤為「馬賽克」）圈起來（日文介面）" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">找到的範圍（紫色的多邊形框）（日文介面）</figcaption>
+      </figure>
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-2-reapplied.webp" alt="同一專案的馬賽克設定。「依 ID」分頁中填入了推定的馬賽克格大小（最小格與最大格皆為 10 px）（日文介面）" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">推定的馬賽克格會填入「依 ID」的設定（可在此變更馬賽克格）（日文介面）</figcaption>
+      </figure>
+    </div>
+    <p class="mt-2 text-[12px] text-ink-4">素材：本公司的範例影片（在臉部燒錄了馬賽克）</p>
+    <ul class="mt-8 grid gap-4 md:grid-cols-3">
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">自動找出位置與範圍</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">只要在偵測選項中開啟「馬賽克」並執行偵測，就能找出素材中原本就有的方塊狀馬賽克。</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">推定馬賽克格，並在其上重新套用</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">推定原本馬賽克的馬賽克格大小，並在其上重新套用 Deepmosaic 的馬賽克。馬賽克格可在馬賽克設定的「依 ID」中變更。</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">框可在編輯頁面修正</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">找到的範圍會以多邊形框顯示，可與其他偵測框一樣在編輯頁面修正。</p>
+      </li>
+    </ul>
+    <p class="mt-6 text-[13px] leading-[1.9] text-ink-3">桌面版與網頁版都能使用。兩者的差異（能否與身體部位、臉部的偵測同時使用）、不易找出的馬賽克，以及所需時間的參考，都整理在{% include ja-link.html href="/docs/#detect-mosaic" label="說明文件" class="text-accent-soft hover:underline" %}中。</p>
+  </div>
+</section>
+
+<!-- MOSAIC -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="MOSAIC" title="靈活的編輯功能" sub="沿著物體形狀的馬賽克、不受影片解析度影響的固定馬賽克格（預設）、以畫面寬度上排列的格數指定、依對象大小範圍設定的馬賽克格，以及依分割數等比的馬賽克格。可配合各提交對象的規定值進行調整。" %}
+    <div class="mb-12">
+      <h3 class="text-[18px] font-bold text-ink">不用方形框，而是沿著物體的形狀加上馬賽克</h3>
+      <p class="mt-2 max-w-[760px] text-[14px] leading-[1.9] text-ink-2">AI 會在偵測到的框內建立對象的輪廓，並依該形狀加上馬賽克（在搭載支援 CUDA 的 GPU 的電腦上預設啟用，沒有相關設定）。頭髮與背景不會被方形一起蓋住，因此只會遮住需要遮住的部分。輪廓可直接在編輯頁面中操作。</p>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2">
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="以方形框直接為 6 位人物的臉部加上馬賽克的影格。頭髮與背景也被方形蓋住" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">維持方形框</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="將同一影格精細化，沿著 6 位人物臉部的形狀加上馬賽克的狀態。頭髮與背景沒有被蓋住" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">沿著形狀的馬賽克</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-1-rect.webp" alt="遠景構圖中，以方形框直接為 6 位人物的臉部加上馬賽克的影格" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">維持方形框（遠景構圖）</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-1-shape.webp" alt="將遠景構圖的同一影格精細化，沿著臉部形狀加上馬賽克的狀態" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">沿著形狀的馬賽克（遠景構圖）</figcaption>
+        </figure>
+      </div>
+      <p class="mt-2 text-[12px] text-ink-4">同一部影片的同一個影格，只變更設定後以 Deepmosaic 匯出的結果。素材：Pexels</p>
+    </div>
+    <div data-island="tabs">
+      <div role="tablist" aria-label="馬賽克設定" class="flex gap-1 border-b border-hair">
+        <button type="button" role="tab" id="tab-scope" aria-controls="panel-scope" aria-selected="true" class="tab tab-active">套用範圍</button>
+        <button type="button" role="tab" id="tab-controls" aria-controls="panel-controls" aria-selected="false" class="tab">設定項目</button>
+      </div>
+      <div class="tabpanels pt-6">
+        <div role="tabpanel" id="panel-scope" aria-labelledby="tab-scope">
+          {% include kv-table.html rows=ZH.mosaic.scopes label_width="180px" %}
+          <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ ZH.mosaic.priority_note }}</p>
+        </div>
+        <div role="tabpanel" id="panel-controls" aria-labelledby="tab-controls">
+          {% include kv-table.html rows=ZH.mosaic.controls label_width="220px" %}
+          <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ ZH.mosaic.note }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 overflow-hidden rounded-xl border border-edge">
+      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="馬賽克設定面板。指定要加上的馬賽克類型（馬賽克／模糊）、馬賽克格大小、不透明度與邊緣羽化的畫面（日文介面）" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="TIMELINE" title="匯出前，在時間軸上完成" sub="從剪掉不需要的場景、重新排列，到加入文字、BGM 與轉場，都能在編輯頁面的時間軸上完成。編輯的內容會直接反映在匯出結果中。" %}
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Clapperboard" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">剪輯與重新排列</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">拖曳片段的兩端即可修剪，也能分割、刪除與重新排列片段。片段之間也可以留下空白。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FolderInput" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">加入素材</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">可匯入影片、圖片與音訊素材，並排列在時間軸上。圖片可做成任意長度的片段。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="PenLine" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">文字與浮水印</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">文字可放在畫面上的任意位置，並可選擇字型（5 種）與粗體。可將標誌等圖片疊加為浮水印。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Activity" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">BGM 與音量</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">將 BGM 放在音訊軌道上，一邊看波形一邊調整位置與音量。也能變更原始影片音訊的音量。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="RefreshCw" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">淡化與轉場</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">可設定影片開頭與結尾的淡入、淡出，以及片段接點的轉場。從接點上的剪刀選擇淡化或轉場，秒數與類型則在側邊欄設定。每個片段的開頭與結尾也能套用淡化。</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ShieldCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">馬賽克維持不變</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">即使剪輯或重新排列，馬賽克仍會加在 AI 偵測到的原始影片區段上。匯入的素材不在偵測範圍內。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANAGE -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="MANAGE" title="整理影片，也能以組織方式使用" sub="即使影片數量增加，也能透過資料夾與標籤立即找到目標影片。Enterprise 可讓組織成員共用 1 份訂閱。" %}
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="card overflow-hidden">
+        <img src="/assets/img/screenshots/home.webp" alt="主畫面。可用左側的側邊欄篩選清單，右側排列著已處理影片的卡片（日文介面）" width="1280" height="800" loading="lazy" decoding="async" class="block w-full border-b border-hair">
+        <div class="p-6">
+          <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="FolderInput" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">主畫面的資料夾與標籤</h3></div>
+          <ul class="flex flex-col gap-2.5">
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>在資料夾中建立子資料夾，並拖曳影片卡片來分類</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>加上標籤，並從側邊欄篩選</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>依名稱、標籤、專案 ID 搜尋，顯示方式可從 3 種中選擇</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card p-6">
+        <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Building2" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">以組織使用（Enterprise）</h3></div>
+        <ul class="flex flex-col gap-2.5">
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>多個帳號共用 1 份訂閱，包含的時數可由整個組織使用</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>由管理員邀請成員，並管理權限與帳號數</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>發放組織代碼後，每個人在登入時輸入即可加入</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>以清單查看過去的請款單，並以 PDF 儲存</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>查看各成員的使用量</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>也歡迎洽詢導入（整合）至貴公司的系統或服務（依內容另行報價）</span></li>
+        </ul>
+        <p class="mt-5 text-[13.5px] leading-[1.9] text-ink-2">
+          {% include ja-link.html href="/docs/#team" label="組織管理的使用方式" class="text-accent-soft hover:underline" %}
+          ·
+          <a href="/zh-tw/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise 導入洽詢</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section id="privacy" class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="PRIVACY" title="影像不會傳送到外部" sub="我們公開傳送資料的內容，以及在中斷網路連線狀態下的運作步驟。您可以親自確認。" %}
+    {% include disclosure-table.html %}
+    <div class="mt-5 card p-6">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">您可以親自確認離線也能運作</h3></div>
+      <ol class="ml-5 list-decimal text-[14px] leading-[2] text-ink-2 marker:text-ink-4">
+        {%- for step in ZH.disclosure.offline_steps %}
+        <li>{{ step }}</li>
+        {%- endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <div>
+        {% include section-title.html kicker="INTEGRATION" title="一鍵匯入 Adobe Premiere Pro" sub="將 AI 偵測到的馬賽克資訊自動匯入 Premiere Pro 的專案。不必從頭處理馬賽克，只需在熟悉的編輯環境中進行最終調整。" align="left" %}
+        <ul class="-mt-6 flex flex-col gap-2.5">
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>從影片卡片的選單直接傳送</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>也會自動引導增效模組的設定</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>原樣重現馬賽克的位置與大小</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>也可在應用程式內匯出燒錄馬賽克的影片（支援 NVENC）</span></li>
+        </ul>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
+        <img src="/assets/img/pr_image.webp" alt="Adobe Premiere Pro 的節目監視器。以從 Deepmosaic 匯入的馬賽克資訊，為畫面中 2 位人物的臉部加上馬賽克（日文介面）" width="1593" height="1332" loading="lazy" decoding="async" class="block w-full">
+      </div>
+    </div>
+
+    <div class="mt-16 grid gap-5 md:grid-cols-3">
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">1</div><h3 class="mb-2 text-[16px] font-bold text-ink">選取影片</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">選取檔案或資料夾，或直接拖放。可一次處理多部影片。</p></div>
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">2</div><h3 class="mb-2 text-[16px] font-bold text-ink">由 AI 偵測</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">準備 → 前處理 → 偵測 → 分析，共 4 個階段。可一邊查看處理 fps 與剩餘時間一邊等待。</p></div>
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">3</div><h3 class="mb-2 text-[16px] font-bold text-ink">確認後匯出</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">確認並修正偵測結果後，傳送到 Premiere Pro，或匯出燒錄馬賽克的影片。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="PRICING" title="依作業量選擇的 3 種方案" sub="付費方案請從各方案的「訂閱」，以網頁版的帳號申請。在 Microsoft Store 版的應用程式中，也能直接使用同一個帳號。" %}
+    {% include pricing-cards.html %}
+    <p class="mt-6 text-center text-[13.5px] text-ink-2">
+      詳情請參閱<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格頁面</a>。
+    </p>
+  </div>
+</section>
+
+<!-- DISCLOSURE -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[900px]">
+    {% include section-title.html kicker="DISCLOSURE" title="不擅長的情況與限制事項" sub="我們不會使用「保證通過審查」、「零漏偵測」之類的說法。偵測精度容易下降的條件，都會事先公開。" %}
+    <div class="mb-6 rounded-lg border-l-[3px] border-warning bg-panel p-5 text-[14px] leading-[1.95] text-ink-body">
+      {{ ZH.disclosure.responsibility }}
+    </div>
+    {% include kv-table.html rows=ZH.disclosure.weaknesses label_width="280px" %}
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">{{ ZH.disclosure.accuracy_note }}</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="scroll-mt-20 py-24">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    {% include section-title.html kicker="FAQ" title="常見問題" %}
+    {% include faq.html items=ZH.faq.items %}
+  </div>
+</section>
+
+{% include cta-download.html secondary_href="/zh-tw/price/" secondary_label="查看價格" %}
+
+{% include footer.html %}
