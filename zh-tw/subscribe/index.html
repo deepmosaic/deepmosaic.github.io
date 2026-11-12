@@ -1,0 +1,109 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/subscribe/
+ja_url: /subscribe/
+source: subscribe/index.html
+source_hash: "f7d2c107442f5f5939d0022379eb82e77b9667bda9c2ffa3d816ab657eb0a49c"
+title: 申請付費方案
+seo_title: 申請付費方案｜Deepmosaic
+# ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の subscribe/index.html と同じ)。料金を変えたらここも直すこと。
+description: Deepmosaic 付費方案（Light 每月 2,980 日圓、Pro 每月 9,800 日圓，未稅）的申請頁面。以網頁版的帳號使用信用卡付款，在 Microsoft Store 版的應用程式中也能直接以同一個帳號使用。
+faq_data: subscribe
+schemas:
+  - software-application
+  - faq
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 繁体字中国語 (台湾) の申し込みのページ。subscribe/index.html (ja) の写しで、構造 (id・data-dl・include の並び) は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する。en/subscribe/index.html とも ja-link.html の位置まで同じ)。
+  - プランのボタンは ja と同じ Web 版の深いリンク `<web_app.url>?checkout=<code>` と data-dl (URL に言語を足さない、設計書 §9.1)。
+  - 金額・込み時間・プラン名は ja のデータ。文は site.data.l10n['zh-tw'] の plans・parts・subscribe (変数 ZH に入れて引く。include の引数に添字を書けない)。
+    金額は「日圓」(currency_prefix / currency_suffix。円の記号を使わない)。
+  - docs へのリンクは ja-link.html。訳のあるページへは /zh-tw/ の接頭辞。ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign subscribe_plans = site.data.plans.tiers | where: "public", true | where_exp: "p", "p.subscribe" -%}
+{%- assign ent = site.data.plans.tiers | where: "code", "enterprise" | first -%}
+{%- assign app_base = site.data.site.web_app.url -%}
+{%- assign q = site.data.subscribe.checkout_query -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+{%- assign PL = ZH.plans -%}
+{%- assign P = ZH.parts -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="導覽路徑" class="mb-5 text-[13px] text-ink-4">
+      <a href="/zh-tw/" class="hover:text-accent-soft">首頁</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">申請付費方案</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">申請付費方案</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">申請需以網頁版的帳號進行，在 Microsoft Store 版的應用程式中也能直接使用。Microsoft Store 版的應用程式沒有購買畫面。請從下方的按鈕開啟網頁版，以與應用程式相同的帳號登入，並以信用卡付款。</p>
+  </div>
+</section>
+
+<section class="pb-12">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <h2 class="text-[19px] font-bold text-ink">申請流程</h2>
+    <ol class="mt-4 grid gap-4 md:grid-cols-3">
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 1</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">在下方的方案中按下「訂閱」，就會開啟網頁版（瀏覽器）。</p>
+      </li>
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 2</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">以與應用程式相同的帳號登入（若沒有帳號，請從「以電子郵件開始」註冊）。登入後會直接進入付款畫面。</p>
+      </li>
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 3</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">以信用卡付款後，帳號的方案就會切換。在應用程式中只要以同一個帳號登入即可套用。</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="pb-12">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <h2 class="text-[19px] font-bold text-ink">選擇方案</h2>
+    <div class="mt-4 grid items-stretch gap-5 md:grid-cols-2">
+      {%- for plan in subscribe_plans %}
+      {%- capture contract_quota %}{% include contract-quota.html plan=plan %}{% endcapture -%}
+      {%- assign T = PL.tiers[plan.code] -%}
+      {%- capture incl -%}{{ PL.currency_prefix }}{{ plan.price_incl_display }}{{ PL.currency_suffix }}{%- endcapture -%}
+      <div id="plan-{{ plan.code }}" class="flex scroll-mt-24 flex-col {% if plan.featured %}plan-card-featured{% else %}plan-card{% endif %}">
+        <h3 class="mb-3 text-[13px] font-bold tracking-[0.1em] {% if plan.featured %}text-accent-soft{% else %}text-ink-4{% endif %}">{{ plan.name | upcase }}</h3>
+        <div class="flex flex-wrap items-baseline gap-x-1.5">
+          <span class="text-[32px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ PL.currency_prefix }}{{ plan.price_display }}{{ PL.currency_suffix }}</span>
+          <span class="text-[13px] {% if plan.featured %}text-hi-ink-3{% else %}text-ink-4{% endif %}">{{ T.price_unit }}{{ P.pc_tax_open }}{{ PL.tax_note }}{% if plan.price_incl_display %}{{ P.pc_tax_sep }}{{ P.pc_tax_incl | replace: '%PRICE%', incl }}{% endif %}{{ P.pc_tax_close }}</span>
+        </div>
+        <p class="mt-3 text-[13.5px] leading-[1.9] {% if plan.featured %}text-hi-ink-2{% else %}text-ink-2{% endif %}">{{ T.summary }}</p>
+        <ul class="mt-4 flex flex-col gap-2 text-[13.5px] {% if plan.featured %}text-hi-ink{% else %}text-ink-body{% endif %}">
+          {%- for spec in T.specs %}
+          <li>{{ spec.label }}：{{ spec.value }}</li>
+          {%- if forloop.first and contract_quota != "" %}
+          <li>{{ P.pc_extra_contracts }}：{{ contract_quota }}</li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+        <div class="mt-auto pt-6">
+          <a href="{{ app_base }}?{{ q }}={{ plan.code }}" data-dl="subscribe-{{ plan.code }}-webapp" class="{% if plan.featured %}btn-primary{% else %}btn-secondary{% endif %} w-full">{{ T.subscribe_label }} {{ plan.name }}</a>
+        </div>
+      </div>
+      {%- endfor %}
+    </div>
+    <p class="mt-5 text-[13px] leading-[1.9] text-ink-4">價格與內含時數的詳情請參閱<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格頁面</a>，使用時間的計算方式請參閱說明文件中的{% include ja-link.html href="/docs#usage" label="使用時間的計算" class="text-accent-soft hover:underline" %}。{{ ent.name }}（企業適用，{{ ent.min_seats }} 個帳號起）採報價方式簽約。請透過<a href="/zh-tw/enterprise/inquiry/" class="text-accent-soft hover:underline">導入洽詢</a>與我們聯絡。</p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[900px]">
+    <h2 class="mb-5 text-[19px] font-bold text-ink">常見問題</h2>
+    {% include faq.html items=ZH.subscribe.faq %}
+  </div>
+</section>
+
+{% include footer.html %}

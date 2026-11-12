@@ -1,0 +1,92 @@
+---
+layout: default
+lang: en
+permalink: /en/mosaic-removal/
+ja_url: /mosaic-removal/
+source: mosaic-removal.html
+source_hash: "41363f52708432310d7e2a7a907d45f654ae1767cfe541c4164d98e19f0feac7"
+title: About mosaic removal
+seo_title: "Deepmosaic is not mosaic removal software"
+description: "Deepmosaic is software for applying (adding) mosaic to videos. It has no features for removing, undoing, or restoring mosaic, or for recovering the original footage beneath it. Be careful not to confuse it with tools that have similar names."
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 英語の「モザイク除去について」のページ (誤認の封じ込め)。mosaic-removal.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する)。封じ込めの設計の注意 (noindex を付けない・他社ツールへの
+  リンクを張らない・DL ボタンを置かない) は mosaic-removal.html のコメントを見ること。英中でも同じ。
+  - 除去の語 (remove mosaic など) を使ってよいのはこのページと zh-tw/mosaic-removal.html だけ (checks/lang-text.mjs がこのパスを許す)。
+  - 文面は site.data.l10n.en.entity (I18N-704)。ja の entity.yml の en の値 (llms.txt / JSON-LD 用) は使わない。
+    変数名は E ではなく EL (can-cannot.html が include の中で E = site.data.entity (ja) を assign し、include は呼び出し側と変数を共有するので、E だと include の後の E.* が ja の文になる)。
+    ja の `lang="en"` の段落 (disambiguation の en) は、英中では地の文なので lang 属性を付けずに EL.disambiguation を出す。
+  - can-cannot.html は page.lang で英語になる (I18N-707)。docs へのリンクは ja-link.html。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign EL = site.data.l10n.en.entity -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[880px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">About mosaic removal</span>
+    </nav>
+    <h1 class="text-[clamp(28px,3.6vw,40px)] font-bold leading-[1.35] tracking-[-0.02em] text-ink">Deepmosaic is software that <span class="text-accent">adds mosaic</span></h1>
+    <p class="mt-5 max-w-[680px] text-[15.5px] leading-[1.95] text-ink-2">{{ EL.definition }}</p>
+    <p class="mt-3 max-w-[680px] text-[13.5px] leading-[1.9] text-ink-4">{{ EL.disambiguation }}</p>
+  </div>
+</section>
+
+<section class="pb-16">
+  <div class="mx-auto flex w-[92%] max-w-[880px] flex-col gap-14">
+
+    <div>
+      <h2 class="mb-6 text-[21px] font-bold text-ink">What it can and cannot do</h2>
+      {% include can-cannot.html %}
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">Why is it confused with other tools?</h2>
+      <p class="mb-5 max-w-[680px] text-[14.5px] leading-[2] text-ink-2">We think there are 2 main reasons.</p>
+      <ul class="flex flex-col gap-3">
+        {%- for reason in EL.confusion_reasons %}
+        <li class="flex gap-2.5 text-[14px] leading-[1.95] text-ink-2">{% include icon.html name="HelpCircle" class="mt-1 h-4 w-4 shrink-0 text-ink-4" %}<span>{{ reason }}</span></li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-5 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ EL.name_origin }}</p>
+      <p class="mt-3 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ EL.oss_distinction }}</p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">If you are looking to remove mosaic</h2>
+      <div class="rounded-lg border-l-[3px] border-warning bg-panel p-5 text-[14px] leading-[2] text-ink-body">
+        Deepmosaic adds mosaic to videos. It cannot remove it.
+        We do not offer any product or service that removes, undoes, or restores mosaic, and we do not accept inquiries about that use.
+        Installing Deepmosaic does not let you return footage that already has mosaic applied to its original state.
+        This software has the exact opposite purpose of the feature you are looking for, so check this before you download it.
+      </div>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">What Deepmosaic solves</h2>
+      <p class="max-w-[680px] text-[14.5px] leading-[2] text-ink-2">
+        Applying mosaic takes time in proportion to the length of the video, because someone has to watch the whole video and keep following the targets.
+        In Deepmosaic, AI detects and tracks the targets throughout the video and applies mosaic, reducing the work people do to reviewing and correcting the detection results.
+        Footage is never sent outside, and all processing happens on your PC.
+      </p>
+      <ul class="mt-6 flex flex-col gap-2.5 text-[14px]">
+        <li><a href="/en/" class="text-accent-soft hover:underline">Product overview and what it can do</a></li>
+        <li>{% include ja-link.html href="/docs" label="How to use it (from installation to export)" class="text-accent-soft hover:underline" %}</li>
+        <li><a href="/en/spec/" class="text-accent-soft hover:underline">System requirements</a></li>
+        <li><a href="/en/price/" class="text-accent-soft hover:underline">Pricing</a></li>
+        <li><a href="/en/#faq" class="text-accent-soft hover:underline">Frequently asked questions</a></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+{% include footer.html %}

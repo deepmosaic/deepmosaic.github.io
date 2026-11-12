@@ -1,0 +1,67 @@
+---
+layout: default
+lang: en
+permalink: /en/price/
+ja_url: /price/
+source: price/index.html
+source_hash: "c54a366e8f12bf1ec1b19c5f58279de0f3dc7ac37a9c0b6f5c18792aa8828721"
+title: Pricing
+seo_title: "Pricing | Deepmosaic - AI software that adds mosaic to videos"
+# ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の price/index.html と同じ)。料金を変えたらここも直すこと。
+description: "Pricing plans for Deepmosaic, which automates the work of applying mosaic to videos. Light ¥2,980 / month, Pro ¥9,800 / month, Enterprise ¥8,000 / account / month (all excl. tax). Included hours are stated clearly, and there are no overage charges. The free plan covers up to 2 hours in total for 7 days from the first launch, with no credit card required."
+schemas:
+  - software-application
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 英語の料金のページ。price/index.html (ja) の写しで、構造 (id・data-dl・include の並び) は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する)。ja の各節のコメント (経緯・理由) は price/index.html を見ること。
+  - 料金カード (pricing-cards.html) と末尾の CTA (cta-download.html) は page.lang で英語になる (I18N-707)。金額の数値は ja のデータのまま。
+  - docs へのリンクは ja-link.html (日本語のページの印を付ける)。訳のあるページへは /en/ の接頭辞。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Pricing</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Pricing</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.l10n.en.entity.one_liner }}
+      You can subscribe to a paid plan on the <a href="/en/subscribe/" class="text-accent-soft hover:underline">subscription page</a> with your Web app account (the Microsoft Store version of the app has no purchase screen, and you can use it with the same account as it is).
+      For the steps, see {% include ja-link.html href="/docs#plan" label="Changing your plan" class="text-accent-soft hover:underline" %} in the documentation.
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include pricing-cards.html %}
+
+    <div class="mt-10 card p-6">
+      <h2 class="text-[17px] font-bold text-ink">How usage time is measured</h2>
+      <ul class="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-[1.9] text-ink-2">
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Usage is measured by the playback length of videos for which detection has finished.</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Time is added when detection finishes. Exporting is not counted.</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>The only data sent to the license server are the usage (video length in seconds), the hash values of files, and the hash value of the device identifier. File names, footage, and the coordinates of detection results are not sent.</span></li>
+      </ul>
+      <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+        For details, see {% include ja-link.html href="/docs#usage" label="Measuring usage time" class="text-accent-soft hover:underline" %} in the documentation.
+      </p>
+    </div>
+
+    <p class="mt-7 text-center text-[13px] text-ink-4">
+      If you have any questions, see the {% include ja-link.html href="/docs" label="documentation" class="text-accent-soft hover:underline" %} or contact us through the <a href="/en/contact/" class="text-accent-soft hover:underline">contact form</a>.
+    </p>
+  </div>
+</section>
+
+{% include cta-download.html secondary_href="/docs" secondary_label="View the documentation (Japanese)" %}
+
+{% include footer.html %}

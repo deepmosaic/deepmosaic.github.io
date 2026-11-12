@@ -1,0 +1,104 @@
+---
+layout: default
+lang: en
+permalink: /en/spec/
+ja_url: /spec/
+source: spec/index.html
+source_hash: "aa718799a166e03ff4aea715cd155a60a0c1917a15c0bae5afd3f909b73fa80a"
+title: System requirements
+seo_title: "System requirements | Deepmosaic - AI software that adds mosaic to videos"
+description: "System requirements for Deepmosaic (AI software that applies mosaic to videos): supported OS, required memory, and GPU requirements, a guide to processing speed based on measurements in the production environment, and the supported load and export formats."
+schemas:
+  - software-application
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 英語の動作環境のページ。spec/index.html (ja) の写しで、構造 (id・data-dl・include の並び) は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する)。ja の各節のコメント (経緯・理由) は spec/index.html を見ること。
+  - 表の行は site.data.l10n.en.spec (I18N-704。ja の _data/spec.yml と同じ入れ子・同じ件数・同じ順)。数値・機種名の正は ja のデータ。
+  - macOS は「開発中・提供時期は未定」の事実だけ (ダウンロードボタンも先行登録も置かない。ja と同じ)。
+  - docs へのリンクは ja-link.html。訳のあるページへは /en/ の接頭辞。ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign SPEC = site.data.l10n.en.spec -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[880px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">System requirements</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">System requirements</h1>
+    <p class="mt-4 max-w-[640px] text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.l10n.en.entity.one_liner }}
+      Check these before you download. Detection speed depends greatly on GPU performance and the resolution of your footage.
+    </p>
+  </div>
+</section>
+
+<section class="pb-16">
+  <div class="mx-auto flex w-[92%] max-w-[880px] flex-col gap-12">
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Monitor" class="h-5 w-5 shrink-0 text-accent" %}Windows
+      </h2>
+      {% include kv-table.html rows=SPEC.windows label_width="180px" %}
+    </div>
+
+    <div>
+      <h2 class="mb-2 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Activity" class="h-5 w-5 shrink-0 text-accent" %}GPU and processing speed guide
+      </h2>
+      <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-2">{{ SPEC.performance_note }}</p>
+      {% include kv-table.html rows=SPEC.performance label_width="280px" %}
+      <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ SPEC.performance_footnote }}</p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="RefreshCw" class="h-5 w-5 shrink-0 text-accent" %}Network
+      </h2>
+      {% include kv-table.html rows=SPEC.network label_width="220px" %}
+      <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">
+        For a list of the data that is sent, see the <a href="/en/#privacy" class="text-accent-soft hover:underline">disclosure of communications</a>.
+      </p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="FileOutput" class="h-5 w-5 shrink-0 text-accent" %}Supported formats
+      </h2>
+      {% include kv-table.html rows=SPEC.formats label_width="140px" %}
+    </div>
+
+    <div>
+      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
+        {% include icon.html name="Laptop" class="h-5 w-5 shrink-0 text-ink-3" %}macOS
+        <span class="badge-done">{{ SPEC.macos.status }}</span>
+      </h2>
+      <div class="card p-6">
+        <p class="text-[14px] leading-[2] text-ink-2">{{ SPEC.macos.note }}</p>
+        <div class="mt-5">
+          {% include kv-table.html rows=SPEC.macos.planned label_width="200px" %}
+        </div>
+      </div>
+    </div>
+
+    <div class="card-hi p-7 text-center">
+      <h2 class="text-[18px] font-bold text-hi-ink">You can check whether your GPU is recognized in the app's settings</h2>
+      <p class="mx-auto mt-3 max-w-[560px] text-[14px] leading-[1.95] text-hi-ink-2">
+        After installation, the GPU in use and the inference model are shown on the detection options screen.
+        If your GPU is not recognized, see {% include ja-link.html href="/docs#trouble" label="Troubleshooting" class="text-accent-bright hover:underline" %}.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+{% include cta-download.html title="If your PC meets the requirements, you can get started right away" secondary_href="/docs" secondary_label="View the documentation (Japanese)" %}
+
+{% include footer.html %}

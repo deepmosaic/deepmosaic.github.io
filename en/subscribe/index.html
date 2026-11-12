@@ -1,0 +1,114 @@
+---
+layout: default
+lang: en
+permalink: /en/subscribe/
+ja_url: /subscribe/
+source: subscribe/index.html
+source_hash: "f7d2c107442f5f5939d0022379eb82e77b9667bda9c2ffa3d816ab657eb0a49c"
+title: Subscribe to a paid plan
+seo_title: "Subscribe to a paid plan | Deepmosaic"
+# ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の subscribe/index.html と同じ)。料金を変えたらここも直すこと。
+description: "The subscription page for Deepmosaic paid plans (Light ¥2,980 / month, Pro ¥9,800 / month, excl. tax). Pay by credit card with your Web app account, and use the same account as it is in the Microsoft Store version of the app."
+faq_data: subscribe
+schemas:
+  - software-application
+  - faq
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 英語の申し込みのページ。subscribe/index.html (ja) の写しで、構造 (id・data-dl・include の並び) は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する)。ja の経緯・理由は subscribe/index.html のコメントを見ること。
+  - プランのボタンは ja と同じ Web 版の深いリンク `<web_app.url>?checkout=<code>` と data-dl (Web 版の言語はブラウザで決まる。URL に言語を足さない、設計書 §9.1)。
+  - 金額・込み時間・プラン名は ja のデータ (_data/plans.yml)。文 (summary・specs・単位・税・申し込むの語) は site.data.l10n.en.plans (I18N-703)、
+    税の括弧・追加契約の語は site.data.l10n.en.parts (I18N-707)。FAQ は site.data.l10n.en.subscribe.faq (JSON-LD も同じ訳、I18N-705)。
+  - docs へのリンクは ja-link.html。訳のあるページへは /en/ の接頭辞。ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign subscribe_plans = site.data.plans.tiers | where: "public", true | where_exp: "p", "p.subscribe" -%}
+{%- assign ent = site.data.plans.tiers | where: "code", "enterprise" | first -%}
+{%- assign app_base = site.data.site.web_app.url -%}
+{%- assign q = site.data.subscribe.checkout_query -%}
+{%- assign PL = site.data.l10n.en.plans -%}
+{%- assign P = site.data.l10n.en.parts -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Subscribe to a paid plan</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Subscribe to a paid plan</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      You subscribe with your Web app account, and you can use your plan as it is in the Microsoft Store version of the app.
+      The Microsoft Store version of the app has no purchase screen. Use a button below to open the Web app, sign in with the same account as the app, and pay by credit card.
+    </p>
+  </div>
+</section>
+
+<section class="pb-12">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <h2 class="text-[19px] font-bold text-ink">How to subscribe</h2>
+    <ol class="mt-4 grid gap-4 md:grid-cols-3">
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 1</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">Press "Subscribe" on a plan below, and the Web app (in your browser) opens.</p>
+      </li>
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 2</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">Sign in with the same account as the app (if you don't have an account, sign up from "Start with email"). Once you sign in, you go straight to the payment screen.</p>
+      </li>
+      <li class="card p-5">
+        <div class="text-[12px] font-bold tracking-[0.1em] text-ink-4">STEP 3</div>
+        <p class="mt-2 text-[14px] leading-[1.9] text-ink-2">Once you pay by credit card, your account's plan is switched. In the app, just sign in with the same account and the change is applied.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section class="pb-12">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <h2 class="text-[19px] font-bold text-ink">Choose a plan</h2>
+    <div class="mt-4 grid items-stretch gap-5 md:grid-cols-2">
+      {%- for plan in subscribe_plans %}
+      {%- capture contract_quota %}{% include contract-quota.html plan=plan %}{% endcapture -%}
+      {%- assign T = PL.tiers[plan.code] -%}
+      {%- capture incl -%}{{ PL.currency_prefix }}{{ plan.price_incl_display }}{{ PL.currency_suffix }}{%- endcapture -%}
+      <div id="plan-{{ plan.code }}" class="flex scroll-mt-24 flex-col {% if plan.featured %}plan-card-featured{% else %}plan-card{% endif %}">
+        <h3 class="mb-3 text-[13px] font-bold tracking-[0.1em] {% if plan.featured %}text-accent-soft{% else %}text-ink-4{% endif %}">{{ plan.name | upcase }}</h3>
+        <div class="flex flex-wrap items-baseline gap-x-1.5">
+          <span class="text-[32px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ PL.currency_prefix }}{{ plan.price_display }}{{ PL.currency_suffix }}</span>
+          <span class="text-[13px] {% if plan.featured %}text-hi-ink-3{% else %}text-ink-4{% endif %}">{{ T.price_unit }}{{ P.pc_tax_open }}{{ PL.tax_note }}{% if plan.price_incl_display %}{{ P.pc_tax_sep }}{{ P.pc_tax_incl | replace: '%PRICE%', incl }}{% endif %}{{ P.pc_tax_close }}</span>
+        </div>
+        <p class="mt-3 text-[13.5px] leading-[1.9] {% if plan.featured %}text-hi-ink-2{% else %}text-ink-2{% endif %}">{{ T.summary }}</p>
+        <ul class="mt-4 flex flex-col gap-2 text-[13.5px] {% if plan.featured %}text-hi-ink{% else %}text-ink-body{% endif %}">
+          {%- for spec in T.specs %}
+          <li>{{ spec.label }}: {{ spec.value }}</li>
+          {%- if forloop.first and contract_quota != "" %}
+          <li>{{ P.pc_extra_contracts }}: {{ contract_quota }}</li>
+          {%- endif %}
+          {%- endfor %}
+        </ul>
+        <div class="mt-auto pt-6">
+          <a href="{{ app_base }}?{{ q }}={{ plan.code }}" data-dl="subscribe-{{ plan.code }}-webapp" class="{% if plan.featured %}btn-primary{% else %}btn-secondary{% endif %} w-full">{{ T.subscribe_label }} to {{ plan.name }}</a>
+        </div>
+      </div>
+      {%- endfor %}
+    </div>
+    <p class="mt-5 text-[13px] leading-[1.9] text-ink-4">
+      For details on pricing and included hours, see the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a>. For how usage time is measured, see {% include ja-link.html href="/docs#usage" label="Measuring usage time" class="text-accent-soft hover:underline" %} in the documentation.
+      {{ ent.name }} (for businesses, from {{ ent.min_seats }} {% if ent.min_seats == 1 %}account{% else %}accounts{% endif %}) is subscribed to on a quote basis. Contact us through <a href="/en/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise inquiries</a>.
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[900px]">
+    <h2 class="mb-5 text-[19px] font-bold text-ink">Frequently asked questions</h2>
+    {% include faq.html items=site.data.l10n.en.subscribe.faq %}
+  </div>
+</section>
+
+{% include footer.html %}

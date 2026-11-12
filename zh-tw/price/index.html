@@ -1,0 +1,61 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/price/
+ja_url: /price/
+source: price/index.html
+source_hash: "c54a366e8f12bf1ec1b19c5f58279de0f3dc7ac37a9c0b6f5c18792aa8828721"
+title: 價格
+seo_title: 價格｜Deepmosaic - 為影片加上馬賽克的 AI 軟體
+# ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の price/index.html と同じ)。料金を変えたらここも直すこと。
+description: 自動化為影片加上馬賽克作業的 Deepmosaic 價格方案。Light 每月 2,980 日圓、Pro 每月 9,800 日圓、Enterprise 每個帳號每月 8,000 日圓（皆為未稅）。明確標示內含時數，不會產生超額費用。免費方案自首次啟動起 7 天內、累計最多 2 小時，不需信用卡。
+schemas:
+  - software-application
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 繁体字中国語 (台湾) の料金のページ。price/index.html (ja) の写しで、構造 (id・data-dl・include の並び) は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する。en/price/index.html とも ja-link.html の位置まで同じ)。
+  - 原文は ja の price/index.html。データの文は site.data.l10n['zh-tw'] を変数 ZH に入れて引く (Jekyll の include の引数には添字を書けない)。
+  - 料金カード (pricing-cards.html) と末尾の CTA (cta-download.html) は page.lang で繁体字になる (I18N-707)。金額は「日圓」(円の記号を使わない)。
+  - docs へのリンクは ja-link.html (日本語のページの印を付ける)。訳のあるページへは /zh-tw/ の接頭辞。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="導覽路徑" class="mb-5 text-[13px] text-ink-4">
+      <a href="/zh-tw/" class="hover:text-accent-soft">首頁</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">價格</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">價格</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">{{ ZH.entity.one_liner }}付費方案可透過<a href="/zh-tw/subscribe/" class="text-accent-soft hover:underline">付費方案申請頁面</a>，以網頁版的帳號申請（Microsoft Store 版的應用程式沒有購買畫面，可直接以同一個帳號使用）。步驟請參閱說明文件中的{% include ja-link.html href="/docs#plan" label="變更方案" class="text-accent-soft hover:underline" %}。</p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include pricing-cards.html %}
+
+    <div class="mt-10 card p-6">
+      <h2 class="text-[17px] font-bold text-ink">使用時間的計算方式</h2>
+      <ul class="mt-3 flex flex-col gap-2.5 text-[13.5px] leading-[1.9] text-ink-2">
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>計算的單位為已完成偵測之影片的播放長度。</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>於偵測完成時計入。匯出不列入計算。</span></li>
+        <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>傳送到授權伺服器的僅有使用量（影片的秒數）、檔案的雜湊值與裝置識別碼的雜湊值，不會傳送檔案名稱、影像或偵測結果的座標。</span></li>
+      </ul>
+      <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">詳情請參閱說明文件中的{% include ja-link.html href="/docs#usage" label="使用時間的計算" class="text-accent-soft hover:underline" %}。</p>
+    </div>
+
+    <p class="mt-7 text-center text-[13px] text-ink-4">如有任何疑問，請參閱{% include ja-link.html href="/docs" label="說明文件" class="text-accent-soft hover:underline" %}或透過<a href="/zh-tw/contact/" class="text-accent-soft hover:underline">聯絡表單</a>與我們聯絡。</p>
+  </div>
+</section>
+
+{% include cta-download.html secondary_href="/docs" secondary_label="查看說明文件（日文）" %}
+
+{% include footer.html %}

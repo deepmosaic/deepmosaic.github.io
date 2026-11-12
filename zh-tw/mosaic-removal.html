@@ -1,0 +1,83 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/mosaic-removal/
+ja_url: /mosaic-removal/
+source: mosaic-removal.html
+source_hash: "41363f52708432310d7e2a7a907d45f654ae1767cfe541c4164d98e19f0feac7"
+title: 關於去除馬賽克
+seo_title: Deepmosaic 並不是去除馬賽克的軟體
+description: Deepmosaic 是為影片「加上」（新增）馬賽克的軟體。不具備去除、解除或還原馬賽克，以及還原馬賽克下方原始影像的功能。請注意不要與名稱相似的工具混淆。
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2209 (i18n1112 I18N-711): 繁体字中国語 (台湾) の「モザイク除去について」のページ (誤認の封じ込め)。mosaic-removal.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-product.test.js が scripts/i18n/parity.mjs で検査する。en/mosaic-removal.html とも ja-link.html の位置まで同じ)。
+  封じ込めの設計の注意 (noindex を付けない・他社ツールへのリンクを張らない・DL ボタンを置かない) は mosaic-removal.html のコメントを見ること。
+  - 除去の語 (去除馬賽克・移除など) を使ってよいのはこのページと en/mosaic-removal.html だけ (checks/lang-text.mjs がこのパスを許す)。
+  - 文面は site.data.l10n['zh-tw'].entity (I18N-704) を変数 ZH → EL に入れて引く。ja の `lang="en"` の段落は、英中では lang 属性を付けずに EL.disambiguation を出す。
+    変数名は E ではなく EL (can-cannot.html が include の中で E = site.data.entity (ja) を assign し、include は呼び出し側と変数を共有するので、E だと include の後の E.* が ja の文になる)。
+  - can-cannot.html は page.lang で繁体字になる (I18N-707)。docs へのリンクは ja-link.html。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+{%- assign EL = ZH.entity -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[880px]">
+    <nav aria-label="導覽路徑" class="mb-5 text-[13px] text-ink-4">
+      <a href="/zh-tw/" class="hover:text-accent-soft">首頁</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">關於去除馬賽克</span>
+    </nav>
+    <h1 class="text-[clamp(28px,3.6vw,40px)] font-bold leading-[1.35] tracking-[-0.02em] text-ink">Deepmosaic 是<span class="text-accent">加上馬賽克</span>的軟體</h1>
+    <p class="mt-5 max-w-[680px] text-[15.5px] leading-[1.95] text-ink-2">{{ EL.definition }}</p>
+    <p class="mt-3 max-w-[680px] text-[13.5px] leading-[1.9] text-ink-4">{{ EL.disambiguation }}</p>
+  </div>
+</section>
+
+<section class="pb-16">
+  <div class="mx-auto flex w-[92%] max-w-[880px] flex-col gap-14">
+
+    <div>
+      <h2 class="mb-6 text-[21px] font-bold text-ink">可以做到的事／無法做到的事</h2>
+      {% include can-cannot.html %}
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">為什麼會被混淆？</h2>
+      <p class="mb-5 max-w-[680px] text-[14.5px] leading-[2] text-ink-2">我們認為主要的原因有 2 個。</p>
+      <ul class="flex flex-col gap-3">
+        {%- for reason in EL.confusion_reasons %}
+        <li class="flex gap-2.5 text-[14px] leading-[1.95] text-ink-2">{% include icon.html name="HelpCircle" class="mt-1 h-4 w-4 shrink-0 text-ink-4" %}<span>{{ reason }}</span></li>
+        {%- endfor %}
+      </ul>
+      <p class="mt-5 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ EL.name_origin }}</p>
+      <p class="mt-3 max-w-[680px] text-[13px] leading-[1.95] text-ink-4">{{ EL.oss_distinction }}</p>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">給正在尋找去除馬賽克方法的人</h2>
+      <div class="rounded-lg border-l-[3px] border-warning bg-panel p-5 text-[14px] leading-[2] text-ink-body">Deepmosaic 是為影片加上馬賽克的軟體，無法去除馬賽克。本公司並未提供去除、解除或還原馬賽克的產品或服務，也不受理與該用途相關的洽詢。即使安裝 Deepmosaic，也無法將已套用馬賽克的影像恢復原狀。這是一款與您所尋找的功能目的完全相反的軟體，下載前請先確認。</div>
+    </div>
+
+    <div>
+      <h2 class="mb-4 text-[21px] font-bold text-ink">Deepmosaic 能解決的問題</h2>
+      <p class="max-w-[680px] text-[14.5px] leading-[2] text-ink-2">為影片加上馬賽克的作業，需要看完整部影片並持續追蹤對象，因此所需時間與影片長度成正比。Deepmosaic 由 AI 在整部影片中偵測並追蹤對象、套用馬賽克，讓人工作業減少到只需確認與修正偵測結果。影像不會傳送到外部，所有處理都在您的電腦上完成。</p>
+      <ul class="mt-6 flex flex-col gap-2.5 text-[14px]">
+        <li><a href="/zh-tw/" class="text-accent-soft hover:underline">產品概要與能做到的事</a></li>
+        <li>{% include ja-link.html href="/docs" label="使用方法（從安裝到匯出）" class="text-accent-soft hover:underline" %}</li>
+        <li><a href="/zh-tw/spec/" class="text-accent-soft hover:underline">系統需求</a></li>
+        <li><a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格</a></li>
+        <li><a href="/zh-tw/#faq" class="text-accent-soft hover:underline">常見問題</a></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+{% include footer.html %}
