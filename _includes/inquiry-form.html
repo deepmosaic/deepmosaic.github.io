@@ -14,8 +14,14 @@
 
   ⚠️ 2 ページが同じ配線 (data-* → 島の props) を使うので、**ここ 1 箇所で持つ**。
      片方のページにだけ属性が足された状態を作らないこと (e2e が両方の出力を見ている)。
+
+  T-2206 (i18n1112 I18N-708): 英中のページ (page.lang が en / zh-tw) では noscript の文を
+  _data/l10n/<lang>/inquiry_form.yml から引く (mailto の件名は英語)。ja の文と件名はこのファイルに
+  そのまま残す (ja のページの出力を変えない)。island の root の data-* は言語で変えない
+  (言語は島が <html lang> から読む、W7-site.md §0-C)。
 {%- endcomment -%}
 {%- assign inquiry_kind = include.kind | default: "enterprise" -%}
+{%- assign inquiry_tx = site.data.l10n[page.lang].inquiry_form -%}
 {%- if jekyll.environment == "production" -%}
   {%- assign inquiry_endpoint = site.data.inquiry.endpoint -%}
 {%- else -%}
@@ -28,7 +34,21 @@
      data-support-email="{{ site.data.inquiry.support_email }}">
   <noscript>
     <div class="card p-6 text-[14.5px] leading-[1.9] text-ink-2">
+      {%- if inquiry_tx -%}
       {%- if inquiry_kind == "general" -%}
+        {%- assign inquiry_tx_subject = inquiry_tx.general_subject -%}
+        {%- assign inquiry_tx_items = inquiry_tx.general_items -%}
+      {%- else -%}
+        {%- assign inquiry_tx_subject = inquiry_tx.enterprise_subject -%}
+        {%- assign inquiry_tx_items = inquiry_tx.enterprise_items -%}
+      {%- endif -%}
+      <p>{{ inquiry_tx.js_required_before }}<a href="mailto:{{ site.data.inquiry.support_email }}?subject={{ inquiry_tx_subject | uri_escape }}" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a>{{ inquiry_tx.js_required_after }}</p>
+      <ul class="mt-3 list-disc pl-5">
+        {%- for item in inquiry_tx_items %}
+        <li>{{ item }}</li>
+        {%- endfor %}
+      </ul>
+      {%- elsif inquiry_kind == "general" -%}
       <p>このフォームの送信には JavaScript が必要です。JavaScript を有効にできない場合は、以下の項目を <a href="mailto:{{ site.data.inquiry.support_email }}?subject=%E3%81%8A%E5%95%8F%E3%81%84%E5%90%88%E3%82%8F%E3%81%9B" class="text-accent-soft hover:underline">{{ site.data.inquiry.support_email }}</a> 宛のメールにご記入ください。</p>
       <ul class="mt-3 list-disc pl-5">
         <li>メールアドレス</li>

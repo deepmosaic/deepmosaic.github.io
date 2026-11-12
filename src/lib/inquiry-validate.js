@@ -29,6 +29,9 @@
 // - 電話番号は送信前に全角 → 半角へ正規化する。Worker は ASCII の数字・`+`・`-`・空白・
 //   括弧しか受けないため、日本語 IME で `０３－１２３４` と打った入力をそのまま送ると
 //   400 になる。
+// - **言語 (T-2206、i18n1112 I18N-708)。** 項目名と文は言語ごとの表 (`LABELS`・`MESSAGES`) から選ぶ。
+//   ja は既存の定数・文面のまま (言語の引数を省くと ja)。英中は同じ規則の結果を訳した文にするだけで、
+//   検証の規則 (`LIMITS`・正規表現・正規化) と送る内容 (`buildPayload`) は言語に依らない。**言語は送らない。**
 
 /** 問い合わせの種類。Worker の判別 union と同じ値 (T-331)。 */
 export const KINDS = Object.freeze(['enterprise', 'general']);
@@ -96,6 +99,155 @@ export function fieldNames(kind) {
 
 /** general だけ「ご相談内容」ではなく「お問い合わせ内容」と呼ぶ。 */
 const GENERAL_LABELS = Object.freeze({ ...FIELD_LABELS, message: 'お問い合わせ内容' });
+
+// ── 言語ごとの項目名と文 (T-2206、i18n1112 I18N-708) ────────────────────────
+//
+// 言語は 'ja' | 'en' | 'zh-tw' (`src/lib/site-lang.js` の pageLang と同じ値)。それ以外は ja。
+// ja の値は上の既存の定数と今の文面そのもの。英中の文は画面にだけ出し、Worker・メール・Slack は日本語のまま。
+
+const EN_LABELS = Object.freeze({
+  company: 'Company name',
+  companyUrl: 'Company website',
+  name: 'Name',
+  email: 'Email address',
+  phone: 'Phone number',
+  seats: 'Planned number of accounts',
+  message: 'Details of your inquiry',
+});
+
+const ZH_LABELS = Object.freeze({
+  company: '公司名稱',
+  companyUrl: '公司網站',
+  name: '姓名',
+  email: '電子郵件地址',
+  phone: '電話號碼',
+  seats: '預計使用的帳號數',
+  message: '諮詢內容',
+});
+
+/** 画面に出す項目名 (言語 × kind)。ja は既存の `FIELD_LABELS` / `GENERAL_LABELS` そのもの。 */
+const LABELS = Object.freeze({
+  ja: Object.freeze({ enterprise: FIELD_LABELS, general: GENERAL_LABELS }),
+  en: Object.freeze({ enterprise: EN_LABELS, general: Object.freeze({ ...EN_LABELS, message: 'Message' }) }),
+  'zh-tw': Object.freeze({ enterprise: ZH_LABELS, general: Object.freeze({ ...ZH_LABELS, message: '詢問內容' }) }),
+});
+
+/**
+ * 検証の文の中で使う項目名。ja・zh-tw は項目名そのまま。en は文の途中に置くので小文字の名詞句
+ * (`Enter your company name.`)。
+ */
+const EN_INLINE = Object.freeze({
+  company: 'your company name',
+  companyUrl: 'your company website',
+  name: 'your name',
+  email: 'your email address',
+  phone: 'your phone number',
+  seats: 'the planned number of accounts',
+  message: 'the details of your inquiry',
+});
+const INLINE_LABELS = Object.freeze({
+  ja: LABELS.ja,
+  en: Object.freeze({ enterprise: EN_INLINE, general: Object.freeze({ ...EN_INLINE, message: 'your message' }) }),
+  'zh-tw': LABELS['zh-tw'],
+});
+
+/** 英中の数の表記 (桁区切り)。ja は今の文面のまま区切らない。 */
+const num = (n) => n.toLocaleString('en-US');
+
+/**
+ * 検証と送信の失敗の文。ja は今の文面のコピー (語順・空白・句読点を変えない)。
+ * 関数の引数は (項目名, 数) か (問い合わせ先の文)。
+ */
+const MESSAGES = Object.freeze({
+  ja: Object.freeze({
+    required: (label) => `${label}を入力してください`,
+    tooShort: (label, min) => `${label}は ${min} 文字以上で入力してください`,
+    tooLong: (label, max) => `${label}は ${max} 文字以内で入力してください`,
+    forbiddenChar: (label) => `${label}に使用できない文字が含まれています`,
+    emailFormat: 'メールアドレスの形式が正しくありません',
+    phoneFormat: '電話番号は数字・+・-・空白・括弧のみで入力してください',
+    seatsInteger: (label) => `${label}は整数で入力してください`,
+    seatsMin: (label, min) => `${label}は ${min} 以上で入力してください (Enterprise は ${min} アカウントから)`,
+    seatsMax: (label, max) => `${label}は ${max} 以下で入力してください`,
+    urlFormat: () => COMPANY_URL_FORMAT_MESSAGE,
+    network: '送信できませんでした。ネットワーク接続をご確認のうえ、もう一度お試しください。',
+    rateLimited: '送信回数の上限に達しました。しばらく時間をおいて再度お試しください。',
+    turnstile: '認証に失敗しました。ページを再読み込みしてください。',
+    invalidGeneric: '入力内容をご確認ください。',
+    /** ja は Worker の文面 (`detail`) をそのまま出すので使わない */
+    invalidField: null,
+    contactWith: (email) => `${email} まで直接ご連絡ください。`,
+    contactWithout: '担当者まで直接ご連絡ください。',
+    delivery: (contact) =>
+      `お問い合わせを受け付けられませんでした。お手数ですが時間をおいて再度お試しいただくか、${contact}`,
+    unknown: (contact) => `送信に失敗しました。時間をおいて再度お試しいただくか、${contact}`,
+  }),
+  en: Object.freeze({
+    required: (label) => `Enter ${label}.`,
+    tooShort: (label, min) => `Enter at least ${num(min)} characters for ${label}.`,
+    tooLong: (label, max) => `Enter ${label} in ${num(max)} characters or fewer.`,
+    forbiddenChar: (label) => `Remove characters that can't be used from ${label}.`,
+    emailFormat: 'Enter a valid email address.',
+    phoneFormat: 'Use only digits, +, -, spaces, and parentheses in your phone number.',
+    seatsInteger: (label) => `Enter a whole number for ${label}.`,
+    seatsMin: (label, min) =>
+      `Enter ${num(min)} or more for ${label} (Enterprise starts at ${num(min)} ${min === 1 ? 'account' : 'accounts'}).`,
+    seatsMax: (label, max) => `Enter ${num(max)} or less for ${label}.`,
+    urlFormat: (label) => `Enter ${label} as a URL (example: https://example.co.jp).`,
+    network: "Couldn't send your message. Check your network connection and try again.",
+    rateLimited: "You've reached the sending limit. Wait a while and try again.",
+    turnstile: 'Verification failed. Reload the page.',
+    invalidGeneric: 'Check your entries.',
+    invalidField: 'Check this field.',
+    contactWith: (email) => `contact ${email} directly.`,
+    contactWithout: 'contact us directly.',
+    delivery: (contact) => `We couldn't accept your inquiry. Wait a while and try again, or ${contact}`,
+    unknown: (contact) => `Couldn't send your message. Try again later, or ${contact}`,
+  }),
+  'zh-tw': Object.freeze({
+    required: (label) => `請輸入${label}。`,
+    tooShort: (label, min) => `${label}至少須輸入 ${num(min)} 個字元。`,
+    tooLong: (label, max) => `${label}最多可輸入 ${num(max)} 個字元。`,
+    forbiddenChar: (label) => `${label}含有無法使用的字元。`,
+    emailFormat: '電子郵件地址的格式不正確。',
+    phoneFormat: '電話號碼只能輸入數字、+、-、空白與括號。',
+    seatsInteger: (label) => `${label}請輸入整數。`,
+    seatsMin: (label, min) => `${label}請輸入 ${num(min)} 以上的數字（Enterprise 至少需要 ${num(min)} 個帳號）。`,
+    seatsMax: (label, max) => `${label}請輸入 ${num(max)} 以下的數字。`,
+    urlFormat: (label) => `${label}請以 URL 格式輸入（例如：https://example.co.jp）。`,
+    network: '無法送出。請確認網路連線後再試一次。',
+    rateLimited: '已達送出次數上限。請稍後再試。',
+    turnstile: '驗證失敗。請重新載入頁面。',
+    invalidGeneric: '請確認輸入的內容。',
+    invalidField: '請確認此欄位的內容。',
+    contactWith: (email) => `直接寫信至 ${email} 與我們聯絡。`,
+    contactWithout: '直接與負責人員聯絡。',
+    delivery: (contact) => `無法受理您的詢問。請稍後再試，或${contact}`,
+    unknown: (contact) => `送出失敗。請稍後再試，或${contact}`,
+  }),
+});
+
+/** 未知の言語は ja。 */
+function langOf(lang) {
+  return Object.prototype.hasOwnProperty.call(LABELS, lang) ? lang : 'ja';
+}
+
+/**
+ * 画面に出す項目名 (T-2206)。ja は既存の `FIELD_LABELS` (general は message だけ「お問い合わせ内容」)。
+ *
+ * @param {unknown} [kind]
+ * @param {string} [lang] `'ja'` (既定) | `'en'` | `'zh-tw'`
+ * @returns {Readonly<Record<string, string>>}
+ */
+export function labelsFor(kind, lang = 'ja') {
+  return LABELS[langOf(lang)][normalizeKind(kind)];
+}
+
+/** 検証の文の部品 (文の中の項目名と文の表)。 */
+function textsFor(kind, lang) {
+  const l = langOf(lang);
+  return { labels: INLINE_LABELS[l][normalizeKind(kind)], msg: MESSAGES[l] };
+}
 
 // RFC 5322 の実用サブセット (HTML5 の input[type=email] 相当 + TLD 必須)。Worker と同一。
 const EMAIL_RE =
@@ -213,20 +365,21 @@ export function normalizeSeats(raw) {
  * @param {'company'|'name'|'email'|'phone'} key
  * @param {number} min
  * @param {number} max
- * @param {Record<string, string>} [labels] kind ごとの表示名
+ * @param {{ labels: Record<string, string>, msg: typeof MESSAGES.ja }} [texts] 言語と kind ごとの項目名と文 (既定は ja の enterprise)
  * @returns {{ ok: true, value: string } | { ok: false, message: string }}
  */
-function singleLine(raw, key, min, max, labels = FIELD_LABELS) {
+function singleLine(raw, key, min, max, texts = textsFor('enterprise', 'ja')) {
+  const { labels, msg } = texts;
   const label = labels[key];
   const value = key === 'phone' ? normalizePhone(raw) : asString(raw).trim();
   if (value.length < min) {
     return {
       ok: false,
-      message: min === 1 ? `${label}を入力してください` : `${label}は ${min} 文字以上で入力してください`,
+      message: min === 1 ? msg.required(label) : msg.tooShort(label, min),
     };
   }
-  if (value.length > max) return { ok: false, message: `${label}は ${max} 文字以内で入力してください` };
-  if (hasForbiddenChar(value)) return { ok: false, message: `${label}に使用できない文字が含まれています` };
+  if (value.length > max) return { ok: false, message: msg.tooLong(label, max) };
+  if (hasForbiddenChar(value)) return { ok: false, message: msg.forbiddenChar(label) };
   return { ok: true, value };
 }
 
@@ -270,19 +423,22 @@ function parseHttpUrl(candidate) {
  * 空白を `%20` にするため)。通ったら `URL#href` (ホストの小文字化・末尾の `/` の補完など) を返す。
  *
  * @param {unknown} raw
+ * @param {string} [lang] 文の言語 (T-2206)。既定は ja (今の文面)。規則は言語に依らない
  * @returns {{ ok: true, value: string | null } | { ok: false, message: string }}
  */
-export function normalizeCompanyUrl(raw) {
+export function normalizeCompanyUrl(raw, lang = 'ja') {
+  const { labels, msg } = textsFor('enterprise', lang);
+  const formatMessage = msg.urlFormat(labels.companyUrl);
   const value = asString(raw).trim();
   if (value === '') return { ok: true, value: null };
-  if (hasForbiddenChar(value) || /\s/.test(value)) return { ok: false, message: COMPANY_URL_FORMAT_MESSAGE };
+  if (hasForbiddenChar(value) || /\s/.test(value)) return { ok: false, message: formatMessage };
 
   const candidate = withDefaultScheme(value);
   if (candidate.length > LIMITS.companyUrl) {
-    return { ok: false, message: `${FIELD_LABELS.companyUrl}は ${LIMITS.companyUrl} 文字以内で入力してください` };
+    return { ok: false, message: msg.tooLong(labels.companyUrl, LIMITS.companyUrl) };
   }
   const href = parseHttpUrl(candidate);
-  return href === null ? { ok: false, message: COMPANY_URL_FORMAT_MESSAGE } : { ok: true, value: href };
+  return href === null ? { ok: false, message: formatMessage } : { ok: true, value: href };
 }
 
 /**
@@ -294,11 +450,14 @@ export function normalizeCompanyUrl(raw) {
  *
  * @param {Record<string, unknown>} input
  * @param {unknown} [kind] `'enterprise'` (既定) か `'general'`
+ * @param {string} [lang] 誤りの文の言語 (T-2206)。既定は ja (今の文面)。どの欄が誤りか・`fields` は言語に依らない
  * @returns {{ ok: true, fields: Record<string, string | number> } | { ok: false, errors: Record<string, string> }}
  */
-export function validateInquiry(input, kind) {
+export function validateInquiry(input, kind, lang = 'ja') {
   const src = input && typeof input === 'object' ? input : {};
-  return normalizeKind(kind) === 'general' ? validateGeneral(src) : validateEnterprise(src);
+  return normalizeKind(kind) === 'general'
+    ? validateGeneral(src, textsFor('general', lang))
+    : validateEnterprise(src, textsFor('enterprise', lang), lang);
 }
 
 /**
@@ -310,24 +469,25 @@ export function validateInquiry(input, kind) {
  * Worker が受け付けても担当者が困るため — ここだけ意図的に Worker より厳しい。
  *
  * @param {Record<string, unknown>} src
+ * @param {{ labels: Record<string, string>, msg: typeof MESSAGES.ja }} texts 言語ごとの項目名と文 (T-2206)
  */
-function validateGeneral(src) {
-  const labels = GENERAL_LABELS;
+function validateGeneral(src, texts) {
+  const { labels, msg } = texts;
   /** @type {Record<string, string>} */
   const errors = {};
   const out = { email: '', message: '', website: '' };
 
-  const email = singleLine(src.email, 'email', 1, LIMITS.email, labels);
+  const email = singleLine(src.email, 'email', 1, LIMITS.email, texts);
   if (!email.ok) errors.email = email.message;
-  else if (!EMAIL_RE.test(email.value)) errors.email = 'メールアドレスの形式が正しくありません';
+  else if (!EMAIL_RE.test(email.value)) errors.email = msg.emailFormat;
   else out.email = email.value;
 
   const message = normalizeMessage(src.message);
-  if (message.length === 0) errors.message = `${labels.message}を入力してください`;
+  if (message.length === 0) errors.message = msg.required(labels.message);
   else if (message.length > LIMITS.message) {
-    errors.message = `${labels.message}は ${LIMITS.message} 文字以内で入力してください`;
+    errors.message = msg.tooLong(labels.message, LIMITS.message);
   } else if (hasForbiddenMessageChar(message)) {
-    errors.message = `${labels.message}に使用できない文字が含まれています`;
+    errors.message = msg.forbiddenChar(labels.message);
   } else out.message = message;
 
   out.website = asString(src.website);
@@ -340,50 +500,53 @@ function validateGeneral(src) {
  * Enterprise 導入相談 (`/enterprise/inquiry/`, T-254)。規則は T-254 から不変。
  *
  * @param {Record<string, unknown>} src
+ * @param {{ labels: Record<string, string>, msg: typeof MESSAGES.ja }} texts 言語ごとの項目名と文 (T-2206)
+ * @param {string} lang
  */
-function validateEnterprise(src) {
+function validateEnterprise(src, texts, lang) {
+  const { labels, msg } = texts;
   /** @type {Record<string, string>} */
   const errors = {};
   const out = { company: '', name: '', email: '', phone: '', seats: 0, message: '', website: '' };
 
-  const company = singleLine(src.company, 'company', 1, LIMITS.company);
+  const company = singleLine(src.company, 'company', 1, LIMITS.company, texts);
   if (company.ok) out.company = company.value;
   else errors.company = company.message;
 
-  const name = singleLine(src.name, 'name', 1, LIMITS.name);
+  const name = singleLine(src.name, 'name', 1, LIMITS.name, texts);
   if (name.ok) out.name = name.value;
   else errors.name = name.message;
 
-  const email = singleLine(src.email, 'email', 1, LIMITS.email);
+  const email = singleLine(src.email, 'email', 1, LIMITS.email, texts);
   if (!email.ok) errors.email = email.message;
-  else if (!EMAIL_RE.test(email.value)) errors.email = 'メールアドレスの形式が正しくありません';
+  else if (!EMAIL_RE.test(email.value)) errors.email = msg.emailFormat;
   else out.email = email.value;
 
-  const phone = singleLine(src.phone, 'phone', LIMITS.phoneMin, LIMITS.phoneMax);
+  const phone = singleLine(src.phone, 'phone', LIMITS.phoneMin, LIMITS.phoneMax, texts);
   if (!phone.ok) errors.phone = phone.message;
   else if (!PHONE_RE.test(phone.value)) {
-    errors.phone = '電話番号は数字・+・-・空白・括弧のみで入力してください';
+    errors.phone = msg.phoneFormat;
   } else out.phone = phone.value;
 
   const seats = normalizeSeats(src.seats);
-  if (seats === null) errors.seats = `${FIELD_LABELS.seats}は整数で入力してください`;
+  if (seats === null) errors.seats = msg.seatsInteger(labels.seats);
   else if (seats < LIMITS.seatsMin) {
-    errors.seats = `${FIELD_LABELS.seats}は ${LIMITS.seatsMin} 以上で入力してください (Enterprise は ${LIMITS.seatsMin} アカウントから)`;
+    errors.seats = msg.seatsMin(labels.seats, LIMITS.seatsMin);
   } else if (seats > LIMITS.seatsMax) {
-    errors.seats = `${FIELD_LABELS.seats}は ${LIMITS.seatsMax} 以下で入力してください`;
+    errors.seats = msg.seatsMax(labels.seats, LIMITS.seatsMax);
   } else out.seats = seats;
 
   const message = normalizeMessage(src.message);
   if (message.length > LIMITS.message) {
-    errors.message = `${FIELD_LABELS.message}は ${LIMITS.message} 文字以内で入力してください`;
+    errors.message = msg.tooLong(labels.message, LIMITS.message);
   } else if (hasForbiddenMessageChar(message)) {
-    errors.message = `${FIELD_LABELS.message}に使用できない文字が含まれています`;
+    errors.message = msg.forbiddenChar(labels.message);
   } else out.message = message;
 
   out.website = asString(src.website);
 
   // 会社の Web ページ (T-1958) は任意。未入力なら fields にキーごと持たない (Worker と同じ)
-  const companyUrl = normalizeCompanyUrl(src.companyUrl);
+  const companyUrl = normalizeCompanyUrl(src.companyUrl, lang);
   if (!companyUrl.ok) errors.companyUrl = companyUrl.message;
   else if (companyUrl.value !== null) out.companyUrl = companyUrl.value;
 
@@ -442,8 +605,11 @@ function generalBody(fields) {
  * をそのまま出すのは `invalid_input` (項目ごとの日本語) だけ。未知の code / 壊れた JSON は
  * generic に倒す。
  *
+ * **英中 (T-2206) では Worker の `message` (日本語) を画面に出さない。** `invalid_input` は欄が分かれば
+ * その欄の汎用の文 (`Check this field.`)、分からなければ `Check your entries.`。`kind` と `field` は言語に依らない。
+ *
  * @param {{ status: number, data?: unknown }} outcome `status` 0 = fetch 自体が失敗 (ネットワーク)
- * @param {{ supportEmail?: string }} [options]
+ * @param {{ supportEmail?: string, lang?: string }} [options] `lang` は文の言語 (既定は ja = 今の文面)
  * @returns {{ kind: 'network'|'rate_limited'|'turnstile'|'invalid'|'delivery'|'unknown', message: string, field: string | null }}
  */
 export function describeFailure(outcome, options = {}) {
@@ -451,48 +617,54 @@ export function describeFailure(outcome, options = {}) {
   const data = outcome?.data && typeof outcome.data === 'object' ? outcome.data : {};
   const code = typeof data.code === 'string' ? data.code : '';
   const supportEmail = typeof options.supportEmail === 'string' ? options.supportEmail.trim() : '';
-  const contactSupport = supportEmail ? `${supportEmail} まで直接ご連絡ください。` : '担当者まで直接ご連絡ください。';
+  const lang = langOf(options.lang);
+  const msg = MESSAGES[lang];
+  const contactSupport = supportEmail ? msg.contactWith(supportEmail) : msg.contactWithout;
 
   if (status === 0) {
     return {
       kind: 'network',
       field: null,
-      message: '送信できませんでした。ネットワーク接続をご確認のうえ、もう一度お試しください。',
+      message: msg.network,
     };
   }
   if (status === 429 || code === 'rate_limited') {
     return {
       kind: 'rate_limited',
       field: null,
-      message: '送信回数の上限に達しました。しばらく時間をおいて再度お試しください。',
+      message: msg.rateLimited,
     };
   }
   if (code === 'turnstile_failed') {
     return {
       kind: 'turnstile',
       field: null,
-      message: '認証に失敗しました。ページを再読み込みしてください。',
+      message: msg.turnstile,
     };
   }
   if (code === 'invalid_input') {
     const field = typeof data.field === 'string' && FIELD_NAMES.includes(data.field) ? data.field : null;
+    if (lang !== 'ja') {
+      // Worker の文面は日本語なので英中では出さない (T-2206)
+      return { kind: 'invalid', field, message: field ? msg.invalidField : msg.invalidGeneric };
+    }
     const detail = typeof data.message === 'string' ? data.message.trim() : '';
     return {
       kind: 'invalid',
       field,
-      message: detail || '入力内容をご確認ください。',
+      message: detail || msg.invalidGeneric,
     };
   }
   if (status === 502 || code === 'delivery_failed') {
     return {
       kind: 'delivery',
       field: null,
-      message: `お問い合わせを受け付けられませんでした。お手数ですが時間をおいて再度お試しいただくか、${contactSupport}`,
+      message: msg.delivery(contactSupport),
     };
   }
   return {
     kind: 'unknown',
     field: null,
-    message: `送信に失敗しました。時間をおいて再度お試しいただくか、${contactSupport}`,
+    message: msg.unknown(contactSupport),
   };
 }

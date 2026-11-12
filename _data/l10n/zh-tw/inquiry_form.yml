@@ -1,0 +1,21 @@
+# T-2206 (i18n1112 I18N-708): 問い合わせフォームの JS が無いときの代わり (`_includes/inquiry-form.html` の noscript) の繁体字中国語。
+# このファイルの持ち主は I18N-708 だけ。
+#   - include が `site.data.l10n[page.lang].inquiry_form` で引く。ja の文と mailto の件名は include に直書きのまま。
+#   - 形は平らな `key: "value"` と、`key:` + `  - "value"` の配列だけ (src/lib/i18n-site-inquiry.test.js が読む)。
+#   - 件名 (*_subject) は英語 (受け手は日本の担当者、spec I18N-708)。include が uri_escape する。
+#   - 項目の一覧 (*_items) は ja の noscript と同じ数・同じ順。
+js_required_before: "此表單需要 JavaScript 才能送出。若無法啟用 JavaScript，請將以下項目以電子郵件寄至 "
+js_required_after: "。"
+general_subject: "Inquiry"
+enterprise_subject: "Enterprise inquiry"
+general_items:
+  - "電子郵件地址"
+  - "詢問內容"
+enterprise_items:
+  - "公司名稱"
+  - "公司網站（選填）"
+  - "姓名"
+  - "電子郵件地址"
+  - "電話號碼"
+  - "預計使用的帳號數（至少 1 個）"
+  - "諮詢內容"

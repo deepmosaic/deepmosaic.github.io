@@ -28,15 +28,110 @@
     describeFailure,
     emptyFields,
     fieldNames,
+    labelsFor,
     normalizeKind,
     validateInquiry,
   } from '../lib/inquiry-validate.js';
+  // T-2206 (i18n1112 I18N-708): ページの言語は <html lang> から読む (W7-site.md §0-C)。
+  // 項目名は labelsFor、検証・送信の失敗の文は inquiry-validate.js に言語を渡して選ぶ。送る内容 (buildPayload) は言語に依らない。
+  import { pageLang, pick } from '../lib/site-lang.js';
+
+  // 画面の文の 3 言語の表。ja は今の文字列のまま (既存の e2e が ja の文で探す)。
+  // mailJaNote は英中だけ (確認のメール・返答は日本語で届く、設計書 §10.4)。ja は null で要素を出さない。
+  const TEXT = {
+    ja: {
+      requiredNote: 'は必須項目です。',
+      optional: '（任意）',
+      emailHelp: '受付確認と返答はこのアドレス宛に届きます。',
+      phoneHelp: '全角で入力しても送信時に半角へ変換します。',
+      seatsHelp: (n) => `Enterprise は ${n} アカウント以上`,
+      generalMessagePh: '発生した操作、画面に出たメッセージ、お困りの内容などをご記入ください',
+      enterpriseMessagePh: '導入時期、対象となる映像の本数や尺、請求書払いのご希望、自社システムへの導入のご相談など',
+      turnstileFailed:
+        '認証部品 (Cloudflare Turnstile) を読み込めませんでした。広告ブロッカー等を一時的に無効にして、ページを再読み込みしてください。',
+      checkInput: '入力内容をご確認ください。',
+      turnstileLoadFailed: '認証部品を読み込めませんでした。ページを再読み込みしてもう一度お試しください。',
+      turnstileWait: '認証の完了をお待ちください。表示されている認証が終わってから、もう一度「送信する」を押してください。',
+      sendingLive: '送信しています。',
+      receivedLive: 'お問い合わせを受け付けました。',
+      doneTitle: '送信完了',
+      doneBody: 'お問い合わせを受け付けました。3 営業日以内に担当者よりご返答いたします。',
+      doneMailSent: 'ご入力のメールアドレス宛に受付確認メールをお送りしました。届かない場合は迷惑メールフォルダをご確認ください。',
+      mailJaNote: null,
+      close: '閉じる',
+      sending: '送信しています…',
+      submit: '送信する',
+      usageNote: '送信内容は担当者からの連絡と返答のためにのみ使用します。',
+      turnstileLanguage: 'ja',
+    },
+    en: {
+      requiredNote: 'indicates a required field.',
+      optional: '(optional)',
+      emailHelp: 'We send the confirmation and our reply to this address.',
+      phoneHelp: 'Full-width digits are converted automatically.',
+      seatsHelp: (n) => `Enterprise requires ${n} or more accounts`,
+      generalMessagePh: 'Describe what you did, any message shown on the screen, and the problem you are having',
+      enterpriseMessagePh:
+        'For example: when you plan to start, the number and length of the videos, whether you want to pay by invoice, or integrating it into your own system',
+      turnstileFailed:
+        "Couldn't load the verification widget (Cloudflare Turnstile). Turn off ad blockers or similar extensions for now, and reload the page.",
+      checkInput: 'Check your entries.',
+      turnstileLoadFailed: "Couldn't load the verification widget. Reload the page and try again.",
+      turnstileWait: 'Wait for verification to finish. After the verification shown here is complete, select "Submit" again.',
+      sendingLive: 'Submitting your inquiry.',
+      receivedLive: "We've received your inquiry.",
+      doneTitle: 'Submitted',
+      doneBody: "We've received your inquiry. Our staff will reply within 3 business days (Japan).",
+      doneMailSent: "We've sent a confirmation email to the address you entered. If it doesn't arrive, check your spam folder.",
+      mailJaNote: 'The confirmation email is in Japanese.',
+      close: 'Close',
+      sending: 'Submitting…',
+      submit: 'Submit',
+      usageNote: 'We use the information you submit only to contact you and reply to your inquiry.',
+      turnstileLanguage: 'en',
+    },
+    'zh-tw': {
+      requiredNote: '為必填欄位。',
+      optional: '（選填）',
+      emailHelp: '受理確認與回覆將寄送至此地址。',
+      phoneHelp: '全形數字會自動轉換為半形。',
+      seatsHelp: (n) => `Enterprise 需 ${n} 個以上的帳號`,
+      generalMessagePh: '請描述您進行的操作、畫面上顯示的訊息，以及遇到的問題',
+      enterpriseMessagePh: '例如：預計導入的時間、目標影片的數量與長度、是否希望以請款單付款、導入自家系統的諮詢等',
+      turnstileFailed: '無法載入驗證元件（Cloudflare Turnstile）。請暫時停用廣告封鎖程式等擴充功能，然後重新載入頁面。',
+      checkInput: '請確認輸入的內容。',
+      turnstileLoadFailed: '無法載入驗證元件。請重新載入頁面後再試一次。',
+      turnstileWait: '請等待驗證完成。畫面上的驗證完成後，請再按一次「送出」。',
+      sendingLive: '正在送出。',
+      receivedLive: '已收到您的詢問。',
+      doneTitle: '已送出',
+      doneBody: '已收到您的詢問。負責人員將於 3 個工作天內（以日本的工作天計算）回覆您。',
+      doneMailSent: '我們已寄送受理確認信至您輸入的電子郵件地址。若未收到，請檢查垃圾郵件資料夾。',
+      mailJaNote: '確認電子郵件為日文。',
+      close: '關閉',
+      sending: '送出中…',
+      submit: '送出',
+      usageNote: '您送出的內容僅用於負責人員與您聯絡及回覆。',
+      turnstileLanguage: 'zh-tw',
+    },
+  };
+  const lang = pageLang();
+  const T = pick(TEXT, lang);
 
   let { endpoint = '', turnstileSiteKey = '', supportEmail = '', kind = 'enterprise' } = $props();
 
   /** `data-kind` の書き間違いは enterprise に倒す (純関数側と同じ規則)。 */
   const formKind = $derived(normalizeKind(kind));
   const isGeneral = $derived(formKind === 'general');
+  /** 画面の項目名 (言語 × kind)。ja は inquiry-validate.js の FIELD_LABELS / GENERAL_LABELS (今の文字列) */
+  const L = $derived(labelsFor(formKind, lang));
+  /**
+   * 英中だけ本文の placeholder を上書きする (後に書いた spread が勝つ)。ja の placeholder は既存のテスト (site-copy-t1941) が
+   * 属性の literal を読むので、textarea に literal のまま残す。
+   */
+  const messagePlaceholder = $derived(
+    lang === 'ja' ? {} : { placeholder: isGeneral ? T.generalMessagePh : T.enterpriseMessagePh },
+  );
   /** 誤りがあったときに最初の項目へフォーカスする順 (= 画面の上から下)。 */
   const keys = $derived(fieldNames(formKind));
 
@@ -126,7 +221,7 @@
         widgetId = turnstile.render(el, {
           sitekey: turnstileSiteKey,
           theme: 'auto',
-          language: 'ja',
+          language: T.turnstileLanguage,
           callback: (token) => {
             turnstileToken = token;
             turnstileState = 'ready';
@@ -180,18 +275,16 @@
     event.preventDefault();
     if (status === 'submitting') return;
 
-    const result = validateInquiry(fields, formKind);
+    const result = validateInquiry(fields, formKind, lang);
     if (!result.ok) {
-      showError('入力内容をご確認ください。', result.errors);
+      showError(T.checkInput, result.errors);
       const first = keys.find((key) => result.errors[key]);
       if (first) focusField(first);
       return;
     }
     if (turnstileSiteKey && turnstileToken === '') {
       showError(
-        turnstileState === 'failed'
-          ? '認証部品を読み込めませんでした。ページを再読み込みしてもう一度お試しください。'
-          : '認証の完了をお待ちください。表示されている認証が終わってから、もう一度「送信する」を押してください。',
+        turnstileState === 'failed' ? T.turnstileLoadFailed : T.turnstileWait,
       );
       return;
     }
@@ -199,7 +292,7 @@
     errorMessage = '';
     fieldErrors = {};
     status = 'submitting';
-    liveText = '送信しています。';
+    liveText = T.sendingLive;
 
     const payload = buildPayload(result.fields, turnstileToken, formKind);
     let outcome;
@@ -221,24 +314,25 @@
     if (outcome.status === 200 && outcome.data?.ok === true) {
       mailSent = outcome.data.mail === true;
       status = 'done';
-      liveText = 'お問い合わせを受け付けました。';
+      liveText = T.receivedLive;
       await tick();
       doneEl?.focus();
       return;
     }
 
     liveText = '';
-    const failure = describeFailure(outcome, { supportEmail });
+    const failure = describeFailure(outcome, { supportEmail, lang });
     // `describeFailure` が返す項目名は**全 kind の和集合**。この kind で描画していない項目
     // (例: Worker を T-331 より前に巻き戻すと、general の送信にも「会社名を入力して…」が
     // 返る。T-516 の Worker 側が本番に出る前にこのサイトを出すと「氏名を入力して…」が返る)
     // を fieldErrors に入れると、どこにも表示されないまま汎用の一文だけが出て
     // 手詰まりになる。描画していない項目のときは Worker の文面をそのまま警告に出す。
+    // 英中の invalid の文は欄の汎用の文 (Worker の日本語の文面は出さない) なので、欄に紐づかないときは全体の案内にする (T-2206)。
     if (failure.kind === 'invalid' && failure.field && keys.includes(failure.field)) {
-      showError('入力内容をご確認ください。', { [failure.field]: failure.message });
+      showError(T.checkInput, { [failure.field]: failure.message });
       focusField(failure.field);
     } else {
-      showError(failure.message);
+      showError(failure.kind === 'invalid' && lang !== 'ja' ? T.checkInput : failure.message);
     }
   }
 
@@ -260,16 +354,19 @@
 
 {#if status === 'done'}
   <div class="card-hi p-6 sm:p-8" bind:this={doneEl} tabindex="-1">
-    <h2 class="text-[18px] font-bold text-hi-ink">送信完了</h2>
+    <h2 class="text-[18px] font-bold text-hi-ink">{T.doneTitle}</h2>
     <p class="mt-2 text-[14.5px] leading-[1.9] text-hi-ink-2">
-      お問い合わせを受け付けました。3 営業日以内に担当者よりご返答いたします。
+      {T.doneBody}
     </p>
     {#if mailSent}
       <p class="mt-2 text-[13px] leading-[1.9] text-hi-ink-3">
-        ご入力のメールアドレス宛に受付確認メールをお送りしました。届かない場合は迷惑メールフォルダをご確認ください。
+        {T.doneMailSent}
       </p>
     {/if}
-    <button type="button" class="btn-secondary mt-5" onclick={closeDone}>閉じる</button>
+    {#if T.mailJaNote}
+      <p class="mt-2 text-[13px] leading-[1.9] text-hi-ink-3">{T.mailJaNote}</p>
+    {/if}
+    <button type="button" class="btn-secondary mt-5" onclick={closeDone}>{T.close}</button>
   </div>
 {/if}
 
@@ -281,12 +378,12 @@
   aria-busy={status === 'submitting'}
   onsubmit={submit}
 >
-  <p class="text-[13px] text-ink-4"><span class="text-danger" aria-hidden="true">*</span> は必須項目です。</p>
+  <p class="text-[13px] text-ink-4"><span class="text-danger" aria-hidden="true">*</span> {T.requiredNote}</p>
 
   <div class="mt-5 grid gap-5 sm:grid-cols-2">
     {#if !isGeneral}
       <div class="sm:col-span-2">
-        <label for="inq-company" class={LABEL}>会社名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <label for="inq-company" class={LABEL}>{L.company}<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
         <input
           id="inq-company"
           name="company"
@@ -306,7 +403,7 @@
            フォームは novalidate なので、形式の検査は inquiry-validate.js の自前の規則 (Worker の写し) -->
       <div class="sm:col-span-2">
         <label for="inq-companyUrl" class={LABEL}>
-          会社の Web ページ<span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
+          {L.companyUrl}<span class="ml-1 text-[12px] font-normal text-ink-4">{T.optional}</span>
         </label>
         <input
           id="inq-companyUrl"
@@ -325,7 +422,7 @@
       </div>
 
       <div>
-        <label for="inq-name" class={LABEL}>氏名<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <label for="inq-name" class={LABEL}>{L.name}<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
         <input
           id="inq-name"
           name="name"
@@ -344,7 +441,7 @@
 
     <!-- general は氏名の隣が空くので (T-516)、メールアドレスを 1 行ぶん使う -->
     <div class={isGeneral ? 'sm:col-span-2' : undefined}>
-      <label for="inq-email" class={LABEL}>メールアドレス<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+      <label for="inq-email" class={LABEL}>{L.email}<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
       <input
         id="inq-email"
         name="email"
@@ -358,13 +455,13 @@
         aria-invalid={invalid('email')}
         aria-describedby={describedBy('email', true)}
       />
-      <p id="inq-email-help" class={HELP}>受付確認と返答はこのアドレス宛に届きます。</p>
+      <p id="inq-email-help" class={HELP}>{T.emailHelp}</p>
       {#if fieldErrors.email}<p id="inq-email-error" class={ERROR}>{fieldErrors.email}</p>{/if}
     </div>
 
     {#if !isGeneral}
       <div>
-        <label for="inq-phone" class={LABEL}>電話番号<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <label for="inq-phone" class={LABEL}>{L.phone}<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
         <input
           id="inq-phone"
           name="phone"
@@ -379,12 +476,12 @@
           aria-invalid={invalid('phone')}
           aria-describedby={describedBy('phone', true)}
         />
-        <p id="inq-phone-help" class={HELP}>全角で入力しても送信時に半角へ変換します。</p>
+        <p id="inq-phone-help" class={HELP}>{T.phoneHelp}</p>
         {#if fieldErrors.phone}<p id="inq-phone-error" class={ERROR}>{fieldErrors.phone}</p>{/if}
       </div>
 
       <div>
-        <label for="inq-seats" class={LABEL}>利用アカウント予定数<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
+        <label for="inq-seats" class={LABEL}>{L.seats}<span class="ml-1 text-danger" aria-hidden="true">*</span></label>
         <input
           id="inq-seats"
           name="seats"
@@ -399,18 +496,18 @@
           aria-invalid={invalid('seats')}
           aria-describedby={describedBy('seats', true)}
         />
-        <p id="inq-seats-help" class={HELP}>Enterprise は {LIMITS.seatsMin} アカウント以上</p>
+        <p id="inq-seats-help" class={HELP}>{T.seatsHelp(LIMITS.seatsMin)}</p>
         {#if fieldErrors.seats}<p id="inq-seats-error" class={ERROR}>{fieldErrors.seats}</p>{/if}
       </div>
     {/if}
 
     <div class="sm:col-span-2">
       <label for="inq-message" class={LABEL}>
-        {isGeneral ? 'お問い合わせ内容' : 'ご相談内容'}
+        {L.message}
         {#if isGeneral}
           <span class="ml-1 text-danger" aria-hidden="true">*</span>
         {:else}
-          <span class="ml-1 text-[12px] font-normal text-ink-4">（任意）</span>
+          <span class="ml-1 text-[12px] font-normal text-ink-4">{T.optional}</span>
         {/if}
       </label>
       <textarea
@@ -423,6 +520,7 @@
         placeholder={isGeneral
           ? '発生した操作、画面に出たメッセージ、お困りの内容などをご記入ください'
           : '導入時期、対象となる映像の本数や尺、請求書払いのご希望、自社システムへの導入のご相談など'}
+        {...messagePlaceholder}
         aria-invalid={invalid('message')}
         aria-describedby={describedBy('message', false)}
       ></textarea>
@@ -434,7 +532,7 @@
         <div bind:this={turnstileEl}></div>
         {#if turnstileState === 'failed'}
           <p class={ERROR}>
-            認証部品 (Cloudflare Turnstile) を読み込めませんでした。広告ブロッカー等を一時的に無効にして、ページを再読み込みしてください。
+            {T.turnstileFailed}
           </p>
         {/if}
       </div>
@@ -456,8 +554,8 @@
 
   <div class="mt-6 flex flex-wrap items-center gap-4">
     <button type="submit" class="btn-primary btn-lg" disabled={status === 'submitting'}>
-      {status === 'submitting' ? '送信しています…' : '送信する'}
+      {status === 'submitting' ? T.sending : T.submit}
     </button>
-    <p class="text-[12.5px] leading-[1.8] text-ink-4">送信内容は担当者からの連絡と返答のためにのみ使用します。</p>
+    <p class="text-[12.5px] leading-[1.8] text-ink-4">{T.usageNote}</p>
   </div>
 </form>

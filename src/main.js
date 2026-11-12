@@ -206,9 +206,17 @@ function initDownloadTracking() {
 // - DOM へは `textContent` と `setAttribute('href', …)` だけ。検証に通らない値は画面にも出さない。
 // ---------------------------------------------------------------------------
 import { joinAppUrl, parseJoinHash } from './lib/join-hash.js';
+// T-2206 (i18n1112 I18N-708): ページの言語は <html lang> から読む (W7-site.md §0-C)。
+import { pageLang, pick } from './lib/site-lang.js';
 
 const COPY_DONE = 'コピーしました。';
 const COPY_FAILED = 'コピーできませんでした。組織コードを選択してコピーしてください。';
+// コピーの結果の文の 3 言語の表 (ja は上の定数のまま)
+const COPY_TEXT = {
+  ja: { done: COPY_DONE, failed: COPY_FAILED },
+  en: { done: 'Copied.', failed: "Couldn't copy. Select the organization code and copy it." },
+  'zh-tw': { done: '已複製。', failed: '無法複製。請選取組織代碼後再複製。' },
+};
 
 function renderJoin(root) {
   const result = parseJoinHash(location.hash);
@@ -251,15 +259,34 @@ function initJoinPage() {
   });
   const copy = root.querySelector('[data-join-copy]');
   const status = root.querySelector('[data-join-copy-status]');
+  const copyMessages = pick(COPY_TEXT, pageLang());
   copy?.addEventListener('click', async () => {
     if (current.kind !== 'code') return;
     try {
       await copyText(current.code);
-      if (status) status.textContent = COPY_DONE;
+      if (status) status.textContent = copyMessages.done;
     } catch {
-      if (status) status.textContent = COPY_FAILED;
+      if (status) status.textContent = copyMessages.failed;
     }
   });
+}
+
+// ---------------------------------------------------------------------------
+// 英中の 404 への振り分け (T-2206、i18n1112 I18N-708、W7-site.md §0-G)。
+//
+// GitHub Pages の 404 は 1 本 (ルートの 404.html) しか置けない。ルートの 404 には `[data-lang-404]` の印があり、
+// その印があってパスが /en/・/zh-tw/ の下のときだけ、英中の 404 へ `location.replace` で移す (履歴に残さない)。
+// 判定は `src/lib/lang-404.js` の純関数。印の無いページ・ja のパスでは何もしない。
+// ---------------------------------------------------------------------------
+import { lang404Target } from './lib/lang-404.js';
+
+/** 英中の 404 へ移したら true (この後の初期化はしない) */
+function redirectLang404() {
+  if (!document.querySelector('[data-lang-404]')) return false;
+  const target = lang404Target(location.pathname);
+  if (target === null) return false;
+  location.replace(target);
+  return true;
 }
 
 // ---------------------------------------------------------------------------
@@ -284,6 +311,7 @@ function mountIslands(selector, Component) {
 }
 
 function init() {
+  if (redirectLang404()) return;
   initScrollReveal();
   initBackToTop();
   initJoinPage();
@@ -315,3 +343,5 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
+
+// ---- i18n の初期化 (I18N-713 が言語の案内の import と呼び出しを足す) ----
