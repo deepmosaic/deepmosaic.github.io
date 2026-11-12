@@ -190,6 +190,28 @@ test('lintText zh-tw: 日本の新字体だけの字 (簡体字の表に無い�
 	assert.deepEqual(lintText('zh-tw', '佛像'), [])
 })
 
+// T-2200 のウェーブ末尾の追い修正 (2026-11-12): desktop の用語集の横断レビュー (T-2137) で足した 3 つ目の表 zh_non_tw_variant
+// (標準繁体だが台湾で使わない字体 → 台湾の字形) と、禁止語の追加 (置信度・創建 など) と allow_in を写した
+test('lintText zh-tw: 台湾で使わない字体 (爲・衆・啓・裏・着) は variant の違反、台湾の字形は違反でない', () => {
+	const chars = readJson('scripts/i18n/glossary-chars.json')
+	for (const [ch, tw] of [['爲', '為'], ['衆', '眾'], ['啓', '啟'], ['裏', '裡'], ['着', '著']]) {
+		assert.equal(chars.zh_non_tw_variant?.[ch], tw, `${ch} → ${tw} が表にある`)
+		const v = lintText('zh-tw', `以${ch}準`)
+		assert.ok(v.some((x) => x.rule === 'variant' && x.word === ch && x.use === tw), `${ch}: ${JSON.stringify(v)}`)
+		assert.deepEqual(lintText('zh-tw', `以${tw}準`), [], `${tw} は台湾の字形 (陰性対照)`)
+	}
+})
+
+test('lintText zh-tw: 横断レビューで足した禁止語は違反、用語集の訳語と allow_in の合成語は許す', () => {
+	for (const [bad, good] of [['置信度', '信賴度'], ['創建', '建立'], ['菜單', '選單'], ['窗口', '視窗'], ['搜索', '搜尋'], ['反饋', '意見回饋'], ['批量', '批次']]) {
+		assert.ok(words(lintText('zh-tw', `${bad}的說明`)).includes(bad), bad)
+		assert.deepEqual(lintText('zh-tw', `${good}的說明`), [], good)
+	}
+	assert.deepEqual(lintText('zh-tw', '感謝您的支持與愛用。'), [], '支持 の allow_in')
+	assert.deepEqual(lintText('zh-tw', '請參閱相關文件。'), [], '文件 の allow_in')
+	assert.ok(words(lintText('zh-tw', '支持 4K 影片')).includes('支持'), 'allow_in の外の 支持 は違反のまま')
+})
+
 test('lintText zh-tw: 仮名・禁止語は違反、除去の語は allowRemoval のときだけ許す', () => {
 	assert.ok(lintText('zh-tw', '影片のモザイク').length > 0)
 	assert.ok(lintText('zh-tw', '支持 Windows').length > 0)
@@ -351,6 +373,30 @@ test('用語集の写し: 形が desktop の用語集 (terms・forbidden・zh_si
 	assert.ok(Array.isArray(g.forbidden['zh-TW_ja_words']))
 	assert.ok(Object.keys(c.zh_simplified).length > 0)
 	assert.ok(Object.keys(c.ja_shinjitai).length > 0)
+})
+
+test('用語集の写し: desktop の横断レビュー (T-2137) の改訂版 (210 語・3 つ目の表 zh_non_tw_variant・必須語の追加)', () => {
+	const g = readJson('scripts/i18n/glossary.json')
+	const c = readJson('scripts/i18n/glossary-chars.json')
+	assert.equal(g.terms.length, 210)
+	assert.ok(Object.keys(c.zh_non_tw_variant ?? {}).length > 0, 'zh_non_tw_variant')
+	const byId = new Map(g.terms.map((t) => [t.id, t]))
+	for (const [id, en, zh] of [
+		['quote', 'quote', '報價'],
+		['confidence', 'confidence', '信賴度'],
+		['threshold', 'threshold', '臨界值'],
+		['menu', 'menu', '選單'],
+		['window', 'window', '視窗'],
+		['create', 'create', '建立'],
+		['search', 'search', '搜尋'],
+		['enterprise', 'Enterprise', 'Enterprise'],
+	]) {
+		assert.equal(byId.get(id)?.en, en, id)
+		assert.equal(byId.get(id)?.zh, zh, id)
+		assert.equal(byId.get(id)?.kind, 'required', id)
+	}
+	const src = readJson('scripts/i18n/glossary.source.json')
+	assert.notEqual(src.desktop_commit, 'be5c5aea7f0593fc8cf597ecc32d71d858d82436', '写し直した desktop のコミット')
 })
 
 test('用語集の写し: 隣に desktop の用語集があれば同じ内容 (無ければ skip)', (t) => {

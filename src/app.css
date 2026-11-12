@@ -20,6 +20,13 @@
 @source "../_guides/**/*.md";
 @source "./**/*.svelte";
 @source not "../_site";
+/* i18n1112 のウェーブ末尾の追い修正: 自動検出がサイトの部品でないファイルの語を class として拾い、基点 (10678af) の
+   ビルドに無かった規則を出していた。ビルド用の道具 (scripts/) を検出から外し、i18n で増えた作業メモ・node テストの語
+   'table' (.table{display:table}) と英語のページの本文の語 shrink (.shrink{flex-shrink:1}) を class として拾わない。
+   docs_draft/ と node テストは基点でも走査されていたので外さない (外すと基点にあった規則が消える) */
+@source not "../scripts";
+@source not inline("table");
+@source not inline("shrink");
 
 /* ==========================================================================
    Dark design tokens (from the new-app design system) + fonts.

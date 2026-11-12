@@ -208,6 +208,11 @@ function initDownloadTracking() {
 import { joinAppUrl, parseJoinHash } from './lib/join-hash.js';
 // T-2206 (i18n1112 I18N-708): ページの言語は <html lang> から読む (W7-site.md §0-C)。
 import { pageLang, pick } from './lib/site-lang.js';
+// ウェーブ末尾の追い修正 (T-2210): 言語を切り替えても組織コード (フラグメント) を引き継ぐ
+import { carryJoinHash } from './lib/join-switch.js';
+
+/** 言語の切り替え (ヘッダー・フッター・ドロワー) と言語の案内の帯 (I18N-713) のリンク */
+const LANG_LINKS = '[data-i18n-switch] a[hreflang], .lang-suggest a[hreflang]';
 
 const COPY_DONE = 'コピーしました。';
 const COPY_FAILED = 'コピーできませんでした。組織コードを選択してコピーしてください。';
@@ -250,13 +255,33 @@ async function copyText(text) {
   throw new Error('clipboard unavailable');
 }
 
+/** 言語のリンクの行き先に、今のフラグメント (検証済みの値を作り直したもの) を付け直す。setAttribute だけ */
+function carryHashTo(a) {
+  const href = a.getAttribute('href');
+  const next = carryJoinHash(href, location.hash);
+  if (next !== href) a.setAttribute('href', next);
+}
+
+function syncJoinSwitchLinks() {
+  document.querySelectorAll(LANG_LINKS).forEach(carryHashTo);
+}
+
 function initJoinPage() {
   const root = document.querySelector('[data-join]');
   if (!root) return;
   let current = renderJoin(root);
+  syncJoinSwitchLinks();
   window.addEventListener('hashchange', () => {
     current = renderJoin(root);
+    syncJoinSwitchLinks();
   });
+  // ドロワー (MobileNav) と帯は後から描かれるので、押した瞬間 (遷移の前) にも付け直す。中クリックは auxclick
+  const onLangLink = (e) => {
+    const a = e.target instanceof Element ? e.target.closest(LANG_LINKS) : null;
+    if (a !== null) carryHashTo(a);
+  };
+  document.addEventListener('click', onLangLink, true);
+  document.addEventListener('auxclick', onLangLink, true);
   const copy = root.querySelector('[data-join-copy]');
   const status = root.querySelector('[data-join-copy-status]');
   const copyMessages = pick(COPY_TEXT, pageLang());

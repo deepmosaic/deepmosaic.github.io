@@ -445,10 +445,11 @@ test('_config.yml: defaults の path "" に lang: ja、path "en" / "zh-tw" の d
 	}
 })
 
-test('_config.yml: exclude に scripts/i18n がある', () => {
+// ウェーブ末尾の追い修正 (T-2210): scripts/ の全部を除外にした (scripts/i18n はその中に含まれる)
+test('_config.yml: exclude に scripts/i18n (か、それを含む scripts) がある', () => {
 	const cfg = read('_config.yml').replace(/\r\n/g, '\n')
 	const ex = cfg.split(/^exclude:\s*$/m)[1].split(/^\S/m)[0]
-	assert.match(ex, /^\s*-\s*scripts\/i18n\s*(#.*)?$/m)
+	assert.match(ex, /^\s*-\s*scripts(\/i18n)?\s*(#.*)?$/m)
 })
 
 // ---------------------------------------------------------------- 7. check-site

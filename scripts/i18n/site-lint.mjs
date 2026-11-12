@@ -10,7 +10,7 @@
 //   - lintText(lang, text, { allowRemoval }) → [{ word, use, rule }]   lang は 'en' | 'zh-tw' ('zh-TW' も可)
 //       en:    仮名・CJK 統合漢字・全角の記号 (U+3000–U+303F・U+FF00–U+FFEF) が無い、forbidden.en の語が単語の境界で
 //              (大文字小文字を無視して) 無い。allowRemoval のとき除去の語 (remove mosaic など) だけを許す
-//       zh-tw: 仮名が無い、glossary-chars.json の zh_simplified・ja_shinjitai の字が無い、forbidden["zh-TW"] と
+//       zh-tw: 仮名が無い、glossary-chars.json の zh_simplified・ja_shinjitai・zh_non_tw_variant の字が無い、forbidden["zh-TW"] と
 //              zh-TW_ja_words の語が無い (allow_in の合成語の中は許す)。allowRemoval のとき 去馬賽克・去碼・移除馬賽克 だけを許す
 //   - lintValue(lang, value, opts?) → lintText と同じ (JSON / yml の値を 1 つ検査する。html の除外は無い)
 //
@@ -103,6 +103,9 @@ function lintZh(text, allowRemoval) {
 		if (simp !== undefined) out.push({ rule: 'simplified', word: ch, use: simp })
 		const shin = chars.ja_shinjitai[ch]
 		if (shin !== undefined) out.push({ rule: 'shinjitai', word: ch, use: shin })
+		// 標準繁体だが台湾で使わない字体 (爲・衆・啓・裏・着 …) → 台湾の字形 (desktop の lint-core.ts の L5 と同じ。古い写しでは表が無い)
+		const variant = chars.zh_non_tw_variant?.[ch]
+		if (variant !== undefined) out.push({ rule: 'variant', word: ch, use: variant })
 	}
 	for (const fw of glossary.forbidden['zh-TW']) {
 		if (allowRemoval && ZH_REMOVAL_WORDS.has(fw.word)) continue

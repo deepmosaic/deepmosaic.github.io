@@ -10,6 +10,7 @@
 // - (c) 429 の文が英中。
 // - (d) /en/enterprise/inquiry/: 電話番号が必須 (規則は ja と同じ。空のときは ja と同じく「最低 5 文字」の文になる = inquiry-validate.js)。
 // - (e) /en/join/#code=…: code の表示とコピーの英文、計測のリクエストが出ない。
+// - (g)(h) /join/ の言語の切り替えで #code= / #admin を引き継ぐ (ウェーブ末尾の追い修正)。
 // - (f) 存在しない /en/nope/ を開くと /en/404.html に移り英文が出る (e2e/lib/serve.mjs は 404 にルートの 404.html を返す =
 //       GitHub Pages と同じ。その中の印 data-lang-404 を src/main.js が見て移す)。
 //
@@ -178,6 +179,34 @@ test.describe('組織への参加 (英語)', () => {
     await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
     await expect(page.locator('meta[name="referrer"]')).toHaveAttribute('content', 'no-referrer');
     expect(externalRequests, '計測・第三者へのリクエストを出さない').toEqual([]);
+  });
+});
+
+// ウェーブ末尾の追い修正 (T-2210): /join/ で言語を切り替えても組織コード (フラグメント) が残る。
+// フッターの切り替え (幅によらず見える) を押す。フラグメントはサーバーへ送られない (行き先の URL の # 以降)。
+test.describe('組織への参加: 言語の切り替えでフラグメントを引き継ぐ', () => {
+  test('(g) /join/#code=… → English → /en/join/#code=… でコードが残る', async ({ page }) => {
+    await page.goto('/join/#code=ABCD-EFGH-JKLM', { waitUntil: 'load' });
+    await expect(page.locator('[data-join-view="code"]')).toBeVisible();
+    const en = page.locator('footer [data-i18n-switch] a[hreflang="en"]');
+    await expect(en).toHaveAttribute('href', '/en/join/#code=ABCD-EFGH-JKLM');
+    await en.click();
+    await expect(page).toHaveURL(/\/en\/join\/#code=ABCD-EFGH-JKLM$/);
+    await expect(page.locator('[data-join-view="code"]')).toBeVisible();
+    await expect(page.locator('[data-join-view="invalid"]')).toBeHidden();
+    await expect(page.locator('[data-join-open-code]')).toHaveAttribute('href', 'deepmosaic://join?code=ABCD-EFGH-JKLM');
+  });
+
+  test('(h) /en/join/#admin → 繁體中文 → /zh-tw/join/#admin、不正なフラグメントは引き継がない', async ({ page }) => {
+    await page.goto('/en/join/#admin', { waitUntil: 'load' });
+    const zh = page.locator('footer [data-i18n-switch] a[hreflang="zh-Hant-TW"]');
+    await expect(zh).toHaveAttribute('href', '/zh-tw/join/#admin');
+    await zh.click();
+    await expect(page).toHaveURL(/\/zh-tw\/join\/#admin$/);
+    await expect(page.locator('[data-join-view="admin"]')).toBeVisible();
+
+    await page.goto('/join/#code=<b>x</b>', { waitUntil: 'load' });
+    await expect(page.locator('footer [data-i18n-switch] a[hreflang="en"]')).toHaveAttribute('href', '/en/join/');
   });
 });
 

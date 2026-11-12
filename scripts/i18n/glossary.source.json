@@ -1,9 +1,9 @@
 {
-	"desktop_commit": "be5c5aea7f0593fc8cf597ecc32d71d858d82436",
+	"desktop_commit": "4c2ce498ca3d9ece6d24383dc3f2a55f03435aeb",
 	"desktop_ref": "i18n1112-integrate",
-	"note": "T-2200: desktop の src/lib/i18n/glossary.json と glossary-chars.json の写し。sha256 は改行を LF にそろえた内容の値",
+	"note": "T-2200: desktop の src/lib/i18n/glossary.json と glossary-chars.json の写し。sha256 は改行を LF にそろえた内容の値。ウェーブ末尾の追い修正 (2026-11-12) で横断レビュー (T-2137 GL-1〜GL-6、210 語・zh_non_tw_variant) の版に写し直した",
 	"sha256": {
-		"glossary.json": "d1a060f1bda26a60ea9544f6a46ff396e1242d74128b6bbaa23169de80e49c40",
-		"glossary-chars.json": "407556032e9f2855796c39804dd40fad739e53ce1cbe580bda127e746fc1df02"
+		"glossary.json": "8ad50064fb1c21979a9f786c19f8425c8bcf39daff8c0b6abcdd00d2b95a03aa",
+		"glossary-chars.json": "72f3938ebf32bfe18b9240403203d9d1cbf2f1eca2cf4c3c3b4d7d21cb813775"
 	}
 }

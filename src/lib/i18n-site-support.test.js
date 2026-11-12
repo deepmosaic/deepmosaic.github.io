@@ -379,7 +379,8 @@ async function runModule(name, files) {
 
 const edit = (rel, fn) => (files) => ({ ...files, [rel]: fn(files[rel]) })
 const drop = (rel) => (files) => Object.fromEntries(Object.entries(files).filter(([k]) => k !== rel))
-const unbuilt = (files) => Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.replace(LAYOUT, '')]))
+// ウェーブ末尾の追い修正: complete の模型は自己参照の canonical を持つので、LAYOUT の固定の行でなく canonical の行を全部除く
+const unbuilt = (files) => Object.fromEntries(Object.entries(files).map(([k, v]) => [k, v.replace(/<link rel="canonical"[^\n]*\n/g, '')]))
 
 test('checks/pages-support: 正しい模型は 0 件 (陽性対照)', async () => {
 	assert.deepEqual(await runModule('pages-support', supportSite()), [])
@@ -443,7 +444,9 @@ function completeSite() {
 	const sitemap = []
 	for (const key of LEDGER_KEYS) {
 		for (const lang of ['ja', 'en', 'zh-tw']) {
-			files[relOf(lang, key)] = html(HTML_LANG[lang], hreflangs(key), '<p>x</p>')
+			// 自己参照の canonical (ウェーブ末尾の追い修正で complete が英中の canonical も見る)
+			const self = `<link rel="canonical" href="${ORIGIN}${PREFIX[lang]}${key}" />\n`
+			files[relOf(lang, key)] = html(HTML_LANG[lang], hreflangs(key), '<p>x</p>').replace(LAYOUT, self)
 			if (key !== '/join/') sitemap.push(`<url><loc>${ORIGIN}${PREFIX[lang]}${key}</loc></url>`)
 		}
 	}
@@ -484,6 +487,11 @@ const COMPLETE_BAD = [
 	['英中の 404 が無い', drop('en/404.html'), 'en/404.html'],
 	['app.js に 404 の振り分けが無い', edit('assets/dist/app.js', () => 'function a(){}\n'), 'data-lang-404'],
 	['app.js が無い', drop('assets/dist/app.js'), 'app.js'],
+	// ウェーブ末尾の追い修正 (2026-11-12): 英中の canonical は自己参照、hreflang はちょうど 4 本
+	['en の canonical が ja を指す', edit('en/price/index.html', (s) => s.replace(`canonical" href="${ORIGIN}/en/price/"`, `canonical" href="${ORIGIN}/price/"`)), 'canonical'],
+	['zh-tw に canonical が無い', edit('zh-tw/company/about.html', (s) => s.replace(/<link rel="canonical"[^\n]*\n/, '')), 'canonical'],
+	['en の canonical が 2 本', edit('en/join/index.html', (s) => s.replace('</head>', `<link rel="canonical" href="${ORIGIN}/en/join/" />\n</head>`)), 'canonical'],
+	['hreflang が 5 本 (余計な 1 本)', edit('zh-tw/spec/index.html', (s) => s.replace('</head>', `<link rel="alternate" hreflang="zh-CN" href="${ORIGIN}/zh-tw/spec/" />\n</head>`)), '4 本'],
 ]
 
 for (const [name, mutate, needle] of COMPLETE_BAD) {

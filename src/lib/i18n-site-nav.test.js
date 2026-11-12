@@ -412,6 +412,9 @@ function jaCssBody(css) {
 	const s = css
 		.replace(/\r\n/g, '\n')
 		.replace(/@source "\.\.\/(?:en|zh-tw)\/\*\*\/\*\.html";/g, '')
+		// ウェーブ末尾の追い修正: Tailwind の自動検出から外す 3 行 (scripts/・語 table・語 shrink。
+		// 基点のビルドに無かった .table・.shrink を消すため。ja の規則は増えも減りもしない)
+		.replace(/@source not (?:"\.\.\/scripts"|inline\("(?:table|shrink)"\));/g, '')
 		.replace(/\/\*[\s\S]*?\*\//g, '')
 	let out = ''
 	let seg = 0

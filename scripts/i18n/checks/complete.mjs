@@ -1,7 +1,9 @@
 // T-2210 (i18n1112 I18N-712): W7 (公式サイトの多言語化) の完成の検査 (check-site のモジュール)。ビルドの出力 (_site) を読む。
 //
 //   - 台帳 (`_data/i18n_pages.yml`) の全部の鍵について、ja / en / zh-tw の 3 版が `_site` にあり、3 版のそれぞれが hreflang で
-//     3 版 + x-default (= en) を指す (対称)。hreflang の細かい形 (本数・og:locale:alternate) は checks/head.mjs が見る。ここは「3 版がそろい、互いに指す」こと。
+//     3 版 + x-default (= en) を指す (対称)。hreflang の細かい形 (og:locale:alternate) は checks/head.mjs が見る。ここは「3 版がそろい、互いに指す」こと。
+//     ウェーブ末尾の追い修正 (2026-11-12): 3 版とも hreflang がちょうど 4 本、英中の版は自分自身を指す canonical がちょうど 1 本
+//     (head.mjs は canonical の無いページを見ないので、英中の canonical の欠けはここで捕まえる)。
 //   - `sitemap.xml` に英中の索引対象のページ (台帳から join を除いた鍵 × 2) があり、英中の join と 404 が無い。
 //   - `_site/en/**` と `_site/zh-tw/**` の `.html` が、台帳の英中の版 + 英中の 404 とちょうど同じ (余計なページ = probe の消し忘れが無い)。
 //   - `_site/assets/dist/app.js` に 404 の振り分け (`data-lang-404`) の処理がある (I18N-708 の取り込み)。
@@ -31,6 +33,10 @@ function hreflangOf(html) {
 	return [...html.matchAll(/<link\b[^>]*\bhreflang=[^>]*>/g)].map((m) => ({ lang: attr(m[0], 'hreflang'), href: attr(m[0], 'href') }))
 }
 
+function canonicalOf(html) {
+	return [...html.matchAll(/<link\b[^>]*\brel=["']canonical["'][^>]*>/g)].map((m) => attr(m[0], 'href'))
+}
+
 function checkSymmetry(ctx, key) {
 	const errors = []
 	const want = {
@@ -45,9 +51,19 @@ function checkSymmetry(ctx, key) {
 			errors.push(`${rel} が無い (台帳の ${key} の ${lang} の版)`)
 			continue
 		}
-		const links = hreflangOf(ctx.read(rel))
+		const page = ctx.read(rel)
+		const links = hreflangOf(page)
 		for (const [hl, href] of Object.entries(want)) {
 			if (!links.some((l) => l.lang === hl && l.href === href)) errors.push(`${rel}: hreflang="${hl}" が ${href} を指していない (3 版の対称が崩れている)`)
+		}
+		if (links.length !== 4) errors.push(`${rel}: hreflang が 4 本でない (${links.length} 本。ja・en・zh-Hant-TW・x-default)`)
+		// 英中の版は自分自身を指す canonical をちょうど 1 本 (checks/head.mjs は canonical の無いページを見ないので、ここで漏れを捕まえる)
+		if (TRANSLATED.includes(lang)) {
+			const self = `${ORIGIN}${PREFIX[lang]}${key}`
+			const canonical = canonicalOf(page)
+			if (canonical.length !== 1 || canonical[0] !== self) {
+				errors.push(`${rel}: canonical が自分自身 (${self}) を指す 1 本でない (${canonical.join(', ') || 'なし'})`)
+			}
 		}
 	}
 	return errors

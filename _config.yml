@@ -36,7 +36,9 @@ exclude:
   - e2e
   - playwright.config.ts
   # T-2199 (i18n1112): サイトの多言語化の道具と用語集の写しを公開しない
-  - scripts/i18n
+  # T-2210 (i18n1112 ウェーブ末尾の追い修正): scripts/ の全部 (check-docs・check-plan-catalog・optimize-images も) を公開しない。
+  # どのページ・css・js・sitemap・llms からも参照されていない (2026-11-12 に _site を走査して確認)
+  - scripts
 
 # Default front matter
 defaults:
