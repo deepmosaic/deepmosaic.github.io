@@ -29,6 +29,20 @@
 export const formatYen = (n) => '¥' + Math.round(n).toLocaleString('ja-JP');
 
 /**
+ * 言語ごとの円の表記 (T-2205、i18n1112 I18N-707)。ja / en は `formatYen` と同じ `¥1,234`、zh-tw は `1,234 日圓`。
+ * 桁区切りはどの言語でも `'ja-JP'` の `toLocaleString` (金額の表記を言語で変えない、設計書 §10.5)。
+ * 知らない言語は ja と同じ。
+ *
+ * @param {string} lang `'ja' | 'en' | 'zh-tw'` (`site-lang.js` の `pageLang()`)
+ * @param {number} n
+ * @returns {string}
+ */
+export function formatYenFor(lang, n) {
+  if (String(lang ?? '').toLowerCase() === 'zh-tw') return Math.round(n).toLocaleString('ja-JP') + ' 日圓';
+  return formatYen(n);
+}
+
+/**
  * 税別の金額に消費税を足した税込額 (1 円未満切り捨て、T-942)。
  *
  * 料金カードの税込併記の規則。`_data/plans.yml` の `price_incl_display` はこの値の写しで、
@@ -161,14 +175,48 @@ export function cheapestPlan(tiers, hours) {
 }
 
 /**
+ * 内訳文の英中の部品 (T-2205、i18n1112 I18N-707)。ja は `planBreakdown` の中の今の文字列のまま。
+ * 数える名詞は en が単数 / 複数、zh-tw が量詞 (個帳號・份訂閱)。区切りは en ` · `、zh-tw `，`
+ * (ja の ` ・ ` の中黒は仮名の範囲なので英中では使わない)。
+ */
+const BREAKDOWN_TEXT = {
+  en: {
+    hours: (h) => `${h} ${h === 1 ? 'hour' : 'hours'}`,
+    pooled: (seats, h) => `${seats} ${seats === 1 ? 'account' : 'accounts'} (${BREAKDOWN_TEXT.en.hours(h)} shared as a pool)`,
+    cumulative: (h) => `${BREAKDOWN_TEXT.en.hours(h)} in total`,
+    unlimited: 'Unlimited',
+    contracts: (c, h) => `${c} subscriptions (${BREAKDOWN_TEXT.en.hours(h)} / month included)`,
+    monthly: (h) => `${BREAKDOWN_TEXT.en.hours(h)} / month included`,
+    trial: (d) => `${d}-day free trial available`,
+    sep: ' · ',
+  },
+  'zh-tw': {
+    pooled: (seats, h) => `${seats} 個帳號（${h} 小時以額度池共用）`,
+    cumulative: (h) => `累計 ${h} 小時`,
+    unlimited: '無限制',
+    contracts: (c, h) => `${c} 份訂閱（每月含 ${h} 小時）`,
+    monthly: (h) => `每月含 ${h} 小時`,
+    trial: (d) => `提供 ${d} 天免費試用`,
+    sep: '，',
+  },
+};
+
+/**
  * 適合プランの内訳文。**文言はデータから組む** — プランごとに固定文を持たせると
  * `_data/plans.yml` の改定で必ず片方だけ古くなる。
  *
+ * T-2205: `lang` (`'ja' | 'en' | 'zh-tw'`、省略時 ja) で英中の文にする。ja の文字列は今のまま。
+ *
  * @param {Tier} tier
  * @param {number} hours
+ * @param {string} [lang]
  * @returns {string}
  */
-export function planBreakdown(tier, hours) {
+export function planBreakdown(tier, hours, lang = 'ja') {
+  const key = String(lang ?? '').toLowerCase();
+  // 自前のキーだけを引く ('constructor' / '__proto__' などで Object のプロトタイプを拾わない)。
+  const tx = Object.hasOwn(BREAKDOWN_TEXT, key) ? BREAKDOWN_TEXT[key] : undefined;
+  if (tx) return planBreakdownIntl(tier, hours, tx);
   const parts = [];
   if (tier.included_basis === 'pooled') {
     const { seats } = bestSeatPlan(tier, hours);
@@ -190,6 +238,33 @@ export function planBreakdown(tier, hours) {
   }
   if (tier.trial_days > 0) parts.push(`${tier.trial_days} 日間無料トライアルあり`);
   return parts.join(' ・ ');
+}
+
+/**
+ * `planBreakdown` の英中 (ja と同じ分岐で、文だけ `BREAKDOWN_TEXT` から組む)。
+ *
+ * @param {Tier} tier
+ * @param {number} hours
+ * @param {typeof BREAKDOWN_TEXT.en} tx
+ * @returns {string}
+ */
+function planBreakdownIntl(tier, hours, tx) {
+  const parts = [];
+  if (tier.included_basis === 'pooled') {
+    const { seats } = bestSeatPlan(tier, hours);
+    parts.push(tx.pooled(seats, seats * tier.included_hours));
+  } else if (tier.included_basis === 'cumulative') {
+    parts.push(tx.cumulative(tier.included_hours));
+  } else if (tier.included_basis === 'unlimited' || tier.included_hours === null) {
+    parts.push(tx.unlimited);
+  } else {
+    const contracts = contractsNeeded(tier, hours) ?? 1;
+    parts.push(
+      contracts > 1 ? tx.contracts(contracts, tier.included_hours * contracts) : tx.monthly(tier.included_hours),
+    );
+  }
+  if (tier.trial_days > 0) parts.push(tx.trial(tier.trial_days));
+  return parts.join(tx.sep);
 }
 
 /**

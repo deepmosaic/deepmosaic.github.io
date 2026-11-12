@@ -13,20 +13,21 @@
    (_data/entity.yml の語彙ポリシーを参照)。
 {%- endcomment -%}
 {%- assign E = site.data.entity -%}
+{%- assign cc_P = site.data.l10n[page.lang].parts -%}{%- assign cc_X = site.data.l10n[page.lang] -%}
 <div class="grid gap-5 md:grid-cols-2">
   <div class="card p-6">
-    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="CheckCircle2" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">できること</h3></div>
+    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="CheckCircle2" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">{% if cc_P %}{{ cc_P.cc_can_title }}{% else %}できること{% endif %}</h3></div>
     <ul class="flex flex-col gap-3">
       {%- for c in E.can %}
-      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>{{ c.ja }}</span></li>
+      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>{% if cc_P %}{{ cc_X.entity.can[forloop.index0] }}{% else %}{{ c.ja }}{% endif %}</span></li>
       {%- endfor %}
     </ul>
   </div>
   <div class="card p-6">
-    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="X" class="h-[18px] w-[18px] shrink-0 text-danger" %}<h3 class="text-[15px] font-bold text-ink">できないこと</h3></div>
+    <div class="mb-4 flex items-center gap-2.5">{% include icon.html name="X" class="h-[18px] w-[18px] shrink-0 text-danger" %}<h3 class="text-[15px] font-bold text-ink">{% if cc_P %}{{ cc_P.cc_cannot_title }}{% else %}できないこと{% endif %}</h3></div>
     <ul class="flex flex-col gap-3">
       {%- for c in E.cannot %}
-      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="X" class="mt-1 h-4 w-4 shrink-0 text-danger" %}<span>{{ c.ja }}</span></li>
+      <li class="flex gap-2 text-[13.5px] leading-[1.9] text-ink-2">{% include icon.html name="X" class="mt-1 h-4 w-4 shrink-0 text-danger" %}<span>{% if cc_P %}{{ cc_X.entity.cannot[forloop.index0] }}{% else %}{{ c.ja }}{% endif %}</span></li>
       {%- endfor %}
     </ul>
   </div>

@@ -22,13 +22,15 @@
 /mosaic-removal/ と食い違い、訂正として機能しなくなる。
 {%- endcomment -%}
 {%- assign E = site.data.entity -%}
+{%- comment -%} T-2205 (i18n1112): 英中は parts / entity の l10n (_data/entity.yml の en は禁止語を含むので英中に出さない) {%- endcomment -%}
+{%- assign wi_P = site.data.l10n[page.lang].parts -%}{%- assign wi_X = site.data.l10n[page.lang] -%}
 <section id="what-is-deepmosaic" class="scroll-mt-20 border-b border-hair py-24">
   <div class="mx-auto w-[92%] max-w-[900px]">
-    {% include section-title.html kicker="WHAT IT IS" title="Deepmosaic とは" sub="モザイクを「かける」ためのソフトです。すでに入っているモザイクを取り除くためのものではありません。" %}
+    {% if wi_P %}{% include section-title.html kicker="WHAT IT IS" title=wi_P.wi_title sub=wi_P.wi_sub %}{% else %}{% include section-title.html kicker="WHAT IT IS" title="Deepmosaic とは" sub="モザイクを「かける」ためのソフトです。すでに入っているモザイクを取り除くためのものではありません。" %}{% endif %}
 
     {% include can-cannot.html %}
 
-    <p class="mt-6 text-[12.5px] leading-[1.9] text-ink-4">{{ E.name_origin.ja }}</p>
-    <p lang="en" class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ E.definition.en }}</p>
+    <p class="mt-6 text-[12.5px] leading-[1.9] text-ink-4">{% if wi_P %}{{ wi_X.entity.name_origin }}{% else %}{{ E.name_origin.ja }}{% endif %}</p>
+    <p{% unless wi_P %} lang="en"{% endunless %} class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{% if wi_P %}{{ wi_X.entity.definition }}{% else %}{{ E.definition.en }}{% endif %}</p>
   </div>
 </section>

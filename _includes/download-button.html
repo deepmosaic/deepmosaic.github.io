@@ -14,11 +14,14 @@ params:
            **`data-dl` が DL 計測の目印。** これが無い <a> は計測の対象外になる
            (`src/main.js` の initDownloadTracking が `a[data-dl]` だけを見る)。
            GA4 の `link_id` になるので、置き場所ごとに違う値にする
+
+T-2205 (i18n1112): href はページの言語の `app_download_link` (3 言語とも同じ URL)。既定のラベルは英中では parts の l10n。
 {%- endcomment -%}
+{%- assign db_P = site.data.l10n[page.lang].parts -%}
 <a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}"
    data-dl="{{ include.dl | default: 'cta' }}"
-   href="{{ site.data.lang.ja.app_download_link }}">
+   href="{{ site.data.lang[page.lang].app_download_link }}">
   {% include icon.html name="Download" class="h-5 w-5" %}
-  {% if include.label %}{{ include.label }}{% else %}Microsoft Store で無料入手{% endif %}
+  {% if include.label %}{{ include.label }}{% else %}{% if db_P %}{{ db_P.dl_label_default }}{% else %}Microsoft Store で無料入手{% endif %}{% endif %}
 </a>
 {% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}

@@ -14,16 +14,18 @@ params:
   secondary_href / secondary_label  (任意) 副ボタン
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+{%- comment -%} T-2205 (i18n1112): 英中は parts / entity の l10n から (ja のページでは nil = 直書きの ja のまま) {%- endcomment -%}
+{%- assign cd_P = site.data.l10n[page.lang].parts -%}{%- assign cd_X = site.data.l10n[page.lang] -%}
 <section class="border-t border-hair bg-gradient-to-b from-surface-alt to-surface py-20">
   <div class="mx-auto w-[92%] max-w-[760px] text-center">
     <img src="/assets/img/app-icon-128.png" alt="" width="56" height="56" class="mx-auto mb-5 h-14 w-14">
-    <h2 class="text-3xl font-bold tracking-[-0.01em] text-ink">{{ include.title | default: "無料でご利用いただけます" }}</h2>
+    <h2 class="text-3xl font-bold tracking-[-0.01em] text-ink">{% if cd_P %}{{ include.title | default: cd_P.cta_title_default }}{% else %}{{ include.title | default: "無料でご利用いただけます" }}{% endif %}</h2>
     <p class="mx-auto mt-3.5 max-w-[560px] text-[15px] leading-[1.95] text-ink-2">
       {%- if include.sub -%}
         {{ include.sub }}
       {%- else -%}
-        初回起動から{{ free_plan.free_window_days }}日間、累計{{ free_plan.included_hours }}時間分の動画インポートが無料。クレジットカード不要。<br>
-        セットアップ後はネットワークを切断した状態でも動作します。
+        {% if cd_P %}{{ cd_P.cta_free_line | replace: '%DAYS%', free_plan.free_window_days | replace: '%HOURS%', free_plan.included_hours }}{% else %}初回起動から{{ free_plan.free_window_days }}日間、累計{{ free_plan.included_hours }}時間分の動画インポートが無料。クレジットカード不要。{% endif %}<br>
+        {% if cd_P %}{{ cd_P.cta_offline_line }}{% else %}セットアップ後はネットワークを切断した状態でも動作します。{% endif %}
       {%- endif -%}
     </p>
     <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
@@ -32,7 +34,7 @@ params:
       <a href="{{ include.secondary_href }}" class="btn-secondary btn-lg">{{ include.secondary_label }}</a>
       {%- endif %}
     </div>
-    <p class="mt-4 text-[13px] text-ink-4">Windows 10 / 11（64bit）</p>
+    <p class="mt-4 text-[13px] text-ink-4">{% if cd_P %}{{ cd_P.cta_os_line }}{% else %}Windows 10 / 11（64bit）{% endif %}</p>
     {%- comment -%}
       X-707: Web 版の説明行。_data/site.yml の web_app.enabled が false の間は
       描画しない (公開時の ON 手順もそちらを参照)。この include はトップ末尾 /
@@ -40,7 +42,7 @@ params:
       `data-dl` は DL ボタンと同じ計測配管 (utm_*/ref の載せ直し + GA4) に乗せる目印。
     {%- endcomment -%}
     {%- if site.data.site.web_app.enabled %}
-    <p class="mt-2 text-[13px] text-ink-4">インストール不要の <a href="{{ site.data.site.web_app.url }}" data-dl="cta-webapp" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline">Web 版</a>（Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {{ site.data.site.web_app.trial_minutes }} 分まで）です。動画はサーバーに送信されず、お使いのブラウザ内で処理します。</p>
+    <p class="mt-2 text-[13px] text-ink-4">{% if cd_P %}{{ cd_P.cta_webapp_before }}{% else %}インストール不要の {% endif %}<a href="{{ site.data.site.web_app.url }}" data-dl="cta-webapp" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline">{% if cd_P %}{{ cd_P.cta_webapp_link }}{% else %}Web 版{% endif %}</a>{% if cd_P %}{{ cd_P.cta_webapp_after | replace: '%MINUTES%', site.data.site.web_app.trial_minutes }}{% else %}（Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {{ site.data.site.web_app.trial_minutes }} 分まで）です。動画はサーバーに送信されず、お使いのブラウザ内で処理します。{% endif %}</p>
     {%- endif %}
     {%- comment -%}
       TICKET-SITE-28: 製品の方向を DL ボタンの直下に置く。この include は
@@ -48,6 +50,6 @@ params:
       3 つの DL ボタンを塞げる**。文面の出所は _data/entity.yml。
       「除去」ではなく「取り除く」を使う理由は同ファイルの語彙ポリシーを参照。
     {%- endcomment -%}
-    <p class="mx-auto mt-1.5 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4">{{ site.data.entity.not_removal_note }}</p>
+    <p class="mx-auto mt-1.5 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4"{% if cd_P %} data-i18n-allow="mosaic_removal"{% endif %}>{% if cd_P %}{{ cd_X.entity.not_removal_note }}{% else %}{{ site.data.entity.not_removal_note }}{% endif %}</p>
   </div>
 </section>

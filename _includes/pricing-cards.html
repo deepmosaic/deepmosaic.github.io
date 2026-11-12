@@ -29,6 +29,12 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
 {%- assign cards = visible | where: "display", "card" -%}
 {%- assign strips = visible | where: "display", "strip" -%}
 {%- assign card_count = cards | size -%}
+{%- comment -%}
+  T-2205 (i18n1112): 英中 (page.lang が en / zh-tw) は文を l10n から引く。ja のページでは pc_PL / pc_P が nil で、
+  直書きの ja と ja のデータの式がそのまま出る。plans の文 = site.data.l10n[page.lang].plans (I18N-703)、
+  直書きの文 = site.data.l10n[page.lang].parts (I18N-707)。金額の数値は ja のデータのまま、通貨の前後だけ l10n。
+{%- endcomment -%}
+{%- assign pc_PL = site.data.l10n[page.lang].plans -%}{%- assign pc_P = site.data.l10n[page.lang].parts -%}{%- assign pc_L = site.data.lang[page.lang] -%}
 
 <div class="grid items-stretch gap-5 {% if card_count == 3 %}md:grid-cols-3{% elsif card_count == 2 %}md:grid-cols-2{% else %}md:grid-cols-2 lg:grid-cols-4{% endif %}">
   {%- for plan in cards %}
@@ -36,6 +42,11 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
     featured カードは `card-hi` と同じグラデーション背景なので、地の文が沈まないよう
     専用の hi-* トークンに切り替える (色は CSS variables 側が SSOT)。
   {%- endcomment -%}
+  {%- assign pc_T = pc_PL.tiers[plan.code] -%}
+  {%- capture pc_incl -%}{{ pc_PL.currency_prefix }}{{ plan.price_incl_display }}{{ pc_PL.currency_suffix }}{%- endcapture -%}
+  {%- comment -%} サイト内のパス (/ で始まり // で始まらない) は英中で言語の接頭辞を付ける {%- endcomment -%}
+  {%- assign pc_href_prefix = "" -%}{%- assign pc_h1 = plan.cta.href | slice: 0, 1 -%}{%- assign pc_h2 = plan.cta.href | slice: 0, 2 -%}
+  {%- if pc_PL and pc_h1 == "/" and pc_h2 != "//" -%}{%- assign pc_href_prefix = pc_L.url_prefix -%}{%- endif -%}
   {%- if plan.featured -%}
     {%- assign kicker_cls = "text-accent-soft" -%}
     {%- assign body_cls = "text-hi-ink-2" -%}
@@ -53,7 +64,7 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
 
     {%- comment -%} カード左上のバッジ。文言は plans.yml の `badge`。 {%- endcomment -%}
     {%- if plan.badge %}
-    <span class="absolute -top-[11px] left-6 badge-accent">{{ plan.badge }}</span>
+    <span class="absolute -top-[11px] left-6 badge-accent">{% if pc_PL %}{{ pc_T.badge | default: plan.badge }}{% else %}{{ plan.badge }}{% endif %}</span>
     {%- endif %}
 
     {%- comment -%}
@@ -67,8 +78,8 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
         Liquid に桁区切りフィルタは無い。無理に組むと読めなくなるので
         表示形は `price_display` としてデータ側に持たせている。
       {%- endcomment -%}
-      <span class="text-[36px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{{ site.data.plans.currency_symbol }}{{ plan.price_display }}</span>
-      <span class="text-[13px] {{ key_cls }}">{{ plan.price_unit }}（{{ site.data.plans.tax_note }}{% if plan.price_incl_display %}・税込 {{ site.data.plans.currency_symbol }}{{ plan.price_incl_display }}{% endif %}）</span>
+      <span class="text-[36px] font-bold tracking-[-0.02em] {% if plan.featured %}text-hi-ink{% else %}text-ink{% endif %}">{% if pc_PL %}{{ pc_PL.currency_prefix }}{{ plan.price_display }}{{ pc_PL.currency_suffix }}{% else %}{{ site.data.plans.currency_symbol }}{{ plan.price_display }}{% endif %}</span>
+      <span class="text-[13px] {{ key_cls }}">{% if pc_PL %}{{ pc_T.price_unit | default: plan.price_unit }}{{ pc_P.pc_tax_open }}{{ pc_PL.tax_note }}{% if plan.price_incl_display %}{{ pc_P.pc_tax_sep }}{{ pc_P.pc_tax_incl | replace: '%PRICE%', pc_incl }}{% endif %}{{ pc_P.pc_tax_close }}{% else %}{{ plan.price_unit }}（{{ site.data.plans.tax_note }}{% if plan.price_incl_display %}・税込 {{ site.data.plans.currency_symbol }}{{ plan.price_incl_display }}{% endif %}）{% endif %}</span>
     </div>
     {%- comment -%}
       税込併記 (T-942)。税込額は `plans.yml` の `price_incl_display` (規則は
@@ -81,10 +92,10 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
       お見積りなので書かない (文言は `plans.yml` の `price_note` が SSOT)。
     {%- endcomment -%}
     {%- if plan.price_note %}
-    <p class="mt-1 text-[12px] leading-[1.7] {{ key_cls }}">{{ plan.price_note }}</p>
+    <p class="mt-1 text-[12px] leading-[1.7] {{ key_cls }}">{% if pc_PL %}{{ pc_T.price_note | default: plan.price_note }}{% else %}{{ plan.price_note }}{% endif %}</p>
     {%- endif %}
 
-    <p class="mt-3.5 text-[13.5px] leading-[1.9] {{ body_cls }}">{{ plan.summary }}</p>
+    <p class="mt-3.5 text-[13.5px] leading-[1.9] {{ body_cls }}">{% if pc_PL %}{{ pc_T.summary | default: plan.summary }}{% else %}{{ plan.summary }}{% endif %}</p>
 
     {%- comment -%}
       「追加契約」行は `plans.yml` の `specs` に文字列で持たせず、`max_contracts` から
@@ -100,12 +111,12 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
     <dl class="mt-[22px] flex flex-col gap-3 border-t {{ rule_cls }} pt-[22px] text-[13.5px]">
       {%- for s in plan.specs %}
       <div class="flex justify-between gap-4">
-        <dt class="shrink-0 {{ key_cls }}">{{ s.label }}</dt>
-        <dd class="text-right {{ val_cls }}">{{ s.value }}</dd>
+        <dt class="shrink-0 {{ key_cls }}">{% if pc_PL %}{{ pc_T.specs[forloop.index0].label | default: s.label }}{% else %}{{ s.label }}{% endif %}</dt>
+        <dd class="text-right {{ val_cls }}">{% if pc_PL %}{{ pc_T.specs[forloop.index0].value | default: s.value }}{% else %}{{ s.value }}{% endif %}</dd>
       </div>
       {%- if forloop.first and contract_quota != "" %}
       <div class="flex justify-between gap-4">
-        <dt class="shrink-0 {{ key_cls }}">追加契約</dt>
+        <dt class="shrink-0 {{ key_cls }}">{% if pc_P %}{{ pc_P.pc_extra_contracts }}{% else %}追加契約{% endif %}</dt>
         <dd class="text-right {{ val_cls }}">{{ contract_quota }}</dd>
       </div>
       {%- endif %}
@@ -113,7 +124,7 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
     </dl>
 
     {%- if plan.note %}
-    <p class="mt-4 text-[12.5px] leading-[1.85] {{ key_cls }}">{{ plan.note }}</p>
+    <p class="mt-4 text-[12.5px] leading-[1.85] {{ key_cls }}">{% if pc_PL %}{{ pc_T.note | default: plan.note }}{% else %}{{ plan.note }}{% endif %}</p>
     {%- endif %}
 
     <div class="mt-auto pt-6">
@@ -123,12 +134,12 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
         DL ではないので `data-dl` は付けない (Web 版への遷移の計測は `/subscribe/` のボタンが持つ)。
       {%- endcomment -%}
       {%- if plan.subscribe %}
-      <a href="/subscribe/#plan-{{ plan.code }}" class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full">{{ plan.subscribe.label }}</a>
+      <a {% if pc_PL %}href="{{ pc_L.url_prefix }}/subscribe/#plan-{{ plan.code }}"{% else %}href="/subscribe/#plan-{{ plan.code }}"{% endif %} class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full">{% if pc_PL %}{{ pc_T.subscribe_label | default: plan.subscribe.label }}{% else %}{{ plan.subscribe.label }}{% endif %}</a>
       {%- elsif plan.cta.kind == "download" %}
-      {% include download-button.html label=plan.cta.label full=true variant=plan.cta.variant dl=plan.code %}
+      {% if pc_T.cta_label %}{% include download-button.html label=pc_T.cta_label full=true variant=plan.cta.variant dl=plan.code %}{% else %}{% include download-button.html label=plan.cta.label full=true variant=plan.cta.variant dl=plan.code %}{% endif %}
       {%- else %}
-      <a href="{{ plan.cta.href }}" class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
-        {{ plan.cta.label }}{% if plan.cta.external %}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}{% endif %}
+      <a {% if pc_href_prefix != "" %}href="{{ pc_href_prefix }}{{ plan.cta.href }}"{% else %}href="{{ plan.cta.href }}"{% endif %} class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
+        {% if pc_PL %}{{ pc_T.cta_label | default: plan.cta.label }}{% else %}{{ plan.cta.label }}{% endif %}{% if plan.cta.external %}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}{% endif %}
       </a>
       {%- endif %}
       {%- comment -%}
@@ -147,7 +158,8 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
       {%- endcomment -%}
       {%- if plan.secondary_cta %}
       <p class="mt-3 text-center text-[12.5px] leading-[1.7]">
-        <a href="{{ plan.secondary_cta.href }}" class="inline-block py-1.5 text-accent-soft hover:underline">{{ plan.secondary_cta.label }}</a>
+        {%- assign pc_s1 = plan.secondary_cta.href | slice: 0, 1 -%}{%- assign pc_s2 = plan.secondary_cta.href | slice: 0, 2 %}
+        <a {% if pc_PL and pc_s1 == "/" and pc_s2 != "//" %}href="{{ pc_L.url_prefix }}{{ plan.secondary_cta.href }}"{% else %}href="{{ plan.secondary_cta.href }}"{% endif %} class="inline-block py-1.5 text-accent-soft hover:underline">{% if pc_PL %}{{ pc_T.secondary_cta_label | default: plan.secondary_cta.label }}{% else %}{{ plan.secondary_cta.label }}{% endif %}</a>
       </p>
       {%- endif %}
     </div>
@@ -162,16 +174,17 @@ Free の横帯は対象外)。**T-298 で Enterprise が見積ベースの相談
   {%- comment -%}
     ラベルと説明は行を分ける (1 行に流すと折り返しでぶら下がりインデントになる)。
   {%- endcomment -%}
+  {%- assign pc_T = pc_PL.tiers[plan.code] -%}
   <div class="flex-[1_1_320px]">
-    <h3 class="text-[14px] font-bold text-ink">{{ plan.name }}（{{ site.data.plans.currency_symbol }}{{ plan.price_display }}）</h3>
-    <p class="mt-1 text-[13.5px] leading-[1.9] text-ink-4">{{ plan.bullets | join: " ／ " }}</p>
+    <h3 class="text-[14px] font-bold text-ink">{% if pc_PL %}{{ plan.name }}{{ pc_P.pc_strip_open }}{{ pc_PL.currency_prefix }}{{ plan.price_display }}{{ pc_PL.currency_suffix }}{{ pc_P.pc_strip_close }}{% else %}{{ plan.name }}（{{ site.data.plans.currency_symbol }}{{ plan.price_display }}）{% endif %}</h3>
+    <p class="mt-1 text-[13.5px] leading-[1.9] text-ink-4">{% if pc_PL %}{{ pc_T.bullets | default: plan.bullets | join: pc_P.pc_bullet_sep }}{% else %}{{ plan.bullets | join: " ／ " }}{% endif %}</p>
   </div>
-  {% include download-button.html label=plan.cta.label variant="secondary" dl=plan.code %}
+  {% if pc_T.cta_label %}{% include download-button.html label=pc_T.cta_label variant="secondary" dl=plan.code %}{% else %}{% include download-button.html label=plan.cta.label variant="secondary" dl=plan.code %}{% endif %}
 </div>
 {%- endfor %}
 
 {%- if site.data.plans.rollout_note != "" %}
 <p class="mt-5 rounded-lg border-l-[3px] border-warning bg-panel px-5 py-4 text-[13px] leading-[1.95] text-ink-2">
-  {{ site.data.plans.rollout_note }}
+  {% if pc_PL %}{{ pc_PL.rollout_note | default: site.data.plans.rollout_note }}{% else %}{{ site.data.plans.rollout_note }}{% endif %}
 </p>
 {%- endif %}

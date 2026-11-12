@@ -1,0 +1,39 @@
+# T-2205 (i18n1112 I18N-707): 共通 include の直書きの文の英語。このファイルの持ち主は I18N-707 だけ。
+#   - include (cta-download・download-button・pricing-cards・contract-quota・contract-limits・what-is・can-cannot・disclosure-table) が
+#     `site.data.l10n[page.lang].parts` で引く。ja の文は include に直書きのまま (ja のページでは参照しない)。
+#   - 平らな `key: "value"` だけ (src/lib/i18n-site-parts.test.js が読む)。キーは include ごとの接頭辞 (cta_ / dl_ / pc_ / cq_ / cl_ / wi_ / cc_ / dt_)。
+#   - `%DAYS%` などの印は include が `replace` で数値に置き換える (印は zh-tw と同じ)。
+#   - データの文 (plans・entity・disclosure) は I18N-703 / 704 の l10n にある。ここは include の直書きの分だけ。
+# cta-download.html
+cta_title_default: "Available for free"                       # 無料でご利用いただけます
+cta_free_line: "Import up to %HOURS% hours of video in total for free for %DAYS% days from the first launch. No credit card required."   # 初回起動から{日}日間、累計{時間}時間分の動画インポートが無料。クレジットカード不要。
+cta_offline_line: "After setup, it works even when disconnected from the network."   # セットアップ後はネットワークを切断した状態でも動作します。
+cta_os_line: "Windows 10 / 11 (64-bit)"                        # Windows 10 / 11（64bit）
+cta_webapp_before: "You can also use the "                     # インストール不要の (リンクの前)
+cta_webapp_link: "Web app"                                     # Web 版 (リンクの文)
+cta_webapp_after: ", which needs no installation (Chrome / Edge). It is for trials (up to %MINUTES% minutes per video). Videos are not sent to a server; they are processed in your browser."   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
+# download-button.html
+dl_label_default: "Get it free on Microsoft Store"             # Microsoft Store で無料入手
+# pricing-cards.html
+pc_tax_open: " ("                                              # 単位の後の （
+pc_tax_sep: ", "                                               # 税別・税込 の ・
+pc_tax_incl: "%PRICE% incl. tax"                               # 税込 ¥{金額}
+pc_tax_close: ")"                                              # ）
+pc_extra_contracts: "Additional subscriptions"                 # 追加契約
+pc_strip_open: " ("                                            # Free（¥0） の （
+pc_strip_close: ")"                                            # ）
+pc_bullet_sep: " / "                                           # Free の横帯の箇条の区切り ／
+# contract-quota.html
+cq_text: "Up to %MAX% subscriptions (up to %HOURS% hours / month)"   # 最大 {n} 契約（月 {h} 時間まで）
+# contract-limits.html
+cl_item: "up to %MAX% subscriptions for %NAME%"                # {プラン名} は最大 {n} 契約
+cl_sep: ", "                                                   # 、
+# what-is.html
+wi_title: "What is Deepmosaic"                                 # Deepmosaic とは
+wi_sub: "Software for applying mosaic. It is not for taking off existing mosaic."   # モザイクを「かける」ためのソフトです。すでに入っているモザイクを取り除くためのものではありません。
+# can-cannot.html
+cc_can_title: "What it can do"                                 # できること
+cc_cannot_title: "What it cannot do"                           # できないこと
+# disclosure-table.html
+dt_sent_title: "What is sent"                                  # 送信するもの
+dt_not_sent_title: "What is not sent"                          # 送信しないもの

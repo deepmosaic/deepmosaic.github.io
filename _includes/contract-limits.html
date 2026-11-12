@@ -15,12 +15,13 @@
    2 回呼ぶため、前回の値が残ると先頭に「、」が出る)。
 {%- endcomment -%}
 {%- assign cl_emitted = false -%}
+{%- assign cl_P = site.data.l10n[page.lang].parts -%}
 {%- assign cl_tiers = site.data.plans.tiers | where: "public", true -%}
 {%- for t in cl_tiers -%}
 {%- assign cl_max = t.max_contracts | default: 1 -%}
 {%- if cl_max > 1 -%}
-{%- if cl_emitted %}、{% endif -%}
-{{ t.name }} は最大 {{ cl_max }} 契約
+{%- if cl_emitted %}{% if cl_P %}{{ cl_P.cl_sep }}{% else %}、{% endif %}{% endif -%}
+{% if cl_P %}{{ cl_P.cl_item | replace: '%NAME%', t.name | replace: '%MAX%', cl_max }}{% else %}{{ t.name }} は最大 {{ cl_max }} 契約{% endif %}
 {%- assign cl_emitted = true -%}
 {%- endif -%}
 {%- endfor -%}

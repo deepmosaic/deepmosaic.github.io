@@ -17,7 +17,8 @@ params:
   plan  `site.data.plans.tiers` の要素
 {%- endcomment -%}
 {%- assign cq_max = include.plan.max_contracts | default: 1 -%}
+{%- assign cq_P = site.data.l10n[page.lang].parts -%}
 {%- if cq_max > 1 -%}
 {%- assign cq_hours = include.plan.included_hours | times: cq_max -%}
-最大 {{ cq_max }} 契約（月 {{ cq_hours }} 時間まで）
+{% if cq_P %}{{ cq_P.cq_text | replace: '%MAX%', cq_max | replace: '%HOURS%', cq_hours }}{% else %}最大 {{ cq_max }} 契約（月 {{ cq_hours }} 時間まで）{% endif %}
 {%- endif -%}

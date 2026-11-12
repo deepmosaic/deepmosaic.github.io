@@ -1,0 +1,37 @@
+# T-2205 (i18n1112 I18N-707): 共通 include の直書きの文の繁体字中国語 (台湾)。このファイルの持ち主は I18N-707 だけ。
+#   - include (cta-download・download-button・pricing-cards・contract-quota・contract-limits・what-is・can-cannot・disclosure-table) が
+#     `site.data.l10n[page.lang].parts` で引く。ja の文は include に直書きのまま (ja のページでは参照しない)。
+#   - 平らな `key: "value"` だけ (src/lib/i18n-site-parts.test.js が読む)。キーと印 (`%DAYS%` など) は en と同じ。
+# cta-download.html
+cta_title_default: "可免費使用"                                  # 無料でご利用いただけます
+cta_free_line: "自首次啟動起 %DAYS% 天內，可免費匯入累計 %HOURS% 小時的影片。不需信用卡。"   # 初回起動から{日}日間、累計{時間}時間分の動画インポートが無料。クレジットカード不要。
+cta_offline_line: "完成設定後，即使中斷網路連線也能運作。"          # セットアップ後はネットワークを切断した状態でも動作します。
+cta_os_line: "Windows 10 / 11（64 位元）"                       # Windows 10 / 11（64bit）
+cta_webapp_before: "也可使用免安裝的"                             # インストール不要の (リンクの前)
+cta_webapp_link: "網頁版"                                        # Web 版 (リンクの文)
+cta_webapp_after: "（支援 Chrome / Edge）。僅供試用（每部影片最長 %MINUTES% 分鐘）。影片不會傳送至伺服器，而是在您的瀏覽器中處理。"   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
+# download-button.html
+dl_label_default: "從 Microsoft Store 免費取得"                  # Microsoft Store で無料入手
+# pricing-cards.html
+pc_tax_open: "（"
+pc_tax_sep: "，"
+pc_tax_incl: "含稅 %PRICE%"
+pc_tax_close: "）"
+pc_extra_contracts: "額外訂閱"                                   # 追加契約
+pc_strip_open: "（"
+pc_strip_close: "）"
+pc_bullet_sep: "／"
+# contract-quota.html
+cq_text: "最多 %MAX% 份訂閱（每月最多 %HOURS% 小時）"              # 最大 {n} 契約（月 {h} 時間まで）
+# contract-limits.html
+cl_item: "%NAME% 最多 %MAX% 份訂閱"                              # {プラン名} は最大 {n} 契約
+cl_sep: "、"
+# what-is.html
+wi_title: "什麼是 Deepmosaic"                                    # Deepmosaic とは
+wi_sub: "這是用來「套用」馬賽克的軟體，並非用來去掉既有馬賽克的軟體。"   # モザイクを「かける」ためのソフトです。…
+# can-cannot.html
+cc_can_title: "可以做到的事"                                     # できること
+cc_cannot_title: "無法做到的事"                                   # できないこと
+# disclosure-table.html
+dt_sent_title: "會傳送的資料"                                    # 送信するもの
+dt_not_sent_title: "不會傳送的資料"                               # 送信しないもの
