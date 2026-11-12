@@ -156,6 +156,23 @@ test('ja-identity: llms.txt・llms-full.txt・robots.txt は基点とバイト�
 	}
 })
 
+test('ja-identity: llms のビルドの日付だけが違っても一致とみなし、日付以外の 1 字違いは落とす', () => {
+	const llms = (d, tail = '') => `# Deepmosaic\n- 最終更新 / Last updated: ${d}\n${tail}`
+	const full = (d) => `生成日 / Generated: ${d} — 出典\n`
+	const base = makeTree(siteFixture({ 'llms.txt': llms('2026-11-12'), 'llms-full.txt': full('2026-11-12') }))
+	const nextDay = makeTree(siteFixture({ 'llms.txt': llms('2026-11-13'), 'llms-full.txt': full('2026-11-13') }))
+	const changed = makeTree(siteFixture({ 'llms.txt': llms('2026-11-13', 'x\n'), 'llms-full.txt': full('2026-11-13') }))
+	try {
+		assert.equal(runNode('ja-identity.mjs', [base, nextDay]).status, 0)
+		const r = runNode('ja-identity.mjs', [base, changed])
+		assert.equal(r.status, 1)
+		assert.match(r.stdout, /内容が違う: llms\.txt/)
+		assert.doesNotMatch(r.stdout, /llms-full\.txt/)
+	} finally {
+		for (const d of [base, nextDay, changed]) rmSync(d, { recursive: true, force: true })
+	}
+})
+
 test('ja-identity: ja のページの文字が 1 字違う → exit 1 で該当のファイル名を出す', () => {
 	const base = makeTree(siteFixture())
 	const cur = makeTree(siteFixture({ 'price/index.html': PAGE('料全') }))
