@@ -1,0 +1,58 @@
+# T-2201 (i18n1112 I18N-703): `_data/plans.yml` の英語の文だけ。数値・URL・コード・並び順・プラン名の正は ja のデータ。
+# tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ (欄の一覧は docs_draft/notes_T-2201.md)。
+# 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/plans.yml"
+_source_hash: "da04c4411cba44da506142c5834a46162f4e2b93521465e937df74b6b1af6d67"
+tax_note: "excl. tax"
+rollout_note: ""
+currency_prefix: "¥"
+currency_suffix: ""
+tiers:
+  free:
+    summary: "Try it for free first"
+    bullets:
+      - "Import up to 2 hours of video in total for free for 7 days from the day you first launch the app (30 minutes without signing up)"
+      - "The free period ends after 7 days or 2 hours in total, whichever comes first"
+      - "Up to 2 hours in total on 1 PC (even if you create a new account)"
+      - "No credit card required"
+      - "After the free period ends, you can keep editing and exporting existing projects"
+    cta_label: "Download for free"
+  light:
+    summary: "For indie creators and individual videographers. An allowance sized for 1–3 videos a month."
+    price_unit: "/ month"
+    specs:
+      - label: "Included hours"
+        value: "5 hours / month"
+      - label: "Concurrent use"
+        value: "1 device"
+      - label: "Payment method"
+        value: "Credit card"
+    cta_label: "Download and subscribe"
+    subscribe_label: "Subscribe"
+  pro:
+    summary: "For freelance editors and individuals working close to full time."
+    price_unit: "/ month"
+    specs:
+      - label: "Included hours"
+        value: "20 hours / month"
+      - label: "Concurrent use"
+        value: "1 device"
+      - label: "Payment method"
+        value: "Credit card"
+      - label: "Cancellation"
+        value: "Anytime, no cancellation fee"
+    cta_label: "Download and subscribe"
+    subscribe_label: "Subscribe"
+  enterprise:
+    summary: "For production companies and post-production houses. Starting from 1 account."
+    price_unit: "/ account / month"
+    price_note: "+ maintenance fee / month"
+    specs:
+      - label: "Included hours"
+        value: "Number of accounts × 20 hours, shared as a pool"
+      - label: "Billing"
+        value: "An invoice is issued for each month of use"
+      - label: "Payment method"
+        value: "Invoice (bank transfer)"
+    note: "We can also discuss integrating it into your company's systems and services. We will provide a separate quote depending on the scope."
+    cta_label: "Talk to us about adoption"

@@ -1,0 +1,11 @@
+# T-2201 (i18n1112 I18N-703): `_data/subscribe.yml` の英語の訳 (faq だけ)。ja と同じ順・同じ件数 (3)。
+# checkout_query などの設定値は持たない (正は ja のデータ)。
+_source: "_data/subscribe.yml"
+_source_hash: "ebad8924d25e8406174f79279e51e54128f1fc14b9d4021097d1df57c472e0c9"
+faq:
+  - q: "Can I subscribe in the Microsoft Store version of the app?"
+    a: "The Microsoft Store version of the app has no purchase screen. To subscribe to a paid plan, use the buttons on this page and sign in to your account in the Web app (in your browser). Once you have finished, sign in to the app with the same account and you can use your paid plan right away."
+  - q: "Do I need to subscribe with the same account as the app?"
+    a: "Yes. Plans are tied to an account (email address). Sign in with the account you use in the app and subscribe. If you don't have an account yet, you can create one from \"Start with email\" on the sign-in screen (you register with a confirmation code sent to your email)."
+  - q: "Where do I change or cancel my plan?"
+    a: "Sign in to the Web app and open \"Manage plan\" from the profile menu at the top right of the screen (you can also change your payment method there). After you cancel, you can keep using your paid plan until the end of the period you have already paid for."
