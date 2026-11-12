@@ -2,7 +2,7 @@
 ---
 
 <!DOCTYPE html>
-<html lang="{{ site.data.lang.ja.my_lang }}"{% if page.no_tracking %} data-no-tracking{% endif %}>
+<html lang="{{ site.data.lang[page.lang].my_lang }}"{% if page.no_tracking %} data-no-tracking{% endif %}>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -14,7 +14,7 @@ TICKET-SITE-05: description をページ単位にした。移行前は全ペー�
 (= リポジトリ CLAUDE.md の「全ページに layout/title/description を必ず指定 (SEO)」
 という規約が守られていない状態)。各ページの front matter に `description:` を書く。
 {%- endcomment -%}
-{%- assign page_desc = page.description | default: site.data.lang.ja.meta_desc -%}
+{%- assign L = site.data.lang[page.lang] -%}{%- assign page_desc = page.description | default: L.meta_desc -%}{%- assign i18n_ja_url = page.ja_url | default: page.url | replace: 'index.html', '' -%}{%- assign i18n_listed = site.data.i18n_pages[i18n_ja_url] -%}
 {%- comment -%}
 TICKET-SITE-31: `title` はパンくず JSON-LD (`schema/breadcrumb.html`) と可視パンくずが
 使うので、SEO 用の文字列と兼用できない。`seo_title` を別キーとして導入し、あれば
@@ -25,7 +25,7 @@ TICKET-SITE-31: `title` はパンくず JSON-LD (`schema/breadcrumb.html`) と�
    「モザイク作業を最終確認だけに | Deepmosaic - AI動画モザイク処理ソフト」= 約 34 全角で、
    **切り詰められたうえ方向が不明**という二重の欠陥だった。
 {%- endcomment -%}
-{%- capture default_title -%}{{ page.title }}｜{{ site.data.site.seo.brand_suffix }}{%- endcapture -%}
+{%- capture default_title -%}{%- if L.seo_brand_suffix -%}{{ page.title }} | {{ L.seo_brand_suffix }}{%- else -%}{{ page.title }}｜{{ site.data.site.seo.brand_suffix }}{%- endif -%}{%- endcapture -%}
 {%- assign seo_title = page.seo_title | default: default_title -%}
 <title>{{ seo_title | escape }}</title>
 <meta name="description" content="{{ page_desc | escape }}">
@@ -54,6 +54,17 @@ Google は無視する (ノイズ)。言語は <html lang> と og:locale が伝�
 <!-- Canonical -->
 {% assign canonical_path = page.url | replace: 'index.html', '' %}
 <link rel="canonical" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
+{%- comment -%}
+T-2203 (i18n1112): 訳のあるページ (`_data/i18n_pages.yml` の台帳。英中のページは front matter の `ja_url` で引く) にだけ、
+ja・en・zh-tw の 3 版の相互参照を出す。x-default は en (ja / 中国語以外の利用者向け)。1 行に 1 本ずつ書き、
+台帳に無いページでは空白も出さない (ja のページの出力の差分を、ja-identity が行ごと消せるこの 4 行だけにする)。
+{%- endcomment -%}
+{%- if i18n_listed %}
+<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="en" href="https://www.deepmosaic.co.jp/en{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="zh-Hant-TW" href="https://www.deepmosaic.co.jp/zh-tw{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp/en{{ i18n_ja_url }}" />
+{%- endif %}
 
 <!-- Bing Web Master -->
 <meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
@@ -119,12 +130,15 @@ article へ分けても得るものが無い。
 <meta property="og:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
 <meta property="og:image:width" content="1200" />
 <meta property="og:image:height" content="630" />
-<meta property="og:image:alt" content="{{ site.data.site.seo.og_image_alt | escape }}" />
+<meta property="og:image:alt" content="{{ L.og_image_alt | default: site.data.site.seo.og_image_alt | escape }}" />
 <meta property="og:title" content="{{ seo_title | escape }}" />
 <meta property="og:description" content="{{ page_desc | escape }}" />
 <meta property="og:url" content="https://www.deepmosaic.co.jp{{ canonical_path }}" />
 <meta property="og:site_name" content="Deepmosaic" />
-<meta property="og:locale" content="{{ site.data.lang.ja.og_lang }}" />
+<meta property="og:locale" content="{{ L.og_lang }}" />
+{%- if i18n_listed -%}{%- assign alt_langs = "ja,en,zh-tw" | split: "," -%}{%- for alt_lang in alt_langs -%}{%- unless alt_lang == page.lang %}
+<meta property="og:locale:alternate" content="{{ site.data.lang[alt_lang].og_lang }}" />
+{%- endunless -%}{%- endfor -%}{%- endif %}
 <meta property="fb:app_id" content="360882787795999" />
 
 {%- comment -%}
@@ -140,7 +154,7 @@ TICKET-SITE-31: X は twitter:title / twitter:description が無ければ og:* �
 <meta name="twitter:title" content="{{ seo_title | escape }}">
 <meta name="twitter:description" content="{{ page_desc | escape }}">
 <meta name="twitter:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
-<meta name="twitter:image:alt" content="{{ site.data.site.seo.og_image_alt | escape }}" />
+<meta name="twitter:image:alt" content="{{ L.og_image_alt | default: site.data.site.seo.og_image_alt | escape }}" />
 
 {%- comment -%}
 TICKET-SITE-05: 構造化データを `_includes/schema/*` に分離し、ページの front matter の

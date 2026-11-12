@@ -6,7 +6,7 @@ JSON-LD: BreadcrumbList (TICKET-SITE-05)。
 
 `page.title` をそのまま 2 階層目の名前に使う。
 {%- endcomment -%}
-{%- assign crumb_path = page.url | replace: 'index.html', '' -%}
+{%- assign crumb_path = page.url | replace: 'index.html', '' -%}{%- assign L = site.data.lang[page.lang] -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -15,8 +15,8 @@ JSON-LD: BreadcrumbList (TICKET-SITE-05)。
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "ホーム",
-      "item": "https://www.deepmosaic.co.jp/"
+      "name": {% if page.lang == 'ja' %}"ホーム"{% else %}{{ L.breadcrumb_home | jsonify }}{% endif %},
+      "item": {% if page.lang == 'ja' %}"https://www.deepmosaic.co.jp/"{% else %}"https://www.deepmosaic.co.jp{{ L.url_prefix }}/"{% endif %}
     },
     {
       "@type": "ListItem",

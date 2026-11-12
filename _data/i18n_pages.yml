@@ -1,0 +1,16 @@
+# T-2203 (i18n1112 I18N-705): 訳のあるページの台帳。鍵は ja のページのパス (page.url。index.html は除いた形)、値は訳のある言語。
+#
+#   - 鍵の 9 本 = アプリの SITE_TRANSLATED_PATHS (desktop `src/lib/i18n/site-url.ts`、8 本) + /company/about (会社概要)。
+#     404 は載せない (noindex。英中の 404 は別に置く)。法務・docs は訳さないので載せない。
+#   - `_layouts/default.html` は、ここに載っているページ (ja・en・zh-tw の 3 版) にだけ hreflang (ja・en・zh-Hant-TW・x-default = en) と
+#     og:locale:alternate を出す。英中のページは front matter の `ja_url` でここの鍵を引く。
+#   - ページを足す・減らすときは、アプリの SITE_TRANSLATED_PATHS も揃える (src/lib/i18n-site-head.test.js が隣の desktop と照合する)。
+"/": [en, zh-tw]
+"/price/": [en, zh-tw]
+"/spec/": [en, zh-tw]
+"/subscribe/": [en, zh-tw]
+"/join/": [en, zh-tw]
+"/contact/": [en, zh-tw]
+"/enterprise/inquiry/": [en, zh-tw]
+"/mosaic-removal/": [en, zh-tw]
+"/company/about": [en, zh-tw]

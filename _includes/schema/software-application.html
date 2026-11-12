@@ -50,6 +50,15 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
 {%- assign low = sorted | first -%}
 {%- assign high = sorted | last -%}
 {%- capture disambig -%}{{ E.disambiguation.ja }} {{ E.disambiguation.en }}{%- endcapture -%}
+{%- comment -%}
+T-2203 (i18n1112): 言語の値はページの言語 (`L` = `site.data.lang[page.lang]`) から出す。ja の出力は今と同じ。
+英中のページだけ、文 (softwareRequirements・disambiguatingDescription・featureList・keywords) を
+`_data/l10n/<lang>/entity.yml` の訳に差し替える。disambiguatingDescription は英中では訳 1 つだけ
+(ja の「ja + en の連結」は ja だけ。ja の entity.yml の en は用語集の禁止語を含むので英中に出さない)。
+{%- endcomment -%}
+{%- assign L = site.data.lang[page.lang] -%}{%- assign T = site.data.l10n[page.lang].entity -%}
+{%- assign sw_requirements = E.software_requirements -%}{%- assign sw_features = E.can | map: "ja" -%}{%- assign sw_keywords = E.keywords -%}
+{%- if T -%}{%- assign sw_requirements = T.software_requirements -%}{%- assign disambig = T.disambiguation -%}{%- assign sw_features = T.can -%}{%- assign sw_keywords = T.keywords -%}{%- endif -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -60,8 +69,8 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
   "operatingSystem": {{ E.os | jsonify }},
   "applicationCategory": {{ E.category | jsonify }},
   "applicationSubCategory": {{ E.subcategory | jsonify }},
-  "softwareRequirements": {{ E.software_requirements | jsonify }},
-  "inLanguage": "ja",
+  "softwareRequirements": {{ sw_requirements | jsonify }},
+  "inLanguage": {{ L.json_ld_lang | default: "ja" | jsonify }},
   "offers": {
     "@type": "AggregateOffer",
     "priceCurrency": {{ site.data.plans.currency | jsonify }},
@@ -69,16 +78,16 @@ JSON-LD: SoftwareApplication (TICKET-SITE-05)。
     "highPrice": {{ high.price | jsonify }},
     "offerCount": {{ public_plans | size }}
   },
-  "description": {{ site.data.lang.ja.meta_desc | jsonify }},
+  "description": {{ L.meta_desc | jsonify }},
   "disambiguatingDescription": {{ disambig | strip | jsonify }},
-  "featureList": {{ E.can | map: "ja" | jsonify }},
-  "keywords": {{ E.keywords | jsonify }},
+  "featureList": {{ sw_features | jsonify }},
+  "keywords": {{ sw_keywords | jsonify }},
   "screenshot": {{ E.screenshot | prepend: "https://www.deepmosaic.co.jp" | jsonify }},
   "softwareHelp": {
     "@type": "WebPage",
     "url": "https://www.deepmosaic.co.jp/docs/"
   },
-  "downloadUrl": {{ site.data.lang.ja.app_download_link | jsonify }},
+  "downloadUrl": {{ L.app_download_link | jsonify }},
   "publisher": { "@id": "https://www.deepmosaic.co.jp/#organization" },
   "url": "https://www.deepmosaic.co.jp"
 }

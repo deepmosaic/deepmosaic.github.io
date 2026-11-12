@@ -21,6 +21,9 @@ T-1922: ページの front matter に `faq_data: <データ名>` があれば `s
 {%- endcomment -%}
 {%- assign faq_src = site.data.faq -%}
 {%- if page.faq_data %}{%- assign faq_src = site.data[page.faq_data].faq -%}{%- endif -%}
+{%- comment -%}T-2203 (i18n1112): 英中のページは同じ順・同じ件数の訳 (`_data/l10n/<lang>/faq.yml` の items、faq_data があれば `<faq_data>.yml` の faq) を使う{%- endcomment -%}
+{%- assign faq_l10n = site.data.l10n[page.lang] -%}
+{%- if faq_l10n -%}{%- if page.faq_data -%}{%- assign faq_src = site.data.l10n[page.lang][page.faq_data].faq -%}{%- else -%}{%- assign faq_src = site.data.l10n[page.lang].faq.items -%}{%- endif -%}{%- endif -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
