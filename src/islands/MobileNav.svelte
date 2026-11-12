@@ -150,6 +150,7 @@
             href={hrefOf(item)}
             download={downloadAttr(item.download)}
             data-dl={item.dl || undefined}
+            hreflang={item.badge ? 'ja' : undefined}
             target={item.target || undefined}
             rel={item.target ? 'noopener noreferrer' : undefined}
             class="block rounded px-3 py-3 text-lg hover:bg-edge"

@@ -5,9 +5,16 @@ T-2204 (i18n1112 I18N-706): 対象外 (日本語のページだけ: docs・法�
 - 英中のページでは後ろに印 (en `(Japanese)` / zh-tw `（日文）`、title は「日本語のページです」) を添える。ja では印を出さない。
 - 変数は jl_ 接頭辞 (include は呼び出し側と変数を共有するので、呼び出し側の L を上書きしない)。
 - 前後に空白・改行を出さない (空白を落とす Liquid のタグを使う)。
+- inside=true (任意): 印をリンクの中に入れ、title をリンクに付ける。ボタン (btn-*) で使う。外に置くと flex の折り返しで印だけが次の行に落ちる
+  (T-2210 ウェーブ末尾、トップのヒーローの docs のボタン)。ja のページでは印を出さないので出力は変わらない。
 {%- endcomment -%}
 {%- assign jl_L = site.data.lang[page.lang] -%}
+{%- assign jl_in = false -%}{%- case page.lang -%}{%- when 'en', 'zh-tw' -%}{%- if include.inside -%}{%- assign jl_in = true -%}{%- endif -%}{%- endcase -%}
+{%- if jl_in -%}
+<a href="{{ include.href }}" class="{{ include.class }}" hreflang="ja" title="{{ jl_L.ja_only_title }}">{{ include.label }}<span class="text-[11px] text-ink-3">{{ jl_L.ja_only_badge }}</span></a>
+{%- else -%}
 <a href="{{ include.href }}" class="{{ include.class }}" hreflang="ja">{{ include.label }}</a>
 {%- if page.lang == 'en' or page.lang == 'zh-tw' -%}
 <span class="ml-1 text-[11px] text-ink-4" title="{{ jl_L.ja_only_title }}">{{ jl_L.ja_only_badge }}</span>
+{%- endif -%}
 {%- endif -%}

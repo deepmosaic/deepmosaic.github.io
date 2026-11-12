@@ -202,3 +202,33 @@
 
 ### ロールバックの観点
 - revert すると用語集が be5c5aea の版に戻り (variant の検査は表が無ければ何もしない)、join の切り替えでコードが落ちる元の挙動に戻り、`_site/scripts/` が再び公開物に出る。ja のページの HTML は revert の前後で変わらない (app.css は `.table`・`.shrink` が戻るだけ)。
+
+## ウェーブ末尾の Playwright (Tester、2026-11-12)
+
+### 結果
+- 1 回目: 98 件中 合格 93 / 失敗 4 / skip 1。失敗は全部 `e2e/i18n-nav.spec.ts` の (a) (幅 768 / 900 / 1024 / 1280)。
+  - 原因は spec の誤り。`header [data-i18n-switch]` がヘッダーの切り替え (div) と、ドロワーへ渡す言語の表 `<script type="application/json" data-i18n-switch data-lang-links>` の 2 つに当たって strict mode で落ちていた。script に data-i18n-switch を付けるのは設計どおり (ja-identity がこの要素を除いて比べる) なので、製品は直さず、spec のセレクタを `header > div > div[data-i18n-switch]` に絞った。
+- 既存の spec (i18n-*.spec.ts 以外) は全部合格。期待値は書き換えていない。
+- 修正後: 105 件中 合格 104 / 失敗 0 / skip 1 (skip は inquiry-cors.spec.ts。E2E_BASE_URL のときだけ回るもので以前から)。
+
+### 追加の確認で見つけて直したもの (英中のページだけ。ja の HTML は ja-identity で同一)
+1. 日本語だけのページ (docs) へのリンクに hreflang="ja" が無いものがあった。
+   - CTA の副ボタン (`cta-download.html` の secondary_href="/docs"、英中の price / spec): 任意の引数 `secondary_hreflang` を足し、渡したときだけ hreflang と印の title を付ける。ja のページは渡さない。
+   - ドロワー (`MobileNav.svelte`) の Docs の項目: badge のある項目にだけ hreflang="ja" を付ける (ja の項目は badge が無いので付かない。i18n-nav (c) の「ja のドロワーの項目に hreflang が無い」はそのまま通る)。
+2. 英中のトップのヒーローの「View the documentation」ボタンの印「(Japanese)」がボタンの外の兄弟要素で、flex の折り返しで印だけが次の行に浮いていた (幅 1280)。`ja-link.html` に任意の引数 `inside=true` を足し、英中のページでは印をボタンの中に入れ、title をリンクに付ける。class は既存のもの (text-[11px] text-ink-3) なので CSS の規則は増えない。
+- 回帰のテストとして `e2e/i18n-nav.spec.ts` に (e) を足した (英中の 6 ページで docs・法務へのリンクが全部 hreflang="ja"、/en/price/ のドロワーの Docs が hreflang="ja" と印を持つ)。修正前に 7 件とも落ちることを確かめた。
+
+### 確認できたこと (ビルドした _site とブラウザ)
+- 英中 20 ページで html lang (en / zh-Hant-TW)・title・description が訳されている。h1 は about だけ無いが、ja の about にも h1 は無い (元の構造)。
+- フッターの言語の切り替えで、9 ページ × 3 言語を行き来でき、戻り先も一致する。
+- /join/#code=ABCD-EFGH-JKMN は 3 言語 × 3 言語の 9 通りでクリックの後も hash が残る。
+- ja のページに hreflang ja / en / zh-Hant-TW / x-default (= /en/) の 4 本。404 は hreflang なし・noindex。
+- 英中の 404 (/en/no-such-page/ → 404, lang=en。zh-tw も同じ)。join は英中でも noindex, nofollow。
+- スクリーンショットは D:/dm-scratch/i18n/site-shots/ (幅 390 / 768 / 1280 / 1440 × /, /en/, /zh-tw/, /en/price/, /zh-tw/price/)。どれも文書の横スクロールは 0px。
+
+### 直さなかったもの (リーダーへ)
+- トップのヒーローの「Web 版を試す」ボタン (`a[data-dl="hero-webapp"]`、btn-secondary btn-lg、折り返さない) が幅 320〜390 で左右の画面外にはみ出す (390 で ja は左 -51px、en は -63px、zh-tw は -5px)。文書の横スクロールにはならないが文字が切れる。**ja のページでも以前から同じ** なので、直すと ja の見え方が変わる。ja を含めて直すかの判断が要る (例: btn に whitespace-normal を許す、モバイルだけ短い文言)。
+- 英中のトップのヒーローの画像 (検出支援できる物体 / 男性器・女性器・人間の顔) は日本語の文字の画像のまま (直下の説明文に英中の訳と「(Japanese UI)」がある)。
+
+### ロールバックの観点
+- revert すると spec のセレクタが戻って (a) が落ち、英中の CTA の副ボタン・ドロワーの Docs から hreflang が消え、ヒーローの印がボタンの外に戻る。ja のページの HTML は前後で変わらない。

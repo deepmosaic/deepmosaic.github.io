@@ -17,7 +17,9 @@
 import { test, expect, devices, type Page } from '@playwright/test';
 
 const HEADER_ROW = 'header > div';
-const HEADER_SWITCH = 'header [data-i18n-switch]';
+// ヘッダー行の直下の切り替え (div) だけを指す。モバイルのドロワーへ渡す言語の表 (`<script data-i18n-switch data-lang-links>`) も
+// header の中にあり data-i18n-switch を持つ (ja-identity がこの要素を除いて比べる設計) ので、`header [data-i18n-switch]` では 2 つに当たる。
+const HEADER_SWITCH = 'header > div > div[data-i18n-switch]';
 const FOOTER_SWITCH = 'footer [data-i18n-switch]';
 const HEADER_WIDTHS = [320, 767, 768, 800, 900, 1023, 1024, 1280] as const;
 const MD_MIN_WIDTH = 768;
@@ -140,5 +142,38 @@ test.describe('(d) 対応するページへの切り替え', () => {
     await en.click();
     await expect(page).toHaveURL(/\/en\/price\/$/);
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  });
+});
+
+// T-2210 ウェーブ末尾: 英中のページから日本語だけのページ (docs・法務) へ向くリンクは、本文・CTA の副ボタン・ドロワーの項目の
+// どれでも hreflang="ja" を持つ (設計書 §9.2)。ウェーブ末尾の確認で、CTA の副ボタンとドロワーの Docs に抜けがあった。
+const JA_ONLY_HREF = /^\/(docs|company\/(terms|privacy|tokushoho))(\/|#|$)/;
+
+test.describe('(e) 日本語だけのページへのリンクの hreflang', () => {
+  for (const path of ['/en/price/', '/zh-tw/price/', '/en/spec/', '/zh-tw/spec/', '/en/', '/zh-tw/']) {
+    test(`${path} の docs・法務へのリンクは全部 hreflang="ja"`, async ({ page }) => {
+      await openAt(page, path, XL_MIN_WIDTH);
+      const hrefs = await page.$$eval('a[href]', (as) =>
+        as.map((a) => ({ href: a.getAttribute('href') ?? '', hreflang: a.getAttribute('hreflang') })),
+      );
+      const jaOnly = hrefs.filter((l) => JA_ONLY_HREF.test(l.href));
+      expect(jaOnly.length, '日本語だけのページへのリンクが 1 本も無い').toBeGreaterThan(0);
+      expect(jaOnly.filter((l) => l.hreflang !== 'ja').map((l) => l.href)).toEqual([]);
+    });
+  }
+
+  test.describe('ドロワー', () => {
+    const { defaultBrowserType: _browser, ...PIXEL_7 } = devices['Pixel 7'];
+    test.use(PIXEL_7);
+
+    test('/en/price/ のドロワーの Docs は hreflang="ja" と印を持つ', async ({ page }) => {
+      await page.goto('/en/price/', { waitUntil: 'domcontentloaded' });
+      const button = page.locator('[data-island="mobile-nav"] button').first();
+      await button.waitFor({ state: 'visible' });
+      await button.tap();
+      const docs = page.locator('aside ul li a[href="/docs"]');
+      await expect(docs).toHaveAttribute('hreflang', 'ja');
+      await expect(docs).toContainText('(Japanese)');
+    });
   });
 });

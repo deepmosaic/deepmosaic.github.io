@@ -45,7 +45,7 @@ schemas:
       {%- if site.data.site.web_app.enabled %}
       <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}Try it in your browser (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</a>
       {%- endif %}
-      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" %}
+      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" inside=true %}
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64-bit)</span>

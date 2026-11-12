@@ -12,6 +12,8 @@ params:
   title    (任意) 見出し。既定「無料でご利用いただけます」
   sub      (任意) 補足文。既定は plans.yml の Free 枠から生成
   secondary_href / secondary_label  (任意) 副ボタン
+  secondary_hreflang  (任意) 副ボタンの行き先が日本語のページだけ (docs) のとき "ja"。英中のページで hreflang と印の title を付ける
+                      (T-2210 ウェーブ末尾。ja のページは渡さないので出力は変わらない。印の語は secondary_label に含める)
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
 {%- comment -%} T-2205 (i18n1112): 英中は parts / entity の l10n から (ja のページでは nil = 直書きの ja のまま) {%- endcomment -%}
@@ -31,7 +33,7 @@ params:
     <div class="mt-7 flex flex-wrap items-center justify-center gap-3">
       {% include download-button.html size="large" dl="cta" %}
       {%- if include.secondary_href %}
-      <a href="{{ include.secondary_href }}" class="btn-secondary btn-lg">{{ include.secondary_label }}</a>
+      <a href="{{ include.secondary_href }}" class="btn-secondary btn-lg"{% if include.secondary_hreflang %} hreflang="{{ include.secondary_hreflang }}" title="{{ site.data.lang[page.lang].ja_only_title }}"{% endif %}>{{ include.secondary_label }}</a>
       {%- endif %}
     </div>
     <p class="mt-4 text-[13px] text-ink-4">{% if cd_P %}{{ cd_P.cta_os_line }}{% else %}Windows 10 / 11（64bit）{% endif %}</p>
