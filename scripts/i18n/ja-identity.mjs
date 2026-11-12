@@ -6,6 +6,7 @@
 //   - 英中のディレクトリ (先頭の `en/`・`zh-tw/`) 以外の全 .html を再帰で列挙して比べる。
 //     `enterprise/` のように `en` で始まる別のディレクトリは対象に入る (ディレクトリ名の完全一致で外す)。
 //   - 比べる前に許した差分だけを除く (normalizeJaHtml)。残りがバイト単位で一致しなければ失敗。
+//   - llms.txt・llms-full.txt・robots.txt (EXACT_FILES) は、基点に在ればそのままバイト単位で比べる。
 //   - 終了コード: 0 = 一致 / 1 = 差分あり (ファイルの増減か内容の違い) / 2 = 使い方の誤り・ディレクトリが無い
 //   - 依存なし (node の標準モジュールだけ)。
 
@@ -15,6 +16,12 @@ import { isMain } from './is-main.mjs'
 
 /** ja-identity の対象から外す、_site 直下のディレクトリ (英中のページの置き場)。 */
 export const TRANSLATED_DIRS = ['en', 'zh-tw']
+
+/**
+ * .html 以外で、基点とバイト単位で一致しなければならないファイル (W7 で変えてはいけない公開物)。
+ * 基点に在るものだけを比べる。sitemap.xml (英中のページが増える) と feed.xml (ビルド時刻が入る) は対象外。
+ */
+export const EXACT_FILES = ['llms.txt', 'llms-full.txt', 'robots.txt']
 
 /** 中身を持たない要素 (閉じタグを探さない)。 */
 const VOID_TAGS = new Set(['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'link', 'meta', 'source', 'track', 'wbr'])
@@ -153,6 +160,13 @@ export function compareSites(baseDir, curDir) {
 		const a = normalizeJaHtml(readBytes(join(baseDir, f)))
 		const b = normalizeJaHtml(readBytes(join(curDir, f)))
 		if (a !== b) problems.push(`内容が違う: ${f}\n${firstDiff(a, b)}`)
+	}
+	for (const f of EXACT_FILES) {
+		const basePath = join(baseDir, f)
+		if (!existsSync(basePath)) continue
+		const curPath = join(curDir, f)
+		if (!existsSync(curPath)) problems.push(`消えた: ${f}`)
+		else if (!readFileSync(basePath).equals(readFileSync(curPath))) problems.push(`内容が違う: ${f} (バイト単位で一致しない)`)
 	}
 	return { files: base.length, problems }
 }

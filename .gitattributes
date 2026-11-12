@@ -1,0 +1,2 @@
+# シェルスクリプトは LF 固定 (autocrlf=true の checkout で CRLF になると bash が落ちる、T-2199)
+*.sh text eol=lf

@@ -81,3 +81,7 @@
 ## ロールバックの観点
 - W7 の後のチケット (I18N-702〜713) は全部この道具 (ja-identity・check-site・parity・source_hash・`page.lang` の既定) に依存する。revert すると後のチケットのテストとゲートが動かない。
 - `_config.yml` の `lang: ja` を外すと、後のチケットの `page.lang` の分岐 (ja のページで nil) が崩れる。
+
+## リーダーの追い修正 (2026-11-12)
+- `.gitattributes` を新設し `*.sh text eol=lf` (autocrlf=true の checkout で `build-site-base.sh` が CRLF になり bash が落ちるのを防ぐ)。
+- `ja-identity.mjs` に `EXACT_FILES` (`llms.txt`・`llms-full.txt`・`robots.txt`) を足した。基点に在るものだけをバイト単位で比べる (W7 で変えてはいけない公開物)。`sitemap.xml` (英中のページが増える) と `feed.xml` (ビルド時刻) は対象外。テスト 1 件を足した (36 件)。

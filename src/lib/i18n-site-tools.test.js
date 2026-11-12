@@ -137,6 +137,25 @@ test('ja-identity: 同じ (ビルド時刻だけ違う) → exit 0 と OK の件
 	}
 })
 
+test('ja-identity: llms.txt・llms-full.txt・robots.txt は基点とバイト一致、1 字違い・消えたら exit 1 (基点に無いものは比べない)', () => {
+	const base = makeTree(siteFixture({ 'llms.txt': '# Deepmosaic\n', 'robots.txt': 'User-agent: *\n' }))
+	const same = makeTree(siteFixture({ 'llms.txt': '# Deepmosaic\n', 'robots.txt': 'User-agent: *\n', 'llms-full.txt': '基点に無い\n' }))
+	const changed = makeTree(siteFixture({ 'llms.txt': '# Deepmosaic \n', 'robots.txt': 'User-agent: *\n' }))
+	const removed = makeTree(siteFixture({ 'llms.txt': '# Deepmosaic\n' }))
+	try {
+		assert.equal(runNode('ja-identity.mjs', [base, same]).status, 0)
+		const r1 = runNode('ja-identity.mjs', [base, changed])
+		assert.equal(r1.status, 1)
+		assert.match(r1.stdout, /内容が違う: llms\.txt/)
+		assert.doesNotMatch(r1.stdout, /robots\.txt/)
+		const r2 = runNode('ja-identity.mjs', [base, removed])
+		assert.equal(r2.status, 1)
+		assert.match(r2.stdout, /消えた: robots\.txt/)
+	} finally {
+		for (const d of [base, same, changed, removed]) rmSync(d, { recursive: true, force: true })
+	}
+})
+
 test('ja-identity: ja のページの文字が 1 字違う → exit 1 で該当のファイル名を出す', () => {
 	const base = makeTree(siteFixture())
 	const cur = makeTree(siteFixture({ 'price/index.html': PAGE('料全') }))
