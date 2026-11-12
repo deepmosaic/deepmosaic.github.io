@@ -345,3 +345,5 @@ if (document.readyState === 'loading') {
 }
 
 // ---- i18n の初期化 (I18N-713 が言語の案内の import と呼び出しを足す) ----
+import { mountLangSuggest } from './lib/lang-suggest-mount.js';
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => mountLangSuggest()); else mountLangSuggest();
