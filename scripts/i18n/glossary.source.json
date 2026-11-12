@@ -1,0 +1,9 @@
+{
+	"desktop_commit": "be5c5aea7f0593fc8cf597ecc32d71d858d82436",
+	"desktop_ref": "i18n1112-integrate",
+	"note": "T-2200: desktop の src/lib/i18n/glossary.json と glossary-chars.json の写し。sha256 は改行を LF にそろえた内容の値",
+	"sha256": {
+		"glossary.json": "d1a060f1bda26a60ea9544f6a46ff396e1242d74128b6bbaa23169de80e49c40",
+		"glossary-chars.json": "407556032e9f2855796c39804dd40fad739e53ce1cbe580bda127e746fc1df02"
+	}
+}
