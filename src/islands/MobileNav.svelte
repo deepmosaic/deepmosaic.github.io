@@ -14,6 +14,43 @@
   // T-231: `download` は真偽属性ではない。`!!` で渡すと download="false" になり
   // 同一オリジンのリンクが "false.html" の強制ダウンロードになる
   import { downloadAttr } from '../lib/download-attr.js';
+  // T-2204 (i18n1112 I18N-706): ページの言語は <html lang> から読む (W7-site.md §0-C)。
+  import { pageLang, pick } from '../lib/site-lang.js';
+
+  // ドロワーの文の 3 言語の表 (ja は今の文字列のまま)。言語の切り替えの見出しは lang-switch.html の
+  // 「表示言語」/ L.lang_switch_label と同じ文
+  const TEXT = {
+    ja: { open: 'メニューを開く', close: 'メニューを閉じる', langHeading: '表示言語' },
+    en: { open: 'Open menu', close: 'Close menu', langHeading: 'Language' },
+    'zh-tw': { open: '開啟選單', close: '關閉選單', langHeading: '語言' },
+  };
+  const text = pick(TEXT, pageLang());
+
+  /**
+   * 言語の切り替えのリンク (lang-switch.html の drawer-data が出す JSON)。無い・読めないときは空 = 何も足さない。
+   * 項目は { label, href, lang, current } だけを受け取り、形の違うものは捨てる (外部入力として扱う)
+   */
+  function readLangLinks() {
+    const el = document.querySelector('script[data-lang-links]');
+    if (!el) return [];
+    try {
+      const parsed = JSON.parse(el.textContent ?? '');
+      if (!Array.isArray(parsed)) return [];
+      return parsed.filter(
+        // 行き先はサイト内のパスだけ (`/` で始まり `//` で始まらない。javascript: などを通さない)
+        (l) =>
+          l &&
+          typeof l.label === 'string' &&
+          typeof l.lang === 'string' &&
+          typeof l.href === 'string' &&
+          l.href.startsWith('/') &&
+          !l.href.startsWith('//'),
+      );
+    } catch {
+      return [];
+    }
+  }
+  const langLinks = readLangLinks();
 
   let { links = '[]', edge = 'right', dlAttr = '', dlFirst = '' } = $props();
 
@@ -73,7 +110,7 @@
 <button
   type="button"
   class="inline-flex items-center justify-center p-2 text-ink"
-  aria-label="メニューを開く"
+  aria-label={text.open}
   aria-expanded={open}
   onclick={toggle}
 >
@@ -100,7 +137,7 @@
     aria-hidden={!open}
   >
     <div class="mb-6 flex justify-end">
-      <button type="button" class="p-2" aria-label="メニューを閉じる" onclick={close}>
+      <button type="button" class="p-2" aria-label={text.close} onclick={close}>
         <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
         </svg>
@@ -117,9 +154,26 @@
             rel={item.target ? 'noopener noreferrer' : undefined}
             class="block rounded px-3 py-3 text-lg hover:bg-edge"
             onclick={close}
-          >{item.label}</a>
+          >{item.label}{#if item.badge}<span class="ml-1 text-xs text-ink-3">{item.badge}</span>{/if}</a>
         </li>
       {/each}
     </ul>
+    {#if langLinks.length > 0}
+      <div data-i18n-switch class="mt-6 border-t border-hair pt-4" role="group" aria-label={text.langHeading}>
+        <p class="mb-2 px-3 text-xs text-ink-3">{text.langHeading}</p>
+        <div class="flex flex-col">
+          {#each langLinks as link}
+            <a
+              href={link.href}
+              lang={link.lang}
+              hreflang={link.lang}
+              aria-current={link.current ? 'true' : undefined}
+              class="block rounded px-3 py-2 hover:bg-edge {link.current ? 'text-ink' : 'text-ink-2'}"
+              onclick={close}
+            >{link.label}</a>
+          {/each}
+        </div>
+      </div>
+    {/if}
   </aside>
 </div>

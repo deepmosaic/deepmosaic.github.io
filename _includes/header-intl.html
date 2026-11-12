@@ -1,0 +1,62 @@
+{%- comment -%}
+T-2204 (i18n1112 I18N-706): 英中 (en / zh-tw) のページのヘッダー。header.html の ja の分岐の写し (W7-site.md §0-B)。
+- header.html は既存のテストがソースを照合している (data-links の JSON・DL の <a>・組織への参加のページを載せないこと) ので、
+  英中の分岐を行内に足さず、英中のときだけ header.html の先頭からこの写しを include する。
+- **header.html を直したら、この写しも直す** (src/lib/i18n-site-nav.test.js が data-dl・行き先・data-links の一致を検査する)。
+- 文は `_data/l10n/<lang>/nav.yml` (N) と `_data/lang/<lang>.json` (L)。訳のあるページへは `{{ L.url_prefix }}` を前に付ける。
+  docs は ja の `/docs` のまま、ラベルの後ろに小さな印 (L.ja_only_badge。幅に余裕のある xl 以上で出し、title はどの幅でも)。
+- 行の gap は xl で詰める (英語のラベルと言語の切り替えで 1120px に収めるため。lg 以下は ja と同じ)。
+{%- endcomment -%}
+{%- assign L = site.data.lang[page.lang] -%}
+{%- assign N = site.data.l10n[page.lang].nav -%}
+{%- capture contact_url -%}{{ L.url_prefix }}/contact/{%- endcapture -%}
+{%- assign u = page.url -%}
+{%- assign home_u = L.url_prefix | append: '/' -%}
+{%- assign price_u = L.url_prefix | append: '/price' -%}
+{%- assign spec_u = L.url_prefix | append: '/spec' -%}
+<header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
+  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-3 lg:gap-7 xl:gap-5">
+
+    <a href="{{ L.url_prefix }}/" class="flex shrink-0 items-center">
+      <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="hidden gap-1 whitespace-nowrap md:flex lg:ml-3">
+      <a href="{{ L.url_prefix }}/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u == home_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.home }}</a>
+      <a href="{{ L.url_prefix }}/price" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains price_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.pricing }}</a>
+      <a href="/docs" hreflang="ja" title="{{ L.ja_only_title }}" class="rounded-md px-2 py-1.5 text-sm lg:px-3 text-ink-2 hover:text-ink">{{ N.docs }}<span class="ml-1 hidden text-[11px] text-ink-4 xl:inline">{{ L.ja_only_badge }}</span></a>
+      <a href="{{ L.url_prefix }}/spec" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains spec_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.spec }}</a>
+    </nav>
+
+    <div class="flex-1"></div>
+
+    <!-- Desktop download CTA (Microsoft Store の掲載ページへ。download 属性は付けない。md の間は短い形、lg 以上で N.store_cta_lg を足す) -->
+    {% include lang-switch.html variant="header" %}
+    <a href="{{ L.app_download_link }}" data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span>{{ N.store_cta_lead }}<span class="hidden lg:inline">{{ N.store_cta_lg }}</span>{{ N.store_cta_tail }}</span>
+    </a>
+
+    <!-- Desktop enterprise CTA (md の間は短い形、lg 以上で N.enterprise_lg を足す) -->
+    <a href="{{ L.url_prefix }}/enterprise/inquiry/" aria-label="{{ N.enterprise }}" class="btn-secondary hidden md:inline-flex md:-ml-1 md:px-3 lg:-ml-4 lg:px-4">
+      {% include icon.html name="Building2" class="h-4 w-4" %}<span>{{ N.enterprise_short }}<span class="hidden lg:inline">{{ N.enterprise_lg }}</span></span>
+    </a>
+
+    <!-- Mobile nav (Svelte island + noscript fallback) -->
+    <div class="md:hidden">
+      <div data-island="mobile-nav" data-edge="right"
+           data-links='[{"label":"{{ N.download }}","href":"{{ L.app_download_link }}","dl":"mobile"},{"label":"{{ N.home }}","href":"{{ L.url_prefix }}/"},{"label":"{{ N.pricing }}","href":"{{ L.url_prefix }}/price"},{"label":"{{ N.docs }}","href":"/docs","badge":"{{ L.ja_only_badge }}"},{"label":"{{ N.spec }}","href":"{{ L.url_prefix }}/spec"},{"label":"{{ N.contact }}","href":"{{ contact_url }}"},{"label":"{{ N.enterprise }}","href":"{{ L.url_prefix }}/enterprise/inquiry/"}]'></div>
+      <noscript>
+        <nav class="flex flex-col items-end gap-1 text-sm">
+          <a href="{{ L.url_prefix }}/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.home }}</a>
+          <a href="{{ L.url_prefix }}/price" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.pricing }}</a>
+          <a href="/docs" hreflang="ja" title="{{ L.ja_only_title }}" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.docs }}<span class="ml-1 text-[11px] text-ink-4">{{ L.ja_only_badge }}</span></a>
+          <a href="{{ L.url_prefix }}/spec" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.spec }}</a>
+          <a href="{{ L.url_prefix }}/enterprise/inquiry/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.enterprise }}</a>
+        </nav>
+      </noscript>
+      {% include lang-switch.html variant="drawer-data" %}
+    </div>
+
+  </div>
+</header>

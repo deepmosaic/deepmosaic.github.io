@@ -1,4 +1,4 @@
-{%- comment -%}T-254: 問い合わせは自前ページ (Google フォームは廃止)。T-332 で一般窓口 /contact/ に付け替え (Enterprise の導入相談は /enterprise/inquiry/){%- endcomment -%}
+{%- comment -%}T-254: 問い合わせは自前ページ (Google フォームは廃止)。T-332 で一般窓口 /contact/ に付け替え (Enterprise の導入相談は /enterprise/inquiry/){%- endcomment -%}{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}{% include header-intl.html %}{%- else -%}
 {%- capture contact_url -%}/contact/{%- endcapture -%}
 {%- assign u = page.url -%}
 <header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
@@ -28,6 +28,7 @@
 
     <!-- Desktop download CTA (T-1917: Microsoft Store の掲載ページへ。ファイル DL ではないので download 属性は付けない。
          T-1968 の出し分けに合わせ、md の間は「Store で入手」、lg 以上で「Microsoft 」を足す。textContent は全幅で「Microsoft Store で入手」) -->
+    {% include lang-switch.html variant="header" %}
     <a href="{{ site.data.lang.ja.app_download_link }}" data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
       {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">Microsoft </span>Store で入手</span>
     </a>
@@ -50,7 +51,8 @@
           <a href="/enterprise/inquiry/" class="px-2 py-1 text-ink-2 hover:text-ink">法人様はこちら</a>
         </nav>
       </noscript>
+      {% include lang-switch.html variant="drawer-data" %}
     </div>
 
   </div>
-</header>
+</header>{% endif %}

@@ -1,0 +1,35 @@
+{%- comment -%}
+T-2204 (i18n1112 I18N-706): 言語の切り替え (日本語 / English / 繁體中文)。設計書 §10.6・W7-site.md。
+  {% include lang-switch.html variant="header" %}       ヘッダー (幅 xl = 1280px 以上だけ。md / lg の既存の幅の条件を壊さないため)
+  {% include lang-switch.html variant="footer" %}       フッター (全幅、1 行のリンク)
+  {% include lang-switch.html variant="drawer-data" %}  モバイルのドロワー用の JSON (MobileNav.svelte が読んで描く)
+- 行き先: 訳の台帳 (_data/i18n_pages.yml) にあるページは対応する 3 版、無ければ各言語のトップ。
+- 表示名は自称で訳さない。各 <a> に lang と hreflang (ja / en / zh-Hant-TW)、今の言語に aria-current="true"。
+  I18N-713 (言語の案内) が `[data-i18n-switch] a[hreflang]` のクリックを拾って選んだ言語を覚えるので、hreflang を外さない。
+- 出力の一番外の要素に data-i18n-switch を付ける (ja のページの許した差分。ja-identity がこの要素を除いて比べる)。
+  include の前後に空白・改行を出さない (空白を落とす Liquid のタグを使う)。変数は ls_ で始める (include の assign はページの変数を上書きするため)。
+{%- endcomment -%}
+{%- assign ls_ja_url = page.ja_url | default: page.url | replace: 'index.html', '' -%}
+{%- if site.data.i18n_pages[ls_ja_url] -%}
+{%- assign ls_href_ja = ls_ja_url -%}
+{%- assign ls_href_en = '/en' | append: ls_ja_url -%}
+{%- assign ls_href_zh = '/zh-tw' | append: ls_ja_url -%}
+{%- else -%}
+{%- assign ls_href_ja = '/' -%}
+{%- assign ls_href_en = '/en/' -%}
+{%- assign ls_href_zh = '/zh-tw/' -%}
+{%- endif -%}
+{%- assign ls_cur = 'ja' -%}
+{%- assign ls_label = '表示言語' -%}
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}
+{%- assign ls_cur = page.lang -%}
+{%- assign ls_label = site.data.lang[page.lang].lang_switch_label -%}
+{%- endif -%}
+{%- case include.variant -%}
+{%- when 'header' -%}
+<div data-i18n-switch class="hidden items-center gap-2 whitespace-nowrap text-xs xl:-ml-4 xl:flex" role="group" aria-label="{{ ls_label }}">{% include icon.html name="Globe" class="h-3.5 w-3.5 shrink-0 text-ink-3" %}<a href="{{ ls_href_ja }}" lang="ja" hreflang="ja" class="{% if ls_cur == 'ja' %}text-ink{% else %}text-ink-3 hover:text-ink{% endif %}"{% if ls_cur == 'ja' %} aria-current="true"{% endif %}>日本語</a><a href="{{ ls_href_en }}" lang="en" hreflang="en" class="{% if ls_cur == 'en' %}text-ink{% else %}text-ink-3 hover:text-ink{% endif %}"{% if ls_cur == 'en' %} aria-current="true"{% endif %}>English</a><a href="{{ ls_href_zh }}" lang="zh-Hant-TW" hreflang="zh-Hant-TW" class="{% if ls_cur == 'zh-tw' %}text-ink{% else %}text-ink-3 hover:text-ink{% endif %}"{% if ls_cur == 'zh-tw' %} aria-current="true"{% endif %}>繁體中文</a></div>
+{%- when 'footer' -%}
+<div data-i18n-switch class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-center gap-x-4 gap-y-1 pt-4 text-xs" role="group" aria-label="{{ ls_label }}">{% include icon.html name="Globe" class="h-3.5 w-3.5 shrink-0 text-ink-4" %}<a href="{{ ls_href_ja }}" lang="ja" hreflang="ja" class="{% if ls_cur == 'ja' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'ja' %} aria-current="true"{% endif %}>日本語</a><a href="{{ ls_href_en }}" lang="en" hreflang="en" class="{% if ls_cur == 'en' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'en' %} aria-current="true"{% endif %}>English</a><a href="{{ ls_href_zh }}" lang="zh-Hant-TW" hreflang="zh-Hant-TW" class="{% if ls_cur == 'zh-tw' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'zh-tw' %} aria-current="true"{% endif %}>繁體中文</a></div>
+{%- when 'drawer-data' -%}
+<script type="application/json" data-i18n-switch data-lang-links>[{"label":"日本語","href":{{ ls_href_ja | jsonify }},"lang":"ja","current":{% if ls_cur == 'ja' %}true{% else %}false{% endif %}},{"label":"English","href":{{ ls_href_en | jsonify }},"lang":"en","current":{% if ls_cur == 'en' %}true{% else %}false{% endif %}},{"label":"繁體中文","href":{{ ls_href_zh | jsonify }},"lang":"zh-Hant-TW","current":{% if ls_cur == 'zh-tw' %}true{% else %}false{% endif %}}]</script>
+{%- endcase -%}

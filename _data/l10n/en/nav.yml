@@ -1,0 +1,25 @@
+# T-2204 (i18n1112 I18N-706): 英中のヘッダー・フッター・モバイルのドロワーの文 (en)。このファイルの持ち主は I18N-706 だけ。
+#   - 部品 (header-intl.html・footer-intl.html) が `site.data.l10n[page.lang].nav` で引く。ja の文は部品 (header.html・footer.html) に直書きのまま。
+#   - 平らな `key: "value"` だけ (src/lib/i18n-site-nav.test.js が読む)。値に " ' < > \ を書かない (属性と data-links の JSON を壊す)。
+#   - 長い形と短い形: store_cta = store_cta_lead + store_cta_lg + store_cta_tail、enterprise = enterprise_short + enterprise_lg
+#     (lg 未満では *_lg を隠す。textContent は全幅で長い形のまま = GA4 の link_text)。
+#   - 料金・会社について・利用規約などのフッターのラベルは `_data/lang/en.json` の既存のキー (price・company・terms …) を使う。
+home: "Home"                                   # ホーム
+pricing: "Pricing"                             # 料金
+docs: "Docs"                                   # ドキュメント (ナビの短い形。フッターは lang の document)
+spec: "Requirements"                           # 動作環境 (ナビ)
+spec_full: "System requirements"               # 動作環境 (フッター)
+store_cta: "Microsoft Store"                   # Microsoft Store で入手
+store_cta_lead: ""
+store_cta_lg: "Microsoft "
+store_cta_tail: "Store"                        # Store で入手 (md の短い形)
+enterprise: "Business inquiries"               # 法人様はこちら
+enterprise_short: "Business"                   # 法人様 (md の短い形)
+enterprise_lg: " inquiries"
+download: "Download"                           # ダウンロード (ドロワー)
+contact: "Contact us"                          # 問い合わせ (ドロワー)
+footer_product: "Product"                      # 製品
+footer_company: "Company"                      # 会社情報
+subscribe: "Subscribe to a paid plan"          # 有料プランのお申し込み
+mosaic_removal: "About existing mosaic"         # モザイク除去について (除去の語は使わない = W7-site.md §2)
+download_store: "Download (Microsoft Store)"   # ダウンロード（Microsoft Store）

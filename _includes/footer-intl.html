@@ -1,0 +1,52 @@
+{%- comment -%}
+T-2204 (i18n1112 I18N-706): 英中 (en / zh-tw) のページのフッター。footer.html の写し (W7-site.md §0-B)。
+- footer.html は既存のテストがソースを照合している (/company/ のリンク 6 本の順・data-dl= の数・/subscribe/・組織への参加のページを載せないこと) ので、
+  英中のときだけ footer.html の先頭からこの写しを include する。
+- **footer.html を直したら、この写しも直す** (src/lib/i18n-site-nav.test.js が /company/ の順・data-dl の数・行き先の集合を検査する)。
+- 訳のあるページ (料金・有料プランのお申し込み・動作環境・モザイク除去について・会社概要・お問い合わせ) は `{{ L.url_prefix }}` 付き。
+  ドキュメントと法務 5 本は ja の URL のまま ja-link.html で印を付ける (設計書 §9.2)。
+{%- endcomment -%}
+{%- assign L = site.data.lang[page.lang] -%}
+{%- assign N = site.data.l10n[page.lang].nav -%}
+<footer class="border-t border-hair bg-footer text-ink-2">
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-8 pt-10 pb-7">
+
+    <div class="flex-[1_1_260px]">
+      <div class="mb-3 flex items-center gap-2.5">
+        <img src="/assets/img/app-icon-128.png" alt="" width="128" height="128" class="h-8 w-8">
+        <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-14">
+      <div>
+        <div class="mb-3 text-xs font-bold tracking-[0.1em] text-ink-4">{{ N.footer_product }}</div>
+        <ul class="flex flex-col gap-2.5 text-[13.5px]">
+          <li><a href="{{ L.url_prefix }}/price" class="text-ink-2 hover:text-accent-soft">{{ L.price }}</a></li>
+          <li><a href="{{ L.url_prefix }}/subscribe/" class="text-ink-2 hover:text-accent-soft">{{ N.subscribe }}</a></li>
+          <li>{% include ja-link.html href="/docs" label=L.document class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li><a href="{{ L.url_prefix }}/spec" class="text-ink-2 hover:text-accent-soft">{{ N.spec_full }}</a></li>
+          <li><a href="{{ L.url_prefix }}/mosaic-removal/" class="text-ink-2 hover:text-accent-soft">{{ N.mosaic_removal }}</a></li>
+          <li><a href="{{ L.app_download_link }}" data-dl="footer" class="text-ink-2 hover:text-accent-soft">{{ N.download_store }}</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="mb-3 text-xs font-bold tracking-[0.1em] text-ink-4">{{ N.footer_company }}</div>
+        <ul class="flex flex-col gap-2.5 text-[13.5px]">
+          <li><a href="{{ L.url_prefix }}/company/about" class="text-ink-2 hover:text-accent-soft">{{ L.company }}</a></li>
+          <li>{% include ja-link.html href="/company/terms" label=L.terms class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li>{% include ja-link.html href="/company/privacy" label=L.privacy class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li>{% include ja-link.html href="/company/cookie" label=L.cookie class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li>{% include ja-link.html href="/company/eula" label=L.eula class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li>{% include ja-link.html href="/company/asct" label=L.asct class="text-ink-2 hover:text-accent-soft" %}</li>
+          <li><a href="{{ L.url_prefix }}/contact/" class="text-ink-2 hover:text-accent-soft">{{ L.contact }}</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+  <div class="border-t border-[#2c2c2c]">
+    {% include lang-switch.html variant="footer" %}
+    <div class="mx-auto w-[92%] max-w-[1120px] py-4 text-xs text-[#5a5a5a]">&copy; {{ site.time | date: '%Y' }} Deepmosaic LLC - All Rights Reserved -</div>
+  </div>
+</footer>

@@ -15,6 +15,8 @@
 @source "../enterprise/**/*.html";
 @source "../contact/**/*.html";
 @source "../spec/**/*.html";
+@source "../en/**/*.html";
+@source "../zh-tw/**/*.html";
 @source "../_guides/**/*.md";
 @source "./**/*.svelte";
 @source not "../_site";
@@ -71,6 +73,12 @@
     "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo,
     sans-serif;
   --font-mono: "Cascadia Code", "Consolas", ui-monospace, monospace;
+}
+
+/* T-2204 (i18n1112 I18N-706): 繁体字 (zh-tw のページ = <html lang="zh-Hant-TW">) は TC の書体を先に。
+   ja と en は上の --font-sans のまま (設計書 §10.3)。言語で分ける規則はこれと :root:not(:lang(ja)) の下だけ (P6) */
+:root:lang(zh) {
+  --font-sans: "Roboto", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", ui-sans-serif, system-ui, sans-serif;
 }
 
 /* ==========================================================================

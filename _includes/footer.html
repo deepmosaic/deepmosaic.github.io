@@ -1,3 +1,4 @@
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}{% include footer-intl.html %}{%- else -%}
 <footer class="border-t border-hair bg-footer text-ink-2">
   <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-8 pt-10 pb-7">
 
@@ -44,6 +45,7 @@
 
   </div>
   <div class="border-t border-[#2c2c2c]">
+    {% include lang-switch.html variant="footer" %}
     <div class="mx-auto w-[92%] max-w-[1120px] py-4 text-xs text-[#5a5a5a]">&copy; {{ site.time | date: '%Y' }} Deepmosaic LLC - All Rights Reserved -</div>
   </div>
-</footer>
+</footer>{% endif %}

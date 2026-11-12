@@ -1,0 +1,13 @@
+{%- comment -%}
+T-2204 (i18n1112 I18N-706): 対象外 (日本語のページだけ: docs・法務) へのリンク。設計書 §9.2・§10.6。
+  {% include ja-link.html href="/company/terms" label=L.terms class="text-ink-2 hover:text-accent-soft" %}
+- 行き先は ja の URL のまま (接頭辞を付けない)。hreflang="ja"。
+- 英中のページでは後ろに印 (en `(Japanese)` / zh-tw `（日文）`、title は「日本語のページです」) を添える。ja では印を出さない。
+- 変数は jl_ 接頭辞 (include は呼び出し側と変数を共有するので、呼び出し側の L を上書きしない)。
+- 前後に空白・改行を出さない (空白を落とす Liquid のタグを使う)。
+{%- endcomment -%}
+{%- assign jl_L = site.data.lang[page.lang] -%}
+<a href="{{ include.href }}" class="{{ include.class }}" hreflang="ja">{{ include.label }}</a>
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}
+<span class="ml-1 text-[11px] text-ink-4" title="{{ jl_L.ja_only_title }}">{{ jl_L.ja_only_badge }}</span>
+{%- endif -%}
