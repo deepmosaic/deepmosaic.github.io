@@ -1,0 +1,52 @@
+---
+layout: default
+lang: en
+permalink: /en/contact/
+ja_url: /contact/
+source: contact/index.html
+source_hash: "004bb2337791fd9688c7010898bbbb911ee319a4fe143b7851a75efc026d7b02"
+title: Contact us
+seo_title: "Contact us | Deepmosaic"
+description: "General contact form for Deepmosaic. Send us your questions, bug reports, or billing inquiries. Enter your email address and message, and our staff will reply within 3 business days (Japan)."
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 英語の一般のお問い合わせのページ。contact/index.html (ja) の写しで、構造 (include の並び・data-*) は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する)。経緯は contact/index.html のコメントを見ること。
+  - フォーム (inquiry-form.html・InquiryForm.svelte) は ja と同じ呼び方。英語の文は include と島が page.lang / <html lang> で出す (I18N-708)。
+  - 送信先の Worker・確認メール・返答は日本語のまま (対象外) なので、フォームの上にその旨の 1 文を置く (設計書 §10.4)。
+  - docs へのリンクは ja-link.html。訳のあるページへは /en/ の接頭辞。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Contact us</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Contact us</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.l10n.en.entity.one_liner }}
+      Send us your questions, bug reports, or billing inquiries using the form below. Our staff will reply within 3 business days (Japan).
+      If you need help using the app, also check the {% include ja-link.html href="/docs" label="documentation" class="text-accent-soft hover:underline" %}.
+    </p>
+    <p class="mt-3 text-[13.5px] leading-[1.95] text-ink-3">
+      For Enterprise (available from 1 account) adoption inquiries, quotes, or requests to pay by invoice, use <a href="/en/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise inquiries</a>.
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-3">The confirmation email and our reply will be in Japanese.</p>
+    {% include inquiry-form.html kind="general" %}
+  </div>
+</section>
+
+{% include footer.html %}

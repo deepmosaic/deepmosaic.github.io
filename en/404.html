@@ -1,0 +1,32 @@
+---
+layout: default
+lang: en
+permalink: /en/404.html
+ja_url: /404.html
+source: 404.html
+source_hash: "f7508bbbe3af481fbd1ada80e6de647ea62ebdca12504d3dbe357abd30c22f88"
+title: Page not found
+seo_title: "Page not found (404) | Deepmosaic"
+description: "The page you are looking for could not be found. Try the Deepmosaic home page, documentation, or pricing page."
+noindex: true
+sitemap: false
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 英語の 404。404.html (ja) の写しで、構造は ja と同じ (ja の振り分けの印の行を除く。
+  src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する)。
+  - GitHub Pages の 404 はルートの 404.html だけ。そこにある印 (data-lang-404) を src/main.js が見て、/en/ の下の 404 をここへ
+    location.replace で移す (W7-site.md §0-G)。このページは振り分けの行き先なので印を置かない (置くと自分へ移り続ける)。
+  - docs へのリンクは ja-link.html。訳のあるページへは /en/ の接頭辞。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{% include header.html %}
+
+<section class="mx-auto max-w-2xl px-4 py-24 text-center">
+    <h1 class="text-4xl font-bold text-ink">404 Not Found</h1>
+    <p class="mt-4 text-lg text-ink-3">The page you are looking for could not be found.</p>
+    <p class="mt-2 text-[14px] text-ink-3">Try the <a href="/en/" class="text-accent-soft hover:underline">home page</a>, the {% include ja-link.html href="/docs" label="documentation" class="text-accent-soft hover:underline" %}, or <a href="/en/price/" class="text-accent-soft hover:underline">pricing</a>.</p>
+    <img class="mx-auto max-w-full h-auto mt-8" src="/assets/img/ufo_ushi.webp" alt="Illustration of a UFO and a cow" width="636" height="592" loading="lazy" decoding="async">
+</section>
+
+{% include footer.html %}

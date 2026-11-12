@@ -1,0 +1,78 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/join/
+ja_url: /join/
+source: join/index.html
+source_hash: "7fdb04ee417408ac3a4457da546f11fb39c69d76317e7968dde90810514ff03b"
+title: 開啟 Deepmosaic
+seo_title: 開啟 Deepmosaic｜Deepmosaic
+description: 透過企業邀請電子郵件中的連結，開啟 Deepmosaic 應用程式的頁面。
+noindex: true
+sitemap: false
+no_tracking: true
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の「Deepmosaic を開く」。join/index.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en/join/index.html とも同じ)。仕組みと注意は join/index.html のコメントを見ること。
+  - data-join* の属性・3 つの表示・noscript・Store へのリンクの構造は ja と同じ (src/main.js の initJoinPage がそのまま動く)。インラインのスクリプトを置かない。
+  - 手順の中のアプリの画面のボタン名は、アプリの繁体字の表示に合わせる (desktop の辞書にまだ無い文は用語集から訳した。W8 で突き合わせる)。
+  - 段落は 1 行に並べる (CJK の改行は空白として描かれるため)。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign store_url = site.data.lang.ja.app_download_link -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-20">
+  <div class="mx-auto w-[92%] max-w-[720px]" data-join>
+    <h1 class="text-[clamp(28px,4vw,38px)] font-bold tracking-[-0.02em] text-ink">開啟 Deepmosaic</h1>
+
+    <div data-join-view="code" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">將以組織代碼 <strong class="font-bold text-ink" data-join-code></strong> 開啟應用程式。</p>
+      <div class="mt-6">
+        <a data-join-open-code class="btn-primary btn-lg w-full sm:w-auto">以應用程式開啟</a>
+      </div>
+      <ol class="mt-8 flex list-decimal flex-col gap-2 pl-6 text-[14px] leading-[1.9] text-ink-2">
+        <li>按下「以應用程式開啟」。</li>
+        <li>確認登入畫面的「Enterprise 方案使用者」中已填入組織代碼。</li>
+        <li>從「以電子郵件開始」或「已使用密碼註冊」登入。</li>
+      </ol>
+      <div class="card mt-8 p-5">
+        <p class="text-[13.5px] leading-[1.9] text-ink-2">若應用程式沒有開啟，請複製組織代碼，並貼到應用程式登入畫面的「Enterprise 方案使用者」中。</p>
+        <div class="mt-3 flex flex-wrap items-center gap-3">
+          <code class="rounded-md border border-hair px-3 py-1.5 text-[15px] tracking-[0.06em] text-ink select-all" data-join-code></code>
+          <button type="button" class="btn-secondary" data-join-copy>複製</button>
+          <span class="text-[13px] text-ink-4" role="status" aria-live="polite" data-join-copy-status></span>
+        </div>
+      </div>
+    </div>
+
+    <div data-join-view="admin" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">以管理員身分登入。</p>
+      <div class="mt-6">
+        <a href="deepmosaic://login" data-join-open-admin class="btn-primary btn-lg w-full sm:w-auto">以應用程式開啟</a>
+      </div>
+      <ol class="mt-8 flex list-decimal flex-col gap-2 pl-6 text-[14px] leading-[1.9] text-ink-2">
+        <li>按下「以應用程式開啟」。</li>
+        <li>以收到邀請電子郵件的電子郵件地址登入（不需輸入組織代碼）。</li>
+      </ol>
+    </div>
+
+    <div data-join-view="invalid" class="mt-6" hidden>
+      <p class="text-[15.5px] leading-[1.95] text-ink-2">連結不正確。請重新開啟電子郵件中的連結，或啟動應用程式並輸入組織代碼。</p>
+    </div>
+
+    <noscript>
+      <p class="mt-6 text-[15.5px] leading-[1.95] text-ink-2">請啟用 JavaScript 以使用此頁面。或者，請啟動應用程式，並在登入畫面的「Enterprise 方案使用者」中輸入組織代碼。</p>
+    </noscript>
+
+    <div class="mt-12 border-t border-hair pt-8" data-join-install>
+      <h2 class="text-[17px] font-bold text-ink">尚未安裝應用程式的使用者</h2>
+      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">請<a href="{{ store_url }}" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-store>在 Microsoft Store 取得 Deepmosaic</a>。安裝後，請再次按下此頁面的「以應用程式開啟」。</p>
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

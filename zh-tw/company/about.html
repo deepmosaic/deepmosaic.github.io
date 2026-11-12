@@ -1,0 +1,59 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/company/about
+ja_url: /company/about
+source: company/about.html
+source_hash: "6ddef9172bb8344b4f5b52e003a0baa962111a3ad58dc545baf453e787fe2718"
+title: 關於我們
+# ja と同じく、会社のページには製品キーワードのサフィックスを付けない (TICKET-SITE-31)。
+seo_title: 關於我們｜Deepmosaic LLC
+description: Deepmosaic LLC 的公司簡介：地址、成立日期、資本額與營業項目。
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の会社概要。company/about.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en/company/about.html とも同じ)。ja のコメントアウトした節は写さない。
+  - 正式な社名 Deepmosaic合同会社 と住所は日本の正式な表記のまま data-ja-allowed の要素に入れる (新字体の「会」を含むので lang-text の対象外にする)。
+  - 住所は site.data.company を ja と同じ式で参照する (直書きしない。site-copy-t1032)。日付・金額は ja と同じ値 (金額は「日圓」)。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+
+{% include header.html %}
+
+<section>
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 rich-prose">
+
+    <h2 class="text-2xl font-bold text-ink mt-8 mb-3 border-b border-edge pb-2">關於我們</h2>
+    <p class="text-sm text-ink-3 mb-8">最後更新日期：2026-10-12</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-left">
+        <tbody>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">公司名稱</td>
+            <td class="px-4 py-3 align-top">Deepmosaic LLC（<span lang="ja" data-ja-allowed>Deepmosaic合同会社</span>）</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">成立日期</td>
+            <td class="px-4 py-3 align-top">2019-05-10</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">地址</td>
+            <td class="px-4 py-3 align-top"><span lang="ja" data-ja-allowed>〒{{ site.data.company.postal_code }} {{ site.data.company.address }}</span></td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">資本額</td>
+            <td class="px-4 py-3 align-top">1,000,000 日圓</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">營業項目</td>
+            <td class="px-4 py-3 align-top">運用深度學習的影片編輯軟體之企劃、開發、銷售及顧問服務</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

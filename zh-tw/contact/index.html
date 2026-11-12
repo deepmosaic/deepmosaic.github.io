@@ -1,0 +1,47 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/contact/
+ja_url: /contact/
+source: contact/index.html
+source_hash: "004bb2337791fd9688c7010898bbbb911ee319a4fe143b7851a75efc026d7b02"
+title: 聯絡我們
+seo_title: 聯絡我們｜Deepmosaic
+description: Deepmosaic 的一般詢問表單。歡迎傳送您的問題、錯誤回報或帳單相關的聯絡事項。填寫電子郵件地址與詢問內容後，負責人員將於 3 個工作天內（以日本的工作天計算）回覆您。
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の一般のお問い合わせのページ。contact/index.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en/contact/index.html とも ja-link.html の位置まで同じ)。
+  - データの文は site.data.l10n['zh-tw'] を変数 ZH に入れて引く (Jekyll の include の引数には添字を書けない)。
+  - フォームは ja と同じ呼び方。繁体字の文は include と島が出す (I18N-708)。確認メール・返答は日本語のまま (対象外) なので、その旨の 1 文をフォームの上に置く。
+  - 段落は 1 行に並べる (CJK の改行は空白として描かれるため)。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="導覽路徑" class="mb-5 text-[13px] text-ink-4">
+      <a href="/zh-tw/" class="hover:text-accent-soft">首頁</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">聯絡我們</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">聯絡我們</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">{{ ZH.entity.one_liner }}如有問題、錯誤回報或帳單相關的聯絡事項，請透過下方表單傳送。負責人員將於 3 個工作天內（以日本的工作天計算）回覆您。若在使用上遇到困難，也請一併參閱{% include ja-link.html href="/docs" label="說明文件" class="text-accent-soft hover:underline" %}。</p>
+    <p class="mt-3 text-[13.5px] leading-[1.95] text-ink-3">Enterprise（1 個帳號起）的導入諮詢、報價或希望以請款單付款時，請透過 <a href="/zh-tw/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise 導入洽詢</a>與我們聯絡。</p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-3">確認電子郵件與回覆將以日文寄送。</p>
+    {% include inquiry-form.html kind="general" %}
+  </div>
+</section>
+
+{% include footer.html %}

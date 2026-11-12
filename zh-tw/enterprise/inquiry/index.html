@@ -1,0 +1,45 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/enterprise/inquiry/
+ja_url: /enterprise/inquiry/
+source: enterprise/inquiry/index.html
+source_hash: "dae372b68ee87c65b8234eac44fc7ac471f82def1205fe142202ef917ec03b01"
+title: Enterprise 導入洽詢
+seo_title: Enterprise 導入洽詢｜Deepmosaic
+description: Deepmosaic Enterprise 方案（1 個帳號起）的導入洽詢表單。請填寫公司名稱、公司網站（選填）、負責人姓名、電子郵件地址、電話號碼、預計使用的帳號數與諮詢內容（也受理導入貴公司系統或服務的諮詢）後送出。負責人員將於 3 個工作天內（以日本的工作天計算）回覆您。
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の Enterprise の導入相談のページ。enterprise/inquiry/index.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en とも ja-link.html の位置まで同じ)。
+  - データの文は site.data.l10n['zh-tw'] を変数 ZH に入れて引く。フォームは ja と同じ呼び方 (kind="enterprise")。
+  - 確認メール・返答は日本語のまま (対象外) なので、その旨の 1 文をフォームの上に置く。段落は 1 行に並べる (CJK の改行は空白になる)。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign ZH = site.data.l10n['zh-tw'] -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="導覽路徑" class="mb-5 text-[13px] text-ink-4">
+      <a href="/zh-tw/" class="hover:text-accent-soft">首頁</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Enterprise 導入洽詢</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">洽詢 Enterprise 的導入</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">{{ ZH.entity.one_liner }}Enterprise 是 1 個帳號起即可使用的方案，可依帳號數在組織內共用內含時數（<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格</a>）。導入諮詢、報價、導入貴公司系統或服務的諮詢（將依內容另行報價），以及希望以請款單付款或銀行轉帳時，請透過下方表單與我們聯絡。負責人員將於 3 個工作天內（以日本的工作天計算）回覆您。</p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-3">確認電子郵件與回覆將以日文寄送。</p>
+    {% include inquiry-form.html kind="enterprise" %}
+  </div>
+</section>
+
+{% include footer.html %}

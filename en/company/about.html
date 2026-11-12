@@ -1,0 +1,59 @@
+---
+layout: default
+lang: en
+permalink: /en/company/about
+ja_url: /company/about
+source: company/about.html
+source_hash: "6ddef9172bb8344b4f5b52e003a0baa962111a3ad58dc545baf453e787fe2718"
+title: About us
+# ja と同じく、会社のページには製品キーワードのサフィックスを付けない (TICKET-SITE-31)。
+seo_title: "About us | Deepmosaic LLC"
+description: "Company profile of Deepmosaic LLC: address, date of establishment, capital, and business."
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 英語の会社概要。company/about.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する)。ja のコメントアウトした節 (代表略歴・代表実績) は写さない。
+  - 正式な社名 Deepmosaic合同会社 と住所は日本の正式な表記のまま data-ja-allowed の要素に入れる (lang-text の検査の対象外)。
+  - 住所は site.data.company を ja と同じ式で参照する (直書きしない。site-copy-t1032)。日付・金額は ja と同じ値。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+
+{% include header.html %}
+
+<section>
+  <div class="mx-auto max-w-3xl px-4 py-12 sm:px-6 rich-prose">
+
+    <h2 class="text-2xl font-bold text-ink mt-8 mb-3 border-b border-edge pb-2">About us</h2>
+    <p class="text-sm text-ink-3 mb-8">Last updated: 2026-10-12</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full border-collapse text-left">
+        <tbody>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">Company name</td>
+            <td class="px-4 py-3 align-top">Deepmosaic LLC (<span lang="ja" data-ja-allowed>Deepmosaic合同会社</span>)</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">Established</td>
+            <td class="px-4 py-3 align-top">2019-05-10</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">Address</td>
+            <td class="px-4 py-3 align-top"><span lang="ja" data-ja-allowed>〒{{ site.data.company.postal_code }} {{ site.data.company.address }}</span></td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">Capital</td>
+            <td class="px-4 py-3 align-top">¥1,000,000</td>
+          </tr>
+          <tr class="border-b border-edge even:bg-panel">
+            <td class="px-4 py-3 font-medium whitespace-nowrap align-top">Business</td>
+            <td class="px-4 py-3 align-top">Planning, development, sales, and consulting of video editing software that uses deep learning</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

@@ -1,0 +1,49 @@
+---
+layout: default
+lang: en
+permalink: /en/enterprise/inquiry/
+ja_url: /enterprise/inquiry/
+source: enterprise/inquiry/index.html
+source_hash: "dae372b68ee87c65b8234eac44fc7ac471f82def1205fe142202ef917ec03b01"
+title: Enterprise inquiries
+seo_title: "Enterprise inquiries | Deepmosaic"
+description: "Inquiry form for the Deepmosaic Enterprise plan (available from 1 account). Send us your company name, company website (optional), name, email address, phone number, planned number of accounts, and the details of your inquiry (we also handle inquiries about integrating it into your company's systems and services). Our staff will reply within 3 business days (Japan)."
+schemas:
+  - breadcrumb
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 英語の Enterprise の導入相談のページ。enterprise/inquiry/index.html (ja) の写しで、構造は ja と同じ
+  (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する)。経緯は enterprise/inquiry/index.html のコメントを見ること。
+  - フォーム (inquiry-form.html・InquiryForm.svelte) は ja と同じ呼び方 (kind="enterprise"、電話番号の必須などの規則も ja と同じ)。英語の文は include と島が出す (I18N-708)。
+  - 送信先の Worker・確認メール・返答は日本語のまま (対象外) なので、フォームの上にその旨の 1 文を置く (設計書 §10.4)。
+  - 金額・込み時間はここに書かない (正は _data/plans.yml、表示は /en/price/)。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Enterprise inquiries</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Talk to us about adopting Enterprise</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.l10n.en.entity.one_liner }}
+      Enterprise is a plan available from 1 account, and your organization can share included hours based on the number of accounts (<a href="/en/price/" class="text-accent-soft hover:underline">Pricing</a>).
+      For adoption inquiries, quotes, inquiries about integrating it into your company's systems or services (quoted separately depending on the details), or requests to pay by invoice or bank transfer, use the form below. Our staff will reply within 3 business days (Japan).
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-3">The confirmation email and our reply will be in Japanese.</p>
+    {% include inquiry-form.html kind="enterprise" %}
+  </div>
+</section>
+
+{% include footer.html %}

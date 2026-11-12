@@ -1,0 +1,31 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/404.html
+ja_url: /404.html
+source: 404.html
+source_hash: "f7508bbbe3af481fbd1ada80e6de647ea62ebdca12504d3dbe357abd30c22f88"
+title: 找不到頁面
+seo_title: 找不到頁面（404）｜Deepmosaic
+description: 找不到您要尋找的頁面。請從 Deepmosaic 的首頁、說明文件或價格頁面尋找。
+noindex: true
+sitemap: false
+---
+
+{%- comment -%}
+  T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の 404。404.html (ja) の写しで、構造は ja と同じ (ja の振り分けの印の行を除く。
+  src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en/404.html とも同じ)。
+  - ルートの 404.html の印 (data-lang-404) を src/main.js が見て、/zh-tw/ の下の 404 をここへ移す。このページは行き先なので印を置かない。
+  - docs へのリンクは ja-link.html。訳のあるページへは /zh-tw/ の接頭辞。段落は 1 行に並べる。
+  - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{% include header.html %}
+
+<section class="mx-auto max-w-2xl px-4 py-24 text-center">
+    <h1 class="text-4xl font-bold text-ink">404 Not Found</h1>
+    <p class="mt-4 text-lg text-ink-3">找不到您要尋找的頁面。</p>
+    <p class="mt-2 text-[14px] text-ink-3">請從<a href="/zh-tw/" class="text-accent-soft hover:underline">首頁</a>、{% include ja-link.html href="/docs" label="說明文件" class="text-accent-soft hover:underline" %}或<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格</a>頁面尋找。</p>
+    <img class="mx-auto max-w-full h-auto mt-8" src="/assets/img/ufo_ushi.webp" alt="UFO 與牛的插圖" width="636" height="592" loading="lazy" decoding="async">
+</section>
+
+{% include footer.html %}
