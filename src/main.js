@@ -266,6 +266,15 @@ function syncJoinSwitchLinks() {
   document.querySelectorAll(LANG_LINKS).forEach(carryHashTo);
 }
 
+/**
+ * 言語の案内の帯は init() の initJoinPage() より後に描かれるので、join のページでは描いた後に帯のリンクにもコードを付け直す
+ * (右クリックのコピー・ドラッグ・ステータスバーの表示も /en/join/#code=… になるように。押した瞬間の付け直しは onLangLink)。
+ * @param {HTMLElement | null} banner mountLangSuggest() の戻り値 (帯を描かなかったときは null)
+ */
+function syncJoinAfterBanner(banner) {
+  if (banner && document.querySelector('[data-join]')) syncJoinSwitchLinks();
+}
+
 function initJoinPage() {
   const root = document.querySelector('[data-join]');
   if (!root) return;
@@ -371,4 +380,4 @@ if (document.readyState === 'loading') {
 
 // ---- i18n の初期化 (I18N-713 が言語の案内の import と呼び出しを足す) ----
 import { mountLangSuggest } from './lib/lang-suggest-mount.js';
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => mountLangSuggest()); else mountLangSuggest();
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => syncJoinAfterBanner(mountLangSuggest())); else syncJoinAfterBanner(mountLangSuggest());

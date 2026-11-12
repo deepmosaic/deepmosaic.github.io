@@ -21,5 +21,5 @@ contact: "Contact us"                          # 問い合わせ (ドロワー)
 footer_product: "Product"                      # 製品
 footer_company: "Company"                      # 会社情報
 subscribe: "Subscribe to a paid plan"          # 有料プランのお申し込み
-mosaic_removal: "About existing mosaic"         # モザイク除去について (除去の語は使わない = W7-site.md §2)
+mosaic_removal: "Deepmosaic only adds mosaic"    # モザイク除去について (除去の語は使わない = W7-site.md §2。リンク先の h1 と同じ向き、existing mosaic は機能名なので使わない)
 download_store: "Download (Microsoft Store)"   # ダウンロード（Microsoft Store）

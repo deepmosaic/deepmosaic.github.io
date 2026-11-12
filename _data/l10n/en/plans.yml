@@ -55,4 +55,4 @@ tiers:
       - label: "Payment method"
         value: "Invoice (bank transfer)"
     note: "We can also discuss integrating it into your company's systems and services. We will provide a separate quote depending on the scope."
-    cta_label: "Talk to us about adoption"
+    cta_label: "Talk to us about getting started"

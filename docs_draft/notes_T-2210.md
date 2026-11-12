@@ -232,3 +232,23 @@
 
 ### ロールバックの観点
 - revert すると spec のセレクタが戻って (a) が落ち、英中の CTA の副ボタン・ドロワーの Docs から hreflang が消え、ヒーローの印がボタンの外に戻る。ja のページの HTML は前後で変わらない。
+
+## ウェーブ末尾のレビューの指摘の修正 (T-2207 / T-2208 / T-2209、3 観点 = en・zh-tw・出力と仕組み)
+
+12 件すべてを確かめ、12 件とも本当の指摘だったので直した (直さなかったものは 0 件)。ja の文・ja のページの出力は変えていない (ja-identity OK、source_hash は ja が基点なので書き直し不要)。
+
+- en MEDIUM `_data/l10n/en/nav.yml` mosaic_removal: "About existing mosaic" → "Deepmosaic only adds mosaic"。existing mosaic は用語集の機能名 (既存のモザイク) の必須の訳語で、除去の訂正ページへの導線と衝突していた。除去の語はフッター (全ページ、data-i18n-allow の外) に置けないので、リンク先の h1 ("Deepmosaic is software that adds mosaic") と同じ向きの名前にした。同じ理由で zh-tw も「關於既有馬賽克」→「Deepmosaic 只會加上馬賽克」(h1「Deepmosaic 是加上馬賽克的軟體」と同じ向き)。英中の全 20 ページのフッターで確認。
+- en LOW `en/index.html`: plugin → plug-in (用語集の必須語・FAQ と揃える)。
+- en LOW `en/spec/index.html`: "disclosure of communications" → "data transmission disclosure" (FAQ と揃える)。
+- en LOW `plans.yml` cta_label "Talk to us about adoption" → "Talk to us about getting started"、`en/enterprise/inquiry/` の h1 → "Talk to us about getting started with Enterprise"。本文中の "adoption inquiries" (contact・inquiry の段落) は文脈上 導入の問い合わせ と読めるので残した (指摘の対象外)。
+- en LOW `en/subscribe/index.html`: "is subscribed to on a quote basis." → "is available by quote."。
+- zh-tw LOW `faq.yml`: 「修飾」→「其他遮蔽處理」、「不適合長片」→「不適合處理較長的影片」(spec.yml と揃える)、「部分遮擋」→「部分遮蔽」(disclosure.yml と揃える)。FAQPage の JSON-LD にも同じ文が出ることを確認。
+- zh-tw LOW `zh-tw/spec/index.html`: 「通訊內容的揭露」→「通訊內容揭露」(FAQ と揃える)。
+- zh-tw LOW `_data/lang/zh-tw.json`: seo_brand_suffix・og_image_alt の「套用」→「加上」(kicker・seo_title と揃える)。zh の 10 ページの og:image:alt で確認。meta_desc・find_desc などの本文の「套用」は副題ではないので残した。
+- zh-tw LOW `mosaic.yml`: 「最粗的格」→「最粗的馬賽克格」(用語集 #40 の「単独の格にしない」)。
+- output LOW `src/main.js`: 言語の案内の帯が initJoinPage() より後に描かれるため、/join/#code=… の帯のリンクの href が読み込み時に /en/join/ のままだった。`syncJoinAfterBanner(mountLangSuggest())` で帯を描いた後に付け直す。helper は join の節に置いた (src/lib/i18n-site-suggest.test.js の「i18n の初期化の区切りの下は import と呼び出しの 2 行だけ」を保つため。テストは書き換えていない)。e2e/i18n-contact.spec.ts に (i) (locale en-US、読み込み直後の帯の href が /en/join/#code=…) を足した。修正前のコードで (i) が落ちることを確認済み。
+
+### W8 へ (リーダーへ)
+
+- フッターの「モザイク除去について」の英中の名前 ("Deepmosaic only adds mosaic" / 「Deepmosaic 只會加上馬賽克」) は、W8 の対訳表のレビューで確定する (除去の語をフッターで許す決定をするなら、ページの title と同じ "About mosaic removal" に揃える案もある = ユーザー判断)。
+- 「最粗的馬賽克格」はアプリの辞書の画面名 (最も粗い粒) の訳が決まったらその語に揃える。plug-in の表記もアプリの辞書と突き合わせる。

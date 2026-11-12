@@ -11,6 +11,7 @@
 // - (d) /en/enterprise/inquiry/: 電話番号が必須 (規則は ja と同じ。空のときは ja と同じく「最低 5 文字」の文になる = inquiry-validate.js)。
 // - (e) /en/join/#code=…: code の表示とコピーの英文、計測のリクエストが出ない。
 // - (g)(h) /join/ の言語の切り替えで #code= / #admin を引き継ぐ (ウェーブ末尾の追い修正)。
+// - (i) 言語の案内の帯のリンクも読み込み直後から #code= を持つ (レビューの指摘の修正)。
 // - (f) 存在しない /en/nope/ を開くと /en/404.html に移り英文が出る (e2e/lib/serve.mjs は 404 にルートの 404.html を返す =
 //       GitHub Pages と同じ。その中の印 data-lang-404 を src/main.js が見て移す)。
 //
@@ -207,6 +208,18 @@ test.describe('組織への参加: 言語の切り替えでフラグメントを
 
     await page.goto('/join/#code=<b>x</b>', { waitUntil: 'load' });
     await expect(page.locator('footer [data-i18n-switch] a[hreflang="en"]')).toHaveAttribute('href', '/en/join/');
+  });
+});
+
+// レビューの指摘 (T-2207〜T-2209 のウェーブ末尾): 言語の案内の帯は initJoinPage() より後に描かれるので、
+// 読み込み直後の帯のリンクの href 属性にもコードが付いていること (右クリックのコピー・ドラッグ・ステータスバーの表示のため)。
+test.describe('組織への参加: 言語の案内の帯のリンクもフラグメントを引き継ぐ', () => {
+  test.use({ locale: 'en-US' });
+  test('(i) en-US で /join/#code=… を開くと、帯のリンクの href が読み込み直後から /en/join/#code=…', async ({ page }) => {
+    await page.goto('/join/#code=ABCD-EFGH-JKLM', { waitUntil: 'load' });
+    const link = page.locator('.lang-suggest a[hreflang="en"]');
+    await expect(link).toHaveCount(1);
+    await expect(link).toHaveAttribute('href', '/en/join/#code=ABCD-EFGH-JKLM');
   });
 });
 
