@@ -47,7 +47,7 @@ test('9-2: サイトの計測は Google Analytics、配信ストアへ流入元�
 	assert.match(s9, /流入元の情報を配信ストアへ引き渡しません。/)
 })
 
-test('9-3: インストーラー版 (2.11.1 以前) の記録はファイル名の識別子・ログイン時の突き合わせを含めて残す', () => {
+test('9-3: インストーラー版 (2.11.1 以前) の記録はファイル名の識別子・サインイン時の突き合わせを含めて残す', () => {
 	const s9 = section9()
 	assert.match(s9, /インストーラー形式で配布していた本ソフトウェア（バージョン2\.11\.1以前。以下「インストーラー版」といいます。）/)
 	assert.match(s9, /当該識別子はインストーラーのファイル名に含まれ、アプリケーションの初回起動時に当社サーバーへ送信されます。/)
@@ -68,7 +68,7 @@ test('企業名・配信サービスの名称を書かない (Google Analytics �
 	assert.doesNotMatch(s9, /Microsoft|マイクロソフト|Store|ストア（/)
 })
 
-test('最終更新日は 2026-11-11、版 (legal.yml) は privacy の改定では動かさない', () => {
-	assert.match(read('company/privacy.html'), /最終更新日: 2026-11-11（制定: 2019-06-01）/)
+test('最終更新日は 2026-11-13 (signin1113 で語を言い換えた)、版 (legal.yml) は privacy の改定では動かさない', () => {
+	assert.match(read('company/privacy.html'), /最終更新日: 2026-11-13（制定: 2019-06-01）/)
 	assert.match(read('_data/legal.yml'), /version:\s*"2026-11-08"/)
 })

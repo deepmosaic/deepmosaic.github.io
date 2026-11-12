@@ -91,19 +91,19 @@ test('組織コードの表示: 文言・ボタン・手順 3 行・コピー', 
 	const steps = [...block.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1])
 	assert.equal(steps.length, 3)
 	assert.match(steps[0], /「アプリで開く」を押します/)
-	assert.match(steps[1], /「エンタープライズプランの方はこちら」に組織コードが入っていることを確かめます/)
-	assert.match(steps[2], /「メールアドレスではじめる」または「パスワードで登録済みの方はこちら」からログインします/)
+	assert.match(steps[1], /サインイン画面が「法人サインイン」の画面で開き、「組織コード」欄に組織コードが入っていることを確かめます/)
+	assert.match(steps[2], /「サインイン」を押してサインインします/)
 	assert.match(block, /<button type="button"[^>]*data-join-copy[^>]*>コピー<\/button>/)
 	assert.match(block, /data-join-copy-status/)
 })
 
 test('管理者の表示: deepmosaic://login と手順 2 行', () => {
 	const block = viewBlock(body, 'admin')
-	assert.match(textOf(block), /管理者としてログインします。/)
+	assert.match(textOf(block), /管理者としてサインインします。/)
 	assert.match(block, /<a href="deepmosaic:\/\/login"[^>]*>アプリで開く<\/a>/)
 	const steps = [...block.matchAll(/<li>([\s\S]*?)<\/li>/g)].map((m) => m[1])
 	assert.equal(steps.length, 2)
-	assert.match(steps[1], /案内メールを受け取ったメールアドレスでログインします \(組織コードは入力しません\)/)
+	assert.match(steps[1], /案内メールを受け取ったメールアドレスでサインインします \(組織コードは入力しません\)/)
 })
 
 test('不正なリンクの表示: 文言だけでボタンを出さない', () => {

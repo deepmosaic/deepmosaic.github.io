@@ -2,7 +2,7 @@
 # ja と同じ入れ子・同じ件数・同じ順・note の有無も ja と同じ。内容は実装と一致させた ja の文の訳で、意味を変えない。
 # 法務の文書名は訳す (ja の文書であることの印はページ側が付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/disclosure.yml"
-_source_hash: "6e281dd354f8c8465a3f92c7d667b76744bcfa18cb07f3689371dc1e715c47a1"
+_source_hash: "4c863984bb7a0fccc37a39bbba591996e948a7876b05d095139c7a7606c868d1"
 network:
   sent:
     - item: "License authentication token"

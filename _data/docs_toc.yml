@@ -15,7 +15,7 @@ desktop:
       - { id: theme, label: テーマ }
   - title: アカウントとプラン
     items:
-      - { id: license, label: ログインとライセンス }
+      - { id: license, label: サインインとライセンス }
       - { id: plan, label: プランの変更 }
       - { id: account, label: アカウントの削除 }
       - { id: support, label: お問い合わせ }

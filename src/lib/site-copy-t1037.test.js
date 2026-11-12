@@ -26,6 +26,7 @@ const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 const ASCT = 'company/asct.html'
 const ABOUT = 'company/about.html'
 const UPDATED = '2026-10-12'
+const ASCT_UPDATED = '2026-11-13'
 
 /** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は検査対象外)。 */
 function stripComments(source) {
@@ -96,13 +97,13 @@ test('特商法: h1 と title は「特定商取引法に基づく表示」で�
 	assert.doesNotMatch(h1[1], /表記/)
 })
 
-test('特商法: 役務の提供の時期はダウンロード又はログイン後 / 決済完了後で、旧文が無い', () => {
+test('特商法: 役務の提供の時期はダウンロード又はサインイン後 / 決済完了後で、旧文が無い', () => {
 	// Act
 	const value = rowValue(read(ASCT), '役務の提供の時期')
 
 	// Assert
 	assert.ok(value, '役務の提供の時期の行が無い')
-	assert.match(value, /ダウンロード又はログイン後/)
+	assert.match(value, /ダウンロード又はサインイン後/)
 	assert.match(value, /決済完了後/)
 	assert.doesNotMatch(value, /登録後、ただちに利用が可能です/)
 })
@@ -169,8 +170,8 @@ test('特商法: 行の順序 (所在地 → 電話番号 → メールアドレ
 	assert.equal(at('役務の提供の時期'), at('動作環境') + 1)
 })
 
-test('最終更新日: 特商法と会社概要が 2026-10-12', () => {
-	assert.equal(lastUpdated(read(ASCT)), UPDATED)
+test('最終更新日: 特商法は 2026-11-13 (signin1113 の語の言い換え)、会社概要は 2026-10-12', () => {
+	assert.equal(lastUpdated(read(ASCT)), ASCT_UPDATED)
 	assert.equal(lastUpdated(read(ABOUT)), UPDATED)
 })
 

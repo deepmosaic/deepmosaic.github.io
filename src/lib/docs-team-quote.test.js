@@ -135,13 +135,13 @@ test('お見積書の手順に 1 アカウントあたりの検出時間と取�
 	assert.match(quoteStep, /取引条件書と注文書/, `同送する帳票に触れていない: ${quoteStep}`)
 })
 
-test('案内メールのアドレスでログインすると管理者になり、他のメンバーは組織コード欄から参加する', () => {
+test('案内メールのアドレスでサインインすると管理者になり、他のメンバーは組織コード欄から参加する', () => {
 	// Arrange
-	const login = steps.find((li) => li.includes('案内メール') && li.includes('ログイン') && li.includes('管理者'))
-	assert.ok(login, '案内メールのアドレスでログインして管理者になる手順が無い')
+	const login = steps.find((li) => li.includes('案内メール') && li.includes('サインイン') && li.includes('管理者'))
+	assert.ok(login, '案内メールのアドレスでサインインして管理者になる手順が無い')
 
 	// Act / Assert
-	assert.match(login, /ログインダイアログ/, `他のメンバーの参加経路が書かれていない: ${login}`)
+	assert.match(login, /サインイン画面/, `他のメンバーの参加経路が書かれていない: ${login}`)
 	assert.match(login, /「組織コード」欄/, `参加の入口 (組織コード欄) が書かれていない: ${login}`)
 })
 

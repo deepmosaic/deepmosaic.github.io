@@ -275,7 +275,7 @@ for (const page of PAGES) {
 				assert.ok(has(rel))
 				const code = viewBlock(body(), 'code')
 				const quoted = lang === 'en' ? [...code.matchAll(/"([^"<>]+)"/g)] : [...code.matchAll(/「([^」]+)」/g)]
-				// 「アプリで開く」「エンタープライズプランの方はこちら」「メールアドレスではじめる」「パスワードで登録済みの方はこちら」
+				// 「アプリで開く」「法人サインイン」「組織コード」「サインイン」「組織コードをお持ちの方（法人）」
 				const names = new Set(quoted.map((m) => m[1]).filter((t) => !/^[\w-]+$/.test(t) || t.includes(' ')))
 				assert.ok(names.size >= 4, `引用したボタン名が 4 つ未満: ${[...names].join(' / ')}`)
 			})

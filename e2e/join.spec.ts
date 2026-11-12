@@ -62,7 +62,7 @@ test('#code=: 組織コードを大文字で表示し、アプリで開くの hr
 test('#admin: 管理者の表示で、アプリで開くの href が deepmosaic://login', async ({ page }) => {
   await open(page, '#admin');
   await expectOnlyView(page, 'admin');
-  await expect(page.locator(VIEW('admin'))).toContainText('管理者としてログインします。');
+  await expect(page.locator(VIEW('admin'))).toContainText('管理者としてサインインします。');
   await expect(page.locator(OPEN_ADMIN)).toHaveAttribute('href', 'deepmosaic://login');
   await expect(page.locator(VIEW('admin')).locator('ol > li')).toHaveCount(2);
   await expect(page.locator(OPEN_CODE)).not.toHaveAttribute('href', /.*/);

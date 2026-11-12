@@ -117,7 +117,7 @@ test('HOME の分類の節は フォルダ・タグ・他のフォルダ と、�
 	assert.match(text, /最後に保存したタブ/, `複数タブで分類を変えたときの挙動が書かれていない: ${text}`)
 })
 
-test('組織の管理の節はログイン画面の組織コード欄と Desktop 版の章 (/docs/#team) を案内している', () => {
+test('組織の管理の節はサインイン画面の組織コード欄と Desktop 版の章 (/docs/#team) を案内している', () => {
 	// Arrange
 	const section = sectionOf(web, 'team')
 	assert.ok(section, '#team が無い')
@@ -126,7 +126,7 @@ test('組織の管理の節はログイン画面の組織コード欄と Desktop
 	// Act / Assert
 	assert.match(section, /href="\/docs\/#team"/, 'Desktop 版の「組織の管理」へのリンクが無い')
 	assert.match(text, /「組織コード」欄/, `参加の入口が書かれていない: ${text}`)
-	assert.match(text, /ログアウト/, `ログイン済みのときのやり直し方が書かれていない: ${text}`)
+	assert.match(text, /サインアウト/, `サインイン済みのときのやり直し方が書かれていない: ${text}`)
 	assert.match(text, /新しいタブ/, `請求書が新しいタブで開くことが書かれていない: ${text}`)
 })
 

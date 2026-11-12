@@ -85,7 +85,7 @@ test('T-1928: プロフィールメニューの項目に「ドキュメント」
 	const list = profile.slice(0, profile.indexOf('が並びます'))
 	assert.ok(list.length > 0, '陽性対照: 項目の列挙が見つからない')
 	assert.match(list, /お問い合わせ/)
-	assert.match(list, /ログアウト/)
+	assert.match(list, /サインアウト/)
 	assert.match(list, /テーマ/)
 	assert.doesNotMatch(list, /ドキュメント|ライセンス|このアプリについて/)
 	assert.match(profile, /メニューバーの「ヘルプ」にあります/)

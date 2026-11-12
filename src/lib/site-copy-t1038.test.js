@@ -133,13 +133,14 @@ test('最終更新日: 6 ページすべてが ISO で MIN_DATE 以降 (同日�
 
 // T-1883 (2026-11-08): 版を上げて eula / terms の日付が進んだ (上の版のテストが見る)。ここは版にも privacy の
 // 個別改定にも連動しない残りの 3 ページ (about / asct / cookie) が同日であることを見る。
-test('最終更新日: 個別に改定した privacy と版の eula / terms を除く 3 ページは同日', () => {
+// signin1113 (T-2115、2026-11-13): asct / cookie は「ログイン」→「サインイン」の言い換えで最終更新日を 2026-11-13 に進めた。about は変えていないので外した (about の日付は t1037 が 2026-10-12 に固定し、上の MIN_DATE のテストが下限を見る)。
+test('最終更新日: 個別に改定した privacy・版の eula / terms・語の言い換えの無い about を除く 2 ページ (asct / cookie) は同日', () => {
 	// Act
-	const rest = SLUGS.filter((s) => !['privacy', 'eula', 'terms'].includes(s))
+	const rest = SLUGS.filter((s) => !['privacy', 'eula', 'terms', 'about'].includes(s))
 	const dates = new Set(rest.map((s) => lastUpdated(read(pageOf(s)))))
 
 	// Assert
-	assert.equal(rest.length, 3)
+	assert.equal(rest.length, 2)
 	assert.equal(dates.size, 1, `日付が揃っていない: ${[...dates].join(', ')}`)
 })
 
