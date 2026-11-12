@@ -1,0 +1,456 @@
+---
+layout: default
+lang: en
+permalink: /en/
+ja_url: /
+source: index.html
+source_hash: "e38ef64f28867d169a3ad9c3bad00d8e460c1431356e048d1e5d4dadd44e48f1"
+title: Mosaic work, down to a final check
+seo_title: AI software that adds mosaic to videos | Deepmosaic
+description: Deepmosaic is a Windows app in which AI automatically detects targets in a video and adds mosaic to them. It cannot take off or undo mosaic. Detection targets are male body areas, female body areas, human faces, and the positions of mosaic already in the video. All processing happens on your PC, and footage is never sent outside. Supports Adobe Premiere Pro integration.
+schemas:
+  - software-application
+  - faq
+---
+
+{%- comment -%}
+  T-2207 (i18n1112 I18N-709): 英語のトップ。index.html (ja) の写しで、構造 (id・data-dl・data-island・img の src・include の並び・data-*) は ja と同じ
+  (src/lib/i18n-site-top-en.test.js が scripts/i18n/parity.mjs で検査する)。ja の各節のコメント (経緯・理由) は index.html を見ること。
+  - ページ固有の文 (hero・stats・各節の見出しと本文) はここに直接書く。データの文は site.data.l10n.en.* から引く。
+  - 数値・URL・設定のデータ (site.data.site.web_app.*・site.data.plans.tiers・site.data.site.roi.*) は ja のデータのまま。
+  - docs へのリンクは ja-link.html (日本語のページの印を付ける)。訳のあるページへは /en/ の接頭辞。
+  - アプリの画面・日本語の文字が写った画像の alt / figcaption には (Japanese UI) を添える (設計書 §10.4)。
+  - 除去の語は否定の注記 (data-i18n-allow="mosaic_removal" の要素) の中だけ。ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
+{%- endcomment -%}
+{%- assign S = site.data.site -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+
+{% include header.html %}
+
+<!-- HERO -->
+<section class="relative overflow-hidden pt-[88px] pb-24">
+  <div aria-hidden="true" class="pointer-events-none absolute left-1/2 top-[-260px] h-[600px] w-[900px] -translate-x-1/2" style="background:radial-gradient(ellipse at center,rgba(79,139,232,.16),transparent 65%)"></div>
+  <div class="relative mx-auto w-[92%] max-w-[1120px] text-center">
+    <div class="kicker mb-3.5">AI software that adds mosaic to videos</div>
+    <h1 class="mx-auto max-w-[820px] text-[clamp(38px,5.4vw,60px)] font-bold leading-[1.25] tracking-[-0.02em] text-ink">Turn mosaic work into<br><span class="text-accent">just a final check</span></h1>
+    <p class="mx-auto mt-[22px] max-w-[660px] text-[17px] leading-[2] text-ink-2">A Windows app in which AI automatically detects targets in your video and applies mosaic to those areas. All processing happens on your PC, and you only review and correct the detection results.</p>
+
+    <figure id="hero-detectable" class="mx-auto mt-8 max-w-[660px]">
+      <img src="/assets/img/detectable-objects.webp" alt="Objects it can help detect: male body areas, female body areas, and human faces (Japanese UI)" width="960" height="540" decoding="async" class="mx-auto block w-[min(288px,100%)] rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">Objects it can help detect: male body areas, female body areas, and human faces (Japanese UI). Turn each on or off in {% include ja-link.html href="/docs/#detect-options" label="detection options" class="text-accent-soft hover:underline" %}. It can also find the positions of mosaic already in the video (<a href="#existing-mosaic" class="text-accent-soft hover:underline">learn more</a>).</figcaption>
+    </figure>
+
+    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
+      <a href="{{ site.data.lang[page.lang].app_download_link }}" data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}Get it free on Microsoft Store</a>
+      {%- if site.data.site.web_app.enabled %}
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}Try it in your browser (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</a>
+      {%- endif %}
+      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" %}
+    </div>
+    <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64-bit)</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Free for {{ free_plan.free_window_days }} days from the first launch, up to {{ free_plan.included_hours }} hours</span>
+      <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}No credit card required</span>
+    </div>
+    <p class="mx-auto mt-3 max-w-[560px] text-[12.5px] leading-[1.8] text-ink-4" data-i18n-allow="mosaic_removal">{{ site.data.l10n.en.entity.not_removal_note }}</p>
+
+    <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
+      <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="Video exported with Deepmosaic, showing the automatic detection results" class="block w-full">
+        <source src="/assets/videos/hero-shape.webm" type="video/webm">
+        <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="The editing screen of the Deepmosaic Desktop app, previewing mosaic applied to faces detected by AI, with a timeline of detected segments along the bottom (Japanese UI)" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
+      </video>
+    </div>
+    <p class="mx-auto mt-3 max-w-[720px] text-[12.5px] leading-[1.8] text-ink-4">Automatic detection results (footage: Pexels).</p>
+    <script>if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) { var heroVideo = document.getElementById('hero-video'); if (heroVideo) { heroVideo.removeAttribute('autoplay'); heroVideo.pause(); } }</script>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<section class="border-y border-hair bg-surface-alt">
+  <div class="mx-auto grid w-[92%] max-w-[1120px] gap-px md:grid-cols-3">
+    <div class="px-6 py-9 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Lock" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">Fully local processing that never sends footage outside</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">We publish a list of what is sent and what is not. Detection, editing, and export work even when disconnected from the network.</p>
+    </div>
+    <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Grid3x3" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">Flexible editing</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">Adjust mosaic or blur, block size, the detection box expansion ratio, and edge feather. Settings can be overridden at 4 levels: the whole project, by class, by tracking ID, and by scene.</p>
+    </div>
+    <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ListChecks" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">A full set of tools for review and correction</h2></div>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">Jump to frames where detection drops out, add, delete, and move detection boxes, and filter by confidence. Fix only the spots you care about.</p>
+    </div>
+  </div>
+</section>
+
+{% include what-is.html %}
+
+{%- comment -%}
+  STATS: 値とラベルはページに英語を直接書く (l10n を作らない、spec)。並びと accent は ja のデータ (site.yml の stats) と同じ添字で引く。
+{%- endcomment -%}
+{%- assign stats_values = "0 bytes|100,000+|12 formats|4 stages" | split: "|" -%}
+{%- assign stats_labels = "Video data sent outside|Training images|Supported input formats|Detection pipeline" | split: "|" -%}
+<!-- STATS -->
+<section class="border-b border-hair bg-surface-alt">
+  <div class="mx-auto grid w-[92%] max-w-[1120px] grid-cols-2 gap-6 py-11 md:grid-cols-4">
+    {%- for s in S.stats %}
+    <div class="text-center">
+      <div class="text-2xl font-bold tracking-[-0.01em] sm:text-[30px] {% if s.accent %}text-accent{% else %}text-ink{% endif %}">{{ stats_values[forloop.index0] }}</div>
+      <div class="mt-1 text-[12.5px] text-ink-3">{{ stats_labels[forloop.index0] }}</div>
+    </div>
+    {%- endfor %}
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="COMPARISON" title="Manual work, outsourcing, and Deepmosaic compared" sub="How the ways of handling mosaic work differ. Costs and turnaround vary greatly by project, so we only lay out the points to weigh." %}
+    <div class="scroll-x">
+      <table class="w-full min-w-[720px] border-collapse text-left">
+        <thead>
+          <tr class="border-b border-edge-strong bg-th">
+            <th class="p-4 text-[13px] font-bold text-ink-body">Item</th>
+            <th class="p-4 text-[13px] font-bold text-ink-body">Manual (in-house)</th>
+            <th class="p-4 text-[13px] font-bold text-ink-body">Outsourcing</th>
+            <th class="p-4 text-[13px] font-bold text-accent">Deepmosaic</th>
+          </tr>
+        </thead>
+        <tbody class="text-[13.5px] leading-[1.9] text-ink-2">
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">How the work is done</td>
+            <td class="p-4">Watch the whole video and follow the targets by eye</td>
+            <td class="p-4">Order → wait for delivery → inspect</td>
+            <td class="p-4 bg-accent/5">AI detects and tracks targets across the whole video and applies mosaic. People only review and correct</td>
+          </tr>
+          <tr class="border-b border-hair bg-row-alt">
+            <td class="p-4 font-bold text-ink-body">Time tied up during processing</td>
+            <td class="p-4">An operator has to stay on it</td>
+            <td class="p-4">2–5 days of waiting in between</td>
+            <td class="p-4 bg-accent/5">Unattended. Pick up from review once it finishes</td>
+          </tr>
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">Unreleased footage leaving your hands</td>
+            <td class="p-4">Does not happen</td>
+            <td class="p-4 text-danger">Happens</td>
+            <td class="p-4 bg-accent/5">Does not happen (everything stays on your PC)</td>
+          </tr>
+          <tr class="border-b border-hair bg-row-alt">
+            <td class="p-4 font-bold text-ink-body">Redoing work with different settings</td>
+            <td class="p-4">Start over each time</td>
+            <td class="p-4">Order again and wait for redelivery</td>
+            <td class="p-4 bg-accent/5">Redo it as many times as you like with the same footage</td>
+          </tr>
+          <tr class="border-b border-hair">
+            <td class="p-4 font-bold text-ink-body">Checking for missed detections</td>
+            <td class="p-4">Watch the whole video</td>
+            <td class="p-4">Watch all of the delivered video</td>
+            <td class="p-4 bg-accent/5">Jump straight to where detection drops out</td>
+          </tr>
+          <tr>
+            <td class="p-4 font-bold text-ink-body">How the cost is structured</td>
+            <td class="p-4">Work hours × labor cost</td>
+            <td class="p-4">Number of videos × unit price</td>
+            <td class="p-4 bg-accent/5">Fixed monthly fee</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+      Processing speed depends heavily on GPU performance and the resolution of the footage. Measured values are listed in <a href="/en/spec/" class="text-accent-soft hover:underline">System requirements</a>.
+    </p>
+  </div>
+</section>
+
+<!-- CALCULATOR -->
+<section id="roi" class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="CALCULATOR" title="Estimate costs from your workload" sub="Enter the number of videos per month and their length to estimate the hours used, the best-fit plan, and the difference from your current cost." %}
+    {%- assign roi_plans = site.data.plans.tiers | where: "public", true -%}
+    <div data-island="roi"
+         data-plans='{{ roi_plans | jsonify }}'
+         data-default-cost="{{ S.roi.default_cost_per_video }}"
+         data-manual-multiplier="{{ S.roi.manual_work_multiplier }}"></div>
+    {%- comment -%}
+      JS 無効時のフォールバック。数値は ja と同じ確定値 (Light×3 = 月 15 時間 / ¥8,940)。ja の数値を変えたらここも変える。
+    {%- endcomment -%}
+    <noscript>
+      <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
+        The estimate requires JavaScript in your browser.
+        For 6 videos × 2 hours a month (12 hours a month), 3 Light subscriptions (15 hours a month) cost a fixed ¥8,940 / month ({{ site.data.l10n.en.plans.tax_note }}).
+        The hours included in each plan are listed on the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a>.
+      </div>
+    </noscript>
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
+      &quot;Estimated manual work&quot; is a <strong class="text-ink-3">placeholder value</strong> calculated as {{ S.roi.manual_work_multiplier }} times the finished length.
+      It is not based on measurements. For your current cost, enter your own actual figures.
+    </p>
+  </div>
+</section>
+
+<!-- RELIABILITY -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="RELIABILITY" title="You can correct every detection result yourself" sub="AI detection is not perfect. That is why we put the ability to correct at the center of the product. Add, delete, and move detection boxes, change the block size, and jump to frames where detection drops out, so you can fix only the spots you care about." %}
+    <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
+      <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
+        <img src="/assets/img/screenshots/edit-overview.webp" alt="The editing page. AI detection boxes overlay the player, and segments for each detection class are lined up on the timeline at the bottom. Mosaic is applied inside these boxes (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ArrowUpFromLine" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Jump to missing frames</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Press <kbd class="rounded border border-edge bg-panel-2 px-1 font-mono text-[11px]">[</kbd> <kbd class="rounded border border-edge bg-panel-2 px-1 font-mono text-[11px]">]</kbd> to move back and forth between frames where detection drops out. This makes the most common pattern of misses easier to follow.</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Maximize2" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Safety margin</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Enlarge or shrink detection boxes from their center by 0.5x–2x. You can choose not to cut it close.</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="LayoutGrid" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Choose the scope</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Override settings at 4 levels: the whole project, by class, by tracking ID, and by scene. Settings for a narrower scope take precedence.</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ClipboardCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Filter by confidence</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Show and apply mosaic only to detections at or above a confidence you specify. You can clear out false detections before you start reviewing.</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Crosshair" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Tracking</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">A box you place by hand follows the target automatically during playback. You can track several boxes at once, and a box ends where the target is lost.</p>
+        </div>
+        <div class="card p-5">
+          <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FlipHorizontal2" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Invert</h3></div>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Apply mosaic outside the box instead of inside. Keep only what you want to show and hide the background.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXISTING MOSAIC -->
+<section id="existing-mosaic" class="scroll-mt-20 border-t border-hair py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="EXISTING MOSAIC" title="Find mosaic that is already in your footage and apply it again" sub="Automatically finds the position and extent of block mosaic that is already in your footage, and applies Deepmosaic mosaic over it. Use it for footage where you want to even out the block size, or where you want to change the blocks to meet the standards of where you submit." %}
+    <p class="mx-auto mb-8 max-w-[760px] rounded-[10px] border border-edge bg-panel-2 px-4 py-3 text-center text-[14px] font-bold leading-[1.9] text-ink">It cannot take mosaic off or restore the original footage. This feature applies new mosaic over the areas it finds.</p>
+    <div class="grid gap-4 sm:grid-cols-2">
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-1-found.webp" alt="The editing page. It has found the mosaic already on a person&#39;s face in the footage and outlines it with a purple polygon box labeled Mosaic (Japanese UI)" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">Area found (purple polygon box) (Japanese UI)</figcaption>
+      </figure>
+      <figure class="overflow-hidden rounded-xl border border-edge">
+        <img src="/assets/img/samples/mosaic-detect-2-reapplied.webp" alt="Mosaic settings for the same project. The estimated block size (10 px for both the minimum and maximum cell) is entered in the By ID tab (Japanese UI)" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+        <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">The estimated blocks go into the &quot;By ID&quot; settings, where you can change them (Japanese UI)</figcaption>
+      </figure>
+    </div>
+    <p class="mt-2 text-[12px] text-ink-4">Footage: our own sample video (with mosaic burned into the faces)</p>
+    <ul class="mt-8 grid gap-4 md:grid-cols-3">
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Finds the position and extent automatically</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Just turn on &quot;Mosaic&quot; in the detection options and run detection to find block mosaic that is already in your footage.</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Estimates the blocks and applies mosaic over them</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Estimates the block size of the original mosaic and applies Deepmosaic mosaic over it. You can change the blocks under &quot;By ID&quot; in the mosaic settings.</p>
+      </li>
+      <li class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Check" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Correct the boxes on the editing page</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">The areas found are shown as polygon boxes, and you can correct them on the editing page just like other detection boxes.</p>
+      </li>
+    </ul>
+    <p class="mt-6 text-[13px] leading-[1.9] text-ink-3">Available in both the Desktop app and the Web app. The differences between the two (whether it can be used at the same time as detection of body areas and faces), mosaic that is hard to find, and estimated processing times are covered in the {% include ja-link.html href="/docs/#detect-mosaic" label="documentation" class="text-accent-soft hover:underline" %}.</p>
+  </div>
+</section>
+
+<!-- MOSAIC -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="MOSAIC" title="Flexible editing" sub="Mosaic that follows the shape of objects, consistent blocks regardless of video resolution (default), blocks set by the number across the screen width, blocks for each range of object size, and blocks proportional to a number of divisions. Adjust them to match the required values of each submission destination." %}
+    <div class="mb-12">
+      <h3 class="text-[18px] font-bold text-ink">Apply mosaic along the shape of objects, not in a square box</h3>
+      <p class="mt-2 max-w-[760px] text-[14px] leading-[1.9] text-ink-2">Within each detected box, AI creates the outline of the target and applies mosaic in that shape (enabled by default on PCs with a CUDA-compatible GPU; there is no setting for it). Hair and background are not blocked out in a square, so you can hide only what needs hiding. You can work with the outlines directly on the editing page.</p>
+      <div class="mt-5 grid gap-4 sm:grid-cols-2">
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="A frame with mosaic applied to the faces of 6 people in square boxes. Hair and background are also covered in squares" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">Square boxes as is</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="The same frame refined so that mosaic follows the shape of the 6 faces. Hair and background are not covered" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">Mosaic that follows the shape</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-1-rect.webp" alt="A wide shot with mosaic applied to the faces of 6 people in square boxes" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">Square boxes as is (wide shot)</figcaption>
+        </figure>
+        <figure class="overflow-hidden rounded-xl border border-edge">
+          <img src="/assets/img/samples/shape-compare-1-shape.webp" alt="The same wide-shot frame refined so that mosaic follows the shape of the faces" width="1280" height="720" loading="lazy" decoding="async" class="block w-full">
+          <figcaption class="px-3 py-2 text-[12.5px] text-ink-4">Mosaic that follows the shape (wide shot)</figcaption>
+        </figure>
+      </div>
+      <p class="mt-2 text-[12px] text-ink-4">The same frame of the same video, exported with Deepmosaic with only the settings changed. Footage: Pexels</p>
+    </div>
+    <div data-island="tabs">
+      <div role="tablist" aria-label="Mosaic settings" class="flex gap-1 border-b border-hair">
+        <button type="button" role="tab" id="tab-scope" aria-controls="panel-scope" aria-selected="true" class="tab tab-active">Scope</button>
+        <button type="button" role="tab" id="tab-controls" aria-controls="panel-controls" aria-selected="false" class="tab">Settings</button>
+      </div>
+      <div class="tabpanels pt-6">
+        <div role="tabpanel" id="panel-scope" aria-labelledby="tab-scope">
+          {% include kv-table.html rows=site.data.l10n.en.mosaic.scopes label_width="180px" %}
+          <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ site.data.l10n.en.mosaic.priority_note }}</p>
+        </div>
+        <div role="tabpanel" id="panel-controls" aria-labelledby="tab-controls">
+          {% include kv-table.html rows=site.data.l10n.en.mosaic.controls label_width="220px" %}
+          <p class="mt-3 text-[12.5px] leading-[1.9] text-ink-4">{{ site.data.l10n.en.mosaic.note }}</p>
+        </div>
+      </div>
+    </div>
+    <div class="mt-8 overflow-hidden rounded-xl border border-edge">
+      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="The mosaic settings panel, where you set the type of mosaic to apply (mosaic or blur), block size, opacity, and edge feather (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="TIMELINE" title="Finish on the timeline before you export" sub="From cutting and reordering unneeded scenes to adding text, BGM, and transitions, you can do it all on the timeline of the editing page. Your edits carry over to the export as they are." %}
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Clapperboard" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Cut and reorder</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Drag either end of a clip to trim it, and split, delete, or reorder clips. You can also leave gaps between clips.</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="FolderInput" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Add media</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Import video, image, and audio files and arrange them on the timeline. An image can become a clip of any length.</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="PenLine" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Text and watermarks</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Place text anywhere on the screen and choose a typeface (5 types) and bold. Overlay images such as logos as watermarks.</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="Activity" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">BGM and volume</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Place BGM on an audio track and adjust its position and volume while watching the waveform. You can also change the volume of the original video&#39;s audio.</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="RefreshCw" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Fades and transitions</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Set a fade in and fade out at the start and end of the video, and transitions at the joins between clips. Choose a fade or a transition from the scissors at a join, and set the duration and type in the sidebar. Fades can also be applied to the start and end of each clip.</p>
+      </div>
+      <div class="card p-5">
+        <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ShieldCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Mosaic stays in place</h3></div>
+        <p class="text-[13px] leading-[1.9] text-ink-2">Even after cutting or reordering, mosaic is applied to the segments of the original video that AI detected. Imported media is not detected.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MANAGE -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="MANAGE" title="Organize your videos, and use it as an organization" sub="Even as the number of videos grows, folders and tags take you straight to the video you need. With Enterprise, members of an organization can share one subscription." %}
+    <div class="grid gap-5 lg:grid-cols-2">
+      <div class="card overflow-hidden">
+        <img src="/assets/img/screenshots/home.webp" alt="The home screen. The sidebar on the left filters the list, and cards for processed videos are lined up on the right (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full border-b border-hair">
+        <div class="p-6">
+          <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="FolderInput" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">Folders and tags on the home screen</h3></div>
+          <ul class="flex flex-col gap-2.5">
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Create subfolders inside folders and drag video cards to sort them</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Add tags and filter by them from the sidebar</span></li>
+            <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Search by name, tag, or project ID, and choose from 3 view styles</span></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card p-6">
+        <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Building2" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">Use it as an organization (Enterprise)</h3></div>
+        <ul class="flex flex-col gap-2.5">
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Share one subscription across multiple accounts and use the included hours across the whole organization</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Admins invite members and manage permissions and the number of accounts</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Hand out an organization code, and each person joins by entering it when signing in</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>View past invoices in a list and save them as PDF</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Check usage by member</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Talk to us about integrating it into your company&#39;s systems and services (quoted separately depending on the details)</span></li>
+        </ul>
+        <p class="mt-5 text-[13.5px] leading-[1.9] text-ink-2">
+          {% include ja-link.html href="/docs/#team" label="How to manage an organization" class="text-accent-soft hover:underline" %}
+          ·
+          <a href="/en/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise inquiries</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRIVACY -->
+<section id="privacy" class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="PRIVACY" title="Your footage is never sent outside" sub="We publish what data is sent and the steps for running the app with the network disconnected. You can check it for yourself." %}
+    {% include disclosure-table.html %}
+    <div class="mt-5 card p-6">
+      <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}<h3 class="text-[15px] font-bold text-ink">Check for yourself that it works offline</h3></div>
+      <ol class="ml-5 list-decimal text-[14px] leading-[2] text-ink-2 marker:text-ink-4">
+        {%- for step in site.data.l10n.en.disclosure.offline_steps %}
+        <li>{{ step }}</li>
+        {%- endfor %}
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- WORKFLOW -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <div class="grid items-center gap-10 lg:grid-cols-2">
+      <div>
+        {% include section-title.html kicker="INTEGRATION" title="Import into Adobe Premiere Pro with one click" sub="Automatically import the mosaic information detected by AI into your Premiere Pro project. Instead of applying mosaic from scratch, you only make the final adjustments in the editing environment you know." align="left" %}
+        <ul class="-mt-6 flex flex-col gap-2.5">
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Send directly from the video card menu</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Guides you through the plugin setup automatically</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Reproduces the mosaic positions and sizes as they are</span></li>
+          <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>You can also export with mosaic burned in from within the app (NVENC supported)</span></li>
+        </ul>
+      </div>
+      <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
+        <img src="/assets/img/pr_image.webp" alt="The Program Monitor in Adobe Premiere Pro. Mosaic is applied to the faces of the 2 people on screen using the mosaic information imported from Deepmosaic (Japanese UI)" width="1593" height="1332" loading="lazy" decoding="async" class="block w-full">
+      </div>
+    </div>
+
+    <div class="mt-16 grid gap-5 md:grid-cols-3">
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">1</div><h3 class="mb-2 text-[16px] font-bold text-ink">Select videos</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">Select files or folders, or drag and drop them. You can process several videos at once.</p></div>
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">2</div><h3 class="mb-2 text-[16px] font-bold text-ink">AI detects</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">4 stages: preparation → preprocessing → detection → analysis. You can wait while checking the processing fps and the time remaining.</p></div>
+      <div class="card p-6"><div class="numeral mb-3 text-[42px]">3</div><h3 class="mb-2 text-[16px] font-bold text-ink">Review and export</h3><p class="text-[13.5px] leading-[1.95] text-ink-2">Review and correct the detection results, then send them to Premiere Pro or export with mosaic burned in.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="py-24">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    {% include section-title.html kicker="PRICING" title="3 plans to match your workload" sub="To subscribe to a paid plan, use &quot;Subscribe&quot; on each plan and sign in with your Web app account. You can use the same account in the Microsoft Store version of the app as it is." %}
+    {% include pricing-cards.html %}
+    <p class="mt-6 text-center text-[13.5px] text-ink-2">
+      See the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a> for details.
+    </p>
+  </div>
+</section>
+
+<!-- DISCLOSURE -->
+<section class="border-y border-hair bg-surface-alt py-24">
+  <div class="mx-auto w-[92%] max-w-[900px]">
+    {% include section-title.html kicker="DISCLOSURE" title="Known weaknesses and limitations" sub="We do not make claims such as &quot;guaranteed to pass review&quot; or &quot;zero missed detections.&quot; We publish in advance the conditions under which detection accuracy tends to drop." %}
+    <div class="mb-6 rounded-lg border-l-[3px] border-warning bg-panel p-5 text-[14px] leading-[1.95] text-ink-body">
+      {{ site.data.l10n.en.disclosure.responsibility }}
+    </div>
+    {% include kv-table.html rows=site.data.l10n.en.disclosure.weaknesses label_width="280px" %}
+    <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">{{ site.data.l10n.en.disclosure.accuracy_note }}</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="scroll-mt-20 py-24">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    {% include section-title.html kicker="FAQ" title="Frequently asked questions" %}
+    {% include faq.html items=site.data.l10n.en.faq.items %}
+  </div>
+</section>
+
+{% include cta-download.html secondary_href="/en/price/" secondary_label="See pricing" %}
+
+{% include footer.html %}
