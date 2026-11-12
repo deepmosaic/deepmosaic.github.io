@@ -1,0 +1,43 @@
+# T-2202 (i18n1112 I18N-704): `_data/disclosure.yml` (送信するもの / しないもの・オフラインの確かめ方・苦手なケース) の英語の文だけ。
+# ja と同じ入れ子・同じ件数・同じ順・note の有無も ja と同じ。内容は実装と一致させた ja の文の訳で、意味を変えない。
+# 法務の文書名は訳す (ja の文書であることの印はページ側が付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/disclosure.yml"
+_source_hash: "6e281dd354f8c8465a3f92c7d667b76744bcfa18cb07f3689371dc1e715c47a1"
+network:
+  sent:
+    - item: "License authentication token"
+    - item: "Version check"
+    - item: "Initial AI model download"
+    - item: "Usage (seconds of video)"
+    - item: "File hash values"
+      note: "File names cannot be recovered from them."
+    - item: "Device identifier (hashed value)"
+      note: "Used to manage the free allowance. The identifier cannot be used to identify the device or the person (while you are signed in, it is linked to your account)."
+    - item: "Date and time you started using the free allowance"
+      note: "Used to manage the free period (the number of days since the app was first launched). Recorded per device and per account."
+    - item: "Operation records such as error information and processing times"
+      note: "Explained when you agree to the End User License Agreement and the Terms of Service."
+  not_sent:
+    - item: "Video and audio"
+    - item: "Frame images and thumbnails"
+    - item: "Coordinates of detection results"
+    - item: "File names"
+      note: "Only hash values are sent."
+    - item: "Project information and work titles"
+offline_steps:
+  - "Complete the initial setup (a network connection is needed only to download the AI models)"
+  - "Unplug the LAN cable or turn off Wi-Fi"
+  - "Load a video, then run detection, editing, and export"
+weaknesses:
+  - key: "Extreme backlight or low light"
+    val: "Accuracy decreases"
+  - key: "Heavy shake or fast camera movement"
+    val: "Accuracy decreases"
+  - key: "Partial occlusion (hands, clothing, props)"
+    val: "Detection may be interrupted"
+  - key: "Unusual angles or compositions with little training data"
+    val: "Accuracy decreases"
+  - key: "Animation and 3DCG works"
+    val: "Accuracy is lower than for live-action footage"
+responsibility: "Responsibility for the final check and for how the content is expressed rests with the creator. This software is intended to make review work more efficient and does not guarantee that your content will pass review."
+accuracy_note: "Measured detection rates will be published together with the measurement conditions (the number of hours and scenes in the test data). Until the figures are finalized, we do not make definitive claims about accuracy."

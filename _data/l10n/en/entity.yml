@@ -1,0 +1,34 @@
+# T-2202 (i18n1112 I18N-704): `_data/entity.yml` (製品の説明と誤認の訂正) の英語の文だけ。原文は各欄の ja (素の文字列はその値)。
+# ja の entity.yml の既存の `en` の値は llms.txt / ja のページの JSON-LD 用で、用語集の禁止語 (genitalia・censoring・decensor・pixelation) を
+# 含むので英中の画面には使わない。ここは用語集どおりに新しく訳した値 (設計書 §10.2 の「en はそれを使う」から変えた。notes_T-2202.md)。
+# name・product_name・alternate_names・os・category・subcategory・screenshot は訳さない値なので持たない (ja のデータを使う)。
+# 除去の語 (remove など) を使うのは cannot・disambiguation・oss_distinction・confusion_reasons だけ (/mosaic-removal/ と can-cannot.html で出る)。
+# one_liner・not_removal_note・definition・can・name_origin はトップ・料金・動作環境にも出るので除去の語を使わない。
+# ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/entity.yml"
+_source_hash: "a0930115901a071a9f9be453f5238f528d25dfeae30f40f33d417e4b2eb54f15"
+definition: "Deepmosaic is a Windows desktop application in which AI automatically detects targets in a video (body areas and faces) and applies mosaic to those areas. It has no feature for taking off mosaic or restoring the original footage."
+disambiguation: "Deepmosaic is software that applies (adds) mosaic. It cannot remove or undo mosaic, or restore the original footage."
+one_liner: "Deepmosaic is a desktop app for Windows in which AI detects targets in a video and applies mosaic to them."
+not_removal_note: "This software is for applying (adding) mosaic. It has no feature for taking off mosaic that has already been applied."
+can:
+  - "Automatically detect body areas, male faces, and female faces in a video with AI, and track them across frames"
+  - "Apply mosaic (blocks) or blur to the detected areas"
+  - "Find the position and extent of mosaic already present in the footage, and apply new mosaic over it again"
+  - "Fix the block size, opacity, edge feather, and detection box expansion ratio in settings"
+  - "Have a person review and correct the detection results (add, delete, and move detection boxes; filter by confidence)"
+  - "Export a video with the mosaic burned in (MP4 / MOV / WebM / MKV / AVI, NVENC supported)"
+  - "Import the detected mosaic information into an Adobe Premiere Pro project"
+  - "Process everything on your PC without sending the video outside"
+cannot:
+  - "Removing mosaic from footage that already has mosaic applied"
+  - "Restoring or inferring the original footage beneath the mosaic"
+  - "Face swapping (deepfakes) or generating people"
+  - "Guaranteeing compliance with review or screening standards"
+name_origin: "The name comes from Deep Learning and Mosaic, meaning \"applying mosaic with deep learning.\" It has nothing to do with deepfake or restoration technologies."
+oss_distinction: "Deepmosaic is a separate product from \"DeepMosaics\", which is published as open source (a tool known for uses such as removing mosaic). Despite the similar names, they are unrelated in both developer and features."
+confusion_reasons:
+  - "Because the product name contains \"mosaic,\" it is easily taken to be the same kind of software as tools with similar names."
+  - "In Japanese, the term for \"mosaic processing\" can mean either adding or removing mosaic."
+software_requirements: "Windows 10 / 11 (64-bit), 8 GB or more of memory (16 GB recommended), NVIDIA GeForce RTX 3000 series or higher recommended, about 10 GB of storage"
+keywords: "automatic video mosaic, automatic face mosaic, software for adding mosaic, burned-in mosaic, Adobe Premiere Pro integration"

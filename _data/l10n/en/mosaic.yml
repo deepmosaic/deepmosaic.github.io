@@ -1,0 +1,32 @@
+# T-2202 (i18n1112 I18N-704): `_data/mosaic.yml` (モザイクの設定の表) の英語の文だけ。ja と同じ入れ子・同じ件数・同じ順。
+# val の中の <strong> と priority_note の &gt; (実体参照) はそのまま残す。数値 (粒の数・範囲・倍率・%・px) は ja と同じ。
+# アプリの画面の名前 (「ピクセルサイズを設定」・ピクセルサイズ自動・最も粗い粒) は W8 でアプリの辞書と突き合わせる (notes_T-2202.md)。
+# ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/mosaic.yml"
+_source_hash: "7ed35d5e9083cfa48b2e21c3847d59b9346ddd954269359ac8205324c400d766"
+scopes:
+  - key: "All"
+    val: "Defaults for the whole project"
+  - key: "By class"
+    val: "Per detection class, such as body areas, male faces, and female faces"
+  - key: "By ID"
+    val: "Per individual tracked target"
+  - key: "By scene"
+    val: "Per cut"
+priority_note: "The order of priority is By ID &gt; By class &gt; By scene &gt; All. Settings for a narrower scope take precedence. A scope with an override shows an indicator, and you can clear each one individually."
+controls:
+  - key: "Pixel size"
+    val: "Set it on the \"Set pixel size\" screen while checking the preview and the graph. Block size is expressed as the <strong>number of blocks across the screen width</strong>, so it looks the same even if the video resolution differs. <strong>Fixed</strong> (default: 53 blocks across the width) uses the same blocks for every target. Turn on <strong>Auto pixel size</strong> to change the blocks according to the size of the target."
+  - key: "By size range"
+    val: "For each range of target size (as a proportion of the screen width), set the number of blocks across the width (1–6 ranges). The block size stays the same within a cut and within the same ID."
+  - key: "Proportional to divisions"
+    val: "Uses blocks equal to the target size divided by the number of divisions (8–64). You can limit how coarse the blocks get with \"Coarsest blocks\" (N or more blocks across the width). The block size stays the same within a cut and within the same ID."
+  - key: "Size (bbox expansion ratio)"
+    val: "Enlarges or shrinks the detection box from its center to adjust the mosaic area (0.5x–2x). You can choose to keep a margin instead of cutting it close."
+  - key: "Type, opacity, and edge feather"
+    val: "Switch between mosaic (blocks) and blur (Gaussian blur), opacity (0–100%; the default of 100% covers completely), and edge feather (0–64 px)"
+  - key: "Confidence threshold"
+    val: "Only detections at or above the specified confidence are shown and get mosaic applied (0–100%)."
+  - key: "Sharp colors"
+    val: "Takes the block color from 1 sampled point instead of the average of the area (equivalent to Sharp Colors in Premiere Pro; off by default)."
+note: "Each setting can be reset to its default with the button at its right end. You can drag the panel to any position and keep editing with it open."
