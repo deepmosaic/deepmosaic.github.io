@@ -50,6 +50,8 @@ schemas:
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
       <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>
+      {%- comment -%} T-2304: Microsoft Store の副ボタン。_data/site.yml の distribution.store_enabled が true のときだけ出る (部品が判断する) {%- endcomment %}
+      {%- include store-button.html dl="hero-store" size="large" %}
       {%- comment -%}
         X-707: Web 版 (app.deepmosaic.co.jp) への導線。公開は全機能完成後に 1 回なので、
         _data/site.yml の web_app.enabled が false の間は描画しない (ON 手順もそちらを参照)。

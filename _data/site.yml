@@ -62,6 +62,17 @@ web_app:
   url: "https://app.deepmosaic.co.jp/"
   trial_minutes: 10
 
+# ── 配布の種類 (T-2304、backlog1113) ───────────────────────────────────
+# 2.14 はサイト配布版 (インストーラ + 自動更新) と Microsoft Store 版の両方で出す。ダウンロードの既定はインストーラ
+# (`_data/lang/<lang>.json` の `app_download_link`)。
+# store_enabled: true で「Microsoft Store で入手」の副ボタン (_includes/store-button.html) が
+# トップのヒーロー・DL の CTA (トップ / 料金 / 動作環境)・docs の #install・/join/ に 3 言語で同時に出る。
+# **Store のページが公開されたら true にする** (ここ 1 行だけ。部品以外で同じ条件を書かない)。
+# false の間は何も出さない (空の要素も残さない)。検査は scripts/i18n/checks/store.mjs (check-site) と
+# scripts/check-store-toggle.mjs (true にした写しでビルドして 4 か所 × 3 言語を確かめる)。
+distribution:
+  store_enabled: false
+
 # ── ROI 計算機の既定値 ─────────────────────────────────────────────────
 # 「現状の1本あたりコスト」の既定 ¥24,000 は 時給¥3,000 × 8時間 の試算。
 # 比較表の金額と同じ値なので、ここを唯一の出所にして二重管理を防ぐ。

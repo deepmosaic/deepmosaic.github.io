@@ -1,0 +1,22 @@
+{%- comment -%}
+Microsoft Store のボタン (T-2304、backlog1113)。
+
+2.14 はサイト配布版 (インストーラ) と Store 版の両方で出す。ダウンロードの既定はインストーラ (`download-button.html`)。
+このボタンは `_data/site.yml` の `distribution.store_enabled` が true のときだけ出す副ボタン (false のときは何も出さない)。
+**切り替えを読むのはこの部品だけ。** 置き場所 (ヒーロー・DL の CTA・docs の #install・/join/) は条件を書かずにこの部品を置く。
+
+params:
+  dl     (必須) 置き場所ごとの識別子 (hero-store / cta-store / docs-install-store / join-store)。
+         `data-dl` (DL の計測の目印、src/main.js の initDownloadTracking) と `data-store-button` (出し分けの検査の目印) に入る。
+         計測しないページ (`page.no_tracking`、例: /join/) では data-dl を出さない。
+  size   (任意) "large" で `btn-lg`
+  wrap   (任意) 包む <div> の class (置き場所が段落の中などで、ボタンの前後に余白が要るとき)。false のときは包みも出さない。
+
+href は掲載ページ (`https://apps.microsoft.com/detail/<app_store_product_id>`)。ファイル DL ではないので `download` 属性は付けない。
+掲載ページの URL には流入元の utm を付けない (src/lib/attribution.js の UNDECORATED_HOSTS)。
+文: ja は直書き、英中は `_data/l10n/<lang>/parts.yml` の st_label。検査は scripts/i18n/checks/store.mjs と scripts/check-store-toggle.mjs。
+{%- endcomment -%}
+{%- if site.data.site.distribution.store_enabled -%}
+{%- assign st_L = site.data.lang[page.lang] -%}{%- assign st_P = site.data.l10n[page.lang].parts -%}
+{% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="btn-secondary{% if include.size == 'large' %} btn-lg{% endif %}" href="https://apps.microsoft.com/detail/{{ st_L.app_store_product_id }}" target="_blank" rel="noopener noreferrer" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include icon.html name="ExternalLink" class="h-5 w-5" %}{% if st_P %}{{ st_P.st_label }}{% else %}Microsoft Store で入手{% endif %}</a>{% if include.wrap %}</div>{% endif %}
+{%- endif -%}

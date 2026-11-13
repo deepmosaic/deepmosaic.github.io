@@ -11,3 +11,6 @@ assets/dist/
 
 # Playwright (E2E: T-286) — ブラウザ本体とレポート/トレースは再生成物
 e2e/.artifacts/
+
+# T-2304: scripts/check-store-toggle.mjs が一時的に作る _data の写し (終わると消す)
+.store-toggle-data/

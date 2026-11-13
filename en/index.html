@@ -4,7 +4,7 @@ lang: en
 permalink: /en/
 ja_url: /
 source: index.html
-source_hash: "0ead458905d841bd103d93df46acfe1cea8243fd123507ad8c1428eaa447378d"
+source_hash: "2129f40588aafeb16d10f11f62f7b50e677d15b307181de92bf21e17dbfbd1fd"
 title: Mosaic work, down to a final check
 seo_title: AI software that adds mosaic to videos | Deepmosaic
 description: Deepmosaic is a Windows app in which AI automatically detects targets in a video and adds mosaic to them. It cannot take off or undo mosaic. Detection targets are male body areas, female body areas, human faces, and the positions of mosaic already in the video. All processing happens on your PC, and footage is never sent outside. Supports Adobe Premiere Pro integration.
@@ -42,6 +42,7 @@ schemas:
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
       <a href="{{ site.data.lang[page.lang].app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}Download for free</a>
+      {%- include store-button.html dl="hero-store" size="large" %}
       {%- if site.data.site.web_app.enabled %}
       <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}Try it in your browser (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</a>
       {%- endif %}

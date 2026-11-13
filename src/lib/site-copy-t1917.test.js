@@ -91,7 +91,11 @@ test('DL ボタン / リンクは app_download_link を使い、download 属性�
 test('ヘッダー・フッター・ヒーロー・DL ボタンに Store の掲載ページや「Microsoft Store」の文を出さない', () => {
 	// 部品は全体、トップのページはヒーローの DL ボタンだけを見る (料金の節の文は T-2306 が直す)
 	const PAGES = ['index.html', 'en/index.html', 'zh-tw/index.html']
-	const targets = [...DL_FILES.filter((rel) => !PAGES.includes(rel)), '_includes/cta-download.html', '_data/l10n/en/nav.yml', '_data/l10n/zh-tw/nav.yml', '_data/l10n/en/parts.yml', '_data/l10n/zh-tw/parts.yml'].map((rel) => [rel, stripComments(read(rel))])
+	// T-2304: parts.yml の st_label は Store のボタン (store-button.html、切り替えが true のときだけ出る) の文なので除く
+	const targets = [...DL_FILES.filter((rel) => !PAGES.includes(rel)), '_includes/cta-download.html', '_data/l10n/en/nav.yml', '_data/l10n/zh-tw/nav.yml', '_data/l10n/en/parts.yml', '_data/l10n/zh-tw/parts.yml'].map((rel) => [
+		rel,
+		stripComments(read(rel)).replace(/^st_label:.*$/m, ''),
+	])
 	for (const rel of PAGES) {
 		const hero = stripComments(read(rel)).match(/<a\s[^>]*data-dl="hero"[^>]*>[\s\S]*?<\/a>/)?.[0]
 		assert.ok(hero, `${rel}: ヒーローの DL ボタンが無い`)

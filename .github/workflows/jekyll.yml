@@ -198,6 +198,9 @@ jobs:
           done
           # T-2199 (i18n1112): 多言語化のビルド出力の検査 (scripts/i18n/checks/*.mjs。ja のページの不変の検査は基点が要るので CI に載せない)
           node scripts/i18n/check-site.mjs _site || fail=1
+          # T-2304: Microsoft Store のボタンの切り替え (_data/site.yml の distribution.store_enabled) を true にした写しの
+          # データで別にビルドし (出力は一時フォルダ、_site は触らない)、4 か所 × 言語にボタンが出ることを確かめる
+          node scripts/check-store-toggle.mjs || fail=1
           # _data/plans.yml と Supabase plan_catalog の突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
           # docs の回帰ガード (TICKET-SITE-48): 契約 ID 20 個 / 目次の ID / ページ内リンク /
