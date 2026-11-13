@@ -10,7 +10,7 @@
 //     ビルドは `--config _config.yml,<一時の設定>` で `data_dir` をその写しに向け、出力は OS の一時フォルダに出す。
 //     本物の `_data` と `_site` は触らない。終わったら写しと一時フォルダを消す (`--keep` で出力を残す)。
 //   - 検査は `scripts/i18n/checks/store.mjs` の `checkStore(ctx, true)` (4 か所 × 言語に 1 つずつ、href・文・計測の目印、
-//     置き場所以外に出ていないこと)。ほかの check-site のモジュール (英中の data-dl の一致など) も同じ出力に当てる。
+//     置き場所以外に出ていないこと、T-1921: 法務文書の配信ストア版の記述が出ていること)。ほかの check-site のモジュール (英中の data-dl の一致など) も同じ出力に当てる。
 //   - 前提: `npm run build` 済み (assets/dist) と Ruby / Bundler (`bundle exec jekyll`)。
 //   - 終了コード: 0 = 合格 / 1 = 検査の不合格 / 2 = 準備やビルドの失敗。
 

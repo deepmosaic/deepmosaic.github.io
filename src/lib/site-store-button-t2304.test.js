@@ -18,7 +18,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { makeContext } from '../../scripts/i18n/check-site.mjs'
-import check, { checkStore, expectedPlacements, readStoreEnabled, STORE_LABELS, SUBSCRIBE_PAGES } from '../../scripts/i18n/checks/store.mjs'
+import check, { checkStore, expectedPlacements, LEGAL_STORE_MARKS, readStoreEnabled, STORE_LABELS, SUBSCRIBE_PAGES } from '../../scripts/i18n/checks/store.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
@@ -162,6 +162,8 @@ function enabledFiles() {
 	}
 	// T-2306: 申し込みのページの Store 版の文と FAQ (true のときだけ)
 	for (const rel of SUBSCRIBE_PAGES) files[rel] = subscribePage(true)
+	// T-1921: 法務文書の配信ストア版の記述 (true のときだけ)
+	for (const [rel, marks] of Object.entries(LEGAL_STORE_MARKS)) files[rel] = `<html><body><p>x</p>${marks.map((m) => `<p>${m}</p>`).join('')}</body></html>`
 	return files
 }
 
@@ -215,10 +217,20 @@ test('check (false): 何も出ていなければ 0 件、Store のボタンや�
 	withSite({ ...clean, 'price/index.html': '<p data-store-note="subscribe">x</p>' }, (ctx) => {
 		assert.match(checkStore(ctx, false).join(' / '), /price\/index\.html.*data-store-note/)
 	})
-	// 法務文書の本文は対象外 (T-1921 で別に扱う)
-	withSite({ ...clean, 'company/privacy/index.html': '<a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW">x</a>', 'en/company/cookie/index.html': '<a href="https://apps.microsoft.com/">x</a>' }, (ctx) => {
-		assert.deepEqual(checkStore(ctx, false), [])
-	})
+	// T-1921: 法務文書も対象。false の出力はサイト配布版の記述だけ (配信ストアの語も掲載ページへのリンクも無い)
+	const legalClean = { 'company/privacy.html': '<p>9-1 サイト配布版について</p><!-- 配信ストア版は切り替えで出す -->', 'company/cookie.html': '<p>サイト配布版</p>' }
+	withSite({ ...clean, ...legalClean }, (ctx) => assert.deepEqual(checkStore(ctx, false), [], 'HTML のコメントの中の語は数えない'))
+	for (const [what, rel, html] of [
+		['privacy の配信ストア版の記述', 'company/privacy.html', '<p>9-2 配信ストア版について</p>'],
+		['cookie の配信ストアの文', 'company/cookie.html', '<p>この記録を配信ストアへ引き渡さず</p>'],
+		['privacy の掲載ページへのリンク', 'company/privacy.html', '<a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW">x</a>'],
+	]) {
+		withSite({ ...clean, ...legalClean, [rel]: html }, (ctx) => {
+			const errors = checkStore(ctx, false)
+			assert.equal(errors.length, 1, `${what}: ${errors.join(' / ')}`)
+			assert.ok(errors[0].startsWith(`${rel}:`), `${what}: ${errors[0]}`)
+		})
+	}
 })
 
 test('check (true): 4 か所 × 言語に正しいボタンがあれば 0 件、欠け・URL・文・計測の違いを検出', () => {
@@ -239,6 +251,11 @@ test('check (true): 4 か所 × 言語に正しいボタンがあれば 0 件、
 		['JSON-LD に Store 版の FAQ が無い', (f) => ({ ...f, 'subscribe/index.html': f['subscribe/index.html'].replace(', {"@type": "Question", "name": "Microsoft Store x"}', '') }), /^subscribe\/index\.html.*JSON-LD/],
 		['申し込みのページが無い', (f) => { const g = { ...f }; delete g['subscribe/index.html']; return g }, /^subscribe\/index\.html/],
 		['ほかのページに Store 版の文', (f) => ({ ...f, 'price/index.html': f['price/index.html'] + '<p data-store-note="subscribe">x</p>' }), /price\/index\.html.*data-store-note/],
+		// T-1921: 法務文書の配信ストア版の記述
+		['privacy に 9-2 配信ストア版が無い', (f) => ({ ...f, 'company/privacy.html': f['company/privacy.html'].replace('<p>9-2 配信ストア版について</p>', '') }), /company\/privacy\.html.*9-2 配信ストア版について/],
+		['privacy の文がコメントの中だけ', (f) => ({ ...f, 'company/privacy.html': f['company/privacy.html'].replace('<p>9-2 配信ストア版について</p>', '<!-- 9-2 配信ストア版について -->') }), /company\/privacy\.html.*9-2/],
+		['cookie が無い', (f) => { const g = { ...f }; delete g['company/cookie.html']; return g }, /company\/cookie\.html/],
+		['法務文書に Store のボタン', (f) => ({ ...f, 'company/cookie.html': f['company/cookie.html'] + btn('cta-store', 'ja') }), /company\/cookie\.html.*cta-store/],
 	]
 	for (const [what, edit, re] of cases) {
 		withSite(edit(enabledFiles()), (ctx) => {
