@@ -21,6 +21,7 @@ import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
 import { compareStructure } from '../../scripts/i18n/parity.mjs'
+import { fmScalar } from './front-matter.js'
 import { sourceHash } from '../../scripts/i18n/source-hash.mjs'
 import { lintText } from '../../scripts/i18n/site-lint.mjs'
 import { makeContext } from '../../scripts/i18n/check-site.mjs'
@@ -37,13 +38,6 @@ function splitFrontMatter(src) {
 	const m = src.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/)
 	assert.ok(m, 'front matter が無い')
 	return { fm: m[1], body: m[2] }
-}
-
-/** front matter のトップレベルの scalar (`key: value`) */
-function fmScalar(fm, key) {
-	const m = fm.match(new RegExp(`^${key}:[ \\t]*(.*?)[ \\t]*$`, 'm'))
-	if (!m) return undefined
-	return m[1].replace(/^(["'])(.*)\1$/, '$2')
 }
 
 /** front matter の配列 (`key:` の次の `  - x` の行) */

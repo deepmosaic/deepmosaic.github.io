@@ -212,6 +212,8 @@ npm run build && bundle exec jekyll build --strict_front_matter
 > `page.schemas` / `page.seo_title` など**未定義キーの分岐を全て例外にする**ため、
 > このサイトの設計とは両立しない。ゲートは `--strict_front_matter` のみ。
 
+front matter が YAML として読めるか (引用符なしの値の中の `: `・値の先頭の YAML の記号・引用符の閉じ忘れ・タブのインデントなど) は `npm test` の `src/lib/front-matter.test.js` (T-2322) が全ページを先に見る (YAML の依存を足さない小さな検査で、見る形・見ない形は `src/lib/front-matter.js` の先頭のコメント。テストの front matter の読み取り `fmScalar` もここにある)。
+
 #### ビルド出力の回帰チェック
 CI (`.github/workflows/jekyll.yml` の `Verify build output`) が実施する。ローカルで
 同じことを確認したいときは、素通しファイルが HTML 化していないかを見るのが要点。
