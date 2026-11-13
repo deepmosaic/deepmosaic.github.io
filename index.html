@@ -64,7 +64,7 @@ schemas:
         (src/lib/attribution.js の ga4EventNameFor)。
       {%- endcomment -%}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}ブラウザでお試し（{{ site.data.site.web_app.trial_minutes }} 分までの動画・インストール不要）</a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>ブラウザでお試し<span class="hidden sm:inline">（{{ site.data.site.web_app.trial_minutes }} 分までの動画・インストール不要）</span></span></a>
       {%- endif %}
       <a href="/docs" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
     </div>

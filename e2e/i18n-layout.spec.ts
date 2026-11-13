@@ -251,8 +251,56 @@ async function inspect(page: Page, t: Target, width: Width): Promise<void> {
     if (s.sampled.details > 0) {
       expect.soft(s.sampled.leaksInDetails, `${s.state}: <details> の中を採れていない`).toBeGreaterThan(0);
     }
+    // T-2308: トップは「ja でもはみ出す (preexisting)」を警告で見逃さない (ヒーローの副ボタンの欠けを直したので 0 件のはず)
+    if (t.jaPath === '/') {
+      const pre = s.overflow.warnings.filter((w) => w.reason === 'preexisting');
+      expect.soft(pre, `${s.state}: ja と ${t.lang} の両方ではみ出す`).toEqual([]);
+    }
   }
 }
+
+// ---- T-2308: ボタンが Pixel 7 (412px) の幅に収まる -------------------------------------------
+// ヒーローの「ブラウザでお試し（…）」が ja 約 492px / en 約 516px で、祖先の section.overflow-hidden に両端を切られていた
+// (横スクロールが出ないので (1) では見つからず、ja でも同じなので (2) では警告 preexisting だった)。
+// ja / en / zh-tw のトップで、見えているボタン (.btn-*) が全部 viewport の中に収まることを確かめる。
+
+const BUTTON_SELECTOR = '.btn-primary, .btn-secondary, .btn-ghost';
+const TOP_PAGES = ['/', '/en/', '/zh-tw/'] as const;
+
+interface ButtonBox {
+  text: string;
+  left: number;
+  right: number;
+}
+
+async function visibleButtons(page: Page): Promise<{ innerWidth: number; buttons: ButtonBox[] }> {
+  return page.evaluate((selector) => {
+    const buttons = [...document.querySelectorAll<HTMLElement>(selector)]
+      .filter((el) => el.checkVisibility({ checkOpacity: true, checkVisibilityCSS: true }))
+      .map((el) => ({ el, r: el.getBoundingClientRect() }))
+      .filter(({ r }) => r.width > 0 && r.height > 0)
+      .map(({ el, r }) => ({ text: (el.innerText || '').trim().slice(0, 40), left: r.left, right: r.right }));
+    return { innerWidth: window.innerWidth, buttons };
+  }, BUTTON_SELECTOR);
+}
+
+test.describe('mobile (Pixel 7) のボタンの幅 (T-2308)', () => {
+  const { defaultBrowserType: _browser, ...PIXEL_7 } = devices['Pixel 7'];
+  test.use(PIXEL_7);
+  for (const path of TOP_PAGES) {
+    test(`${path} のボタンが画面の幅に収まる`, async ({ page }) => {
+      const res = await page.goto(path, { waitUntil: 'load' });
+      expect(res?.ok(), `${path} が開けない (${res?.status()})`).toBe(true);
+      await settle(page);
+      const { innerWidth, buttons } = await visibleButtons(page);
+      expect(innerWidth).toBe(412);
+      // 採取の空振りを防ぐ: ヒーローの主ボタンとドキュメントのボタンは必ずある
+      expect(buttons.length).toBeGreaterThanOrEqual(2);
+      const out = buttons.filter((b) => b.left < -0.5 || b.right > innerWidth + 0.5);
+      expect(out, `${path}: 画面の外にはみ出すボタン`).toEqual([]);
+    });
+  }
+});
 
 // ---- 対照 (採取の式が壊れたら緑にならないように) ------------------------------------
 // はみ出しの 6 つの kind・漏れ・除外するものを 1 枚の使い捨てのページに置き、採取の結果をそのまま確かめる。

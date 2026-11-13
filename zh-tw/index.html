@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/
 ja_url: /
 source: index.html
-source_hash: "faec9a032d44de77a0d5430389a8971a4ec8487ef5e1e5cbc1cbdb6b99448fd8"
+source_hash: "d94095701b05ab4873642a3dc203c7bf3a9a1f51c921b05d21d8c662a2d55f43"
 title: 讓馬賽克作業只剩最終確認
 seo_title: 自動為影片加上馬賽克的 AI 軟體｜Deepmosaic
 description: Deepmosaic 是由 AI 自動偵測影片中的對象並加上馬賽克的 Windows 應用程式。無法去掉或解除馬賽克。偵測對象為男性身體部位、女性身體部位、人的臉部，以及影片中既有馬賽克的位置。所有處理都在您的電腦上完成，影像不會傳送到外部。支援與 Adobe Premiere Pro 整合。
@@ -46,7 +46,7 @@ schemas:
       <a href="{{ site.data.lang[page.lang].app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}免費下載</a>
       {%- include store-button.html dl="hero-store" size="large" %}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}在瀏覽器中試用（影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘，免安裝）</a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>在瀏覽器中試用<span class="hidden sm:inline">（影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘，免安裝）</span></span></a>
       {%- endif %}
       {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}查看說明文件{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" inside=true %}
     </div>

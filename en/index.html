@@ -4,7 +4,7 @@ lang: en
 permalink: /en/
 ja_url: /
 source: index.html
-source_hash: "faec9a032d44de77a0d5430389a8971a4ec8487ef5e1e5cbc1cbdb6b99448fd8"
+source_hash: "d94095701b05ab4873642a3dc203c7bf3a9a1f51c921b05d21d8c662a2d55f43"
 title: Mosaic work, down to a final check
 seo_title: AI software that adds mosaic to videos | Deepmosaic
 description: Deepmosaic is a Windows app in which AI automatically detects targets in a video and adds mosaic to them. It cannot take off or undo mosaic. Detection targets are male body areas, female body areas, human faces, and the positions of mosaic already in the video. All processing happens on your PC, and footage is never sent outside. Supports Adobe Premiere Pro integration.
@@ -44,7 +44,7 @@ schemas:
       <a href="{{ site.data.lang[page.lang].app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}Download for free</a>
       {%- include store-button.html dl="hero-store" size="large" %}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}Try it in your browser (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>Try it in your browser<span class="hidden sm:inline"> (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</span></span></a>
       {%- endif %}
       {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}{% include ja-link.html href="/docs" label=docs_label class="btn-secondary btn-lg" inside=true %}
     </div>
