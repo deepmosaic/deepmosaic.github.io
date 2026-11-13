@@ -3,7 +3,7 @@
 # アプリの画面の名前 (「ピクセルサイズを設定」・ピクセルサイズ自動・最も粗い粒) は W8 でアプリの辞書と突き合わせる (notes_T-2202.md)。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/mosaic.yml"
-_source_hash: "7ed35d5e9083cfa48b2e21c3847d59b9346ddd954269359ac8205324c400d766"
+_source_hash: "102769e16c79eb665fe8eb7d27d9d775981a653be925a409195adecad2284bd3"
 scopes:
   - key: "All"
     val: "Defaults for the whole project"

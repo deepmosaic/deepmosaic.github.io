@@ -6,7 +6,7 @@
 # one_liner・not_removal_note・definition・can・name_origin はトップ・料金・動作環境にも出るので除去の語を使わない。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/entity.yml"
-_source_hash: "a0930115901a071a9f9be453f5238f528d25dfeae30f40f33d417e4b2eb54f15"
+_source_hash: "342880aa4a1d8693bfebdff540a2c735f3265e479fd6e4aff6055435fac6807d"
 definition: "Deepmosaic is a Windows desktop application in which AI automatically detects targets in a video (body areas and faces) and applies mosaic to those areas. It has no feature for taking off mosaic or restoring the original footage."
 disambiguation: "Deepmosaic is software that applies (adds) mosaic. It cannot remove or undo mosaic, or restore the original footage."
 one_liner: "Deepmosaic is a desktop app for Windows in which AI detects targets in a video and applies mosaic to them."

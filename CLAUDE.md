@@ -90,7 +90,7 @@ npm run build && bundle exec jekyll build
 
 ## Conventions
 
-- 用語 (T-1901): 検出対象 (label 0) の利用者に見える名前は「身体のプライバシー部位」(旧「局部」は使わない)。識別子 (`porn` / `detect_genitalia` / label の数値 / env 名 / API の欄名) と過去の記録 (CHANGELOG / docs_draft) は変えない
+- 用語 (T-2249、T-1901 の取り消し): 検出対象 (label 0) の日本語の表示名は「局部」(T-1901 の「身体のプライバシー部位」は使わない)。英中の訳は `body areas` (`private` を付けない) / `身體部位` のまま。識別子 (`porn` / `detect_genitalia` / label の数値 / env 名 / API の欄名) と過去の記録 (CHANGELOG / docs_draft) は変えない
 - Jekyll の Liquid テンプレート構文
 - 画像は `assets/img/` に配置。**WebP 必須** (TICKET-SITE-13)
   - スクリーンショットは front リポの `node scripts/e2e/screenshots.mjs` が **PNG で**出力する。

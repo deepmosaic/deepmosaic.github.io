@@ -33,7 +33,7 @@ T-1470 (req1025): web 2.8.6 は本番ビルドで追跡 / 前後に反映 (+ キ
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>Web 版は、インストール不要でブラウザから使える Deepmosaic です。動画の読み込みから AI 検出、検出結果の編集、モザイクを焼き込んだ動画の書き出しまでを、<b>すべてお使いの PC のブラウザの中で</b>処理します。映像・音声・フレーム画像・検出結果がサーバーに送られることはありません。通信するのは、サインインとプランの確認、AI モデルの取得、利用状況の記録（処理時間や動画の形式・長さなどの数値）とエラーの報告だけです（<a href="/company/privacy/">プライバシーポリシー</a>）。</p>
     <p><b>Web 版はお試し用です。</b>1 本 {{ site.data.site.web_app.trial_minutes }} 分までの動画を処理できます。それより長い動画、多数の動画、1.9GB を超える動画は Desktop 版をご利用ください（<a href="#requirements">動画の長さ</a>）。有料プラン（Light / Pro）と組織（Enterprise）のアカウントでは、この長さの制限はありません。</p>
-    <p>アカウントとプラン、無料枠の時間は Desktop 版と共通です。検出対象（身体のプライバシー部位 / 男性の顔 / 女性の顔）と編集ページの機能も同じなので、操作の詳細は <a href="/docs/">Desktop 版のガイド</a>を参照してください。このページでは Web 版に固有の要件と違いをまとめます。</p>
+    <p>アカウントとプラン、無料枠の時間は Desktop 版と共通です。検出対象（局部 / 男性の顔 / 女性の顔）と編集ページの機能も同じなので、操作の詳細は <a href="/docs/">Desktop 版のガイド</a>を参照してください。このページでは Web 版に固有の要件と違いをまとめます。</p>
     {% if site.data.site.web_app.enabled %}<p>Web 版は <a href="{{ site.data.site.web_app.url }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> から開けます。</p>{% endif %}
   </div>
 </section>
@@ -99,7 +99,7 @@ T-1470 (req1025): web 2.8.6 は本番ビルドで追跡 / 前後に反映 (+ キ
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">検出</div>
-        <div class="kv-val">ほぼ同じ（検出対象 3 種と「モザイク」（素材にすでにかかっているモザイク）、検出範囲、ピクセルサイズの設定（固定 / 大きさの範囲ごと / 分割数で比例）、一括実行、シーンの自動判定）。Web 版は「モザイク」を身体のプライバシー部位・顔と併用できます（Desktop 版は排他で、「モザイク」を ON にするとモザイクの枠だけを検出します。<a href="/docs/#detect-mosaic">すでにかかっているモザイク</a>）。<b>モザイクの精緻化は 2.6.1 から Web 版でも有効</b>です（WebGPU の shader-f16 に対応した GPU とブラウザのとき。関連ファイルとして精緻化用のモデル約 175 MB を追加で取得します）。対応しない環境では四角い枠でモザイクをかけます。処理速度は Desktop 版の半分以下が目安です。<b>検出した枠の軌跡の自動補正（<a href="/docs/#detect">AI検出</a>）は Desktop 版のみ</b>で、Web 版の検出には付きません</div>
+        <div class="kv-val">ほぼ同じ（検出対象 3 種と「モザイク」（素材にすでにかかっているモザイク）、検出範囲、ピクセルサイズの設定（固定 / 大きさの範囲ごと / 分割数で比例）、一括実行、シーンの自動判定）。Web 版は「モザイク」を局部・顔と併用できます（Desktop 版は排他で、「モザイク」を ON にするとモザイクの枠だけを検出します。<a href="/docs/#detect-mosaic">すでにかかっているモザイク</a>）。<b>モザイクの精緻化は 2.6.1 から Web 版でも有効</b>です（WebGPU の shader-f16 に対応した GPU とブラウザのとき。関連ファイルとして精緻化用のモデル約 175 MB を追加で取得します）。対応しない環境では四角い枠でモザイクをかけます。処理速度は Desktop 版の半分以下が目安です。<b>検出した枠の軌跡の自動補正（<a href="/docs/#detect">AI検出</a>）は Desktop 版のみ</b>で、Web 版の検出には付きません</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">編集ページ</div>

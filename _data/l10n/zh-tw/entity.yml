@@ -4,7 +4,7 @@
 # one_liner・not_removal_note・definition・can・name_origin はトップ・料金・動作環境にも出るので除去の語を使わない (ja の「取り除く」は「去掉」)。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/entity.yml"
-_source_hash: "a0930115901a071a9f9be453f5238f528d25dfeae30f40f33d417e4b2eb54f15"
+_source_hash: "342880aa4a1d8693bfebdff540a2c735f3265e479fd6e4aff6055435fac6807d"
 definition: "Deepmosaic 是一款由 AI 自動偵測影片中的對象（身體部位、臉部），並對該範圍套用馬賽克的 Windows 桌面應用程式。不具備去掉或還原馬賽克的功能。"
 disambiguation: "Deepmosaic 是為影片加上（新增）馬賽克的軟體。無法移除、解除或還原馬賽克。"
 one_liner: "Deepmosaic 是一款由 AI 偵測影片中的對象並套用馬賽克的 Windows 桌面應用程式。"
