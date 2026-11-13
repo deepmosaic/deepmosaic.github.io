@@ -12,4 +12,4 @@ faq:
   - q: "Do I need to subscribe with the same account as the app?"
     a: "Yes. Plans are tied to an account (email address). Sign in with the account you use in the app and subscribe. If you don't have an account yet, you can create one from \"Sign in\" on the sign-in screen (your account is created automatically when you sign in with a confirmation code sent to your email)."
   - q: "Where do I change or cancel my plan?"
-    a: "Sign in to the Web app and open \"Manage plan\" from the profile menu at the top right of the screen (you can also change your payment method there. If you downloaded the Windows version, you can also do this from \"Manage plan\" in the profile menu of the app). After you cancel, you can keep using your paid plan until the end of the period you have already paid for."
+    a: "Sign in to the Web app and open \"Manage plan\" from the profile menu at the top right of the screen. You can also change your payment method there. If you downloaded the Windows version, you can also use \"Manage plan\" in the app's profile menu. After you cancel, you can keep using your paid plan until the end of the period you have already paid for."

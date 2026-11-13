@@ -275,7 +275,7 @@ for (const page of PAGES) {
 				assert.equal(/Microsoft Store/.test(install.replace(/<[^>]*>/g, '')), false, '既定の文に Microsoft Store を出さない')
 				assert.match(
 					dl[1],
-					lang === 'en' ? /^Download Deepmosaic \(Windows version\)$/ : /^下載 Deepmosaic（Windows 版）$/,
+					lang === 'en' ? /^Download Deepmosaic for Windows$/ : /^下載 Deepmosaic（Windows 版）$/,
 				)
 			})
 

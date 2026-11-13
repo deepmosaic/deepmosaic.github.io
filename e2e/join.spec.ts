@@ -148,7 +148,7 @@ test('noindex・referrer なし・サイトマップに載らない', async ({ p
 const DOWNLOAD_URL = 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows';
 for (const [path, text] of [
   ['/join/', 'Deepmosaic（Windows 版）をダウンロード'],
-  ['/en/join/', 'Download Deepmosaic (Windows version)'],
+  ['/en/join/', 'Download Deepmosaic for Windows'],
   ['/zh-tw/join/', '下載 Deepmosaic（Windows 版）'],
 ] as const) {
   test(`${path}: アプリのダウンロードへのリンク (別タブ・noopener・計測なし・Store のボタンは既定で出ない)`, async ({ page }) => {

@@ -15,7 +15,7 @@ can:
   - "Automatically detect body areas, male faces, and female faces in a video with AI, and track them across frames"
   - "Apply mosaic (blocks) or blur to the detected areas"
   - "Find the position and extent of mosaic already present in the footage, and apply new mosaic over it again"
-  - "Fix the block size, opacity, edge feather, and detection box expansion ratio in settings"
+  - "Set fixed values for the block size, opacity, edge feather, and detection box expansion ratio in settings"
   - "Have a person review and correct the detection results (add, delete, and move detection boxes; filter by confidence)"
   - "Export a video with the mosaic burned in (MP4 / MOV / WebM / MKV / AVI, NVENC supported)"
   - "Import the detected mosaic information into an Adobe Premiere Pro project"

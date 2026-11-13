@@ -25,7 +25,7 @@ items:
   - q: "Will processing stop if I go over the hour limit?"
     a: "Processing in progress does not stop, and there are no overage charges. If your allowance is not enough, you can add more subscriptions to the same plan (Light: up to %%LIGHT_MAX%% subscriptions for %%LIGHT_TOTAL%% hours a month; Pro: up to %%PRO_MAX%% subscriptions for %%PRO_TOTAL%% hours a month). The included hours for each plan are listed on the pricing page."
   - q: "Is a GPU required? Do you support Mac?"
-    a: "AI detection also works with a CPU alone, but processing becomes much slower (about 2 fps in our measurements). For comfortable use, we recommend an NVIDIA GeForce RTX 3000 series GPU or higher. Lower GPUs have not been tested. A macOS version is in development, and its release date has not been decided. At this time, only Windows 10 / 11 (64-bit) is supported."
+    a: "AI detection also works with a CPU alone, but processing becomes much slower (about 2 fps in our measurements). For comfortable use, we recommend an NVIDIA GeForce RTX 3000 series GPU or higher. GPUs below that level have not been tested. A macOS version is in development, and its release date has not been decided. At this time, only Windows 10 / 11 (64-bit) is supported."
   - q: "Which Adobe products does it work with?"
     a: "It supports Adobe Premiere Pro. You can import AI-detected mosaic information into a Premiere Pro project with one click. The app also guides you through setting up the plug-in automatically. Exporting videos with the mosaic burned in can also be done entirely within the app."
   - q: "How do I update the app?"
