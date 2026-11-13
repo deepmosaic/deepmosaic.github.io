@@ -18,6 +18,11 @@
   true: /subscribe/ ごとに目印 1 つ、Store の FAQ が表示 (<details>) と FAQPage の JSON-LD の両方にある、ほかのページに目印が無い)。
   `node scripts/check-store-toggle.mjs` (true の出力) も合格 (/subscribe/ の FAQ は true で 4 件、false で 3 件)。
 
+- レビューの指摘 (MEDIUM) で追い直し: 最初のコミットでは `index.html` (3 言語) の料金節の sub・`llms.txt` の行・`subscribe/index.html` (3 言語) の description に
+  「（Windows 版をダウンロードしてお使いの方）」の限定が付いていなかった (上の記述と実際が食い違っていた)。追いのコミットで 3 言語とも限定を足した
+  (ja「（Windows 版をダウンロードしてお使いの方）」/ en「(if you downloaded the Windows version)」/ zh「（下載使用 Windows 版的使用者）」、price/index.html と同じ語)。
+  `accept-site.mjs` で en / zh-tw の index と subscribe の source_hash を書き直した。
+
 ## テストの期待値を変えたもの (理由)
 - `src/lib/site-copy-t1922.test.js` (spec が書き直してよいと書いたもの): Store だけを前提にした文の固定を、両方の配布に合う文 + Store の文は部品と store_only だけ、に書き直し。T-2306 の節の検査を追加。
 - `src/lib/site-store-button-t2304.test.js`: checks/store.mjs の単体の模型に申し込みのページを足し、検出のケースを 6 つ追加 (弱めていない)。

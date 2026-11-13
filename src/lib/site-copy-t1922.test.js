@@ -202,20 +202,20 @@ test('導線: フッター・料金ページ・トップの料金節・docs #pla
 test('T-2306: トップの料金節・料金ページ・llms.txt は両方の配布に合う文 (Store 版の文を書かない)', () => {
 	const sub = read('index.html').match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 	assert.ok(sub, 'トップの料金節の sub が無い')
-	assert.match(sub[1], /アプリのプロフィールメニュー、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
+	assert.match(sub[1], /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
 	assert.match(sub[1], /Desktop 版と Web 版の両方/)
 	assert.doesNotMatch(sub[1], /Microsoft Store/)
 	const price = textOf(read('price/index.html'))
 	assert.match(price, /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはお申し込みページから Web 版のアカウントでお申し込みいただけます/)
 	assert.doesNotMatch(price, /Microsoft Store|購入画面/)
 	const llms = read('llms.txt').split(/\r?\n/).find((l) => l.includes('{{ U }}/subscribe/'))
-	assert.match(llms, /プロフィールメニュー/)
-	assert.match(llms, /profile menu/)
+	assert.match(llms, /プロフィールメニュー（Windows 版をダウンロードしてお使いの方）/)
+	assert.match(llms, /profile menu in the app \(if you downloaded the Windows version\)/)
 	assert.doesNotMatch(llms, /Microsoft Store/)
 	// 英中
 	for (const [rel, re] of [
-		['en/index.html', /profile menu in the app/],
-		['zh-tw/index.html', /個人資料選單/],
+		['en/index.html', /profile menu in the app \(if you downloaded the Windows version\)/],
+		['zh-tw/index.html', /個人資料選單（下載使用 Windows 版的使用者）/],
 	]) {
 		const s = read(rel).match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 		assert.ok(s, `${rel}: 料金節の sub が無い`)
