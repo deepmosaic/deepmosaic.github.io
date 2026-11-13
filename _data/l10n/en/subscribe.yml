@@ -1,7 +1,7 @@
 # T-2201 (i18n1112 I18N-703): `_data/subscribe.yml` の英語の訳 (store_note と faq)。faq は ja と同じ順・同じ件数 (4)・同じ位置に store_only (T-2306)。
 # checkout_query などの設定値は持たない (正は ja のデータ)。
 _source: "_data/subscribe.yml"
-_source_hash: "a2fd12afc801f17d4ded6283b220a11538a931dc942d8cfe82ef8b9dd4b51fa4"
+_source_hash: "f0f4c6ba8533acb0611454b792231cf6e5108c68eece538da475b129b16fa3b8"
 store_note: "The Microsoft Store version of the app has no purchase screen. If you use the Microsoft Store version, subscribe on this page (sign in with the same account as the app, and you can use your plan in the app right away)."
 faq:
   - q: "Can I subscribe in the app?"
