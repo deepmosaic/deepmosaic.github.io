@@ -4,7 +4,7 @@ lang: en
 permalink: /en/join/
 ja_url: /join/
 source: join/index.html
-source_hash: "d8f2a448bf8dfc0aaf1bb20e4f543f8ea608d378264b206132722d8f92d41762"
+source_hash: "a2cb3d93a193a878e7bb7bf24eb13b5ffd45691a2acac42e993bf1377288a510"
 title: Open Deepmosaic
 seo_title: "Open Deepmosaic | Deepmosaic"
 description: "A page for opening the Deepmosaic app from the link in the invitation email for businesses."
@@ -17,12 +17,12 @@ no_tracking: true
   T-2210 (i18n1112 I18N-712): 英語の「Deepmosaic を開く」(法人の案内メールのリンクの着地点)。join/index.html (ja) の写しで、構造は ja と同じ
   (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する)。仕組みと注意 (フラグメントの組織コード・自動では開かない・
   計測なし・noindex・ナビに載せない) は join/index.html のコメントを見ること。英中でも同じ。
-  - data-join* の属性と 3 つの表示 (code / admin / invalid)・noscript・Store へのリンクの構造は ja と同じ (src/main.js の initJoinPage がそのまま動く)。
+  - data-join* の属性と 3 つの表示 (code / admin / invalid)・noscript・ダウンロードへのリンク (T-2307) の構造は ja と同じ (src/main.js の initJoinPage がそのまま動く)。
     コピーの結果の文は main.js の COPY_TEXT が <html lang> で英語にする (I18N-708)。インラインのスクリプトを置かない。
   - 手順の中のアプリの画面のボタン名は、アプリの英語の表示に合わせる (desktop の辞書にまだ無い文は用語集から訳した。W8 で突き合わせる)。
   - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
 {%- endcomment -%}
-{%- assign store_url = site.data.lang.ja.app_download_link -%}
+{%- assign download_url = site.data.lang.ja.app_download_link -%}
 
 {% include header.html %}
 
@@ -74,7 +74,7 @@ no_tracking: true
     <div class="mt-12 border-t border-hair pt-8" data-join-install>
       <h2 class="text-[17px] font-bold text-ink">If you haven't installed the app yet</h2>
       <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">
-        <a href="{{ store_url }}" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-store>Get Deepmosaic from Microsoft Store</a>.
+        <a href="{{ download_url }}" download target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-download>Download Deepmosaic (Windows version)</a> and install it.
         After installing it, select "Open in app" on this page again.
       </p>
       {%- include store-button.html dl="join-store" wrap="mt-4" %}

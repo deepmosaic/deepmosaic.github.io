@@ -112,15 +112,26 @@ test('不正なリンクの表示: 文言だけでボタンを出さない', () 
 	assert.equal(/<a\b|<button\b/.test(block), false)
 })
 
-test('アプリをまだ入れていない方: Microsoft Store (既存の DL URL) へ、別タブ・noopener', () => {
+// T-2307 (backlog1113): 既定の入手先はインストーラ (DL の単一管理点 app_download_link)。
+// Store のボタンは切り替え (store_enabled) が true のときだけ出る部品 (join-store) を、文の下に置く。
+test('アプリをまだ入れていない方: Windows 版のダウンロード (app_download_link) へ、別タブ・noopener・計測なし', () => {
+	const install = body.slice(body.indexOf('data-join-install'))
 	assert.match(body, /アプリをまだ入れていない方/)
+	assert.match(textOf(install), /Deepmosaic（Windows 版）をダウンロードしてインストールしてください。/)
 	assert.match(body, /入れた後に、もう一度このページの「アプリで開く」を押してください。/)
-	const store = body.match(/<a\b[^>]*data-join-store[^>]*>/)
-	assert.ok(store, 'Store へのリンクが無い')
-	assert.match(store[0], /href="\{\{ store_url \}\}"/)
-	assert.match(page, /assign store_url = site\.data\.lang\.ja\.app_download_link/)
-	assert.match(store[0], /target="_blank"/)
-	assert.match(store[0], /rel="noopener noreferrer"/)
+	assert.equal(/Microsoft Store/.test(textOf(install)), false, '既定の文に Microsoft Store を出さない')
+	const dl = body.match(/<a\b[^>]*data-join-download[^>]*>([^<]*)<\/a>/)
+	assert.ok(dl, 'ダウンロードへのリンクが無い')
+	assert.equal(dl[1], 'Deepmosaic（Windows 版）をダウンロード')
+	assert.match(dl[0], /href="\{\{ download_url \}\}"/)
+	assert.match(page, /assign download_url = site\.data\.lang\.ja\.app_download_link/)
+	assert.match(dl[0], /\sdownload[\s>]/, 'ファイル DL なので download 属性 (download-button.html と同じ)')
+	assert.match(dl[0], /target="_blank"/)
+	assert.match(dl[0], /rel="noopener noreferrer"/)
+	assert.equal(/data-dl\b/.test(dl[0]), false, '計測しないページなので data-dl を付けない')
+	assert.equal(/data-join-store\b/.test(body), false, '旧い目印 (Store へのリンク) を残さない')
+	// Store のボタンは文の後ろに部品で置く (切り替えは部品だけが読む)
+	assert.ok(install.indexOf('data-join-download') < install.indexOf('include store-button.html dl="join-store"'))
 })
 
 test('自動では開かない: ページに自前のスクリプトや meta refresh を置かない', () => {

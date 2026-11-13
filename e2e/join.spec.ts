@@ -143,15 +143,28 @@ test('noindex・referrer なし・サイトマップに載らない', async ({ p
   expect(await sitemap.text()).not.toContain('/join/');
 });
 
-// T-2303: リンク先は DL の単一管理点 (app_download_link = インストーラ)。文と Store のボタンは T-2307 / T-2304 が直す。
-test('アプリの入手へのリンク (別タブ・noopener)', async ({ page }) => {
-  await open(page, '#code=ABCD-EFGH-2345');
-  const store = page.locator('[data-join-store]');
-  await expect(store).toHaveAttribute('href', 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows');
-  await expect(store).toHaveAttribute('target', '_blank');
-  await expect(store).toHaveAttribute('rel', 'noopener noreferrer');
-  await expect(store).not.toHaveAttribute('data-dl', /.*/);
-});
+// T-2307: 「アプリをまだ入れていない方」は Windows 版のダウンロード (DL の単一管理点 app_download_link = インストーラ) へ。
+// 計測しないページなので data-dl を付けない。Store のボタンは切り替え (既定 false) が true のときだけ出る。
+const DOWNLOAD_URL = 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows';
+for (const [path, text] of [
+  ['/join/', 'Deepmosaic（Windows 版）をダウンロード'],
+  ['/en/join/', 'Download Deepmosaic (Windows version)'],
+  ['/zh-tw/join/', '下載 Deepmosaic（Windows 版）'],
+] as const) {
+  test(`${path}: アプリのダウンロードへのリンク (別タブ・noopener・計測なし・Store のボタンは既定で出ない)`, async ({ page }) => {
+    await page.goto(`${path}#code=ABCD-EFGH-2345`, { waitUntil: 'load' });
+    const install = page.locator('[data-join-install]');
+    const dl = install.locator('[data-join-download]');
+    await expect(dl).toHaveText(text);
+    await expect(dl).toHaveAttribute('href', DOWNLOAD_URL);
+    await expect(dl).toHaveAttribute('download', '');
+    await expect(dl).toHaveAttribute('target', '_blank');
+    await expect(dl).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(dl).not.toHaveAttribute('data-dl', /.*/);
+    await expect(install).not.toContainText('Microsoft Store');
+    await expect(page.locator('[data-store-button], [data-join-store], a[href*="apps.microsoft.com"]')).toHaveCount(0);
+  });
+}
 
 test.describe('モバイル幅', () => {
   const { defaultBrowserType: _browser, ...PIXEL_7 } = devices['Pixel 7'];

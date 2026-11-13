@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/join/
 ja_url: /join/
 source: join/index.html
-source_hash: "d8f2a448bf8dfc0aaf1bb20e4f543f8ea608d378264b206132722d8f92d41762"
+source_hash: "a2cb3d93a193a878e7bb7bf24eb13b5ffd45691a2acac42e993bf1377288a510"
 title: 開啟 Deepmosaic
 seo_title: 開啟 Deepmosaic｜Deepmosaic
 description: 透過企業邀請電子郵件中的連結，開啟 Deepmosaic 應用程式的頁面。
@@ -16,12 +16,12 @@ no_tracking: true
 {%- comment -%}
   T-2210 (i18n1112 I18N-712): 繁体字中国語 (台湾) の「Deepmosaic を開く」。join/index.html (ja) の写しで、構造は ja と同じ
   (src/lib/i18n-site-support.test.js が scripts/i18n/parity.mjs で検査する。en/join/index.html とも同じ)。仕組みと注意は join/index.html のコメントを見ること。
-  - data-join* の属性・3 つの表示・noscript・Store へのリンクの構造は ja と同じ (src/main.js の initJoinPage がそのまま動く)。インラインのスクリプトを置かない。
+  - data-join* の属性・3 つの表示・noscript・ダウンロードへのリンク (T-2307) の構造は ja と同じ (src/main.js の initJoinPage がそのまま動く)。インラインのスクリプトを置かない。
   - 手順の中のアプリの画面のボタン名は、アプリの繁体字の表示に合わせる (desktop の辞書にまだ無い文は用語集から訳した。W8 で突き合わせる)。
   - 段落は 1 行に並べる (CJK の改行は空白として描かれるため)。
   - ja を直したら訳も直し、accept-site.mjs で source_hash を書き直す。
 {%- endcomment -%}
-{%- assign store_url = site.data.lang.ja.app_download_link -%}
+{%- assign download_url = site.data.lang.ja.app_download_link -%}
 
 {% include header.html %}
 
@@ -70,7 +70,7 @@ no_tracking: true
 
     <div class="mt-12 border-t border-hair pt-8" data-join-install>
       <h2 class="text-[17px] font-bold text-ink">尚未安裝應用程式的使用者</h2>
-      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">請<a href="{{ store_url }}" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-store>在 Microsoft Store 取得 Deepmosaic</a>。安裝後，請再次按下此頁面的「以應用程式開啟」。</p>
+      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">請<a href="{{ download_url }}" download target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-download>下載 Deepmosaic（Windows 版）</a>並安裝。安裝後，請再次按下此頁面的「以應用程式開啟」。</p>
       {%- include store-button.html dl="join-store" wrap="mt-4" %}
     </div>
   </div>

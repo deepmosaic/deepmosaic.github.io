@@ -262,13 +262,21 @@ for (const page of PAGES) {
 				assert.equal([...admin.matchAll(/<li>/g)].length, 2)
 				assert.equal(/<a\b|<button\b/.test(viewBlock(b, 'invalid')), false)
 				assert.match(b, /<noscript>[\s\S]*?<\/noscript>/)
-				// Store の URL は ja と同じ式 (ja のデータの URL。言語で変えない)
-				assert.match(src(), /assign store_url = site\.data\.lang\.ja\.app_download_link/)
-				const store = b.match(/<a\b[^>]*data-join-store[^>]*>/)
-				assert.ok(store, 'Store へのリンクが無い')
-				assert.match(store[0], /href="\{\{ store_url \}\}"/)
-				assert.match(store[0], /target="_blank"/)
-				assert.match(store[0], /rel="noopener noreferrer"/)
+				// ダウンロードの URL は ja と同じ式 (ja のデータの URL。言語で変えない)。T-2307: 入手先はインストーラ
+				assert.match(src(), /assign download_url = site\.data\.lang\.ja\.app_download_link/)
+				const dl = b.match(/<a\b[^>]*data-join-download[^>]*>([^<]*)<\/a>/)
+				assert.ok(dl, 'ダウンロードへのリンクが無い')
+				assert.match(dl[0], /href="\{\{ download_url \}\}"/)
+				assert.match(dl[0], /\sdownload[\s>]/)
+				assert.match(dl[0], /target="_blank"/)
+				assert.match(dl[0], /rel="noopener noreferrer"/)
+				assert.equal(/data-dl\b|data-join-store\b/.test(b), false)
+				const install = b.slice(b.indexOf('data-join-install'))
+				assert.equal(/Microsoft Store/.test(install.replace(/<[^>]*>/g, '')), false, '既定の文に Microsoft Store を出さない')
+				assert.match(
+					dl[1],
+					lang === 'en' ? /^Download Deepmosaic \(Windows version\)$/ : /^下載 Deepmosaic（Windows 版）$/,
+				)
 			})
 
 			test(`${rel}: アプリの画面のボタン名を引用している (en は "…"、zh-tw は「…」)`, () => {
@@ -341,7 +349,7 @@ const JOIN_BODY =
 	'<div class="x" data-join><h1>t</h1><div data-join-view="code" hidden><strong data-join-code></strong><a data-join-open-code>o</a>' +
 	'<code data-join-code></code><button type="button" data-join-copy>c</button><span data-join-copy-status></span></div>' +
 	'<div data-join-view="admin" hidden><a href="deepmosaic://login" data-join-open-admin>o</a></div><div data-join-view="invalid" hidden><p>x</p></div>' +
-	'<noscript><p>x</p></noscript><div data-join-install><a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW" data-join-store>s</a></div></div>'
+	'<noscript><p>x</p></noscript><div data-join-install><a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows" download data-join-download>s</a></div></div>'
 const island = (kind, note) =>
 	`${note ? `<p>${note}</p>` : ''}<div data-island="inquiry-form"\n     data-kind="${kind}"\n     data-endpoint="https://e.example/inquiry">\n  <noscript><p>js</p></noscript>\n</div>`
 
@@ -405,7 +413,7 @@ const SUPPORT_BAD = [
 	['join に no-referrer が無い', edit('zh-tw/join/index.html', (s) => s.replace(REFERRER, '')), 'referrer'],
 	['join に計測がある', edit('en/join/index.html', (s) => s.replace('</head>', `${GTAG}</head>`)), 'googletagmanager'],
 	['join に cloudflareinsights がある', edit('en/join/index.html', (s) => s.replace('</head>', '<script src="https://static.cloudflareinsights.com/beacon.min.js"></script></head>')), 'cloudflareinsights'],
-	['join の data-join の構造が欠ける', edit('zh-tw/join/index.html', (s) => s.replace(' data-join-store', '')), 'data-join-store'],
+	['join の data-join の構造が欠ける', edit('zh-tw/join/index.html', (s) => s.replace(' data-join-download', '')), 'data-join-download'],
 	['英中の 404 に data-lang-404 がある', edit('en/404.html', (s) => s.replace('<h1>', `${LANG_404_LINE}<h1>`)), 'data-lang-404'],
 	['ルートの 404 に data-lang-404 が無い', edit('404.html', (s) => s.replace(LANG_404_LINE, '')), 'data-lang-404'],
 	['会社概要に Deepmosaic LLC が無い', edit('en/company/about.html', (s) => s.replace('Deepmosaic LLC', 'Deepmosaic')), 'Deepmosaic LLC'],

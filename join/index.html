@@ -25,8 +25,11 @@ no_tracking: true
     referrer を送らない。`noindex: true` / `sitemap: false`。ナビゲーションには載せない。
   - 3 つの表示 (code / admin / invalid) は既定ですべて hidden。JS が 1 つだけ出す。JS 無効のときは noscript の案内。
   - 固定: `src/lib/join-hash.test.js` / `src/lib/site-copy-t2090.test.js` / `e2e/join.spec.ts`
+  - T-2307 (backlog1113): 「アプリをまだ入れていない方」の入手先は Windows 版のダウンロード (DL の単一管理点 `app_download_link`
+    = インストーラ)。計測しないページなので data-dl は付けない。Store のボタンは `store-button.html` (join-store) が、
+    `_data/site.yml` の `distribution.store_enabled` が true のときだけ文の下に出す。
 {%- endcomment -%}
-{%- assign store_url = site.data.lang.ja.app_download_link -%}
+{%- assign download_url = site.data.lang.ja.app_download_link -%}
 
 <section class="pt-16 pb-20">
   <div class="mx-auto w-[92%] max-w-[720px]" data-join>
@@ -76,7 +79,7 @@ no_tracking: true
     <div class="mt-12 border-t border-hair pt-8" data-join-install>
       <h2 class="text-[17px] font-bold text-ink">アプリをまだ入れていない方</h2>
       <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">
-        <a href="{{ store_url }}" target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-store>Microsoft Store で Deepmosaic を入手</a>してください。
+        <a href="{{ download_url }}" download target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-download>Deepmosaic（Windows 版）をダウンロード</a>してインストールしてください。
         入れた後に、もう一度このページの「アプリで開く」を押してください。
       </p>
       {%- include store-button.html dl="join-store" wrap="mt-4" %}

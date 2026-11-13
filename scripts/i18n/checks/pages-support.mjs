@@ -35,7 +35,7 @@ const JOIN_MARKERS = [
 	'data-join-copy',
 	'data-join-copy-status',
 	'data-join-install',
-	'data-join-store',
+	'data-join-download',
 ]
 const TRACKERS = ['googletagmanager', 'cloudflareinsights', 'line-scdn']
 
