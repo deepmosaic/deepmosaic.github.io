@@ -24,6 +24,8 @@ T-1922: ページの front matter に `faq_data: <データ名>` があれば `s
 {%- comment -%}T-2203 (i18n1112): 英中のページは同じ順・同じ件数の訳 (`_data/l10n/<lang>/faq.yml` の items、faq_data があれば `<faq_data>.yml` の faq) を使う{%- endcomment -%}
 {%- assign faq_l10n = site.data.l10n[page.lang] -%}
 {%- if faq_l10n -%}{%- if page.faq_data -%}{%- assign faq_src = site.data.l10n[page.lang][page.faq_data].faq -%}{%- else -%}{%- assign faq_src = site.data.l10n[page.lang].faq.items -%}{%- endif -%}{%- endif -%}
+{%- comment -%}T-2306: `store_only: true` の項目は store_enabled が true のときだけ (表示側 faq.html と同じ条件){%- endcomment -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign faq_src = faq_src | where_exp: "i", "i.store_only != true" -%}{%- endunless -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

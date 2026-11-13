@@ -18,7 +18,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { makeContext } from '../../scripts/i18n/check-site.mjs'
-import check, { checkStore, expectedPlacements, readStoreEnabled, STORE_LABELS } from '../../scripts/i18n/checks/store.mjs'
+import check, { checkStore, expectedPlacements, readStoreEnabled, STORE_LABELS, SUBSCRIBE_PAGES } from '../../scripts/i18n/checks/store.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
@@ -160,7 +160,15 @@ function enabledFiles() {
 	for (const p of expectedPlacements()) {
 		files[p.file] = (files[p.file] ?? '<html><body>') + btn(p.id, langOf(p.file), { tracked: p.tracked })
 	}
+	// T-2306: 申し込みのページの Store 版の文と FAQ (true のときだけ)
+	for (const rel of SUBSCRIBE_PAGES) files[rel] = subscribePage(true)
 	return files
+}
+
+/** 申し込みのページの模型 (store = true なら Store 版の文と FAQ の項目がある) */
+function subscribePage(store) {
+	const ld = store ? '{"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "a"}, {"@type": "Question", "name": "Microsoft Store x"}]}' : '{"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "a"}]}'
+	return `<html><head><script type="application/ld+json">${ld}</script></head><body><p>x</p>${store ? '<p data-store-note="subscribe">Microsoft Store y</p>' : ''}<details>a</details>${store ? '<details>Microsoft Store x</details>' : ''}</body></html>`
 }
 
 function withSite(files, fn) {
@@ -196,6 +204,17 @@ test('check (false): 何も出ていなければ 0 件、Store のボタンや�
 			assert.match(errors[0], /price\/index\.html/)
 		})
 	}
+	// T-2306: 申し込みのページ (3 言語) に Store 版の文・FAQ が出ていれば検出
+	withSite({ ...clean, ...Object.fromEntries(SUBSCRIBE_PAGES.map((r) => [r, subscribePage(false)])) }, (ctx) => assert.deepEqual(checkStore(ctx, false), []))
+	for (const rel of SUBSCRIBE_PAGES) {
+		withSite({ ...clean, [rel]: subscribePage(true) }, (ctx) => {
+			const errors = checkStore(ctx, false)
+			assert.ok(errors.length > 0 && errors.every((e) => e.startsWith(`${rel}:`)), `${rel}: ${errors.join(' / ')}`)
+		})
+	}
+	withSite({ ...clean, 'price/index.html': '<p data-store-note="subscribe">x</p>' }, (ctx) => {
+		assert.match(checkStore(ctx, false).join(' / '), /price\/index\.html.*data-store-note/)
+	})
 	// 法務文書の本文は対象外 (T-1921 で別に扱う)
 	withSite({ ...clean, 'company/privacy/index.html': '<a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW">x</a>', 'en/company/cookie/index.html': '<a href="https://apps.microsoft.com/">x</a>' }, (ctx) => {
 		assert.deepEqual(checkStore(ctx, false), [])
@@ -214,6 +233,12 @@ test('check (true): 4 か所 × 言語に正しいボタンがあれば 0 件、
 		['計測するページに data-dl が無い', (f) => ({ ...f, 'docs/index.html': btn('docs-install-store', 'ja', { tracked: false }) }), /docs\/index\.html.*data-dl/],
 		['download 属性', (f) => ({ ...f, 'spec/index.html': btn('cta-store', 'ja').replace('<a ', '<a download ') }), /spec\/index\.html.*download/],
 		['ヘッダーにも出ている', (f) => ({ ...f, 'contact/index.html': btn('header-store', 'ja') }), /contact\/index\.html/],
+		// T-2306: 申し込みのページの Store 版の文と FAQ
+		['申し込みのページに Store 版の文が無い', (f) => ({ ...f, 'en/subscribe/index.html': f['en/subscribe/index.html'].replace(/<p data-store-note="subscribe">[^<]*<\/p>/, '') }), /en\/subscribe\/index\.html.*data-store-note/],
+		['申し込みのページに Store 版の FAQ が無い', (f) => ({ ...f, 'zh-tw/subscribe/index.html': f['zh-tw/subscribe/index.html'].replace('<details>Microsoft Store x</details>', '') }), /zh-tw\/subscribe\/index\.html.*FAQ/],
+		['JSON-LD に Store 版の FAQ が無い', (f) => ({ ...f, 'subscribe/index.html': f['subscribe/index.html'].replace(', {"@type": "Question", "name": "Microsoft Store x"}', '') }), /^subscribe\/index\.html.*JSON-LD/],
+		['申し込みのページが無い', (f) => { const g = { ...f }; delete g['subscribe/index.html']; return g }, /^subscribe\/index\.html/],
+		['ほかのページに Store 版の文', (f) => ({ ...f, 'price/index.html': f['price/index.html'] + '<p data-store-note="subscribe">x</p>' }), /price\/index\.html.*data-store-note/],
 	]
 	for (const [what, edit, re] of cases) {
 		withSite(edit(enabledFiles()), (ctx) => {

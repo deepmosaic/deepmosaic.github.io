@@ -17,6 +17,8 @@ params:
   items   (任意) 表示する項目。既定は site.data.faq 全件
 {%- endcomment -%}
 {%- assign faq_items = include.items | default: site.data.faq -%}
+{%- comment -%}T-2306: `store_only: true` の項目 (Microsoft Store 版の FAQ) は `_data/site.yml` の distribution.store_enabled が true のときだけ。JSON-LD (schema/faq.html) も同じ条件で外す{%- endcomment -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign faq_items = faq_items | where_exp: "i", "i.store_only != true" -%}{%- endunless -%}
 <div class="flex flex-col gap-2.5" data-island="accordion">
   {%- for item in faq_items %}
   <details class="group rounded-[10px] border border-edge bg-panel-2 open:border-accent">

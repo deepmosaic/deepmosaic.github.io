@@ -3,7 +3,7 @@ layout: default
 title: 有料プランのお申し込み
 seo_title: 有料プランのお申し込み｜Deepmosaic
 permalink: /subscribe/
-description: Deepmosaicの有料プラン（Light 月額2,980円 / Pro 月額9,800円、税別）のお申し込みページ。Web 版のアカウントでクレジットカード決済を行い、Microsoft Store 版のアプリでも同じアカウントでそのままご利用いただけます。
+description: Deepmosaicの有料プラン（Light 月額2,980円 / Pro 月額9,800円、税別）のお申し込みページ。Web 版のアカウントでクレジットカード決済を行えます。アプリのプロフィールメニューからも申し込め、同じアカウントで Desktop 版と Web 版の両方でご利用いただけます。
 faq_data: subscribe
 schemas:
   - software-application
@@ -17,8 +17,11 @@ schemas:
   T-1922 (2026-11-11): 有料プランの申し込みページ。ユーザー決定「案 B」= サイトに専用の申し込みページを作り、
   Stripe の決済へ (アカウントとの紐付けあり)。
 
-  - 配布は Microsoft Store 版だけ (T-1916)。Store 版のアプリは購入画面を出さず、このページを案内する
-    (desktop `src/lib/links.ts` の `SUBSCRIBE_URL`)。料金カードの「申し込む」もここへ来る (`_data/plans.yml` の `subscribe`)。
+  - T-2306 (backlog1113): 2.14 はサイト配布版と Microsoft Store 版の両方で出す。申し込みは「アプリのプロフィールメニュー
+    (Windows 版をダウンロードしてお使いの方)、またはこのページから Web 版のアカウントで」。Store 版のアプリは購入画面を出さず、
+    このページを案内する (desktop `src/lib/links.ts` の `SUBSCRIBE_URL`) のでページは残す。料金カードの「申し込む」もここへ来る
+    (`_data/plans.yml` の `subscribe`)。Store 版についての文は部品 `store-subscribe-note.html` と FAQ の `store_only` の項目で、
+    `_data/site.yml` の `distribution.store_enabled` が true のときだけ出る (このページは切り替えを直接読まない)。
   - プランのボタンは Web 版の深いリンク `<web_app.url>?checkout=<code>` (Web 版がログイン → Stripe Checkout まで運ぶ)。
     クエリ名は `_data/subscribe.yml` の `checkout_query`。`data-dl` の末尾 `-webapp` で GA4 の `web_app_open` に入る。
   - 金額・込み時間は `_data/plans.yml` から (ここに直書きしない)。front matter の description だけは Liquid が効かない
@@ -40,9 +43,10 @@ schemas:
     </nav>
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">有料プランのお申し込み</h1>
     <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
-      お申し込みは Web 版のアカウントで行い、Microsoft Store 版のアプリでもそのまま使えます。
-      Microsoft Store 版のアプリには購入画面がありません。下のボタンから Web 版を開き、アプリと同じアカウントでサインインしてクレジットカードでお支払いください。
+      有料プランは、アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはこのページから Web 版のアカウントでお申し込みいただけます。どちらでお申し込みいただいても、同じアカウントで Desktop 版と Web 版の両方でご利用いただけます。
+      このページでは、下のボタンから Web 版を開き、アプリと同じアカウントでサインインしてクレジットカードでお支払いください。
     </p>
+    {%- include store-subscribe-note.html %}
   </div>
 </section>
 

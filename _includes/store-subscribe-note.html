@@ -1,0 +1,13 @@
+{%- comment -%}
+申し込みのページの Microsoft Store 版についての 1 文 (T-2306、backlog1113)。`/subscribe/` (3 言語) の冒頭の段落の下に置く。
+
+2.14 はサイト配布版 (インストーラ) と Store 版の両方で出す。ページの本文は両方に合う文で、Store 版のアプリに購入画面が無いことは
+`_data/site.yml` の `distribution.store_enabled` が true のときだけ出す (false のときは何も出さない)。
+切り替えを読むのは部品 (store-button.html・docs/store-edition.html・この部品・FAQ の faq.html と schema/faq.html) だけ。
+文: ja は `_data/subscribe.yml` の store_note、英中は `_data/l10n/<lang>/subscribe.yml` の store_note。
+目印 `data-store-note` は出し分けの検査 (scripts/i18n/checks/store.mjs) が見る。
+{%- endcomment -%}
+{%- if site.data.site.distribution.store_enabled -%}
+{%- assign sn_src = site.data.subscribe -%}{%- if site.data.l10n[page.lang] -%}{%- assign sn_src = site.data.l10n[page.lang].subscribe -%}{%- endif -%}
+<p class="mt-3 text-[15.5px] leading-[1.95] text-ink-2" data-store-note="subscribe">{{ sn_src.store_note }}</p>
+{%- endif -%}

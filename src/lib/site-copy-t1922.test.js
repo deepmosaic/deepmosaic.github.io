@@ -7,8 +7,12 @@
 //     クエリ名は `_data/subscribe.yml` の `checkout_query`、ボタンを出すのは plans.yml で `subscribe` を持つプラン。
 //   - 料金カード (トップと /price/) の Light / Pro は「申し込む → /subscribe/」(Store に戻ってループしない)。
 //   - Enterprise は見積のまま (申し込みボタンを出さず、導入相談へ)。
-//   - 「申し込みは Web 版のアカウントで行い、Store 版のアプリでもそのまま使えます」「Store 版アプリには購入画面がありません」。
-//   - FAQ は 2〜3 件で、表示と FAQPage JSON-LD が同じデータ (page.faq_data)。
+//   - T-2306 (backlog1113): 2.14 はサイト配布版と Microsoft Store 版の両方で出す。文は両方に合う形
+//     「アプリのプロフィールメニュー (Windows 版をダウンロードしてお使いの方)、またはこのページから Web 版のアカウントで申し込める。
+//     どちらでも同じアカウントで Desktop 版と Web 版の両方に効く」。Store 版についての文 (購入画面が無い) と FAQ は
+//     `_data/site.yml` の `distribution.store_enabled` が true のときだけ出す (部品 `_includes/store-subscribe-note.html` と
+//     FAQ の `store_only: true` の項目。FAQ の部品と JSON-LD が同じ条件で外す)。
+//   - FAQ は Store の項目を除いて 2〜3 件で、表示と FAQPage JSON-LD が同じデータ (page.faq_data)。
 //
 // 読み取りはこのファイル内で完結させる (spec-requirements.test.js と同じ流儀)。
 
@@ -94,10 +98,31 @@ test('/subscribe/: ボタンは Web 版の ?checkout=<code> を指し、web_app_
 	assert.match(src, /id="plan-\{\{ plan\.code \}\}"/)
 })
 
-test('/subscribe/: Store 版アプリには購入画面が無いこと、Web 版のアカウントで申し込み Store 版でもそのまま使えることを書く', () => {
+test('/subscribe/: アプリのプロフィールメニューかこのページで申し込め、同じアカウントで Desktop 版と Web 版の両方に効くことを書く (T-2306)', () => {
 	const text = textOf(read(PAGE))
-	assert.match(text, /お申し込みは Web 版のアカウントで行い、Microsoft Store 版のアプリでもそのまま使えます/)
-	assert.match(text, /Microsoft Store 版のアプリには購入画面がありません/)
+	assert.match(text, /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはこのページから Web 版のアカウントでお申し込みいただけます/)
+	assert.match(text, /同じアカウントで Desktop 版と Web 版の両方でご利用いただけます/)
+	assert.match(frontMatter(read(PAGE), 'description') ?? '', /プロフィールメニュー/)
+	// Store 版についての文は切り替えの部品の中だけ (ページの本文・description には書かない)
+	assert.doesNotMatch(text, /Microsoft Store|購入画面/, 'ページの本文に Store 版の文が残っている (部品に移す)')
+	assert.doesNotMatch(frontMatter(read(PAGE), 'description') ?? '', /Microsoft Store/)
+	assert.match(stripComments(read(PAGE)), /\{%-? include store-subscribe-note\.html -?%\}/)
+})
+
+test('store-subscribe-note.html: 全体が store_enabled の if の中で、購入画面が無いことを言語ごとのデータから出す (T-2306)', () => {
+	const src = stripComments(read('_includes/store-subscribe-note.html'))
+	const m = src.match(/^\s*\{%-?\s*if site\.data\.site\.distribution\.store_enabled\s*-?%\}([\s\S]*)\{%-?\s*endif\s*-?%\}\s*$/)
+	assert.ok(m, '全体が store_enabled の if の中に無い (false のときに何かが出る)')
+	assert.match(m[1], /data-store-note="subscribe"/)
+	assert.match(m[1], /\.store_note\b/)
+	assert.match(read('_data/subscribe.yml'), /^store_note: ".*Microsoft Store 版のアプリには購入画面がありません。.*"\s*$/m)
+	for (const lang of ['en', 'zh-tw']) assert.match(read(`_data/l10n/${lang}/subscribe.yml`), /^store_note: ".*Microsoft Store.*"\s*$/m, lang)
+	// 英中のページも同じ位置に部品を置く
+	for (const rel of ['en/subscribe/index.html', 'zh-tw/subscribe/index.html']) {
+		const page = stripComments(read(rel))
+		assert.match(page, /\{%-? include store-subscribe-note\.html -?%\}/, rel)
+		assert.doesNotMatch(textOf(read(rel)), /Microsoft Store/, `${rel}: 本文に Store 版の文が残っている`)
+	}
 })
 
 test('/subscribe/: Enterprise は申し込みボタンではなく導入相談へ', () => {
@@ -106,15 +131,44 @@ test('/subscribe/: Enterprise は申し込みボタンではなく導入相談�
 	assert.doesNotMatch(src, /checkout=enterprise/)
 })
 
-test('/subscribe/: FAQ は 2〜3 件で、表示と JSON-LD が同じデータを使う', () => {
+/** subscribe.yml の faq を [{ q, storeOnly }] で返す (2 行目以降の `store_only: true` を見る)。 */
+function faqItems(yml) {
+	const items = []
+	for (const line of yml.split(/\r?\n/)) {
+		const q = line.match(/^ {2}- q: "(.*)"\s*$/)
+		if (q) items.push({ q: q[1], storeOnly: false })
+		else if (/^ {4}store_only: true\s*$/.test(line) && items.length > 0) items[items.length - 1].storeOnly = true
+	}
+	return items
+}
+
+test('/subscribe/: FAQ は Store の項目を除いて 2〜3 件で、表示と JSON-LD が同じデータを使う', () => {
+	assert.deepEqual(faqItems('faq:\n  - q: "a"\n    a: "x"\n  - q: "b"\n    store_only: true\n    a: "y"\n'), [{ q: 'a', storeOnly: false }, { q: 'b', storeOnly: true }])
 	const cfg = read('_data/subscribe.yml')
-	const qs = cfg.match(/^ {2}- q: /gm) ?? []
-	assert.ok(qs.length >= 2 && qs.length <= 3, `FAQ が ${qs.length} 件`)
-	assert.match(cfg, /購入画面がありません/)
+	const items = faqItems(cfg)
+	const common = items.filter((i) => !i.storeOnly)
+	assert.ok(common.length >= 2 && common.length <= 3, `Store 以外の FAQ が ${common.length} 件`)
+	// 両方の配布に合う FAQ: アプリ (プロフィールメニュー) から申し込めるか
+	assert.ok(common.some((i) => i.q === 'アプリから申し込めますか？'), 'アプリから申し込めるかの FAQ が無い')
+	assert.match(cfg, /アプリの画面右上のプロフィールメニューから申し込めます/)
+	// Store 版の FAQ は 1 件で store_only。ほかの項目は Store に触れない
+	const store = items.filter((i) => i.storeOnly)
+	assert.deepEqual(store.map((i) => i.q), ['Microsoft Store 版のアプリで申し込めますか？'])
+	for (const i of common) assert.doesNotMatch(i.q, /Microsoft Store/)
+	// 英中も同じ順・同じ位置に store_only
+	for (const lang of ['en', 'zh-tw']) {
+		assert.deepEqual(faqItems(read(`_data/l10n/${lang}/subscribe.yml`)).map((i) => i.storeOnly), items.map((i) => i.storeOnly), `${lang} の store_only の位置が ja と違う`)
+	}
 	assert.match(stripComments(read(PAGE)), /\{% include faq\.html items=site\.data\.subscribe\.faq %\}/)
 	const schema = read('_includes/schema/faq.html')
 	assert.match(schema, /site\.data\[page\.faq_data\]\.faq/)
 	assert.match(schema, /for item in faq_src/)
+	// 表示と JSON-LD が同じ条件で Store の項目を外す (食い違うと FAQPage のガイドライン違反)
+	const drop = /\{%-?\s*unless site\.data\.site\.distribution\.store_enabled\s*-?%\}\s*\{%-?\s*assign (\w+) = \1 \| where_exp: "i", "i\.store_only != true"\s*-?%\}\s*\{%-?\s*endunless\s*-?%\}/
+	assert.match(stripComments(read('_includes/faq.html')), drop, 'faq.html が store_only を外していない')
+	assert.match(stripComments(schema), drop, 'schema/faq.html が store_only を外していない')
+	const sch = stripComments(schema)
+	assert.ok(sch.search(drop) < sch.indexOf('for item in faq_src'), 'schema/faq.html: 外すのがループの後になっている')
 })
 
 test('料金カード: subscribe があれば「申し込む → /subscribe/#plan-<code>」で、Store の DL ボタンより優先する', () => {
@@ -132,9 +186,48 @@ test('導線: フッター・料金ページ・トップの料金節・docs #pla
 	assert.match(price, /href="\/subscribe\/"/)
 	assert.doesNotMatch(textOf(read('price/index.html')), /アプリ内のプラン管理からお手続き/)
 	assert.doesNotMatch(read('index.html'), /アプリ内のプラン管理からお手続き/)
-	const plan = stripComments(read('_includes/docs/02-account.html'))
+	const account = read('_includes/docs/02-account.html')
+	const planSec = account.slice(account.indexOf('<section id="plan"'), account.indexOf('</section>', account.indexOf('<section id="plan"')))
+	const plan = stripComments(planSec)
 	assert.match(plan, /href="\/subscribe\/"/)
-	assert.match(textOf(plan), /Microsoft Store 版のアプリには購入画面がありません/)
+	// T-2306: 両方の配布に合う文。Store 版の補足は docs/store-edition.html (T-2305) にあり、#plan には書かない
+	assert.match(textOf(planSec), /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、または有料プランのお申し込みのページから Web 版のアカウントで申し込めます/)
+	assert.match(textOf(planSec), /同じアカウントで Desktop 版と Web 版の両方/)
+	assert.match(textOf(planSec), /アプリにサインインし、画面右上のプロフィールアイコンをクリックします/)
+	assert.doesNotMatch(textOf(planSec), /Microsoft Store|購入画面|ログイン/)
 	assert.match(read('llms.txt'), /\{\{ U \}\}\/subscribe\//)
 	assert.match(read('src/app.css'), /@source "\.\.\/subscribe\/\*\*\/\*\.html";/)
+})
+
+test('T-2306: トップの料金節・料金ページ・llms.txt は両方の配布に合う文 (Store 版の文を書かない)', () => {
+	const sub = read('index.html').match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
+	assert.ok(sub, 'トップの料金節の sub が無い')
+	assert.match(sub[1], /アプリのプロフィールメニュー、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
+	assert.match(sub[1], /Desktop 版と Web 版の両方/)
+	assert.doesNotMatch(sub[1], /Microsoft Store/)
+	const price = textOf(read('price/index.html'))
+	assert.match(price, /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはお申し込みページから Web 版のアカウントでお申し込みいただけます/)
+	assert.doesNotMatch(price, /Microsoft Store|購入画面/)
+	const llms = read('llms.txt').split(/\r?\n/).find((l) => l.includes('{{ U }}/subscribe/'))
+	assert.match(llms, /プロフィールメニュー/)
+	assert.match(llms, /profile menu/)
+	assert.doesNotMatch(llms, /Microsoft Store/)
+	// 英中
+	for (const [rel, re] of [
+		['en/index.html', /profile menu in the app/],
+		['zh-tw/index.html', /個人資料選單/],
+	]) {
+		const s = read(rel).match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
+		assert.ok(s, `${rel}: 料金節の sub が無い`)
+		assert.match(s[1], re, rel)
+		assert.doesNotMatch(s[1], /Microsoft Store/, rel)
+	}
+	for (const [rel, re] of [
+		['en/price/index.html', /profile menu in the app/],
+		['zh-tw/price/index.html', /個人資料選單/],
+	]) {
+		const t = textOf(read(rel))
+		assert.match(t, re, rel)
+		assert.doesNotMatch(t, /Microsoft Store|purchase screen|購買畫面/, rel)
+	}
 })

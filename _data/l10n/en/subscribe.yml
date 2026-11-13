@@ -1,11 +1,15 @@
-# T-2201 (i18n1112 I18N-703): `_data/subscribe.yml` の英語の訳 (faq だけ)。ja と同じ順・同じ件数 (3)。
+# T-2201 (i18n1112 I18N-703): `_data/subscribe.yml` の英語の訳 (store_note と faq)。faq は ja と同じ順・同じ件数 (4)・同じ位置に store_only (T-2306)。
 # checkout_query などの設定値は持たない (正は ja のデータ)。
 _source: "_data/subscribe.yml"
-_source_hash: "caca18e482173fde2a4cb56b6488265d3a7f589866eb3328ee694409a522d5a0"
+_source_hash: "a2fd12afc801f17d4ded6283b220a11538a931dc942d8cfe82ef8b9dd4b51fa4"
+store_note: "The Microsoft Store version of the app has no purchase screen. If you use the Microsoft Store version, subscribe on this page (sign in with the same account as the app, and you can use your plan in the app right away)."
 faq:
+  - q: "Can I subscribe in the app?"
+    a: "Yes. If you downloaded the Windows version, you can subscribe from the profile menu at the top right of the app. You can also use the buttons on this page and sign in to your account in the Web app (in your browser). Either way, you can use your paid plan with the same account in both the Desktop app and the Web app."
   - q: "Can I subscribe in the Microsoft Store version of the app?"
+    store_only: true
     a: "The Microsoft Store version of the app has no purchase screen. To subscribe to a paid plan, use the buttons on this page and sign in to your account in the Web app (in your browser). Once you have finished, sign in to the app with the same account and you can use your paid plan right away."
   - q: "Do I need to subscribe with the same account as the app?"
     a: "Yes. Plans are tied to an account (email address). Sign in with the account you use in the app and subscribe. If you don't have an account yet, you can create one from \"Sign in\" on the sign-in screen (your account is created automatically when you sign in with a confirmation code sent to your email)."
   - q: "Where do I change or cancel my plan?"
-    a: "Sign in to the Web app and open \"Manage plan\" from the profile menu at the top right of the screen (you can also change your payment method there). After you cancel, you can keep using your paid plan until the end of the period you have already paid for."
+    a: "Sign in to the Web app and open \"Manage plan\" from the profile menu at the top right of the screen (you can also change your payment method there. If you downloaded the Windows version, you can also do this from \"Manage plan\" in the profile menu of the app). After you cancel, you can keep using your paid plan until the end of the period you have already paid for."

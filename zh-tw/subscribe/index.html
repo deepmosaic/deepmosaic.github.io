@@ -4,11 +4,11 @@ lang: zh-tw
 permalink: /zh-tw/subscribe/
 ja_url: /subscribe/
 source: subscribe/index.html
-source_hash: "92e55f4fdd05a9c56c3249178c40b8016cbee1fc7b69984ad26c9187d174841b"
+source_hash: "d94c8de4c918f6a7e656d6eb2babdc512f23aa8ebdf93bced42379e4f26199a4"
 title: 申請付費方案
 seo_title: 申請付費方案｜Deepmosaic
 # ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の subscribe/index.html と同じ)。料金を変えたらここも直すこと。
-description: Deepmosaic 付費方案（Light 每月 2,980 日圓、Pro 每月 9,800 日圓，未稅）的申請頁面。以網頁版的帳號使用信用卡付款，在 Microsoft Store 版的應用程式中也能直接以同一個帳號使用。
+description: Deepmosaic 付費方案（Light 每月 2,980 日圓、Pro 每月 9,800 日圓，未稅）的申請頁面。以網頁版的帳號使用信用卡付款。也可從應用程式的個人資料選單申請，同一個帳號在桌面版與網頁版都能使用。
 faq_data: subscribe
 schemas:
   - software-application
@@ -42,7 +42,8 @@ schemas:
       <span class="text-ink-3">申請付費方案</span>
     </nav>
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">申請付費方案</h1>
-    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">申請需以網頁版的帳號進行，在 Microsoft Store 版的應用程式中也能直接使用。Microsoft Store 版的應用程式沒有購買畫面。請從下方的按鈕開啟網頁版，以與應用程式相同的帳號登入，並以信用卡付款。</p>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">付費方案可從應用程式的個人資料選單（下載使用 Windows 版的使用者），或從本頁面以網頁版的帳號申請。無論從哪裡申請，同一個帳號在桌面版與網頁版都能使用。在本頁面，請從下方的按鈕開啟網頁版，以與應用程式相同的帳號登入，並以信用卡付款。</p>
+    {%- include store-subscribe-note.html %}
   </div>
 </section>
 

@@ -191,12 +191,15 @@ test('読み取り: ja の plans.yml の tiers の code と specs が plans-yml.
 	assert.equal(jaPlans.rollout_note, '')
 })
 
-test('読み取り: ja の faq は 15 件、subscribe の faq は 3 件 (陽性対照)', () => {
+test('読み取り: ja の faq は 15 件、subscribe の faq は 4 件で 2 件目だけ store_only (陽性対照)', () => {
 	assert.ok(Array.isArray(jaFaq))
 	assert.equal(jaFaq.length, 15)
 	assert.equal(jaFaq[1].q, 'モザイクを除去することはできますか？')
-	assert.equal(jaSubscribe.faq.length, 3)
+	// T-2306: 両方の配布に合う FAQ 3 件 + Store 版の FAQ 1 件 (store_enabled が true のときだけ出る)
+	assert.equal(jaSubscribe.faq.length, 4)
+	assert.deepEqual(jaSubscribe.faq.map((f) => f.store_only === true), [false, true, false, false])
 	assert.equal(jaSubscribe.checkout_query, 'checkout')
+	assert.equal(typeof jaSubscribe.store_note, 'string')
 })
 
 test('読み取り: 非対応の記法 (ブロックスカラー・暗黙 null・閉じない引用符) は throw する', () => {
@@ -235,17 +238,22 @@ for (const lang of LANGS) {
 		}
 	})
 
-	test(`subscribe (${lang}): faq が ja と同じ件数 (3)・空でない・設定値を持たない`, () => {
+	test(`subscribe (${lang}): faq が ja と同じ件数 (4)・同じ位置に store_only・空でない・設定値を持たない`, () => {
 		const { subscribe } = l10n[lang]
 		assert.ok(Array.isArray(subscribe.faq), 'faq: の下に配列')
 		assert.equal(subscribe.faq.length, jaSubscribe.faq.length)
-		assert.equal(subscribe.faq.length, 3)
+		assert.equal(subscribe.faq.length, 4)
 		subscribe.faq.forEach((item, i) => {
-			assert.deepEqual(Object.keys(item).sort(), ['a', 'q'], `faq[${i}] の欄`)
+			// T-2306: 欄は ja の同じ位置の項目と同じ (Store 版の FAQ だけ store_only: true)
+			assert.deepEqual(Object.keys(item).sort(), Object.keys(jaSubscribe.faq[i]).sort(), `faq[${i}] の欄`)
+			assert.equal(item.store_only, jaSubscribe.faq[i].store_only, `faq[${i}].store_only が ja と違う`)
 			assert.ok(item.q.trim() !== '' && item.a.trim() !== '', `faq[${i}] が空`)
 			assert.deepEqual(placeholders(item.a), placeholders(jaSubscribe.faq[i].a))
 		})
-		assert.deepEqual(Object.keys(subscribe).sort(), ['_source', '_source_hash', 'faq'])
+		// T-2306: Store 版についての 1 文 (store_note) の訳。checkout_query などの設定値は持たない
+		assert.equal(typeof subscribe.store_note, 'string')
+		assert.ok(subscribe.store_note.includes('Microsoft Store'), 'store_note に Microsoft Store が無い')
+		assert.deepEqual(Object.keys(subscribe).sort(), ['_source', '_source_hash', 'faq', 'store_note'])
 	})
 }
 
