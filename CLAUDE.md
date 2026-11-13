@@ -53,7 +53,7 @@ npm run build && bundle exec jekyll build
 | `price/` | 価格ページ |
 | `index.html` / `404.html` | トップページ / 404 |
 | `mosaic-removal.html` | `/mosaic-removal/`。「モザイク除去」誤認の封じ込めページ |
-| `en/` / `zh-tw/` | 英語 / 繁体字中国語のページ (`/en/…`・`/zh-tw/…`。W7 で作る。front matter に `lang`・`source`・`source_hash` が必須) |
+| `en/` / `zh-tw/` | 英語 / 繁体字中国語のページ (`/en/…`・`/zh-tw/…`。各 10 ファイル (404 を含む)、公開済み。front matter に `lang`・`source`・`source_hash` が必須) |
 | `scripts/i18n/` | 多言語化の検査の道具 (ja-identity・check-site・parity・source_hash・用語集の写し)。公開しない |
 | `CNAME` | カスタムドメイン |
 | `BingSiteAuth.xml` / `sitemap.xml` / `robots.txt` | SEO |
@@ -61,13 +61,13 @@ npm run build && bundle exec jekyll build
 
 ### i18n
 
-多言語化 (i18n1112、2026-11-12〜。T-2199 で土台、W7 で英中のページを作る)。**日本語が正本**で、英語と繁体字中国語 (台湾向け) の写しを足す。**ja のページの出力は 1 バイトも変えない** (ja-identity で毎チケット検査)。
+多言語化 (i18n1112、2026-11-12〜。T-2199 で土台、W7 で英中のページを作って公開済み。ヘッダーの言語の切り替えと ja のページの案内の帯から行ける)。**日本語が正本**で、英語と繁体字中国語 (台湾向け) の写しを置く。**ja のページの出力は 1 バイトも変えない** (ja-identity で毎チケット検査。ja を意図して変えるチケットだけは、リーダーが基点を作り直す)。アプリの表示言語は 2.13 が日本語だけ、2.14 から日本語・英語・繁体字中国語の 3 つ (公開の手順の正は desktop の `docs/release.md`)。画面の文の規則の正は desktop の `docs/i18n.md`。
 
 - **URL**: ja は今のまま (`/`・`/price/` …)。英語は `/en/…`、繁体字は `/zh-tw/…`。対象は `/`・`/price/`・`/spec/`・`/subscribe/`・`/mosaic-removal/`・`/contact/`・`/enterprise/inquiry/`・`/join/`・`/company/about`・`/404.html` (英中の 404 は `/en/404.html`・`/zh-tw/404.html`)。自動のリダイレクトはしない。
 - **対象外 (日本語のページだけ)**: docs (`/docs/`・`/docs/web/`・`_includes/docs`)、法務 (`/company/{terms,privacy,cookie,eula,asct}`、`_data/legal.yml`)、`llms.txt` / `llms-full.txt` / `robots.txt`、`feed.xml`。英中のページからこれらへのリンクは日本語のページへ向け、`{% include ja-link.html … %}` で「日本語のページ」の印を付ける。
 - **`page.lang`**: ja は `_config.yml` の defaults (`path: ""` の `values` の `lang: ja`) で決まる。**英中のページは front matter に `lang: en` / `lang: zh-tw` を必ず書く**。`scope: { path: "en" }` の defaults は置かない (Jekyll の前方一致で `enterprise/` にも当たる)。英中のページの front matter は `lang`・`permalink` (`/en/` / `/zh-tw/` で始まる)・`ja_url`・`source` (元の ja のファイル)・`source_hash`・`title`・`seo_title`・`description` ほか ja と同じ値。
 - **辞書**: `_data/lang/ja.json` は**変えない**。`_data/lang/{en,zh-tw}.json` は ja.json の全キーの訳 + 英中だけのキー (`url_prefix`・`json_ld_lang` など。ja では nil になるので `| default:` か ja の分岐で今の出力を保つ)。Liquid では `site.data.lang[page.lang]`・`site.data.l10n[page.lang].<name>` (ハイフンがあるので添字で引く)。
-- **部品・データの文**: `_data/l10n/<en|zh-tw>/<name>.yml` に置き、1 ファイルを 1 チケットが持つ (`plans`・`faq`・`subscribe` = T-2201 / `spec`・`disclosure`・`mosaic`・`entity` = T-2202 / `nav` = T-2204 / `parts` = T-2205 / `inquiry_form` = T-2206。持ち物の境界はこの表のとおりで、他のチケットの持ち物は編集しない)。数値・URL・コード・並びの正は ja のデータだけ。データの写し (`plans` ほか) は先頭に `_source` / `_source_hash` を持つ。訳のあるページの台帳は `_data/i18n_pages.yml` (hreflang を出すページ)。
+- **部品・データの文**: `_data/l10n/<en|zh-tw>/<name>.yml` に置く。作ったときは 1 ファイルを 1 チケットが持った (`plans`・`faq`・`subscribe` = T-2201 / `spec`・`disclosure`・`mosaic`・`entity` = T-2202 / `nav` = T-2204 / `parts` = T-2205 / `inquiry_form` = T-2206。この持ち物の決まりは i18n1112 の間だけのもので、もう終わった。表は出所の記録として残す)。数値・URL・コード・並びの正は ja のデータだけ。データの写し (`plans` ほか) は先頭に `_source` / `_source_hash` を持つ。訳のあるページの台帳は `_data/i18n_pages.yml` (hreflang を出すページ)。
 - **ja のソースの日本語の直書きは残す**: 既存の node テストが include のソースの日本語・href・Liquid の式を照合しているため、共通部品は行内の `{% if page.lang == 'ja' %}原文{% else %}{{ 訳 }}{% endif %}` か `{{ tx.x | default: 元の式 }}` で英中の値だけを引く。header / footer は英中用の写し `_includes/header-intl.html` / `_includes/footer-intl.html` を include する。アイランドと JS は `<html lang>` を読む (`src/lib/site-lang.js`) か、同じファイルの中の 3 言語の表 (`const TEXT = { ja, en, 'zh-tw' }`、ja は今の文字列のまま)。
 - **英中の見た目の直し**は `:root:not(:lang(ja))` の下だけ (ja の CSS を変えない)。
 - **検査の道具** (`scripts/i18n/`、`_config.yml` の exclude で公開しない。依存なし):
@@ -85,8 +85,10 @@ npm run build && bundle exec jekyll build
 
   - `source-hash.mjs`: ja のソースの正規化 (CRLF・コメント・行末の空白・空行を除く) の sha256。`src/lib/i18n-site-tools.test.js` が英中の全ページと l10n の hash の一致を検査する (`npm test`)。
   - `parity.mjs`: ja と英中のソースの構造 (`id`・`data-dl`・`data-island`・`data-*` の名前・`<img src>`・include の並び) の一致。各ページのチケットの node テストが使う。
-  - `checks/ja-lang.mjs`: `<html lang>` と `og:locale` (ja `ja`/`ja_JP`、en `en`/`en_US`、zh-tw `zh-Hant-TW`/`zh_TW`)。`checks/lang-text.mjs` (W7 で作る): 英中のページの見える文に仮名・簡体字・禁止語が無いこと。用語集の写しは `scripts/i18n/glossary.json`。
+  - `checks/ja-lang.mjs`: `<html lang>` と `og:locale` (ja `ja`/`ja_JP`、en `en`/`en_US`、zh-tw `zh-Hant-TW`/`zh_TW`)。`checks/lang-text.mjs`: 英中のページの見える文に仮名・簡体字・禁止語が無いこと (本体は `scripts/i18n/site-lint.mjs`、用語集の写しを読む)。`checks/store.mjs`: Store のボタンの出し分け (下の項)。
   - 検査を足すときは `scripts/i18n/checks/<名前>.mjs` (`export default function check(ctx)` がエラーの文字列の配列を返す) を足すだけ。node テストは `src/lib/i18n-site-<名前>.test.js` (`_site` を読まない)。
+- **用語集の写し**: `scripts/i18n/glossary.json`・`glossary-chars.json` は desktop の `src/lib/i18n/glossary.json`・`glossary-chars.json` (正本) の写しで、**サイトで直接直さない**。語を足す・直すときは desktop で直してから 2 つをそのまま写し、`scripts/i18n/glossary.source.json` の `desktop_commit` (写した desktop のコミットの 40 桁の sha)・`desktop_ref` (消えない名前。例 `backlog1113 (T-2232)`)・`sha256` (改行を LF にそろえた内容の値、2 つ)・`note` を直す。`npm test` の `src/lib/i18n-site-lang.test.js` が sha256 を照合する。desktop・web・サイトの 3 者を同じ版の組で揃える (手順は desktop の `docs/i18n.md`)。
+- **Store のボタンの切り替え** (T-2304): `_data/site.yml` の `distribution.store_enabled` (既定 `false`) 1 か所で、`true` のときだけ 3 言語で「Microsoft Store で入手」のボタンと Store 版だけの説明 (申し込みのページ・FAQ・法務文書の配信ストア版の記述) が出る。英中の訳や部品を直したら、`false` の出力は `node scripts/i18n/check-site.mjs _site` (`checks/store.mjs`)、`true` の出力は `node scripts/check-store-toggle.mjs` (`_data` の写しで切り替えて丸ごとビルドし、本物の `_data`・`_site` は触らない) で両方を確かめる。
 
 ## Conventions
 
@@ -252,6 +254,9 @@ E2E_BASE_URL=https://www.deepmosaic.co.jp npx playwright test   # 配信サー�
 
 `E2E_BASE_URL` を渡すと `playwright.config.ts` が対象を読み取りだけの spec に絞る
 （問い合わせフォームの spec を本番へ向けない）。解析系のリクエストは spec が abort する。
+
+英中のページ (i18n): `E2E_SKIP_BUILD=1 npx playwright test e2e/i18n-layout.spec.ts` (T-2215) が台帳 `_data/i18n_pages.yml` の英中のページを 2 つの幅 (1280×800 と Pixel 7) で開き、横スクロール・はみ出し・日本語の残りが無いことを見る。`DM_I18N_SHOTS=1` を足すと全ページの全面のスクリーンショットも撮る。許可の一覧は `e2e/i18n-allow.json` (`{ version, entries[] }`、足してよいのは検査の誤検出だけで各項目に理由が必須)。
+ほかに `e2e/i18n-contact.spec.ts` (英中のお問い合わせ・導入相談・参加・404)・`e2e/i18n-nav.spec.ts` (言語の切り替え)・`e2e/i18n-suggest.spec.ts` (ja のページの言語の案内の帯と選んだ言語の記憶) がある。どれも `npx playwright test` の全件に入る。
 
 ⚠️ **E2E 一式 (`e2e/` `playwright.config.ts`) は `_config.yml` の `exclude` に入れる。**
 外すと Jekyll が `_site/` に複製して配信してしまう（CI の `Verify build output` が検知する）。
