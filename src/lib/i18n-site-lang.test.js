@@ -410,13 +410,13 @@ test('用語集の写し: 隣に desktop の用語集があれば同じ内容 (�
 	}
 })
 
-test('用語集の写し: signin1113 (T-2238) の版 (sign_in / sign_out の ja がサインイン / サインアウト、法人 が reference)', () => {
+test('用語集の写し: signin1113 (T-2238) の版 (sign_in / sign_out の ja がサインイン / サインアウト、法人 が required (T-2232))', () => {
 	const g = readJson('scripts/i18n/glossary.json')
 	const byId = new Map(g.terms.map((t) => [t.id, t]))
 	assert.equal(byId.get('sign_in')?.ja, 'サインイン')
 	assert.equal(byId.get('sign_out')?.ja, 'サインアウト')
 	assert.equal(byId.get('corporate')?.ja, '法人')
-	assert.equal(byId.get('corporate')?.kind, 'reference')
+	assert.equal(byId.get('corporate')?.kind, 'required')
 	for (const t of g.terms) {
 		assert.ok(!['ログイン', 'ログアウト'].includes(t.ja), t.id)
 	}

@@ -82,7 +82,7 @@ performance:
   - key: "NVIDIA GeForce GTX 1060 / 1660, etc. (GTX 10 / 16 series)"
     val: "About 10–25× the video length, measured. Not suitable for processing long videos."
   - key: "No GPU (CPU only)"
-    val: "About 2.9× the video length (about 29 min for a 10-min video), measured. Detection uses the lightweight model, and mosaic refinement is not performed. Varies greatly with CPU performance."
+    val: "About 2.9× the video length (about 29 min for a 10-min video), measured. Detection uses the lightweight model, and the \"Refine mosaic\" stage is skipped. Varies greatly with CPU performance."
 performance_footnote: "For GPUs not listed, use the value for a model with similar performance as a guide. GPUs for laptops are slower than the desktop GPUs with the same name. You don't need to operate the app during processing, and once it finishes, you can resume work from \"Areas to review\"."
 network:
   - key: "Initial setup"
