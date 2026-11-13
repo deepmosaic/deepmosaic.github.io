@@ -1,6 +1,6 @@
 // T-2304 (backlog1113): Microsoft Store のボタンの出し分けの検査 (check-site のモジュール)。ビルドの出力 (_site) を読む。
 //
-//   - 切り替えは `_data/site.yml` の `distribution.store_enabled` 1 か所 (部品 `_includes/store-button.html` だけが読む)。
+//   - 切り替えは `_data/site.yml` の `distribution.store_enabled` 1 か所 (部品 `_includes/store-button.html` と docs の `_includes/docs/store-edition.html` だけが読む)。
 //   - false (既定): サイト全体の出力に Store のボタン (目印 `data-store-button`) と掲載ページ (`apps.microsoft.com`) へのリンクが無い。
 //       法務文書 (`company/privacy`・`company/cookie`、英中も) の本文は対象外 (T-1921 で別に扱う)。
 //   - true: 4 か所 × 言語 (docs は ja だけ) に 1 つずつボタンがあり、href が掲載ページ (`app_store_product_id` から)、文がその言語のもの、

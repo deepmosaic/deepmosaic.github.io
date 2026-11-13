@@ -1,0 +1,23 @@
+{%- comment -%}
+docs の Microsoft Store 版だけの補足 (T-2305、backlog1113)。01-intro の #install の末尾に置く。
+
+2.14 はサイト配布版 (インストーラ + 自動更新) と Store 版 (MSIX) の両方で出す。docs の本文はサイト配布版の文で、
+Store 版で違う所 (入手先・更新は Store が配る・アプリ内に購入画面が無い・同梱ソフトは差し替えできない ほか) はここに 1 か所でまとめる。
+`_data/site.yml` の `distribution.store_enabled` が true のときだけ出す (false のときは何も出さない)。
+切り替えを読むのは部品 (store-button.html とこの部品) だけで、docs の章のファイルは条件を書かずにこの部品を置く。
+文は Store 版だけを前提にしていた版 (T-1917 / T-1922 / T-1900) の Store 向けの文を使う。正本は desktop の build_variant / isStoreBuild()。
+検査: src/lib/site-copy-t2305.test.js。true の出力は `node scripts/check-store-toggle.mjs --keep` で見られる。
+{%- endcomment -%}
+{%- if site.data.site.distribution.store_enabled -%}
+<h3 id="install-store" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">Microsoft Store 版をお使いの方へ</h3>
+<p>Microsoft Store 版でも、使える機能・アカウント・プランはインストーラ版と同じです。次の点だけが異なります。</p>
+<ul>
+  <li><strong>入手先</strong>: 上の「Microsoft Store で入手」から Microsoft Store の掲載ページを開き、「入手」（または「インストール」）を押してください。Microsoft Store アプリで「Deepmosaic」を検索しても見つかります（Microsoft Store アプリで直接開く場合は<a href="{{ site.data.lang.ja.app_store_protocol_link }}">こちら</a>）。インストール先は Windows が管理するアプリのフォルダで、変更できません</li>
+  <li><strong>アップデート</strong>: 新しいバージョンは Microsoft Store が配信し、自動で更新されます。アプリ内の更新ダイアログと、メニューの「ファイル ▸ アップデートを確認」はありません。AI モデルは起動時に自動で取得します（<a href="#update">アップデート</a>）</li>
+  <li><strong>有料プランの申し込み</strong>: Microsoft Store 版のアプリには購入画面がありません。有料プランの申し込み・変更・解約は、Web 版（ブラウザ）でアプリと同じアカウントにサインインして行います（<a href="#plan">プランの変更</a>）</li>
+  <li><strong>同梱する第三者ソフト</strong>: Microsoft Store 版はパッケージの中身が読み取り専用・署名済みのため、同梱の FFmpeg をその場で差し替えることはできません（GPL に従って別途入手・改変した FFmpeg を使うことはできます。<a href="#licenses">同梱する第三者ソフトとライセンス</a>）</li>
+  <li><strong>Premiere Pro 連携</strong>: Microsoft Store 版で Premiere Pro 連携を使うには、プラグインの更新（0.1.21 以降）が必要です。「Premiere Pro へインポート」から案内に従って更新してください（<a href="#premiere">Premiere Pro 連携</a>）</li>
+  <li><strong>アンインストール</strong>: 確認画面のチェックは無く、設定とサインインの情報（<code>%USERPROFILE%\.deepmosaic</code>）とプロジェクトフォルダは残ります。不要になったフォルダは、アンインストールの後にエクスプローラーで削除してください（プロジェクトフォルダの中に保存した書き出し動画も消えるのでご注意ください）</li>
+  <li><strong>インストーラ版から切り替える場合</strong>: プロジェクトフォルダ・設定とサインインの情報・AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>）は Microsoft Store 版がそのまま使います。インストーラ版をアンインストールすると AI モデル等は削除され、Microsoft Store 版は次回起動時にこれらを取得し直します。アンインストールの確認画面の「アプリのデータとプロジェクトフォルダを削除する」に<strong>チェックを入れないでください</strong>（Microsoft Store 版と共有している設定・検出結果・プロジェクトフォルダも削除されます）</li>
+</ul>
+{%- endif -%}

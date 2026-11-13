@@ -8,44 +8,42 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
 <section id="update" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="アップデート" %}
   {%- comment -%}
-    T-1917: Microsoft Store 版は本体の更新を Store が配る (アプリ内の更新ダイアログと「アップデートを確認」は無い、desktop T-1898)。
-    旧インストーラ版 (2.11.1 まで) の「今すぐ更新」「あとで」の説明は、2.11.1 を使い続ける利用者向けに末尾に残す。
+    T-2305 (backlog1113): サイト配布版 (インストーラ + 自動更新) の文 (公開中の文)。2.13 から検出エンジンはアプリに含まれ
+    本体と一緒に更新され、AI モデルだけが起動時に取得される (2 行)。Microsoft Store 版の更新 (Store が配る・更新ダイアログと
+    「アップデートを確認」は無い) は 01-intro の #install の Store だけの補足 (docs/store-edition.html) に書く。
   {%- endcomment -%}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>新しいバージョンは Microsoft Store が配信し、Windows の設定に従って自動で更新されます。アプリ内で更新を操作する必要はありません。</p>
+    <p>アプリは起動時に自動で新しいバージョンを確認します。更新がある場合はダイアログが表示され、「今すぐ更新」「あとで」のどちらかを選択します。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
-        <div class="kv-key">自動更新</div>
-        <div class="kv-val">Microsoft Store の「アプリの更新」が有効なら、新しいバージョンが自動でインストールされます。アプリの起動中は、次に起動したときに新しいバージョンになります</div>
+        <div class="kv-key">自動確認のタイミング</div>
+        <div class="kv-val">起動直後、その後は 1 時間ごと、およびウィンドウに戻ったとき。検出やエンコードの実行中は完了まで表示を待ちます</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">手動で更新する</div>
-        <div class="kv-val">Microsoft Store アプリの「ライブラリ」（または「ダウンロードと更新」）で「更新プログラムを取得する」を押します。検出やエンコードの実行中は、完了してから更新してください</div>
+        <div class="kv-key">今すぐ更新</div>
+        <div class="kv-val">新しいバージョンをダウンロードして適用し、アプリが自動で再起動します。実行中の処理がある場合は完了後に更新してください</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">あとで</div>
+        <div class="kv-val">このセッションではそれ以上の自動確認を行いません。次回起動時に再度確認します</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">検出エンジン</div>
         <div class="kv-val">アプリに含まれていて、アプリと一緒に更新されます</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">AI モデル</div>
         <div class="kv-val">起動時に新しいものがあれば自動で取得・差し替えられます（初回セットアップと同じ仕組み）</div>
       </div>
-      <div class="kv-row">
-        <div class="kv-key">設定とデータ</div>
-        <div class="kv-val">更新しても設定・検出結果・プロジェクトフォルダはそのまま残ります</div>
-      </div>
     </div>
-    <h3 class="mt-6 text-[16px] font-bold text-ink">インストーラ版（2.11.1 まで）の更新ダイアログ</h3>
-    <p>インストーラ版は起動時に新しいバージョンを確認し、更新があるとダイアログで「今すぐ更新」「あとで」を選べました。インストーラ版の配布は 2.11.1 で終了したため、2.11.1 からはこのダイアログで新しいバージョンは案内されません。新しいバージョンは Microsoft Store 版をインストールしてお使いください（データはそのまま引き継がれます。<a href="#install">インストール</a>）。</p>
-    <h3 class="mt-6 text-[16px] font-bold text-ink">手動で確認する（インストーラ版）</h3>
-    <p>インストーラ版では、メニューの「ファイル ▸ アップデートを確認」で、本体 / エンジン / モデル・アセットの 3 つについて「現在」「最新」「状態」が表示されます。Microsoft Store 版にはこのメニューはありません（本体とエンジンは Microsoft Store が更新し、モデルは起動時に自動で取得します）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">手動で確認する</h3>
+    <p>メニューの「ファイル ▸ アップデートを確認」で、本体 / エンジン / モデル・アセットの 3 つについて「現在」「最新」「状態」が表示されます。「更新があります」のときは「今すぐ更新」（本体）または「モデル・アセットを更新」で適用できます。「再確認」で問い合わせ直します。ネットワークに接続できないときは「ネットワーク接続をご確認のうえ、もう一度お試しください。」と表示されます。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/update-check.webp" alt="「アップデートの確認」ダイアログ。本体・エンジン・モデル・アセットの現在と最新のバージョン" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
-      <figcaption class="mt-2 text-[12.5px] text-ink-4">アップデートの確認（インストーラ版）</figcaption>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">アップデートの確認</figcaption>
     </figure>
   </div>
 </section>
-
 
 <section id="data" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="データの保存場所" %}
@@ -62,7 +60,7 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
       </div>
       <div class="kv-row">
         <div class="kv-key"><code>%LOCALAPPDATA%\deepmosaic</code></div>
-        <div class="kv-val">AI モデル、GPU 用ランタイム（NVIDIA 製 GPU 搭載機のみ）など（合計で 10GB程度）。初回セットアップと起動時の確認で自動管理されます。検出エンジンと動画処理ツールはアプリに含まれています。インストーラ版から Microsoft Store 版に切り替えた場合も、この場所をそのまま使います（Microsoft Store 版を新しく入れた PC では、Windows がアプリ専用の場所に振り替えて保存することがあります）</div>
+        <div class="kv-val">AI モデル、GPU 用ランタイム（NVIDIA 製 GPU 搭載機のみ）など（合計で 10GB程度）。初回セットアップと起動時の確認で自動管理されます。検出エンジンと動画処理ツールはアプリに含まれています</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">書き出した動画</div>
@@ -78,15 +76,18 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
   {% include docs-h2.html kicker="運用" title="アンインストール" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <ol>
-      <li>Windowsの「設定」→「アプリ」→「インストールされているアプリ」を開きます（スタートメニューの「Deepmosaic」を右クリックして「アンインストール」でもかまいません）</li>
+      <li>Windowsの「設定」→「アプリ」→「インストールされているアプリ」を開きます</li>
       <li>一覧から「Deepmosaic」を探し、「アンインストール」を選択します（管理者権限は不要です）</li>
     </ol>
-    <p>アンインストールしても、設定とサインインの情報（<code>%USERPROFILE%\.deepmosaic</code>）とプロジェクトフォルダ（検出結果・編集データ）は残ります。AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>、10GB程度）は、Microsoft Store 版を新しく入れた PC ではアンインストールと一緒に削除されますが、インストーラ版から引き継いだ場合は残ります。不要になったフォルダは、アプリをアンインストールした後にエクスプローラーで削除してください（プロジェクトフォルダの中に保存した書き出し動画も消えるのでご注意ください）。元の動画や、プロジェクトフォルダの外に書き出した動画は削除されません。アップデートの際は何も削除されません。</p>
-    <p>インストーラ版（2.11.1 まで）のアンインストールでは、AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>）が自動で削除され、確認画面の「アプリのデータとプロジェクトフォルダを削除する (中の書き出し動画も削除されます)」にチェックを入れると、設定とサインインの情報とプロジェクトフォルダも削除されます。Microsoft Store 版を使い続ける場合は、このチェックを入れないでください。</p>
+    {%- comment -%}
+      T-2305: 公開中の文。2.13 から検出エンジンはアプリに含まれるので「検出エンジンと AI モデル」を「AI モデル等」にした。
+      動きの正本は desktop の src-tauri/installer/hooks.nsh の NSIS_HOOK_POSTUNINSTALL (更新以外では %LOCALAPPDATA%\deepmosaic を常に消し、
+      チェックありのときだけ %USERPROFILE%\.deepmosaic と登録済みのプロジェクトフォルダも消す)。Store 版の違いは docs/store-edition.html。
+    {%- endcomment -%}
+    <p>アンインストールすると、AI モデル等（<code>%LOCALAPPDATA%\deepmosaic</code>、10GB程度）は自動で削除されます（再インストールしたときは初回セットアップで再ダウンロードします）。アンインストールの確認画面で「アプリのデータとプロジェクトフォルダを削除する (中の書き出し動画も削除されます)」にチェックを入れると、設定とサインインの情報（<code>%USERPROFILE%\.deepmosaic</code>）と、Deepmosaic が作ったプロジェクトフォルダ（検出結果・編集データ。フォルダの中に保存した書き出し動画も含みます）も削除されます。チェックしない場合、これらは残ります。プロジェクトフォルダの外にある元の動画や書き出した動画は削除されません。アップデートの際は何も削除されません。</p>
     <p>アカウント自体を削除したい場合は<a href="#account">アカウントの削除</a>を参照してください。</p>
   </div>
 </section>
-
 
 {%- comment -%}
   TICKET-SITE-16: **現行の実装をそのまま書く。**
@@ -199,13 +200,13 @@ docs 第 6 章「運用」(TICKET-SITE-42 で部品化、TICKET-SITE-46 で拡�
 <section id="licenses" class="scroll-mt-24">
   {% include docs-h2.html kicker="運用" title="同梱する第三者ソフトとライセンス" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>Desktop 版（Microsoft Store 版）のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、メニューバーの「ヘルプ ▸ ライセンス」から同じ一覧と各ライセンスの全文を確認できます。一覧にはソフト名の行だけが並び、行を押すと版・ライセンス・提供元・ソースの入手先などの中身が開きます。</p>
+    <p>Desktop 版のアプリには、次の第三者ソフトウェアを同梱しています。アプリの中では、メニューバーの「ヘルプ ▸ ライセンス」から同じ一覧と各ライセンスの全文を確認できます。一覧にはソフト名の行だけが並び、行を押すと版・ライセンス・提供元・ソースの入手先などの中身が開きます。</p>
     <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.3（ffmpeg.exe / ffprobe.exe）</h3>
     <ul>
       <li>ライセンス: GNU General Public License version 3（GPL v3）。全文は <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
       <li>版とビルド: n8.1.3-27-g8dca1586f4。ビルドは BtbN/FFmpeg-Builds（リリース autobuild-2026-10-31-12-59、win64-gpl-8.1）。<code>--enable-gpl --enable-version3</code> で構成され、libx264・libx265・libxvid（いずれも GPL v2 以降）をはじめとするライブラリを静的にリンクしています。リンクしたライブラリの一覧とそれぞれのライセンスは、アプリ内の「ヘルプ ▸ ライセンス」（ffmpeg-NOTICE.txt）で確認できます。</li>
       <li>ソースコードの入手先（GPL v3 第 6 条の対応ソース）: <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README.txt" target="_blank" rel="noopener noreferrer">https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README.txt</a> — FFmpeg 本体・静的にリンクした全ライブラリのソースとビルドの手順を無償で提供します（この FFmpeg を配布する間と、最後の配布から少なくとも 3 年間）。入手できない場合は<a href="#support">お問い合わせ</a>ください。</li>
-      <li>動画の読み込みと書き出しに使う別のプログラムとして同梱しており、Deepmosaic のアプリ本体にはリンクしていません。Microsoft Store 版はパッケージの中身が読み取り専用・署名済みのため、同梱の FFmpeg をその場で差し替えることはできません（GPL に従って別途入手・改変した FFmpeg を使うことはできます）。</li>
+      <li>動画の読み込みと書き出しに使う別のプログラムとして同梱しており、Deepmosaic のアプリ本体にはリンクしていません。</li>
     </ul>
     <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime 1.26</h3>
     <ul>

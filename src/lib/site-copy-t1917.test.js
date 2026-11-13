@@ -7,8 +7,8 @@
 //     (`/download/latest/windows`)。`app_store_protocol_link`・`app_store_product_id` は Store のボタン (T-2304) 用に残す。
 //   - DL ボタン / リンクはファイル DL なので `download` 属性を付ける (公開中の形。data-dl の計測は残す)。
 //   - ヘッダー・フッター・ヒーロー・DL ボタンの既定の文に Store の掲載ページ・「Microsoft Store」を出さない。
-//   - docs の #install に「インストーラ (NSIS) は 2.11.1 で終了、Store 版へ (データはそのまま、アカウントに紐づく)」の案内。
-//   - #update は Store の更新、#uninstall は Windows の設定から、#data は %LOCALAPPDATA%\deepmosaic の共有を書く。
+//   - docs の #install・#update・#uninstall・#data は T-2305 でサイト配布版の文に戻した (Store 版だけの補足は
+//     docs/store-edition.html、切り替えが true のときだけ)。検査は site-copy-t2305.test.js。
 //
 // 読み取りはこのファイル内で完結させる (spec-requirements.test.js と同じ流儀)。
 
@@ -119,21 +119,6 @@ test('JSON-LD の downloadUrl はページの言語の app_download_link (= イ�
 	assert.match(read('_includes/schema/software-application.html'), /"downloadUrl": \{\{ L\.app_download_link \| jsonify \}\}/)
 })
 
-test('#install: Store で入手する手順・2 つのリンク・インストーラ版 2.11.1 の終了と移行の案内', () => {
-	const install = sectionOf(read('_includes/docs/01-intro.html'), 'install')
-	assert.ok(install, '01-intro に #install が無い')
-	const text = textOf(install)
-	assert.match(install, /app_store_protocol_link/)
-	assert.match(install, /download-button\.html/)
-	assert.match(text, /Microsoft Store で配布/)
-	assert.match(text, /2\.11\.1 で終了/)
-	assert.match(text, /データはそのまま引き継がれます/)
-	assert.match(text, /移行の作業は不要/)
-	assert.match(text, /アカウントに紐づいて/)
-	assert.match(text, /0\.1\.21/, 'Premiere 連携のプラグイン更新の版')
-	assert.doesNotMatch(text, /ダウンロードしたインストーラ（Deepmosaic Setup）を実行/, '旧手順が残っている')
-})
-
 // T-1929 (desktop 2.13): GPU 高速化はスイッチを廃止し、NVIDIA 製 GPU 搭載機で自動取得 (site-copy-help1111.test.js)
 test('#setup: 検出エンジンはアプリに含まれ、GPU 高速化は NVIDIA 製 GPU 搭載機で自動取得', () => {
 	const setup = textOf(sectionOf(read('_includes/docs/01-intro.html'), 'setup') ?? '')
@@ -141,27 +126,4 @@ test('#setup: 検出エンジンはアプリに含まれ、GPU 高速化は NVID
 	assert.match(setup, /初回に高速化用のコンポーネント/)
 	assert.doesNotMatch(setup, /自動では取得しません/)
 	assert.doesNotMatch(setup, /モデルデータと検出エンジンが自動でダウンロード/)
-})
-
-test('#update: 本体の更新は Microsoft Store、インストーラ版の更新ダイアログは過去の説明として区別する', () => {
-	const update = textOf(sectionOf(read('_includes/docs/06-ops.html'), 'update') ?? '')
-	assert.match(update, /Microsoft Store が配信/)
-	assert.match(update, /インストーラ版（2\.11\.1 まで）/)
-	assert.match(update, /Microsoft Store 版にはこのメニューはありません/)
-})
-
-test('#uninstall: Windows の設定から。Store 版で残るもの・インストーラ版のチェックの注意', () => {
-	const un = textOf(sectionOf(read('_includes/docs/06-ops.html'), 'uninstall') ?? '')
-	assert.match(un, /インストールされているアプリ/)
-	assert.match(un, /%USERPROFILE%\\\.deepmosaic/)
-	assert.match(un, /プロジェクトフォルダ/)
-	assert.match(un, /インストーラ版から引き継いだ場合は残ります/)
-	assert.match(un, /チェックを入れないでください/)
-})
-
-test('#data: %LOCALAPPDATA%\\deepmosaic はインストーラ版と Store 版で同じ場所を使う', () => {
-	const data = textOf(sectionOf(read('_includes/docs/06-ops.html'), 'data') ?? '')
-	assert.match(data, /%LOCALAPPDATA%\\deepmosaic/)
-	assert.match(data, /この場所をそのまま使います/)
-	assert.match(data, /検出エンジンと動画処理ツールはアプリに含まれています/)
 })

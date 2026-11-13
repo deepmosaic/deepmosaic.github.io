@@ -5,7 +5,7 @@
 //   - T-1928: メニューバーに「ヘルプ」(ライセンス / ドキュメント) を足し、プロフィールメニューから 2 項目を外した。
 //     「ライセンス」への案内はメニューバーの「ヘルプ」から。初回セットアップ中も「ヘルプ」は使える。
 //     (T-2094 / desktop T-2093: 項目の表示名は旧「このアプリについて」→「ライセンス」。旧名の不在は site-copy-t2094.test.js)
-//     Store 版には「アップデートを確認」が無いので、ファイルメニューの説明は旧インストーラ版のみと書く。
+//     ファイルメニューの「アップデートを確認」は T-2305 でサイト配布版の文に戻した (Store 版に無いことは docs/store-edition.html)。
 //   - T-1929: GPU 高速化のスイッチを廃止し、NVIDIA 製 GPU 搭載機では初回に自動取得 (GPU の無い PC は取得しない)。
 //     失敗時の文言は desktop の CudaRuntimeWidget.svelte の実文言 (「再試行」/ 次回の起動時に取り直す)。
 //     #licenses に「初回に取得する第三者ソフト」(NVIDIA CUDA / cuDNN と ONNX Runtime の CUDA 実行プロバイダ)。
@@ -100,11 +100,13 @@ test('T-1928: 初回セットアップ中は「ファイル ▸ 終了」と「�
 	assert.match(setupText, /「ファイル ▸ 終了」と「ヘルプ」以外が無効/)
 })
 
-test('T-1928: 「アップデートを確認」は旧インストーラ版のみと書く (Store 版には無い)', () => {
+// T-2305 (backlog1113): 2.14 はサイト配布版と Store 版の両方。ファイルメニューの説明は公開中の文 (サイト配布版) に戻し、
+// Store 版に「アップデートを確認」が無いことは docs/store-edition.html (切り替えが true のときだけ) に書く。
+test('T-1928 / T-2305: 「アップデートを確認」は公開中の文 (旧インストーラ版のみ、と書かない)', () => {
 	const file = afterHeading(layout, 'メニューバー「ファイル」')
 	assert.ok(file)
-	assert.match(file, /アップデートを確認 旧インストーラ版（2\.11\.1 まで）のみ/)
-	assert.match(file, /Microsoft Store 版にはこの項目は無く/)
+	assert.match(file, /アップデートを確認 本体 \/ エンジン \/ モデル・アセットの更新を確認します/)
+	assert.doesNotMatch(file, /旧インストーラ版|Microsoft Store/)
 })
 
 test('T-1929: #setup は NVIDIA 製 GPU 搭載機で初回に自動取得、GPU の無い PC は取得しない', () => {
