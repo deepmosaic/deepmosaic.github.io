@@ -375,10 +375,10 @@ test('用語集の写し: 形が desktop の用語集 (terms・forbidden・zh_si
 	assert.ok(Object.keys(c.ja_shinjitai).length > 0)
 })
 
-test('用語集の写し: desktop の横断レビュー (T-2137) の改訂版 (210 語・3 つ目の表 zh_non_tw_variant・必須語の追加)', () => {
+test('用語集の写し: desktop の横断レビュー (T-2137) の改訂版 + signin1113 (T-2238) の 法人 (211 語・3 つ目の表 zh_non_tw_variant・必須語の追加)', () => {
 	const g = readJson('scripts/i18n/glossary.json')
 	const c = readJson('scripts/i18n/glossary-chars.json')
-	assert.equal(g.terms.length, 210)
+	assert.equal(g.terms.length, 211)
 	assert.ok(Object.keys(c.zh_non_tw_variant ?? {}).length > 0, 'zh_non_tw_variant')
 	const byId = new Map(g.terms.map((t) => [t.id, t]))
 	for (const [id, en, zh] of [
@@ -407,6 +407,30 @@ test('用語集の写し: 隣に desktop の用語集があれば同じ内容 (�
 			continue
 		}
 		assert.equal(readFileSync(neighbour, 'utf8').replace(/\r\n/g, '\n'), lf(`scripts/i18n/${name}`), name)
+	}
+})
+
+test('用語集の写し: signin1113 (T-2238) の版 (sign_in / sign_out の ja がサインイン / サインアウト、法人 が reference)', () => {
+	const g = readJson('scripts/i18n/glossary.json')
+	const byId = new Map(g.terms.map((t) => [t.id, t]))
+	assert.equal(byId.get('sign_in')?.ja, 'サインイン')
+	assert.equal(byId.get('sign_out')?.ja, 'サインアウト')
+	assert.equal(byId.get('corporate')?.ja, '法人')
+	assert.equal(byId.get('corporate')?.kind, 'reference')
+	for (const t of g.terms) {
+		assert.ok(!['ログイン', 'ログアウト'].includes(t.ja), t.id)
+	}
+})
+
+test('用語集の写し: T-2249 の版 (body_areas の ja が 局部、en / zh は body areas / 身體部位)', () => {
+	const g = readJson('scripts/i18n/glossary.json')
+	const body = g.terms.find((t) => t.id === 'body_areas')
+	assert.equal(body?.ja, '局部')
+	assert.equal(body?.en, 'body areas')
+	assert.equal(body?.zh, '身體部位')
+	assert.equal(body?.kind, 'required')
+	for (const t of g.terms) {
+		assert.notEqual(t.ja, '身体のプライバシー部位', t.id)
 	}
 })
 

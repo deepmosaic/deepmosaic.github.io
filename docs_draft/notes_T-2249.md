@@ -47,3 +47,8 @@ T-1901 (0536f32) で「局部」→「身体のプライバシー部位」に変
 ## ロールバック
 
 このコミットを revert すれば T-1901 の表記に戻る (source_hash も一緒に戻る)。
+
+## 用語集の写し (desktop / web の担当)
+
+- S2 の横断レビューの追い修正で、desktop i18n1112-integrate e1d14f81 の `src/lib/i18n/glossary.json` (211 語) を `scripts/i18n/glossary.json` へ写した。20 行目の持ち越しはこれで済んだ。
+- T-2238 の写し (sign_in / sign_out の ja、法人) も同じコミットで行った。`glossary.source.json` の desktop_commit と sha256 を更新し、`i18n-site-lang.test.js` の語数を 211 にし、T-2238 / T-2249 の版を確かめるテストを 2 つ足した。

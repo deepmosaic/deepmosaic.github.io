@@ -1,9 +1,9 @@
 {
-	"desktop_commit": "4c2ce498ca3d9ece6d24383dc3f2a55f03435aeb",
+	"desktop_commit": "e1d14f8175039b7764cfb8837765be9c91a38ac2",
 	"desktop_ref": "i18n1112-integrate",
-	"note": "T-2200: desktop の src/lib/i18n/glossary.json と glossary-chars.json の写し。sha256 は改行を LF にそろえた内容の値。ウェーブ末尾の追い修正 (2026-11-12) で横断レビュー (T-2137 GL-1〜GL-6、210 語・zh_non_tw_variant) の版に写し直した",
+	"note": "T-2200: desktop の src/lib/i18n/glossary.json と glossary-chars.json の写し。sha256 は改行を LF にそろえた内容の値。ウェーブ末尾の追い修正 (2026-11-12) で横断レビュー (T-2137 GL-1〜GL-6、210 語・zh_non_tw_variant) の版に写し直した。signin1113 (T-2238): sign_in / sign_out の ja をサインイン / サインアウトに、法人 (reference) を足して 211 語。T-2249: body_areas の ja を 局部 に (T-1901 の取り消し)",
 	"sha256": {
-		"glossary.json": "8ad50064fb1c21979a9f786c19f8425c8bcf39daff8c0b6abcdd00d2b95a03aa",
+		"glossary.json": "b7520a2ad997f6b0a551d5b0ce5e0cbf14b65a7d168b4c5854b555f977256384",
 		"glossary-chars.json": "72f3938ebf32bfe18b9240403203d9d1cbf2f1eca2cf4c3c3b4d7d21cb813775"
 	}
 }
