@@ -2,10 +2,11 @@
 //
 //   node --test src/lib/site-copy-t1917.test.js
 //
-//   - 配布は Microsoft Store だけ (ユーザー決定 2026-11-11)。DL URL の単一管理点 `_data/lang/ja.json` の
-//     `app_download_link` が Store の掲載ページ、`app_store_protocol_link` が Store アプリで開くリンク。
-//   - DL ボタンはファイル DL ではなくなったので `download` 属性を付けない (data-dl の計測は残す)。
-//   - サイト配布の worker の DL 口 (`/download/latest/windows`) をページから参照しない。
+//   - T-2303 (backlog1113, 2026-11-13) で DL の既定をインストーラに戻した (2.14 はサイト配布版と Store 版の両方)。
+//     DL URL の単一管理点 `_data/lang/{ja,en,zh-tw}.json` の `app_download_link` は worker の DL 口
+//     (`/download/latest/windows`)。`app_store_protocol_link`・`app_store_product_id` は Store のボタン (T-2304) 用に残す。
+//   - DL ボタン / リンクはファイル DL なので `download` 属性を付ける (公開中の形。data-dl の計測は残す)。
+//   - ヘッダー・フッター・ヒーロー・DL ボタンの既定の文に Store の掲載ページ・「Microsoft Store」を出さない。
 //   - docs の #install に「インストーラ (NSIS) は 2.11.1 で終了、Store 版へ (データはそのまま、アカウントに紐づく)」の案内。
 //   - #update は Store の更新、#uninstall は Windows の設定から、#data は %LOCALAPPDATA%\deepmosaic の共有を書く。
 //
@@ -20,7 +21,7 @@ import { dirname, join } from 'node:path'
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 
-const STORE_WEB = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW'
+const INSTALLER_DL = 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows'
 const STORE_PROTO = 'ms-windows-store://pdp/?productid=9PDKMKWHN9RW'
 
 /** Liquid / HTML のコメントを落とす (コメント内の記述は数えない)。 */
@@ -38,13 +39,16 @@ function sectionOf(html, id) {
 
 const textOf = (html) => stripComments(html).replace(/<[^>]*>/g, '').replace(/\s+/g, ' ')
 
-/** DL ボタン / リンクを持つ部品とページ (`app_download_link` を href に使う所)。 */
+/** DL ボタン / リンクを持つ部品とページ (`app_download_link` を href に使う所)。docs (01-intro) の #install は T-2305 が直す。 */
 const DL_FILES = [
 	'index.html',
+	'en/index.html',
+	'zh-tw/index.html',
 	'_includes/header.html',
+	'_includes/header-intl.html',
 	'_includes/footer.html',
+	'_includes/footer-intl.html',
 	'_includes/download-button.html',
-	'_includes/docs/01-intro.html',
 ]
 
 test('ヘルパー: 陽性対照と陰性対照', () => {
@@ -53,36 +57,62 @@ test('ヘルパー: 陽性対照と陰性対照', () => {
 	assert.equal(textOf('<!-- x --><i>z</i>'), 'z')
 })
 
-test('ja.json: DL の単一管理点が Microsoft Store の掲載ページ、Store アプリ用のリンクもある', () => {
-	const lang = JSON.parse(read('_data/lang/ja.json'))
-	assert.equal(lang.app_download_link, STORE_WEB)
-	assert.equal(lang.app_store_protocol_link, STORE_PROTO)
-	assert.equal(lang.app_store_product_id, '9PDKMKWHN9RW')
+test('lang/*.json: DL の単一管理点はインストーラ (worker の DL 口)、Store のリンクは別のキーに残す (3 言語)', () => {
+	for (const lang of ['ja', 'en', 'zh-tw']) {
+		const L = JSON.parse(read(`_data/lang/${lang}.json`))
+		assert.equal(L.app_download_link, INSTALLER_DL, `${lang}.app_download_link`)
+		assert.equal(L.app_store_protocol_link, STORE_PROTO, `${lang}.app_store_protocol_link`)
+		assert.equal(L.app_store_product_id, '9PDKMKWHN9RW', `${lang}.app_store_product_id`)
+	}
 })
 
-test('DL ボタン / リンクは app_download_link を使い、download 属性を付けず、data-dl は残す', () => {
+test('DL ボタン / リンクは app_download_link を使い、download 属性と data-dl を持つ', () => {
 	for (const rel of DL_FILES) {
 		const html = stripComments(read(rel))
 		const tags = html.match(/<a\s[^>]*app_download_link[^>]*>/g) ?? []
 		assert.ok(tags.length > 0, `${rel}: app_download_link を使う <a> が無い (陽性対照)`)
 		for (const tag of tags) {
-			assert.doesNotMatch(tag, /\sdownload(\s|=|>)/, `${rel}: download 属性が残っている: ${tag}`)
+			assert.match(tag, /\sdownload(\s|>)/, `${rel}: download 属性が無い (値は付けない): ${tag}`)
 			assert.match(tag, /data-dl=/, `${rel}: data-dl が無い (計測から漏れる): ${tag}`)
 		}
 	}
-	// モバイルのドロワー (Svelte の data-links) も download を渡さない
-	const header = read('_includes/header.html')
-	const links = header.match(/data-links='([^']*)'/)?.[1]
-	assert.ok(links, 'header の data-links が見つからない')
-	const dl = JSON.parse(links.replace(/\{\{[^}]*\}\}/g, 'x')).find((l) => l.dl === 'mobile')
-	assert.ok(dl, 'data-links に dl=mobile の項目が無い')
-	assert.equal(dl.download, undefined, 'data-links の DL 項目に download が残っている')
+	// モバイルのドロワー (Svelte の data-links) の DL 項目は download: true (src/lib/download-attr.js で '' に写る)
+	for (const rel of ['_includes/header.html', '_includes/header-intl.html']) {
+		const links = read(rel).match(/data-links='([^']*)'/)?.[1]
+		assert.ok(links, `${rel}: data-links が見つからない`)
+		const items = JSON.parse(links.replace(/\{\{[^}]*\}\}/g, 'x'))
+		const dl = items.find((l) => l.dl === 'mobile')
+		assert.ok(dl, `${rel}: data-links に dl=mobile の項目が無い`)
+		assert.equal(dl.download, true, `${rel}: data-links の DL 項目に download: true が無い`)
+		for (const item of items.filter((l) => l !== dl)) assert.equal(item.download, undefined, `${rel}: ${item.href} に download`)
+	}
 })
 
-test('サイト配布の DL 口 (worker の /download/latest/windows) をページ・データから参照しない', () => {
-	for (const rel of [...DL_FILES, '_data/lang/ja.json', '_includes/cta-download.html', '_includes/pricing-cards.html']) {
-		assert.doesNotMatch(stripComments(read(rel)), /download\/latest\/windows/, `${rel} に旧 DL 口が残っている`)
+test('ヘッダー・フッター・ヒーロー・DL ボタンに Store の掲載ページや「Microsoft Store」の文を出さない', () => {
+	// 部品は全体、トップのページはヒーローの DL ボタンだけを見る (料金の節の文は T-2306 が直す)
+	const PAGES = ['index.html', 'en/index.html', 'zh-tw/index.html']
+	const targets = [...DL_FILES.filter((rel) => !PAGES.includes(rel)), '_includes/cta-download.html', '_data/l10n/en/nav.yml', '_data/l10n/zh-tw/nav.yml', '_data/l10n/en/parts.yml', '_data/l10n/zh-tw/parts.yml'].map((rel) => [rel, stripComments(read(rel))])
+	for (const rel of PAGES) {
+		const hero = stripComments(read(rel)).match(/<a\s[^>]*data-dl="hero"[^>]*>[\s\S]*?<\/a>/)?.[0]
+		assert.ok(hero, `${rel}: ヒーローの DL ボタンが無い`)
+		targets.push([`${rel} のヒーロー`, hero])
 	}
+	for (const [where, live] of targets) {
+		assert.doesNotMatch(live, /apps\.microsoft\.com|9PDKMKWHN9RW/, `${where} に Store の掲載ページが残っている`)
+		assert.doesNotMatch(live, /Microsoft Store|Store で入手|Store 取得/, `${where} に Store の文が残っている`)
+	}
+	// 陽性対照: 公開中の文に戻っている
+	assert.match(read('_includes/download-button.html'), /無料でダウンロード/)
+	assert.match(stripComments(read('index.html')), /data-dl="hero"[^>]*>\{% include icon\.html name="Download" class="h-5 w-5" %\}無料でダウンロード<\/a>/)
+	assert.match(stripComments(read('en/index.html')), /data-dl="hero"[^>]*>\{% include icon\.html name="Download" class="h-5 w-5" %\}Download for free<\/a>/)
+	assert.match(stripComments(read('zh-tw/index.html')), /data-dl="hero"[^>]*>\{% include icon\.html name="Download" class="h-5 w-5" %\}免費下載<\/a>/)
+	assert.match(stripComments(read('_includes/footer.html')), /data-dl="footer"[^>]*>ダウンロード<\/a>/)
+	assert.match(stripComments(read('_includes/footer-intl.html')), /data-dl="footer"[^>]*>\{\{ N\.download \}\}<\/a>/)
+	assert.match(stripComments(read('_includes/header.html')), /<span><span class="hidden lg:inline">無料で<\/span>ダウンロード<\/span>/)
+})
+
+test('JSON-LD の downloadUrl はページの言語の app_download_link (= インストーラ)', () => {
+	assert.match(read('_includes/schema/software-application.html'), /"downloadUrl": \{\{ L\.app_download_link \| jsonify \}\}/)
 })
 
 test('#install: Store で入手する手順・2 つのリンク・インストーラ版 2.11.1 の終了と移行の案内', () => {

@@ -143,10 +143,11 @@ test('noindex・referrer なし・サイトマップに載らない', async ({ p
   expect(await sitemap.text()).not.toContain('/join/');
 });
 
-test('Microsoft Store へのリンク (別タブ・noopener)', async ({ page }) => {
+// T-2303: リンク先は DL の単一管理点 (app_download_link = インストーラ)。文と Store のボタンは T-2307 / T-2304 が直す。
+test('アプリの入手へのリンク (別タブ・noopener)', async ({ page }) => {
   await open(page, '#code=ABCD-EFGH-2345');
   const store = page.locator('[data-join-store]');
-  await expect(store).toHaveAttribute('href', /^https:\/\/apps\.microsoft\.com\/detail\//);
+  await expect(store).toHaveAttribute('href', 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows');
   await expect(store).toHaveAttribute('target', '_blank');
   await expect(store).toHaveAttribute('rel', 'noopener noreferrer');
   await expect(store).not.toHaveAttribute('data-dl', /.*/);

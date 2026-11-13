@@ -98,7 +98,8 @@ test('陽性対照: 既存のテストが照合する ja の直書き・href・�
 	assert.match(tags[0], /data-dl=/)
 	// ja の直書きの文
 	assert.match(SRC['cta-download'], /無料でご利用いただけます/)
-	assert.match(SRC['download-button'], /Microsoft Store で無料入手/)
+	assert.match(SRC['download-button'], /無料でダウンロード/) // T-2303: 公開中の既定のラベルに戻した
+	assert.doesNotMatch(SRC['download-button'], /Microsoft Store/)
 	assert.match(SRC['contract-quota'], /最大 \{\{ cq_max \}\} 契約（月 \{\{ cq_hours \}\} 時間まで）/)
 	assert.match(SRC['contract-limits'], /\{\{ t\.name \}\} は最大 \{\{ cl_max \}\} 契約/)
 	assert.match(SRC['what-is'], /title="Deepmosaic とは"/)

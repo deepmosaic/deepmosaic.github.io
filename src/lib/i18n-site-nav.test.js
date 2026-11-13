@@ -109,9 +109,12 @@ test('header: data-links の項目の数・行き先・dl が ja と同じ、ラ
 		intl.map((l) => l.href),
 		ja.map((l) => l.href),
 	)
-	for (const item of intl) {
-		assert.equal(item.download, undefined, 'data-links に download を渡さない (T-231)')
-	}
+	// T-2303: DL 項目 (インストーラ) だけ download: true (ja と同じ)。真偽は download-attr.js が '' に写す (T-231)
+	assert.deepEqual(
+		intl.map((l) => l.download),
+		ja.map((l) => l.download),
+	)
+	assert.equal(intl.find((l) => l.dl === 'mobile')?.download, true)
 	const raw = stripComments(HEADER_INTL).match(/data-links='([^']*)'/)[1]
 	assert.doesNotMatch(raw, /[぀-ヿ]/, '英中の data-links に仮名を直書きしない')
 	// docs の項目は印を持つ
@@ -120,11 +123,11 @@ test('header: data-links の項目の数・行き先・dl が ja と同じ、ラ
 	assert.equal(docs.badge, 'x', 'docs の項目に印 (badge = L.ja_only_badge) が無い')
 })
 
-test('header: 英中の DL の <a> は app_download_link・data-dl を持ち download 属性を持たない', () => {
+test('header: 英中の DL の <a> は app_download_link・data-dl・download 属性 (値なし) を持つ (T-2303)', () => {
 	const tags = stripComments(HEADER_INTL).match(/<a\s[^>]*app_download_link[^>]*>/g) ?? []
 	assert.equal(tags.length, 1)
 	assert.match(tags[0], /data-dl="header"/)
-	assert.doesNotMatch(tags[0], /\sdownload(\s|=|>)/)
+	assert.match(tags[0], /\sdownload\s/)
 })
 
 test('header: ja の分岐は既存の行を残し、英中のときだけ写しを include する', () => {
@@ -132,7 +135,7 @@ test('header: ja の分岐は既存の行を残し、英中のときだけ写し
 	assert.match(live, /\{%- if page\.lang == 'en' or page\.lang == 'zh-tw' -%\}\{% include header-intl\.html %\}\{%- else -%\}/)
 	assert.match(HEADER, /<\/header>\{% endif %\}\r?\n?$/)
 	// 既存の行 (data-links・noscript・DL の <a>) が残っている (陽性対照: 既存のテストが照合する形)
-	assert.match(live, /data-links='\[\{"label":"ダウンロード","href":"\{\{ site\.data\.lang\.ja\.app_download_link \}\}","dl":"mobile"\}/)
+	assert.match(live, /data-links='\[\{"label":"ダウンロード","href":"\{\{ site\.data\.lang\.ja\.app_download_link \}\}","download":true,"dl":"mobile"\}/)
 	assert.match(live, /<noscript>/)
 	assert.match(live, /data-dl="header"/)
 })
@@ -291,8 +294,12 @@ test('nav.yml: en と zh-tw のキーの集合が同じ、値が空でない', (
 	assert.deepEqual(Object.keys(NAV['zh-tw']).sort(), Object.keys(NAV.en).sort())
 	assert.ok(Object.keys(NAV.en).length >= 10, '陽性対照: キーが少なすぎる')
 	for (const lang of ['en', 'zh-tw']) {
-		// 空を許すのは組み立ての先頭 (store_cta_lead。en は「Microsoft Store」の前に何も付けない) だけ
-		for (const [k, v] of Object.entries(NAV[lang])) if (k !== 'store_cta_lead') assert.ok(v.length > 0, `${lang}.${k} が空`)
+		// 空を許すのは DL のボタンの組み立ての先頭と末尾 (dl_cta_lead / dl_cta_tail。T-2303: en は「Download」+「 for free」で末尾が空、
+		// zh-tw は「免費」+「下載」で先頭が空) だけ
+		const mayBeEmpty = new Set(['dl_cta_lead', 'dl_cta_tail'])
+		for (const [k, v] of Object.entries(NAV[lang])) if (!mayBeEmpty.has(k)) assert.ok(v.length > 0, `${lang}.${k} が空`)
+		// md の短い形 (lead + tail) は空にしない
+		assert.ok((NAV[lang].dl_cta_lead + NAV[lang].dl_cta_tail).trim().length > 0, `${lang}: DL の短い形が空`)
 	}
 })
 
@@ -308,12 +315,18 @@ test('nav.yml: 全部の値が lintValue を通り、属性・JSON を壊す字�
 test('nav.yml: 短い形と長い形の組み立てが全体の文と一致する (textContent は全幅で長い文のまま)', () => {
 	for (const lang of ['en', 'zh-tw']) {
 		const n = NAV[lang]
-		assert.equal(n.store_cta_lead + n.store_cta_lg + n.store_cta_tail, n.store_cta, `${lang}: store_cta`)
+		assert.equal(n.dl_cta_lead + n.dl_cta_lg + n.dl_cta_tail, n.dl_cta, `${lang}: dl_cta`)
 		assert.equal(n.enterprise_short + n.enterprise_lg, n.enterprise, `${lang}: enterprise`)
+	}
+	// T-2303: 全体の文は ja の「無料でダウンロード」の訳 (用語集の download / free)
+	assert.equal(NAV.en.dl_cta, 'Download for free')
+	assert.equal(NAV['zh-tw'].dl_cta, '免費下載')
+	for (const lang of ['en', 'zh-tw']) {
+		for (const k of Object.keys(NAV[lang])) assert.doesNotMatch(k, /^store_|_store$/, `${lang}: Store のキーが残っている: ${k}`)
 	}
 	// 写しが同じ組み立てで描く
 	const live = stripComments(HEADER_INTL)
-	assert.match(live, /\{\{ N\.store_cta_lead \}\}<span class="hidden lg:inline">\{\{ N\.store_cta_lg \}\}<\/span>\{\{ N\.store_cta_tail \}\}/)
+	assert.match(live, /\{\{ N\.dl_cta_lead \}\}<span class="hidden lg:inline">\{\{ N\.dl_cta_lg \}\}<\/span>\{\{ N\.dl_cta_tail \}\}/)
 	assert.match(live, /\{\{ N\.enterprise_short \}\}<span class="hidden lg:inline">\{\{ N\.enterprise_lg \}\}<\/span>/)
 	assert.match(live, /aria-label="\{\{ N\.enterprise \}\}"/)
 })

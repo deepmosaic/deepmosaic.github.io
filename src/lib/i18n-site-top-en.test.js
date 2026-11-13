@@ -178,7 +178,7 @@ test('リンク: サイト内は /en/ の接頭辞、docs は ja-link.html、DL 
 	}
 	const jaLinks = [...body.matchAll(/\{%-?\s*include ja-link\.html href="([^"]*)"/g)].map((m) => m[1])
 	assert.deepEqual(jaLinks.sort(), ['/docs', '/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team'])
-	assert.match(body, /<a href="\{\{ site\.data\.lang\[page\.lang\]\.app_download_link \}\}" data-dl="hero"/)
+	assert.match(body, /<a href="\{\{ site\.data\.lang\[page\.lang\]\.app_download_link \}\}" download data-dl="hero"/) // T-2303: インストーラの DL (ja と同じ属性)
 	assert.match(body, /secondary_href="\/en\/price\/"/)
 })
 

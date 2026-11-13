@@ -13,7 +13,7 @@ cta_webapp_before: "You can also use the "                     # インストー
 cta_webapp_link: "Web app"                                     # Web 版 (リンクの文)
 cta_webapp_after: ", which needs no installation (Chrome / Edge). It is for trials (up to %MINUTES% minutes per video). Videos are not sent to a server; they are processed in your browser."   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
 # download-button.html
-dl_label_default: "Get it free on Microsoft Store"             # Microsoft Store で無料入手
+dl_label_default: "Download for free"                          # 無料でダウンロード (T-2303)
 # pricing-cards.html
 pc_tax_open: " ("                                              # 単位の後の （
 pc_tax_sep: ", "                                               # 税別・税込 の ・

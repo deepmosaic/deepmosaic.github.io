@@ -95,25 +95,15 @@ test('同一オリジンのリンクに download 属性が付かない', async (
   expect(offenders, 'download 属性は値が "false" でも保存に回る (T-231)').toEqual([]);
 });
 
-// T-1917: 配布は Microsoft Store だけになり、DL 項目はファイルではなく Store の掲載ページを指す。
-// `download` 属性は付けない (data-links に `download` を渡さない)。値が付くなら '' に限る (T-231)。
-test('DL 項目は Microsoft Store の掲載ページを指し、download 属性を持たない', async ({ page }) => {
+test('クロスオリジンの DL 項目は download="" (サーバのファイル名で保存) のまま', async ({ page }) => {
   await openDrawer(page);
   const links = await readDrawerLinks(page);
 
-  const store = links.filter((link) => {
-    try {
-      return new URL(link.href).hostname === 'apps.microsoft.com';
-    } catch {
-      return false;
-    }
-  });
-  expect(store.length, 'ドロワーから DL 項目 (Microsoft Store) が消えている').toBeGreaterThan(0);
-  for (const link of store) {
-    expect.soft(link.download, `${link.text} の download 属性`).toBeNull();
-  }
-  for (const link of links.filter((l) => l.download !== null)) {
-    expect.soft(link.download, `${link.text} の download 属性は '' 以外にしない`).toBe('');
+  // data-links の `download: true` は '' に写る (src/lib/download-attr.js)。"true" / "false" は不可
+  const withDownload = links.filter((link) => link.download !== null);
+  expect(withDownload.length, 'ドロワーから DL 項目が消えている').toBeGreaterThan(0);
+  for (const link of withDownload) {
+    expect.soft(link.download, `${link.text} の download 属性`).toBe('');
   }
 });
 

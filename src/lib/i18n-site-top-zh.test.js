@@ -140,7 +140,7 @@ test('本文: en/index.html の英文が残っていない (写して訳し忘�
 	const body = stripComments(splitFrontMatter(ZH).body)
 	for (const en of [
 		'Turn mosaic work into',
-		'Get it free on Microsoft Store',
+		'Download for free',
 		'Frequently asked questions',
 		'See pricing',
 		'Japanese UI',
@@ -220,7 +220,7 @@ test('リンク: サイト内は /zh-tw/ の接頭辞、docs は ja-link.html、
 	}
 	const jaLinks = [...body.matchAll(/\{%-?\s*include ja-link\.html href="([^"]*)"/g)].map((m) => m[1])
 	assert.deepEqual(jaLinks.sort(), ['/docs', '/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team'])
-	assert.match(body, /<a href="\{\{ site\.data\.lang\[page\.lang\]\.app_download_link \}\}" data-dl="hero"/)
+	assert.match(body, /<a href="\{\{ site\.data\.lang\[page\.lang\]\.app_download_link \}\}" download data-dl="hero"/) // T-2303: インストーラの DL (ja と同じ属性)
 	assert.match(body, /secondary_href="\/zh-tw\/price\/"/)
 })
 

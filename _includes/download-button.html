@@ -1,11 +1,11 @@
 {%- comment -%}
 DL ボタン (DL URL の単一管理点)。
 
-T-1917: 配布は Microsoft Store だけ (サイト配布のインストーラは 2.11.1 で終了)。href は Store の掲載ページ
-(`_data/lang/ja.json` の `app_download_link`) で、ファイル DL ではないので `download` 属性は付けない。
+T-2303 (backlog1113): 既定はインストーラ (`_data/lang/<lang>.json` の `app_download_link` = worker の DL 口)。
+ファイル DL なので `download` 属性を付ける (公開中の形)。Store のボタンは別の部品 (切り替え 1 か所で出す、T-2304)。
 
 params:
-  label    (任意) 文言。既定「Microsoft Store で無料入手」
+  label    (任意) 文言。既定「無料でダウンロード」
   size     (任意) "large" で `btn-lg`
   full     (任意) 真値で幅 100%
   variant  (任意) "secondary" で副ボタン配色 (TICKET-SITE-20: 料金カードの非推奨プラン用)
@@ -18,10 +18,10 @@ params:
 T-2205 (i18n1112): href はページの言語の `app_download_link` (3 言語とも同じ URL)。既定のラベルは英中では parts の l10n。
 {%- endcomment -%}
 {%- assign db_P = site.data.l10n[page.lang].parts -%}
-<a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}"
+<a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
    data-dl="{{ include.dl | default: 'cta' }}"
    href="{{ site.data.lang[page.lang].app_download_link }}">
   {% include icon.html name="Download" class="h-5 w-5" %}
-  {% if include.label %}{{ include.label }}{% else %}{% if db_P %}{{ db_P.dl_label_default }}{% else %}Microsoft Store で無料入手{% endif %}{% endif %}
+  {% if include.label %}{{ include.label }}{% else %}{% if db_P %}{{ db_P.dl_label_default }}{% else %}無料でダウンロード{% endif %}{% endif %}
 </a>
 {% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}

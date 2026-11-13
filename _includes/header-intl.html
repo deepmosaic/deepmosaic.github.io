@@ -31,10 +31,10 @@ T-2204 (i18n1112 I18N-706): 英中 (en / zh-tw) のページのヘッダー。he
 
     <div class="flex-1"></div>
 
-    <!-- Desktop download CTA (Microsoft Store の掲載ページへ。download 属性は付けない。md の間は短い形、lg 以上で N.store_cta_lg を足す) -->
+    <!-- Desktop download CTA (T-2303: インストーラの DL。md の間は短い形、lg 以上で N.dl_cta_lg を足す。textContent は全幅で N.dl_cta) -->
     {% include lang-switch.html variant="header" %}
-    <a href="{{ L.app_download_link }}" data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
-      {% include icon.html name="Download" class="h-4 w-4" %}<span>{{ N.store_cta_lead }}<span class="hidden lg:inline">{{ N.store_cta_lg }}</span>{{ N.store_cta_tail }}</span>
+    <a href="{{ L.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span>{{ N.dl_cta_lead }}<span class="hidden lg:inline">{{ N.dl_cta_lg }}</span>{{ N.dl_cta_tail }}</span>
     </a>
 
     <!-- Desktop enterprise CTA (md の間は短い形、lg 以上で N.enterprise_lg を足す) -->
@@ -45,7 +45,7 @@ T-2204 (i18n1112 I18N-706): 英中 (en / zh-tw) のページのヘッダー。he
     <!-- Mobile nav (Svelte island + noscript fallback) -->
     <div class="md:hidden">
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"{{ N.download }}","href":"{{ L.app_download_link }}","dl":"mobile"},{"label":"{{ N.home }}","href":"{{ L.url_prefix }}/"},{"label":"{{ N.pricing }}","href":"{{ L.url_prefix }}/price"},{"label":"{{ N.docs }}","href":"/docs","badge":"{{ L.ja_only_badge }}"},{"label":"{{ N.spec }}","href":"{{ L.url_prefix }}/spec"},{"label":"{{ N.contact }}","href":"{{ contact_url }}"},{"label":"{{ N.enterprise }}","href":"{{ L.url_prefix }}/enterprise/inquiry/"}]'></div>
+           data-links='[{"label":"{{ N.download }}","href":"{{ L.app_download_link }}","download":true,"dl":"mobile"},{"label":"{{ N.home }}","href":"{{ L.url_prefix }}/"},{"label":"{{ N.pricing }}","href":"{{ L.url_prefix }}/price"},{"label":"{{ N.docs }}","href":"/docs","badge":"{{ L.ja_only_badge }}"},{"label":"{{ N.spec }}","href":"{{ L.url_prefix }}/spec"},{"label":"{{ N.contact }}","href":"{{ contact_url }}"},{"label":"{{ N.enterprise }}","href":"{{ L.url_prefix }}/enterprise/inquiry/"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="{{ L.url_prefix }}/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.home }}</a>

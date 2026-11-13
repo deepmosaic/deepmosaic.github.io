@@ -11,7 +11,7 @@ cta_webapp_before: "也可使用免安裝的"                             # イ�
 cta_webapp_link: "網頁版"                                        # Web 版 (リンクの文)
 cta_webapp_after: "（支援 Chrome / Edge）。僅供試用（每部影片最長 %MINUTES% 分鐘）。影片不會傳送至伺服器，而是在您的瀏覽器中處理。"   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
 # download-button.html
-dl_label_default: "從 Microsoft Store 免費取得"                  # Microsoft Store で無料入手
+dl_label_default: "免費下載"                                     # 無料でダウンロード (T-2303)
 # pricing-cards.html
 pc_tax_open: "（"
 pc_tax_sep: "，"

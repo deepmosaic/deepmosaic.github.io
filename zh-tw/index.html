@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/
 ja_url: /
 source: index.html
-source_hash: "2939c561fa8274832c6b7113f74837d01687c0af0f1115e673c1cde2eb08ef02"
+source_hash: "0ead458905d841bd103d93df46acfe1cea8243fd123507ad8c1428eaa447378d"
 title: 讓馬賽克作業只剩最終確認
 seo_title: 自動為影片加上馬賽克的 AI 軟體｜Deepmosaic
 description: Deepmosaic 是由 AI 自動偵測影片中的對象並加上馬賽克的 Windows 應用程式。無法去掉或解除馬賽克。偵測對象為男性身體部位、女性身體部位、人的臉部，以及影片中既有馬賽克的位置。所有處理都在您的電腦上完成，影像不會傳送到外部。支援與 Adobe Premiere Pro 整合。
@@ -43,7 +43,7 @@ schemas:
     </figure>
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      <a href="{{ site.data.lang[page.lang].app_download_link }}" data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}從 Microsoft Store 免費取得</a>
+      <a href="{{ site.data.lang[page.lang].app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}免費下載</a>
       {%- if site.data.site.web_app.enabled %}
       <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}在瀏覽器中試用（影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘，免安裝）</a>
       {%- endif %}
