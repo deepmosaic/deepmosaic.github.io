@@ -375,10 +375,10 @@ test('用語集の写し: 形が desktop の用語集 (terms・forbidden・zh_si
 	assert.ok(Object.keys(c.ja_shinjitai).length > 0)
 })
 
-test('用語集の写し: desktop の横断レビュー (T-2137) の改訂版 + signin1113 (T-2238) の 法人 (211 語・3 つ目の表 zh_non_tw_variant・必須語の追加)', () => {
+test('用語集の写し: desktop の横断レビュー (T-2137) の改訂版 + signin1113 (T-2238) の 法人 + T-2218 の追加 9 語 (220 語・3 つ目の表 zh_non_tw_variant・必須語の追加)', () => {
 	const g = readJson('scripts/i18n/glossary.json')
 	const c = readJson('scripts/i18n/glossary-chars.json')
-	assert.equal(g.terms.length, 211)
+	assert.equal(g.terms.length, 220)
 	assert.ok(Object.keys(c.zh_non_tw_variant ?? {}).length > 0, 'zh_non_tw_variant')
 	const byId = new Map(g.terms.map((t) => [t.id, t]))
 	for (const [id, en, zh] of [
