@@ -261,8 +261,8 @@ for (const store of [false, true]) {
 
 // ---- 7. 日付と版 ----
 
-test('最終更新日は 2026-11-13 (privacy / cookie)、版 (legal.yml) は privacy / cookie の改定では動かさない', () => {
-	assert.match(read(PRIVACY), /最終更新日: 2026-11-13（制定: 2019-06-01）/)
-	assert.match(read(COOKIE), /最終更新日: 2026-11-13/)
+test('最終更新日は 2026-11-14 (privacy / cookie)、版 (legal.yml) は privacy / cookie の改定では動かさない', () => {
+	assert.match(read(PRIVACY), /最終更新日: 2026-11-14（制定: 2019-06-01）/)
+	assert.match(read(COOKIE), /最終更新日: 2026-11-14/)
 	assert.match(read('_data/legal.yml'), /version:\s*"2026-11-08"/)
 })

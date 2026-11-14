@@ -26,7 +26,7 @@ const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 const ASCT = 'company/asct.html'
 const ABOUT = 'company/about.html'
 const UPDATED = '2026-10-12'
-const ASCT_UPDATED = '2026-11-13'
+const ASCT_UPDATED = '2026-11-14'
 
 /** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は検査対象外)。 */
 function stripComments(source) {
@@ -170,7 +170,7 @@ test('特商法: 行の順序 (所在地 → 電話番号 → メールアドレ
 	assert.equal(at('役務の提供の時期'), at('動作環境') + 1)
 })
 
-test('最終更新日: 特商法は 2026-11-13 (signin1113 の語の言い換え)、会社概要は 2026-10-12', () => {
+test('最終更新日: 特商法は 2026-11-14 (signin1113 の語の言い換え)、会社概要は 2026-10-12', () => {
 	assert.equal(lastUpdated(read(ASCT)), ASCT_UPDATED)
 	assert.equal(lastUpdated(read(ABOUT)), UPDATED)
 })

@@ -120,8 +120,8 @@ test('リンク: プライバシーポリシーへは拡張子なしの permalin
 	assert.ok(!html.includes('/company/privacy.html'))
 })
 
-test('日付: 最終更新日は ISO 形式の 2026-11-13 (signin1113)', () => {
-	assert.equal(lastUpdated(read(COOKIE_PAGE)), '2026-11-13')
+test('日付: 最終更新日は ISO 形式の 2026-11-14 (signin1113)', () => {
+	assert.equal(lastUpdated(read(COOKIE_PAGE)), '2026-11-14')
 })
 
 test('事実の一致: 保存期間は attribution.js、測定 ID は _layouts/default.html の gtag と一致する', () => {

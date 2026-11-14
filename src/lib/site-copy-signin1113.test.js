@@ -160,10 +160,10 @@ test('パスワードの入口 (Shift の隠し入口・パスワードでのサ
 	assert.ok(targets[0][1].includes('パスワードは要りません'), '陽性対照: #license に「パスワードは要りません」が無い')
 })
 
-test('法務: privacy / cookie / asct は最終更新日 2026-11-13、legal.yml の版と terms / eula は据え置き', () => {
-	assert.ok(read('company/privacy.html').includes('最終更新日: 2026-11-13（制定: 2019-06-01）'))
-	assert.ok(read('company/cookie.html').includes('最終更新日: 2026-11-13'))
-	assert.ok(read('company/asct.html').includes('最終更新日: 2026-11-13'))
+test('法務: privacy / cookie / asct は最終更新日 2026-11-14、legal.yml の版と terms / eula は据え置き', () => {
+	assert.ok(read('company/privacy.html').includes('最終更新日: 2026-11-14（制定: 2019-06-01）'))
+	assert.ok(read('company/cookie.html').includes('最終更新日: 2026-11-14'))
+	assert.ok(read('company/asct.html').includes('最終更新日: 2026-11-14'))
 	assert.match(read('_data/legal.yml'), /version: "2026-11-08"/)
 	assert.ok(read('company/terms.html').includes('最終更新日: 2026-11-08'))
 	assert.ok(read('company/eula.html').includes('最終更新日: 2026-11-08'))
