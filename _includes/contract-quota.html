@@ -1,0 +1,17 @@
+{%- comment -%}
+1 プランぶんの追加契約枠を「最大 N 契約（月 M 時間まで）」の形で組み立てる。
+数値は `_data/plans.yml` の `max_contracts` と `included_hours` から取り、このファイルにも書かない。
+料金カード (`_includes/pricing-cards.html`) と `llms-full.txt` が使う。
+
+`max_contracts` が 1 以下のプランでは何も出力しない。呼び出し側は出力の有無で行を出すかを決めてよい。
+include は呼び出し元と変数を共有するので、作業変数は `cq_` で始める。
+
+params:
+  plan  `site.data.plans.tiers` の要素
+{%- endcomment -%}
+{%- assign cq_max = include.plan.max_contracts | default: 1 -%}
+{%- assign cq_P = site.data.l10n[page.lang].parts -%}
+{%- if cq_max > 1 -%}
+{%- assign cq_hours = include.plan.included_hours | times: cq_max -%}
+{% if cq_P %}{{ cq_P.cq_text | replace: '%MAX%', cq_max | replace: '%HOURS%', cq_hours }}{% else %}最大 {{ cq_max }} 契約（月 {{ cq_hours }} 時間まで）{% endif %}
+{%- endif -%}

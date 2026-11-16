@@ -1,0 +1,54 @@
+{%- assign do_id = include.id_prefix | default: 'detectable' -%}
+{%- assign do_class = include.class | default: 'mx-auto block h-auto w-[min(288px,100%)] rounded-[10px] border border-edge' -%}
+{%- assign do_P = site.data.l10n[page.lang].parts -%}
+{%- assign do_poly = '0,0 411.2,0 514,270 411.2,540 0,540' -%}
+{%- assign do_xl = 249 -%}
+{%- assign do_xr = 704.4 -%}
+{%- assign do_head_split = false -%}
+{%- assign do_fs_l = 80 -%}
+{%- assign do_fs_r = 80 -%}
+{%- assign do_l1 = 247 -%}
+{%- assign do_l2 = 351 -%}
+{%- assign do_r1 = 143 -%}
+{%- assign do_r2 = 247 -%}
+{%- assign do_r3 = 351 -%}
+{%- assign do_r4 = 455 -%}
+{%- case page.lang -%}
+{%- when 'en' -%}
+{%- assign do_poly = '0,0 245.2,0 348,270 245.2,540 0,540' -%}
+{%- assign do_xl = 174 -%}
+{%- assign do_xr = 654 -%}
+{%- assign do_fs_l = 62 -%}
+{%- assign do_fs_r = 62 -%}
+{%- assign do_l1 = 210 -%}
+{%- assign do_l2 = 292 -%}
+{%- assign do_l3 = 374 -%}
+{%- assign do_r1 = 136 -%}
+{%- assign do_r2 = 240 -%}
+{%- assign do_r3 = 344 -%}
+{%- assign do_r4 = 448 -%}
+{%- assign do_head_split = true -%}
+{%- assign do_h2_words = do_P.do_head_2 | split: ' ' -%}
+{%- assign do_h2_last = do_h2_words | last -%}
+{%- assign do_h2_rest = do_h2_words | pop | join: ' ' -%}
+{%- when 'zh-tw' -%}
+{%- assign do_fs_l = 76 -%}
+{%- assign do_fs_r = 62 -%}
+{%- assign do_l1 = 247 -%}
+{%- assign do_l2 = 347 -%}
+{%- assign do_r1 = 157 -%}
+{%- assign do_r2 = 247 -%}
+{%- assign do_r3 = 337 -%}
+{%- assign do_r4 = 427 -%}
+{%- endcase -%}
+<svg viewBox="0 0 960 540" width="960" height="540" role="img" aria-labelledby="{{ do_id }}-title" class="{{ do_class }}">
+<title id="{{ do_id }}-title">{% if do_P %}{{ do_P.do_title | escape }}{% else %}検出支援できる物体: 男性器・女性器・男性の顔・女性の顔・モザイク{% endif %}</title>
+<rect x="0" y="0" width="960" height="540" fill="#1C4587"/>
+<polygon points="{{ do_poly }}" fill="#1155CC"/>
+<text x="{{ do_xl }}" y="{{ do_l1 }}" font-size="{{ do_fs_l }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_P %}{{ do_P.do_head_1 | escape }}{% else %}検出支援{% endif %}</text>
+<text x="{{ do_xl }}" y="{{ do_l2 }}" font-size="{{ do_fs_l }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_head_split %}<tspan x="{{ do_xl }}" y="{{ do_l2 }}">{{ do_h2_rest | escape }}</tspan><tspan font-size="0"> </tspan><tspan x="{{ do_xl }}" y="{{ do_l3 }}">{{ do_h2_last | escape }}</tspan>{% elsif do_P %}{{ do_P.do_head_2 | escape }}{% else %}できる物体{% endif %}</text>
+<text x="{{ do_xr }}" y="{{ do_r1 }}" font-size="{{ do_fs_r }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_P %}{{ do_P.do_item_male | escape }}{% else %}男性器{% endif %}</text>
+<text x="{{ do_xr }}" y="{{ do_r2 }}" font-size="{{ do_fs_r }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_P %}{{ do_P.do_item_female | escape }}{% else %}女性器{% endif %}</text>
+<text x="{{ do_xr }}" y="{{ do_r3 }}" font-size="{{ do_fs_r }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_P %}{{ do_P.do_item_faces | escape }}{% else %}男女の顔{% endif %}</text>
+<text x="{{ do_xr }}" y="{{ do_r4 }}" font-size="{{ do_fs_r }}" font-weight="700" fill="#FFFFFF" text-anchor="middle">{% if do_P %}{{ do_P.do_item_mosaic | escape }}{% else %}モザイク{% endif %}</text>
+</svg>

@@ -1,0 +1,221 @@
+// docs 第 7 章「組織（Enterprise）」の表記・参加経路・権限・請求書タブがアプリの画面と同じであることの
+// 回帰テスト。
+//
+//   node --test src/lib/docs-team-org.test.js
+//
+// アプリの画面と同じ内容であること:
+//
+//   - 表示文字列は「チーム」ではなく「組織」(「組織の管理」)
+//   - **参加の入口はサインインの画面の「組織コード」欄だけ** (アカウントメニューに参加の項目は無い)
+//   - 招待と招待メールの再送は**管理者のみ** (メンバーには権限タブに案内が出る)。
+//     アプリの権限名は「管理者」「メンバー」。「オーナー」は出てこない
+//   - 「請求書」タブで過去の請求書をすべて一覧 (状態 5 種、「さらに読み込む」、
+//     表示 / PDF)。タブは管理者だけに出る
+//
+// 組織の機能に版の断り書き (「次回のデスクトップ更新から」「対応版アプリの公開後に…」) を置かない。
+//
+// 読み取りはこのファイル内で完結させる (`docs-team-quote.test.js` と同じ流儀)。
+
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const read = (...parts) => readFileSync(join(ROOT, ...parts), 'utf8')
+
+/** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は表記の検査対象外)。 */
+function stripComments(source) {
+	return source
+		.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '')
+		.replace(/<!--[\s\S]*?-->/g, '')
+}
+
+/** タグを落とし、空白を 1 つに潰した素の文字列。 */
+const textOf = (html) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ')
+
+/** `<h3>` 見出しが `heading` で始まる節の HTML。見つからなければ null。 */
+function subsectionOf(html, heading) {
+	const start = html.search(new RegExp(`<h3[^>]*>${heading}`))
+	if (start < 0) return null
+	const rest = html.slice(start)
+	const next = rest.slice(1).search(/<h3[^>]*>/)
+	return next < 0 ? rest : rest.slice(0, next + 1)
+}
+
+/** `<div class="kv-key">ラベル</div>` に続く `kv-val` の素の文字列。見つからなければ null。 */
+function kvValue(html, label) {
+	const re = new RegExp(`<div class="kv-key">${label}</div>\\s*<div class="kv-val">([\\s\\S]*?)</div>`)
+	const m = html.match(re)
+	return m === null ? null : textOf(m[1])
+}
+
+const rawDoc = read('_includes', 'docs', '07-team.html')
+const doc = stripComments(rawDoc)
+const docText = textOf(doc)
+
+test('stripComments は Liquid / HTML のコメントだけを落とす', () => {
+	// Arrange
+	const source = 'A{%- comment -%}チーム{%- endcomment -%}B<!-- チーム -->C{% comment %}x{% endcomment %}D'
+
+	// Act
+	const stripped = stripComments(source)
+
+	// Assert
+	assert.equal(stripped, 'ABCD')
+})
+
+test('subsectionOf / kvValue は見つからなければ null を返す (すり抜け防止)', () => {
+	// Arrange / Act / Assert
+	assert.equal(subsectionOf(doc, '存在しない見出し'), null)
+	assert.equal(kvValue(doc, '存在しないラベル'), null)
+})
+
+// ── 「チーム」→「組織」 ───────────────────────────────────────
+
+test('07-team の表示文字列に「チーム」が無く、「組織の管理」で案内している', () => {
+	// Arrange / Act / Assert
+	assert.ok(!docText.includes('チーム'), '表示文字列に「チーム」が残っている')
+	assert.match(docText, /「組織の管理」/, 'アプリのメニュー名「組織の管理」で案内していない')
+})
+
+// ── メニュー名「組織」/ 組織コードの再発行は画面に無い ───────────────────
+
+test('プロフィールメニューの項目名は「組織」で案内し、「組織の管理」はダイアログ名として残す', () => {
+	// Arrange
+	const webText = textOf(stripComments(read('_includes', 'docs', 'web.html')))
+
+	// Act / Assert
+	assert.match(docText, /プロフィールメニューの「組織」/, '07-team のメニュー名が「組織」になっていない')
+	assert.match(docText, /「組織」を選ぶと「組織の管理」のダイアログが開き/)
+	assert.ok(!/メニュー[^。]*「組織の管理」/.test(docText), '07-team にメニュー名としての「組織の管理」が残っている')
+	assert.match(webText, /プロフィールメニューの「組織」から/, 'web.html のメニュー名が「組織」になっていない')
+})
+
+test('組織コードは「確認」だけを案内し、再発行の手順を載せない (アプリの画面に無い)', () => {
+	// Act / Assert
+	assert.ok(!docText.includes('再発行'), '07-team に組織コードの再発行の案内が残っている')
+	assert.match(docText, /組織コードの確認ができます/)
+})
+
+test('目次 (docs_toc.yml) と llms.txt の見出しも「組織」に揃っている', () => {
+	// Arrange
+	const toc = read('_data', 'docs_toc.yml')
+	const tocBody = toc
+		.split('\n')
+		.filter((line) => !line.trimStart().startsWith('#'))
+		.join('\n')
+	const llmsTeam = read('llms.txt')
+		.split('\n')
+		.find((line) => line.includes('/docs/#team'))
+
+	// Act / Assert
+	assert.ok(!tocBody.includes('チーム'), '目次に「チーム」が残っている')
+	assert.match(tocBody, /id: team, label: 組織の管理（Enterprise）/)
+	assert.ok(llmsTeam, 'llms.txt に /docs/#team の行が無い')
+	assert.ok(!llmsTeam.includes('チーム'), `llms.txt の見出しに「チーム」が残っている: ${llmsTeam}`)
+})
+
+test('権限の名前はアプリと同じ「管理者」「メンバー」(「オーナー」はアプリに出てこない)', () => {
+	// Arrange / Act / Assert
+	assert.ok(!docText.includes('オーナー'), 'アプリに無い権限名「オーナー」が残っている')
+	assert.ok(kvValue(doc, '管理者'), '権限の表に「管理者」の行が無い')
+	assert.ok(kvValue(doc, 'メンバー'), '権限の表に「メンバー」の行が無い')
+})
+
+// ── 参加の入口はログインダイアログの組織コード欄だけ ──────────────────────
+
+test('組織コードでの参加はサインイン画面の「組織コード」欄から (サインイン済みならサインアウトしてから)', () => {
+	// Arrange
+	const join = subsectionOf(doc, '組織コードで参加する')
+	assert.ok(join, '「組織コードで参加する」の節が無い')
+
+	// Act
+	const text = textOf(join)
+
+	// Assert
+	assert.match(text, /サインイン画面/, `参加の入口が書かれていない: ${text}`)
+	assert.match(text, /「組織コード」欄/, `入力欄の名前が書かれていない: ${text}`)
+	assert.match(text, /サインアウト/, `サインイン済みのときのやり直し方が書かれていない: ${text}`)
+})
+
+test('アカウントメニューの「組織コードで参加」を案内していない (メニューに無い)', () => {
+	// Arrange / Act / Assert
+	assert.ok(!docText.includes('「組織コードで参加」'), 'メニューに無い項目名がある')
+	assert.doesNotMatch(docText, /(アカウント|プロフィール)メニューの?「組織コード/, 'メニューからの参加を案内している')
+})
+
+// ── 招待は管理者のみ ──────────────────────────────────────────────────
+
+test('招待と招待メールの再送は管理者だけができると書いてある', () => {
+	// Arrange
+	const invite = subsectionOf(doc, 'メンバーを招待する')
+	assert.ok(invite, '「メンバーを招待する」の節が無い')
+	const member = kvValue(doc, 'メンバー')
+
+	// Act
+	const text = textOf(invite)
+
+	// Assert
+	assert.match(text, /管理者だけ/, `招待が管理者だけの操作だと書かれていない: ${text}`)
+	assert.match(text, /再送/, `招待メールの再送に触れていない: ${text}`)
+	assert.match(member, /招待/, `メンバーの行で招待できないことに触れていない: ${member}`)
+})
+
+// ── 請求書タブ ────────────────────────────────────────────────────────
+
+test('ダイアログのタブに「請求書」があり、管理者だけに表示されると書いてある', () => {
+	// Arrange
+	const tabs = docText.match(/管理者には[^。]*の 4 つ/)
+
+	// Act / Assert
+	assert.ok(tabs, `管理者に表示されるタブの説明が無い: ${docText.slice(0, 400)}`)
+	assert.match(tabs[0], /権限[\s\S]*請求[\s\S]*請求書[\s\S]*利用量/, `タブの並びが違う: ${tabs[0]}`)
+})
+
+test('「請求書」の節に一覧の列・状態 5 種・さらに読み込む・表示 / PDF がある', () => {
+	// Arrange
+	const invoices = subsectionOf(doc, '請求書')
+	assert.ok(invoices, '「請求書」の節が無い')
+	const text = textOf(invoices)
+	const statuses = ['下書き', '未払い', '支払済み', '無効', '回収不能']
+
+	// Act
+	const missing = statuses.filter((s) => !text.includes(`「${s}」`))
+
+	// Assert
+	assert.match(text, /管理者だけ/, `管理者だけのタブだと書かれていない: ${text}`)
+	for (const column of ['請求日', '請求書番号', '期間', '金額', '状態']) {
+		assert.ok(text.includes(column), `列「${column}」の説明が無い`)
+	}
+	assert.deepEqual(missing, [], `状態の表記が足りない: ${missing.join(' / ')}`)
+	assert.match(text, /「さらに読み込む」/, `古い請求書の読み込み方が書かれていない: ${text}`)
+	assert.match(text, /「表示」/, `ブラウザで開く操作が書かれていない: ${text}`)
+	assert.match(text, /「PDF」/, `PDF の操作が書かれていない: ${text}`)
+})
+
+test('請求書の一覧を「請求」タブの中にあるように書いていない (別のタブ)', () => {
+	// Arrange / Act / Assert
+	assert.ok(!docText.includes('「請求」の請求書一覧'), '請求書の一覧が「請求」タブにあるように読める')
+})
+
+// ── 版の断り書きを置かない ─────────────────────────────────────────
+
+test('組織の機能に「次回のデスクトップ更新から」の断り書きが無い', () => {
+	// Arrange
+	const leftovers = ['次回のデスクトップ更新', 'このページ冒頭の注記']
+
+	// Act
+	const found = leftovers.filter((w) => docText.includes(w))
+
+	// Assert
+	assert.deepEqual(found, [], `07-team に版の断り書きがある: ${found.join(' / ')}`)
+	assert.ok(!/配布中の v\d/.test(docText), '07-team に配布中の版への言及がある')
+})
+
+test('「対応版アプリの公開後」の断り書きが無い', () => {
+	// Arrange / Act / Assert
+	assert.ok(!docText.includes('対応版アプリの公開後'), '版を示さない断り書きがある')
+	assert.ok(!docText.includes('対応版から'), '版を示さない断り書きがある')
+})

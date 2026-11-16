@@ -1,0 +1,45 @@
+---
+layout: default
+title: ドキュメント
+# 既定サフィックスだと全角 28.5 文字で切り詰めラインに触るため
+# `seo_title` で置換する。「かけ方」は方向が確定していて実需クエリでもある。
+seo_title: 使い方ガイド｜動画へのモザイクのかけ方 - Deepmosaic
+description: Deepmosaic Desktopの使い方。インストールと初回セットアップ、アカウントとプラン、動画の読み込み、AI検出とキュー、検出結果の編集（検出枠・モザイク設定・シーン・人物ギャラリー・ショートカット）、モザイクを焼き込んだ動画の書き出し、プロジェクトの受け渡し、Adobe Premiere Pro連携、アップデートとトラブルシューティングまでの全機能の操作手順。
+schemas:
+  - breadcrumb
+---
+{% include header.html %}
+
+<section>
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-12 pt-12 pb-24" data-island="scrollspy" data-offset="76">
+    {%- assign docs_toc = site.data.docs_toc.desktop %}
+
+    <nav aria-label="目次" class="docs-toc sticky top-[84px] hidden max-h-[calc(100vh-6rem)] w-[220px] shrink-0 self-start overflow-y-auto pr-2 md:block">
+      <div class="mb-3 text-xs font-bold tracking-[.1em] text-ink-4">目次</div>
+      {% include docs-toc-list.html toc=docs_toc %}
+    </nav>
+
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold tracking-[-.01em] text-ink">ドキュメント</h1>
+      <p class="mt-1.5 text-[14.5px] text-ink-3">Deepmosaic Desktop（Windows 版）の使い方ガイド。ブラウザ版は <a href="/docs/web/" class="text-accent-soft hover:underline">Web 版の使い方</a></p>
+
+      {%- comment -%} モバイル用の目次。サイドバーは md 未満で非表示なので、本文先頭に折りたたみで置く。 {%- endcomment -%}
+      <details class="docs-toc mt-5 rounded-[10px] border border-edge bg-panel-2 md:hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">目次</summary>
+        <div class="px-4 pb-4">
+          {% include docs-toc-list.html toc=docs_toc %}
+        </div>
+      </details>
+
+      {% include docs/01-intro.html %}
+      {% include docs/02-account.html %}
+      {% include docs/03-detect.html %}
+      {% include docs/04-edit.html %}
+      {% include docs/05-export.html %}
+      {% include docs/06-ops.html %}{% include docs/07-team.html %}
+
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

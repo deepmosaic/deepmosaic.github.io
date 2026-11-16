@@ -1,0 +1,5 @@
+# 法務文書の版の単一の出所。
+# - version = company/eula.html と company/terms.html の「最終更新日」。アプリはこの値で同意の版を記録する。
+# - 改定するときは eula / terms / ここ / アプリ側の版を同時に直す。
+# - 書式は `key: "value"` の 1 階層だけ (テストの極小パーサが読む)。
+version: "2026-11-08"

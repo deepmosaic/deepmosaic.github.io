@@ -1,0 +1,44 @@
+{%- comment -%}
+言語の切り替え (日本語 / English / 繁體中文)。
+
+  {% include lang-switch.html variant="header" %}       ヘッダー (幅 lg 以上)。ボタン + 閉じた一覧 <ul hidden> の中のリンク 3 本。
+                                                        開閉は island LangMenu (判定は src/lib/lang-menu.js)。JS が無ければ一覧は閉じたまま
+  {% include lang-switch.html variant="footer" %}       フッター (全幅、1 行のリンク)
+  {% include lang-switch.html variant="drawer-data" %}  モバイルのドロワー用の JSON (MobileNav.svelte が読んで描く)
+
+- 行き先: 訳の台帳 (_data/i18n_pages.yml) にあるページは対応する 3 版、無ければ各言語のトップ。
+- 表示名は自称で訳さない。各 <a> に lang と hreflang (ja / en / zh-Hant-TW)、今の言語に aria-current="true"。
+  言語の案内が `[data-i18n-switch] a[hreflang]` のクリックを拾うので、hreflang を外さない。
+- 出力の一番外の要素に data-i18n-switch を付ける。
+include の前後に空白・改行を出さない。変数は ls_ で始める。
+{%- endcomment -%}
+{%- assign ls_ja_url = page.ja_url | default: page.url | replace: 'index.html', '' -%}
+{%- if site.data.i18n_pages[ls_ja_url] -%}
+{%- assign ls_href_ja = ls_ja_url -%}
+{%- assign ls_href_en = '/en' | append: ls_ja_url -%}
+{%- assign ls_href_zh = '/zh-tw' | append: ls_ja_url -%}
+{%- else -%}
+{%- assign ls_href_ja = '/' -%}
+{%- assign ls_href_en = '/en/' -%}
+{%- assign ls_href_zh = '/zh-tw/' -%}
+{%- endif -%}
+{%- assign ls_cur = 'ja' -%}
+{%- assign ls_label = '表示言語' -%}
+{%- assign ls_cur_name = '日本語' -%}
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}
+{%- assign ls_cur = page.lang -%}
+{%- assign ls_label = site.data.lang[page.lang].lang_switch_label -%}
+{%- endif -%}
+{%- if page.lang == 'en' -%}
+{%- assign ls_cur_name = 'English' -%}
+{%- elsif page.lang == 'zh-tw' -%}
+{%- assign ls_cur_name = '繁體中文' -%}
+{%- endif -%}
+{%- case include.variant -%}
+{%- when 'header' -%}
+<div data-i18n-switch data-island="lang-menu" class="relative hidden items-center lg:-ml-7 lg:-mr-4 lg:flex xl:-ml-4 xl:-mr-2"><button type="button" data-lang-menu-trigger aria-expanded="false" aria-controls="lang-menu-list" aria-label="{{ ls_label }}: {{ ls_cur_name }}" title="{{ ls_label }}" class="group inline-flex h-10 min-w-10 shrink-0 items-center justify-center gap-0.5 rounded-lg px-1 text-ink-2 transition-colors hover:bg-hair hover:text-ink hover:ring-1 hover:ring-edge focus-visible:bg-hair focus-visible:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-soft aria-expanded:bg-hair aria-expanded:text-ink aria-expanded:ring-1 aria-expanded:ring-edge xl:gap-1.5 xl:px-3">{% include icon.html name="Languages" class="h-6 w-6 shrink-0" %}<span class="hidden whitespace-nowrap text-sm xl:inline">{{ ls_cur_name }}</span>{% include icon.html name="ChevronDown" class="h-4 w-4 shrink-0 transition-transform group-aria-expanded:rotate-180" %}</button><ul id="lang-menu-list" data-lang-menu-list hidden aria-label="{{ ls_label }}" class="absolute right-0 top-[calc(100%+6px)] z-50 min-w-[10rem] rounded-lg border border-edge bg-panel p-1 shadow-lg"><li><a href="{{ ls_href_ja }}" lang="ja" hreflang="ja" class="flex min-h-10 items-center gap-2.5 whitespace-nowrap rounded-md px-3 text-sm focus-visible:bg-elevated focus-visible:text-ink {% if ls_cur == 'ja' %}font-medium text-ink{% else %}text-ink-2 hover:bg-elevated hover:text-ink{% endif %}"{% if ls_cur == 'ja' %} aria-current="true"{% endif %}><span class="inline-flex h-4 w-4 shrink-0 text-accent-soft">{% if ls_cur == 'ja' %}{% include icon.html name="Check" class="h-4 w-4" %}{% endif %}</span>日本語</a></li><li><a href="{{ ls_href_en }}" lang="en" hreflang="en" class="flex min-h-10 items-center gap-2.5 whitespace-nowrap rounded-md px-3 text-sm focus-visible:bg-elevated focus-visible:text-ink {% if ls_cur == 'en' %}font-medium text-ink{% else %}text-ink-2 hover:bg-elevated hover:text-ink{% endif %}"{% if ls_cur == 'en' %} aria-current="true"{% endif %}><span class="inline-flex h-4 w-4 shrink-0 text-accent-soft">{% if ls_cur == 'en' %}{% include icon.html name="Check" class="h-4 w-4" %}{% endif %}</span>English</a></li><li><a href="{{ ls_href_zh }}" lang="zh-Hant-TW" hreflang="zh-Hant-TW" class="flex min-h-10 items-center gap-2.5 whitespace-nowrap rounded-md px-3 text-sm focus-visible:bg-elevated focus-visible:text-ink {% if ls_cur == 'zh-tw' %}font-medium text-ink{% else %}text-ink-2 hover:bg-elevated hover:text-ink{% endif %}"{% if ls_cur == 'zh-tw' %} aria-current="true"{% endif %}><span class="inline-flex h-4 w-4 shrink-0 text-accent-soft">{% if ls_cur == 'zh-tw' %}{% include icon.html name="Check" class="h-4 w-4" %}{% endif %}</span>繁體中文</a></li></ul></div>
+{%- when 'footer' -%}
+<div data-i18n-switch class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-center gap-x-4 gap-y-1 pt-4 text-xs" role="group" aria-label="{{ ls_label }}">{% include icon.html name="Globe" class="h-3.5 w-3.5 shrink-0 text-ink-4" %}<a href="{{ ls_href_ja }}" lang="ja" hreflang="ja" class="{% if ls_cur == 'ja' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'ja' %} aria-current="true"{% endif %}>日本語</a><a href="{{ ls_href_en }}" lang="en" hreflang="en" class="{% if ls_cur == 'en' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'en' %} aria-current="true"{% endif %}>English</a><a href="{{ ls_href_zh }}" lang="zh-Hant-TW" hreflang="zh-Hant-TW" class="{% if ls_cur == 'zh-tw' %}text-ink-2{% else %}text-ink-4 hover:text-accent-soft{% endif %}"{% if ls_cur == 'zh-tw' %} aria-current="true"{% endif %}>繁體中文</a></div>
+{%- when 'drawer-data' -%}
+<script type="application/json" data-i18n-switch data-lang-links>[{"label":"日本語","href":{{ ls_href_ja | jsonify }},"lang":"ja","current":{% if ls_cur == 'ja' %}true{% else %}false{% endif %}},{"label":"English","href":{{ ls_href_en | jsonify }},"lang":"en","current":{% if ls_cur == 'en' %}true{% else %}false{% endif %}},{"label":"繁體中文","href":{{ ls_href_zh | jsonify }},"lang":"zh-Hant-TW","current":{% if ls_cur == 'zh-tw' %}true{% else %}false{% endif %}}]</script>
+{%- endcase -%}

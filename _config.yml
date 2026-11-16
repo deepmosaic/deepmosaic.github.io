@@ -1,0 +1,62 @@
+# Site settings
+title: Deepmosaic
+# 「モザイク処理」は日本語として方向 (かける/外す) を含まないため「かける」と書く。
+# この値は jekyll-feed の feed.xml に出る。
+description: "動画に映った対象をAIが自動検出してモザイクをかけるWindows向けデスクトップアプリケーション"
+url: "https://www.deepmosaic.co.jp"
+baseurl: ""
+lang: ja
+
+# Build settings
+markdown: kramdown
+
+# Plugins
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude from build
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - CHANGELOG.md
+  - CLAUDE.md
+  - LICENSE
+  - .claude
+  - .serena
+  - node_modules
+  - vendor
+  - src
+  - package.json
+  - package-lock.json
+  - vite.config.js
+  - docs_draft
+  # E2E は公開物ではない。除外しないと spec / 設定が _site に複製されて配信される
+  - e2e
+  - playwright.config.ts
+  # scripts/ の全部 (多言語化の検査の道具・用語集の写し・check-docs・check-plan-catalog・optimize-images・write-lastmod) を公開しない。
+  # どのページ・css・js・sitemap・llms からも参照されていない
+  - scripts
+
+# Default front matter
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+      # ja のページの言語。英中のページは front matter に lang: en / zh-tw を直接書く
+      # (path: "en" の defaults は enterprise/ にも前方一致で当たるので置かない)
+      lang: ja
+
+# sitemap の lastmod (_plugins/last_modified_at.rb): ページのソースのパス → 追加で見るパス (本文やデータを別のファイルに持つページ)。
+# そのページの lastmod は、自分のファイルと追加のパスのうち一番新しいコミットの日時になる
+last_modified_at_extra_paths:
+  docs/index.html: [_includes/docs]
+  docs/web/index.html: [_includes/docs/web.html]
+  price/index.html: [_data/plans.yml]
+  subscribe/index.html: [_data/plans.yml]
+  en/price/index.html: [_data/plans.yml, _data/l10n/en/plans.yml]
+  en/subscribe/index.html: [_data/plans.yml, _data/l10n/en/plans.yml]
+  zh-tw/price/index.html: [_data/plans.yml, _data/l10n/zh-tw/plans.yml]
+  zh-tw/subscribe/index.html: [_data/plans.yml, _data/l10n/zh-tw/plans.yml]

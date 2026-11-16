@@ -1,0 +1,49 @@
+{%- assign L = site.data.lang[page.lang] -%}
+{%- assign N = site.data.l10n[page.lang].nav -%}
+{%- capture contact_url -%}{{ L.url_prefix }}/contact/{%- endcapture -%}
+{%- assign u = page.url -%}
+{%- assign home_u = L.url_prefix | append: '/' -%}
+{%- assign price_u = L.url_prefix | append: '/price' -%}
+{%- assign spec_u = L.url_prefix | append: '/spec' -%}
+<header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md">
+  <div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-3 lg:gap-7 xl:gap-5">
+
+    <a href="{{ L.url_prefix }}/" class="flex shrink-0 items-center">
+      <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
+    </a>
+
+    <nav class="hidden gap-1 whitespace-nowrap md:flex lg:ml-3">
+      <a href="{{ L.url_prefix }}/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u == home_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.home }}</a>
+      <a href="{{ L.url_prefix }}/price/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains price_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.pricing }}</a>
+      <a href="/docs/" hreflang="ja" title="{{ L.ja_only_title }}" class="rounded-md px-2 py-1.5 text-sm lg:px-3 text-ink-2 hover:text-ink">{{ N.docs }}<span class="ml-1 hidden text-[11px] text-ink-4 xl:inline">{{ L.ja_only_badge }}</span></a>
+      <a href="{{ L.url_prefix }}/spec/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains spec_u %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">{{ N.spec }}</a>
+    </nav>
+
+    <div class="flex-1"></div>
+
+    {% include lang-switch.html variant="header" %}
+    <a href="{{ L.url_prefix }}/enterprise/inquiry/" aria-label="{{ N.enterprise }}" class="btn-secondary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Building2" class="h-4 w-4" %}<span>{{ N.enterprise_short }}<span class="hidden lg:inline">{{ N.enterprise_lg }}</span></span>
+    </a>
+
+    <a href="{{ L.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:-ml-1 md:px-3 lg:-ml-4 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span>{{ N.dl_cta_lead }}<span class="hidden lg:inline">{{ N.dl_cta_lg }}</span>{{ N.dl_cta_tail }}</span>
+    </a>
+
+    <div class="md:hidden">
+      <div data-island="mobile-nav" data-edge="right"
+           data-links='[{"label":"{{ N.download }}","href":"{{ L.app_download_link }}","download":true,"dl":"mobile"},{"label":"{{ N.home }}","href":"{{ L.url_prefix }}/"},{"label":"{{ N.pricing }}","href":"{{ L.url_prefix }}/price/"},{"label":"{{ N.docs }}","href":"/docs/","badge":"{{ L.ja_only_badge }}"},{"label":"{{ N.spec }}","href":"{{ L.url_prefix }}/spec/"},{"label":"{{ N.contact }}","href":"{{ contact_url }}"},{"label":"{{ N.enterprise }}","href":"{{ L.url_prefix }}/enterprise/inquiry/"}]'></div>
+      <noscript>
+        <nav class="flex flex-col items-end gap-1 text-sm">
+          <a href="{{ L.url_prefix }}/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.home }}</a>
+          <a href="{{ L.url_prefix }}/price/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.pricing }}</a>
+          <a href="/docs/" hreflang="ja" title="{{ L.ja_only_title }}" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.docs }}<span class="ml-1 text-[11px] text-ink-4">{{ L.ja_only_badge }}</span></a>
+          <a href="{{ L.url_prefix }}/spec/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.spec }}</a>
+          <a href="{{ L.url_prefix }}/enterprise/inquiry/" class="px-2 py-1 text-ink-2 hover:text-ink">{{ N.enterprise }}</a>
+        </nav>
+      </noscript>
+      {% include lang-switch.html variant="drawer-data" %}
+    </div>
+
+  </div>
+</header>

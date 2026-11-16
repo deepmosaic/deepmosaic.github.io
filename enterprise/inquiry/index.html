@@ -1,0 +1,39 @@
+---
+layout: default
+title: Enterprise 導入相談
+# 共通サフィックスを付けると「Enterprise 導入相談｜Deepmosaic - 動画にモザイクをかけるAIソフト」
+# = 約 33 全角で切り詰められるため、ブランド名だけに絞る。
+seo_title: Enterprise 導入相談｜Deepmosaic
+permalink: /enterprise/inquiry/
+description: Deepmosaic Enterprise プラン（1 アカウントから）の導入相談フォーム。会社名・会社の Web ページ（任意）・ご担当者名・メールアドレス・電話番号・利用アカウント予定数・ご相談内容（御社のシステム・サービスへの導入のご相談も承ります）をお送りください。3 営業日以内に担当者よりご返答いたします。
+schemas:
+  - breadcrumb
+---
+
+{% include header.html %}<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="パンくず" class="mb-5 text-[13px] text-ink-4">
+      <a href="/" class="hover:text-accent-soft">ホーム</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Enterprise 導入相談</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Enterprise 導入について相談する</h1>
+    {%- comment -%}
+      先頭の 1 文は製品カテゴリの宣言 (出所は _data/entity.yml、/price/ と同じ)。
+      金額・込み時間はここに書かない (正は _data/plans.yml、表示は /price/)。
+    {%- endcomment -%}
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.entity.one_liner }}
+      Enterprise は 1 アカウントからご利用いただけるプランで、アカウント数に応じた込み時間を組織で共有できます（<a href="/price/" class="text-accent-soft hover:underline">料金</a>）。
+      導入のご相談やお見積り、御社のシステム・サービスへの導入のご相談（内容に応じて別途お見積りします）、請求書払い・銀行振込のご希望は、以下のフォームからお送りください。3 営業日以内に担当者よりご返答いたします。
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    {% include inquiry-form.html kind="enterprise" %}
+  </div>
+</section>
+
+{% include footer.html %}

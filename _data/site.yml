@@ -1,0 +1,56 @@
+# サイト全体で使う値。複数箇所に出る値と、後から差し替えたい値を置く。
+
+# SEO の共通の値。brand_suffix は全ページ共通の <title> のサフィックス (title が長いページは front matter に seo_title を書く)。
+# same_as は Organization の JSON-LD の sameAs。自社のアカウントだけを並べ、X は head の twitter:site と同じアカウントにする (checks/seo.mjs)。
+seo:
+  brand_suffix: "Deepmosaic - 動画にモザイクをかけるAIソフト"
+  og_image: "/assets/img/main_logo_og_1200x630.jpg"
+  og_image_alt: "動画に自動でモザイクをかけるAIソフト Deepmosaic"
+  same_as:
+    - "https://github.com/deepmosaic"
+    - "https://x.com/deepmosaic"
+
+# トップのヒーローの文。kicker と sub に「除去」を書かない (_data/entity.yml の語彙ポリシー)。
+hero:
+  kicker: "動画にモザイクをかけるAIソフト"
+  headline_lead: "モザイク作業を"
+  headline_accent: "最終確認だけに。"
+  sub: "動画に映った対象を AI が自動検出し、その範囲にモザイクをかける Windows アプリです。処理はすべてお使いの PC 内で完結し、あなたは検出結果の確認と修正だけを行います。"
+
+# Web 版への導線。enabled: true でトップの HERO のボタンと DL CTA の説明行 (_includes/cta-download.html) が出る。
+# trial_minutes は Web 版のお試しの上限 (分) の文言用の写し (src/lib/site-copy-web-trial.test.js が固定する)。
+# 英中のページの Web 版へのリンクには ?<lang_query>=<lang_param[page.lang]> を付ける (ja は付けない)。
+# 値を変えるときは scripts/i18n/checks/webapp-lang.mjs の定数も直す。
+web_app:
+  enabled: true
+  url: "https://app.deepmosaic.co.jp/"
+  trial_minutes: 10
+  lang_query: "lang"
+  lang_param:
+    en: "en"
+    zh-tw: "zh-TW"
+
+# store_enabled: true で「Microsoft Store で入手」の副ボタン (_includes/store-button.html) と Store 版だけの説明が 3 言語で出る。
+# 切り替えはここ 1 行だけ。検査は scripts/i18n/checks/store.mjs と scripts/check-store-toggle.mjs。
+distribution:
+  store_enabled: false
+
+# ROI 計算機の既定値。default_cost_per_video は 時給 ¥3,000 × 8 時間 の試算 (比較表の金額と同じ)。
+# manual_work_multiplier は手作業の想定工数 (完成尺の何倍か) の試算の仮定。画面にも仮置きの試算と出す。
+roi:
+  default_videos_per_month: 5
+  default_length_hours: 2
+  default_cost_per_video: 24000
+  manual_work_multiplier: 4
+
+# STATS 帯の値。検証できる事実だけを出す。
+stats:
+  - value: "0 byte"
+    label: "映像データの外部送信量"
+    accent: true
+  - value: "100,000+"
+    label: "学習画像データ"
+  - value: "12 形式"
+    label: "読み込み対応フォーマット"
+  - value: "4 段階"
+    label: "検出パイプライン"

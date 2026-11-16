@@ -1,0 +1,12 @@
+---
+layout: null
+sitemap: false
+---
+# Deepmosaic は「動画にモザイクをかける（付加する）」ソフトです。
+# モザイクを除去・解除するソフトではありません。
+# 製品の要約: {{ site.url }}/llms.txt
+
+User-agent: *
+Allow: /
+
+Sitemap: {{ site.url }}/sitemap.xml

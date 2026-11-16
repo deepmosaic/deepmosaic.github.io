@@ -1,0 +1,383 @@
+import './app.css';
+
+// ---------------------------------------------------------------------------
+// Vanilla progressive enhancements (no framework). These replace the old
+// jQuery-wrapped assets/js/index.js. Svelte island mounts are added below.
+// ---------------------------------------------------------------------------
+
+// Scroll-triggered reveal: add `.animated` once each element enters the viewport.
+function initScrollReveal() {
+  if (!('IntersectionObserver' in window)) return;
+  const els = document.querySelectorAll('.animate-on-scroll');
+  if (!els.length) return;
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('animated');
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.1 }
+  );
+  els.forEach((el) => observer.observe(el));
+}
+
+// Back-to-top button: show past 500px, smooth-scroll to top on click.
+function initBackToTop() {
+  const btn = document.getElementById('backToTop');
+  if (!btn) return;
+  window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 500);
+  });
+  btn.addEventListener('click', (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+}
+
+// ダウンロードの流入経路。
+//
+// 着地時に utm_* と外部参照元を sessionStorage へ置き、DL リンクの href に載せ直す。
+// **JS が動いたときの上乗せに限る** — 素の href は Liquid が出したままなので、
+// JS 無効・バンドル読み込み失敗・広告ブロッカーでもダウンロードは今までどおり動く。
+//
+// 純ロジックは `src/lib/attribution.js`。この関数だけが DOM / sessionStorage に触る。
+import {
+  attributionFromLanding,
+  decorateDownloadUrl,
+  ga4EventNameFor,
+  ga4FileDownloadParams,
+  firstTouchFromLanding,
+  mergeAttribution,
+  parseFirstEnvelope,
+  parseStoredEnvelope,
+  // `data-dl-attr` のワイヤ形式。**保存層 (エンベロープ) とは別物**で、
+  // MobileNav.svelte が `parseStoredAttribution` で受ける側にいる (保存形式を変えても無変更)
+  serializeAttribution,
+  serializeFirst,
+  serializeStored,
+} from './lib/attribution.js';
+
+const ATTR_KEY = 'dm_attr';
+
+// 保存先は localStorage (30 日)。sessionStorage だと**タブを閉じた時点で流入元が消え**、
+// 「Google で見つけて後日ダウンロード」が全部 direct になる。
+//
+// **Safari の ITP はスクリプトが書いた localStorage を 7 日で削除する。**
+// 30 日が効くのは Chrome / Edge / Firefox だけ。「30 日保持」と言い切らないこと。
+//
+// storage は Safari のプライベートモード等で throw する。握って続行する
+function readStored() {
+  const now = Date.now();
+  try {
+    const fresh = parseStoredEnvelope(localStorage.getItem(ATTR_KEY), now);
+    if (fresh !== null) return fresh;
+  } catch {
+    /* localStorage が使えない環境。下の sessionStorage へ落ちる */
+  }
+  // localStorage に無いときは sessionStorage の値も読む (sessionStorage はタブを閉じれば消える)
+  try {
+    return parseStoredEnvelope(sessionStorage.getItem(ATTR_KEY), now);
+  } catch {
+    return null;
+  }
+}
+function writeStored(record) {
+  try {
+    localStorage.setItem(ATTR_KEY, serializeStored(record, Date.now()));
+  } catch {
+    /* 保存できなくてもこのページ内の装飾は効く */
+  }
+}
+
+// first-touch は**別のキーで別に持つ**。last-touch の record に混ぜると
+// 2 つの思想が混ざる (attribution.js の mergeAttribution の注記)。
+// **一度書いたら上書きしない** — それが first-touch の定義。
+const FIRST_KEY = 'dm_attr_first';
+
+function readFirst() {
+  try {
+    return parseFirstEnvelope(localStorage.getItem(FIRST_KEY), Date.now());
+  } catch {
+    return null;
+  }
+}
+function writeFirstIfAbsent(record) {
+  if (record === null) return;
+  try {
+    if (parseFirstEnvelope(localStorage.getItem(FIRST_KEY), Date.now()) !== null) return;
+    localStorage.setItem(FIRST_KEY, serializeFirst(record, Date.now()));
+  } catch {
+    /* 保存できなくてもこのページ内の装飾は効く */
+  }
+}
+
+/**
+ * `a[data-dl]` の href に流入経路を載せる。冪等 (二度呼んでも増えない)。
+ *
+ * **record が null でも呼ぶ。** `dm=1` (計測が走った印) を必ず付けるため —
+ * 「JS が走ったうえで流入元が無かった = 真の直接アクセス」を、
+ * 「JS が走らなかった」と区別できるようにする。
+ */
+function decorateLinks(record, first, root = document) {
+  root.querySelectorAll('a[data-dl]').forEach((a) => {
+    // `a.href` は解決済みの絶対 URL。**クエリ由来の値を href に直接代入しない**
+    a.setAttribute('href', decorateDownloadUrl(a.href, record, first));
+  });
+}
+
+function initDownloadTracking() {
+  const record = mergeAttribution(
+    readStored(),
+    attributionFromLanding({
+      search: location.search,
+      referrer: document.referrer,
+      origin: location.origin,
+    })
+  );
+  if (record !== null) writeStored(record);
+
+  // **`attributionFromLanding` と違い、流入元が無くても書く。** 直接アクセスが
+  // first-touch であることそのものが事実で、着地ページも残す価値がある
+  writeFirstIfAbsent(
+    firstTouchFromLanding({
+      search: location.search,
+      referrer: document.referrer,
+      origin: location.origin,
+      pathname: location.pathname,
+    })
+  );
+  const first = readFirst();
+
+  // 読み込み時に書き換えるのが主。**クリック委譲だけでは中クリック・右クリックの
+  // 「リンクのアドレスをコピー」・ステータスバー表示・D&D で utm が全部落ちる。**
+  decorateLinks(record, first);
+
+  // クリック側は (1) 後から生えた <a> の取りこぼしの保険 (2) GA4 の送信。
+  // capture 相で拾うのは、ナビゲーションが始まる前に href を確定させるため。
+  // 中クリックは `click` ではなく `auxclick` が飛ぶので両方を見る。
+  let lastSent = null;
+  const onActivate = (e) => {
+    const a = e.target instanceof Element ? e.target.closest('a[data-dl]') : null;
+    if (a === null) return;
+    // **null でも装飾する** (`dm=1` を必ず付けるため)。
+    const current = readStored() ?? record;
+    a.setAttribute('href', decorateDownloadUrl(a.href, current, readFirst() ?? first));
+
+    // `click` と `auxclick` が同一操作で続けて飛ぶ環境があるので重複を潰す。
+    // **時刻をバケットに丸めない** — 境界をまたぐと同じ操作が 2 回送られる。
+    // 「同じボタンを 500ms 以内に再度」だけを潰す (別のボタンなら必ず送る)。
+    const now = Date.now();
+    if (lastSent !== null && lastSent.dl === a.dataset.dl && now - lastSent.at < 500) return;
+    lastSent = { dl: a.dataset.dl, at: now };
+
+    // **gtag が無くても装飾は続ける。** 計測が落ちてもダウンロードは壊さない。
+    // Web 版への導線 (`*-webapp`) は file_download に混ぜず web_app_open で送る
+    window.gtag?.(
+      'event',
+      ga4EventNameFor(a.dataset.dl),
+      ga4FileDownloadParams({
+        href: a.href,
+        text: a.textContent,
+        id: a.dataset.dl ?? '',
+        classes: a.className,
+      })
+    );
+  };
+  document.addEventListener('click', onActivate, true);
+  document.addEventListener('auxclick', onActivate, true);
+
+  // MobileNav は Svelte が後から描画するので、値を props (data 属性) で渡す。
+  // last-touch と first-touch は別物なので**別の属性**にする
+  return { record, first };
+}
+
+// ---------------------------------------------------------------------------
+// `/join/`: 法人の案内メールのリンクの着地点。
+//
+// フラグメント (`#code=XXXX-XXXX-XXXX` / `#admin`) を読み、該当する案内だけを見せる。フラグメントは
+// サーバーへ送られないので、組織コードは配信元のログに残らない。解釈は `src/lib/join-hash.js` の純関数。
+//
+// - **自動では開かない。** ページを開いただけでアプリを起動しない (利用者が「アプリで開く」を押す)。
+// - DOM へは `textContent` と `setAttribute('href', …)` だけ。検証に通らない値は画面にも出さない。
+// ---------------------------------------------------------------------------
+import { joinAppUrl, parseJoinHash } from './lib/join-hash.js';
+// ページの言語は <html lang> から読む。
+import { pageLang, pick } from './lib/site-lang.js';
+// 言語を切り替えても組織コード (フラグメント) を引き継ぐ
+import { carryJoinHash } from './lib/join-switch.js';
+
+/** 言語の切り替え (ヘッダー・フッター・ドロワー) と言語の案内の帯のリンク */
+const LANG_LINKS = '[data-i18n-switch] a[hreflang], .lang-suggest a[hreflang]';
+
+const COPY_DONE = 'コピーしました。';
+const COPY_FAILED = 'コピーできませんでした。組織コードを選択してコピーしてください。';
+// コピーの結果の文の 3 言語の表 (ja は上の定数のまま)
+const COPY_TEXT = {
+  ja: { done: COPY_DONE, failed: COPY_FAILED },
+  en: { done: 'Copied.', failed: "Couldn't copy. Select the organization code and copy it." },
+  'zh-tw': { done: '已複製。', failed: '無法複製。請選取組織代碼後再複製。' },
+};
+
+function renderJoin(root) {
+  const result = parseJoinHash(location.hash);
+  root.querySelectorAll('[data-join-view]').forEach((el) => {
+    el.hidden = el.dataset.joinView !== result.kind;
+  });
+  const open = root.querySelector('[data-join-open-code]');
+  const codeEls = root.querySelectorAll('[data-join-code]');
+  const copyStatus = root.querySelector('[data-join-copy-status]');
+  if (copyStatus) copyStatus.textContent = '';
+  if (result.kind === 'code') {
+    codeEls.forEach((el) => {
+      el.textContent = result.code;
+    });
+    open?.setAttribute('href', joinAppUrl(result.code));
+  } else {
+    // 前の表示 (hashchange 前) の値を残さない
+    codeEls.forEach((el) => {
+      el.textContent = '';
+    });
+    open?.removeAttribute('href');
+  }
+  return result;
+}
+
+async function copyText(text) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  throw new Error('clipboard unavailable');
+}
+
+/** 言語のリンクの行き先に、今のフラグメント (検証済みの値を作り直したもの) を付け直す。setAttribute だけ */
+function carryHashTo(a) {
+  const href = a.getAttribute('href');
+  const next = carryJoinHash(href, location.hash);
+  if (next !== href) a.setAttribute('href', next);
+}
+
+function syncJoinSwitchLinks() {
+  document.querySelectorAll(LANG_LINKS).forEach(carryHashTo);
+}
+
+/**
+ * 言語の案内の帯は init() の initJoinPage() より後に描かれるので、join のページでは描いた後に帯のリンクにもコードを付け直す
+ * (右クリックのコピー・ドラッグ・ステータスバーの表示も /en/join/#code=… になるように。押した瞬間の付け直しは onLangLink)。
+ * @param {HTMLElement | null} banner mountLangSuggest() の戻り値 (帯を描かなかったときは null)
+ */
+function syncJoinAfterBanner(banner) {
+  if (banner && document.querySelector('[data-join]')) syncJoinSwitchLinks();
+}
+
+function initJoinPage() {
+  const root = document.querySelector('[data-join]');
+  if (!root) return;
+  let current = renderJoin(root);
+  syncJoinSwitchLinks();
+  window.addEventListener('hashchange', () => {
+    current = renderJoin(root);
+    syncJoinSwitchLinks();
+  });
+  // ドロワー (MobileNav) と帯は後から描かれるので、押した瞬間 (遷移の前) にも付け直す。中クリックは auxclick
+  const onLangLink = (e) => {
+    const a = e.target instanceof Element ? e.target.closest(LANG_LINKS) : null;
+    if (a !== null) carryHashTo(a);
+  };
+  document.addEventListener('click', onLangLink, true);
+  document.addEventListener('auxclick', onLangLink, true);
+  const copy = root.querySelector('[data-join-copy]');
+  const status = root.querySelector('[data-join-copy-status]');
+  const copyMessages = pick(COPY_TEXT, pageLang());
+  copy?.addEventListener('click', async () => {
+    if (current.kind !== 'code') return;
+    try {
+      await copyText(current.code);
+      if (status) status.textContent = copyMessages.done;
+    } catch {
+      if (status) status.textContent = copyMessages.failed;
+    }
+  });
+}
+
+// ---------------------------------------------------------------------------
+// 英中の 404 への振り分け。
+//
+// GitHub Pages の 404 は 1 本 (ルートの 404.html) しか置けない。ルートの 404 には `[data-lang-404]` の印があり、
+// その印があってパスが /en/・/zh-tw/ の下のときだけ、英中の 404 へ `location.replace` で移す (履歴に残さない)。
+// 判定は `src/lib/lang-404.js` の純関数。印の無いページ・ja のパスでは何もしない。
+// ---------------------------------------------------------------------------
+import { lang404Target } from './lib/lang-404.js';
+
+/** 英中の 404 へ移したら true (この後の初期化はしない) */
+function redirectLang404() {
+  if (!document.querySelector('[data-lang-404]')) return false;
+  const target = lang404Target(location.pathname);
+  if (target === null) return false;
+  location.replace(target);
+  return true;
+}
+
+// ---------------------------------------------------------------------------
+// Svelte island mounts — each hydrates server-rendered (Jekyll) markup, so the
+// page works without JS and islands only add interactivity.
+// ---------------------------------------------------------------------------
+import { mount } from 'svelte';
+import MobileNav from './islands/MobileNav.svelte';
+import Accordion from './islands/Accordion.svelte';
+import Scrollspy from './islands/Scrollspy.svelte';
+import VideoLightbox from './islands/VideoLightbox.svelte';
+import RoiCalculator from './islands/RoiCalculator.svelte';
+import Tabs from './islands/Tabs.svelte';
+import InquiryForm from './islands/InquiryForm.svelte';
+import LangMenu from './islands/LangMenu.svelte';
+
+function mountIslands(selector, Component) {
+  document.querySelectorAll(selector).forEach((el) => {
+    // Pass the host element (behavior islands enhance existing DOM) plus any
+    // data-* attributes (rendering islands read their config from these).
+    mount(Component, { target: el, props: { host: el, ...el.dataset } });
+  });
+}
+
+function init() {
+  if (redirectLang404()) return;
+  initScrollReveal();
+  initBackToTop();
+  initJoinPage();
+  // **island のマウントより前**に済ませる。MobileNav が描画する DL リンクへは
+  // `data-dl-attr` を props として渡すので、Svelte のスケジューリングに依存しない。
+  // 計測なしのページ (`<html data-no-tracking>`、レイアウトの `page.no_tracking`) では
+  // 流入経路を記録しない (localStorage に着地ページを書かない・リンクを装飾しない)。
+  const noTracking = document.documentElement.hasAttribute('data-no-tracking');
+  const { record: attribution, first: firstTouch } = noTracking
+    ? { record: null, first: null }
+    : initDownloadTracking();
+  document.querySelectorAll('[data-island="mobile-nav"]').forEach((el) => {
+    el.dataset.dlAttr = serializeAttribution(attribution);
+    // **`data-dl-first` は保存層のエンベロープごと渡す。** MobileNav 側は
+    // `parseFirstEnvelope` で読むので、そこでも期限と中身が再検証される
+    el.dataset.dlFirst = serializeFirst(firstTouch, Date.now());
+  });
+  mountIslands('[data-island="mobile-nav"]', MobileNav);
+  mountIslands('[data-island="accordion"]', Accordion);
+  mountIslands('[data-island="scrollspy"]', Scrollspy);
+  mountIslands('[data-island="video-lightbox"]', VideoLightbox);
+  mountIslands('[data-island="roi"]', RoiCalculator);
+  mountIslands('[data-island="tabs"]', Tabs);
+  mountIslands('[data-island="inquiry-form"]', InquiryForm);
+  mountIslands('[data-island="lang-menu"]', LangMenu);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+
+// ---- i18n の初期化 (言語の案内の import と呼び出し) ----
+import { mountLangSuggest } from './lib/lang-suggest-mount.js';
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => syncJoinAfterBanner(mountLangSuggest())); else syncJoinAfterBanner(mountLangSuggest());

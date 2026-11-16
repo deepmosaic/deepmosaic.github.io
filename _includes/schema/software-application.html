@@ -1,0 +1,42 @@
+{%- assign E = site.data.entity -%}
+{%- assign public_plans = site.data.plans.tiers | where: "public", true | where_exp: "p", "p.quote_label == nil" -%}
+{%- assign sorted = public_plans | sort: "price" -%}
+{%- assign low = sorted | first -%}
+{%- assign high = sorted | last -%}
+{%- capture disambig -%}{{ E.disambiguation.ja }} {{ E.disambiguation.en }}{%- endcapture -%}
+{%- assign L = site.data.lang[page.lang] -%}{%- assign T = site.data.l10n[page.lang].entity -%}
+{%- assign sw_requirements = E.software_requirements -%}{%- assign sw_features = E.can | map: "ja" -%}{%- assign sw_keywords = E.keywords -%}
+{%- if T -%}{%- assign sw_requirements = T.software_requirements -%}{%- assign disambig = T.disambiguation -%}{%- assign sw_features = T.can -%}{%- assign sw_keywords = T.keywords -%}{%- endif -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "@id": "https://www.deepmosaic.co.jp/#software",
+  "name": {{ E.product_name | jsonify }},
+  "alternateName": {{ E.alternate_names | jsonify }},
+  "operatingSystem": {{ E.os | jsonify }},
+  "applicationCategory": {{ E.category | jsonify }},
+  "applicationSubCategory": {{ E.subcategory | jsonify }},
+  "softwareRequirements": {{ sw_requirements | jsonify }},
+  "inLanguage": {{ L.json_ld_lang | default: "ja" | jsonify }},
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": {{ site.data.plans.currency | jsonify }},
+    "lowPrice": {{ low.price | jsonify }},
+    "highPrice": {{ high.price | jsonify }},
+    "offerCount": {{ public_plans | size }}
+  },
+  "description": {{ L.meta_desc | jsonify }},
+  "disambiguatingDescription": {{ disambig | strip | jsonify }},
+  "featureList": {{ sw_features | jsonify }},
+  "keywords": {{ sw_keywords | jsonify }},
+  "screenshot": {{ E.screenshot | prepend: "https://www.deepmosaic.co.jp" | jsonify }},
+  "softwareHelp": {
+    "@type": "WebPage",
+    "url": "https://www.deepmosaic.co.jp/docs/"
+  },
+  "downloadUrl": {{ L.app_download_link | jsonify }},
+  "publisher": { "@id": "https://www.deepmosaic.co.jp/#organization" },
+  "url": "https://www.deepmosaic.co.jp"
+}
+</script>

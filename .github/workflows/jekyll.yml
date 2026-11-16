@@ -1,0 +1,242 @@
+name: Deploy Jekyll site to Pages
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # sitemap の lastmod (_plugins/last_modified_at.rb) はファイルごとの最後のコミットの日時を使う。
+          # 浅いクローンでは全ファイルが最後のコミットの日時にそろうので、履歴を全部取る
+          fetch-depth: 0
+
+      # Build front-end assets (Tailwind CSS v4 + Svelte islands) into assets/dist/
+      # BEFORE Jekyll runs, so `jekyll build` sweeps them into _site.
+      - name: Setup Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install JS deps
+        run: npm ci
+
+      # 単体テスト。料金の計算は `_data/plans.yml` の実データを読むので、
+      # 料金カードの表示と ROI 計算機が食い違ったまま公開されるのを止められる。
+      - name: Test
+        env:
+          # 料金のカタログとのライブの突き合わせ (`src/lib/plan-catalog.test.js`) に使う鍵。
+          # **無ければテスト側は skip する**ので、未登録でも CI は緑のまま。
+          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
+        run: npm test
+
+      - name: Build front-end assets (Vite)
+        run: npm run build
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.4'
+          bundler-cache: true
+
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v6
+
+      - name: Build with Jekyll
+        run: bundle exec jekyll build --strict_front_matter --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      # ビルド出力の検査。
+      #
+      # 1) 素通しファイル (robots.txt / llms.txt / llms-full.txt) が HTML でラップされていないこと。
+      #    `_config.yml` の defaults が全ページに `layout: default` を当てるため、front matter の
+      #    `layout: null` を落とすと Jekyll がこれらを HTML でラップして配信する。ビルドは成功するので、
+      #    検査しないと気付けない。
+      #
+      # 2) 製品の説明 (モザイクを *かける* ソフトであること) の文言が消えていないこと。
+      #
+      # 3) 料金データが料金のカタログとずれていないこと (`scripts/check-plan-catalog.mjs`)。
+      #    ずれたまま公開すると実在しない契約条件を広告することになる。
+      #    鍵の未設定・ネットワーク断・5xx・鍵が無効のときは `::warning::` を出して素通しする
+      #    (exit 0)。落ちるのは「取得に成功して値が食い違ったとき」だけ。`|| fail=1` で受けているのは、
+      #    ずれを検知しても他の検査結果をまとめて出してから終わらせるため。
+      - name: Verify build output
+        env:
+          # 未登録なら空文字が渡り、スクリプト側が skip する (CI は緑のまま)
+          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
+        run: |
+          set -euo pipefail
+          fail=0
+          for f in robots.txt llms.txt llms-full.txt; do
+            if [ ! -f "_site/$f" ]; then
+              echo "::error::_site/$f が生成されていない"; fail=1; continue
+            fi
+            if head -c 400 "_site/$f" | grep -qiE '<!doctype|<html'; then
+              echo "::error::_site/$f が HTML でラップされている — front matter の layout: null を確認すること"; fail=1
+            fi
+          done
+          head -1 _site/llms.txt | grep -q '^# Deepmosaic' \
+            || { echo "::error::llms.txt の H1 が失われている"; fail=1; }
+          grep -q '^Sitemap: ' _site/robots.txt \
+            || { echo "::error::robots.txt の Sitemap 行が失われている"; fail=1; }
+          grep -qE '<br>|<strong>|&gt;|&lt;' _site/llms-full.txt \
+            && { echo "::error::llms-full.txt に HTML / 実体参照が残っている — strip_html と実体参照デコードの順序を確認すること"; fail=1; } || true
+          grep -q 'モザイクをかける' _site/index.html \
+            || { echo "::error::トップページから製品の方向を示す文言が消えている"; fail=1; }
+          grep -q '取り除く機能はありません' _site/index.html \
+            || { echo "::error::トップページから誤認訂正の注記が消えている"; fail=1; }
+          grep -q 'disambiguatingDescription' _site/index.html \
+            || { echo "::error::JSON-LD の disambiguatingDescription が消えている"; fail=1; }
+          [ -f _site/mosaic-removal/index.html ] \
+            || { echo "::error::/mosaic-removal/ が生成されていない"; fail=1; }
+          # 置換されていないプレースホルダ。
+          # `_data/faq.yml` の回答は `%%LIGHT_MAX%%` 等を持ち、置換は `_includes/faq-answer.html`
+          # だけが行う。**この include を通さない読み手が増えると生のまま公開面に出る**。
+          # FAQ は FAQPage の JSON-LD として検索結果にも出る。
+          if grep -rl '%%[A-Z_]\{1,\}%%' _site >/dev/null 2>&1; then
+            echo "::error::置換されていないプレースホルダが出力に残っている — _includes/faq-answer.html を通していない箇所がある"
+            grep -rn '%%[A-Z_]\{1,\}%%' _site | head -20
+            fail=1
+          fi
+          # 表示 FAQ と FAQPage JSON-LD の件数一致 (同一データ源なので必ず一致するはず)
+          # `set -euo pipefail` 下では grep が 0 件で exit 1 を返し、pipefail 経由で
+          # **代入コマンドごとスクリプトが落ちる**。落ちてほしいのは事実だが、それだと
+          # 「何がどう消えたか」の診断が出ないまま生の shell エラーになる。`|| true` で
+          # 件数を受け取り、判定とメッセージはこちらで出す。
+          d=$(grep -o '<details' _site/index.html | wc -l || true)
+          q=$(grep -o '"@type": "Question"' _site/index.html | wc -l || true)
+          [ "$d" -eq "$q" ] \
+            || { echo "::error::FAQ の表示件数 ($d) と FAQPage JSON-LD の件数 ($q) が食い違っている"; fail=1; }
+          # DL 計測。`data-dl` が付いていない DL リンクは計測されない。
+          # ページ単位で「1 本以上あること」だけを見る (カード枚数は数えない)。
+          # /price/ にはトップと同じく Free の帯の DL ボタンがある。
+          for p in index.html price/index.html spec/index.html; do
+            a=$(grep -o 'data-dl="' "_site/$p" | wc -l || true)
+            [ "$a" -gt 0 ] \
+              || { echo "::error::_site/$p の DL ボタンから data-dl が消えている — 計測が止まる"; fail=1; }
+          done
+          # /price/ の ENTERPRISE カードの相談導線とお見積りの表示 (お見積りのカード) が
+          # 消えないことを 3 本で固定する。
+          grep -q 'href="/enterprise/inquiry/"' _site/price/index.html \
+            || { echo "::error::/price/ の ENTERPRISE カードから導入相談の導線 (/enterprise/inquiry/) が消えている"; fail=1; }
+          grep -q 'お見積り' _site/price/index.html \
+            || { echo "::error::/price/ の ENTERPRISE カードのお見積りの表示 (plans.yml の quote_label) が消えている"; fail=1; }
+          grep -q 'ご利用規模・運用形態に応じて個別にご案内します' _site/price/index.html \
+            || { echo "::error::/price/ の ENTERPRISE カードのお見積りの表示 (plans.yml の quote_note) が消えている"; fail=1; }
+          grep -q 'data-dl' _site/assets/dist/app.js \
+            || { echo "::error::バンドルから DL 計測の配線が消えている"; fail=1; }
+          # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
+          # DL 先は Microsoft Store の掲載ページと配布のダウンロードの 2 つを見る
+          grep -qE 'download/latest/windows\?|apps\.microsoft\.com/detail/9PDKMKWHN9RW\?' _site/index.html \
+            && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
+          # `download` は真偽属性ではない。Svelte 5 で `download={!!x}` と書くと
+          # `download="false"` が出力され、同一オリジンのリンクが "false.html" という名前の
+          # 強制ダウンロードになる。クロスオリジンの DL 項目は download 属性が無視されるので気付きにくい。
+          # 値は '' (サーバのファイル名で保存) か属性なし (undefined) の二択 — src/lib/download-attr.js
+          grep -qE '["'\''`]download["'\''`],!!' _site/assets/dist/app.js \
+            && { echo "::error::バンドルに download={!!…} が残っている — download は真偽属性ではない。src/lib/download-attr.js を通すこと"; fail=1; } || true
+          if grep -rlE 'download="(true|false)"' --include='*.html' _site >/dev/null 2>&1; then
+            echo "::error::download=\"true\" / download=\"false\" が HTML に出力されている — 値は '' か属性なしにすること"
+            grep -rnE 'download="(true|false)"' --include='*.html' _site | head -20
+            fail=1
+          fi
+          # 問い合わせの導線は自前のページ (/enterprise/inquiry/ と /contact/)。
+          # Google フォームの URL が出力に無いことを固定する。
+          if grep -rl --include='*.html' 'docs.google.com/forms' _site >/dev/null 2>&1; then
+            echo "::error::Google フォームの URL が出力に残っている — 問い合わせ導線は自前ページに統一すること"
+            grep -rln --include='*.html' 'docs.google.com/forms' _site | head -10
+            fail=1
+          fi
+          # 問い合わせは 2 ページ (Enterprise 導入相談 = enterprise、一般 = general)。
+          # どちらも「アイランド root」「kind」「JS 無効時の代替 (noscript)」の 3 点が揃っていること。
+          # kind が落ちると /contact/ が Enterprise の項目立て (会社名・電話・アカウント数必須) で
+          # 描画され、一般の問い合わせが送れなくなる — 見た目は動くので e2e か ここでしか捕まらない。
+          for entry in 'enterprise/inquiry:enterprise' 'contact:general'; do
+            page="${entry%%:*}"
+            kind="${entry##*:}"
+            grep -q 'data-island="inquiry-form"' "_site/$page/index.html" \
+              || { echo "::error::/$page/ からフォームのアイランド root が消えている"; fail=1; }
+            grep -q "data-kind=\"$kind\"" "_site/$page/index.html" \
+              || { echo "::error::/$page/ の data-kind が \"$kind\" でない — _includes/inquiry-form.html の include 引数を確認すること"; fail=1; }
+            grep -q '<noscript>' "_site/$page/index.html" \
+              || { echo "::error::/$page/ から JS 無効時の代替 (noscript) が消えている"; fail=1; }
+          done
+          # E2E 一式は公開物ではない (_config.yml の exclude)。除外が外れると
+          # spec と設定がそのまま配信されるので、出力に現れた時点で落とす。
+          for leaked in e2e playwright.config.ts; do
+            [ -e "_site/$leaked" ] \
+              && { echo "::error::_site/$leaked が配信対象に入っている — _config.yml の exclude を確認すること"; fail=1; } || true
+          done
+          # 多言語化のビルド出力の検査 (scripts/i18n/checks/*.mjs。ja のページの不変の検査は基点が要るので CI に載せない)
+          node scripts/i18n/check-site.mjs _site || fail=1
+          # Microsoft Store のボタンの切り替え (_data/site.yml の distribution.store_enabled) を true にした写しの
+          # データで別にビルドし (出力は一時フォルダ、_site は触らない)、4 か所 × 言語にボタンが出ることを確かめる
+          node scripts/check-store-toggle.mjs || fail=1
+          # _data/plans.yml と料金のカタログの突き合わせ (取得できなければ skip)
+          node scripts/check-plan-catalog.mjs || fail=1
+          # docs の検査: 契約 ID 20 個 / 目次の ID / ページ内リンク /
+          # サイト内と llms.txt からの /docs/#… の深いリンク / <img> の実在・alt・width/height。
+          # 節 ID はアプリ内ヘルプと /price/ /spec/ が参照するので改名しない。
+          # 純ロジックは src/lib/docs-check.js (npm test で検証)
+          node scripts/check-docs.mjs || fail=1
+          exit $fail
+
+      # ブラウザの E2E (問い合わせフォーム・ナビ・料金・多言語のページほか)。
+      #
+      # 上の `Verify build output` が固定できるのは「アイランド root と noscript が
+      # 出力に居ること」まで。**送信が実際に通るか** (検証エラーの表示、全角電話の
+      # 正規化、200 / 429 / 502 の文面、payload の形) は本物のブラウザでしか分からない。
+      #
+      # ⚠️ **E2E_SKIP_BUILD=1 を外さないこと。** 外すと `npm run build && jekyll build` が
+      #    走り直し、`JEKYLL_ENV=production` も `--baseurl` も無い出力で `_site/` を
+      #    上書きしてしまう。この直後の `Upload artifact` はそれを Pages に上げる。
+      #
+      # 送信先 (`_data/inquiry.yml` の endpoint) は spec 側が page.route で差し替え、
+      # それ以外の外部通信は abort する。CI から本物の問い合わせは飛ばない。
+      - name: Install Playwright browser (Chromium)
+        run: npx playwright install --with-deps chromium
+
+      - name: E2E (問い合わせフォーム)
+        env:
+          E2E_SKIP_BUILD: '1'
+        run: npx playwright test
+
+      # 落ちたときだけトレース / スクリーンショットを持ち帰る (成功時は捨てる)
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v5
+        with:
+          name: playwright-report
+          path: e2e/.artifacts/
+          retention-days: 7
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v5
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

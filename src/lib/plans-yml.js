@@ -1,0 +1,158 @@
+// `_data/plans.yml` の `tiers:` を読む極小パーサ。
+//
+// 料金の計算のテストと、料金のカタログとの突き合わせ (`scripts/check-plan-catalog.mjs`) が使う。
+// 読み手を 2 つ持つと片方だけ古くなるので、plans.yml を読むコードは必ずここを通す。
+//
+// YAML ライブラリを devDependency に足さないための割り切り。対応するのは plans.yml が
+// 実際に使っている形 (2 階層のスカラーと `- label:` の配列) だけ。
+//
+// **非対応の記法に当たったら黙って読み飛ばさず throw する。** 静かに `undefined` を
+// 返すと「検査は通るが値は間違っている」状態になり、読み手の存在意義が消えるため。
+// 具体的には以下を検出する:
+//
+//   - ブロックスカラー (`summary: |` / `>`)
+//   - 暗黙 null (`overage_per_hour:` のように値を書かない形)
+//     → 次の行のインデントを見て「ネストブロックの開始」と区別する
+
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+
+const HERE = dirname(fileURLToPath(import.meta.url));
+
+/** `_data/plans.yml` の既定パス (このモジュールからの相対で解決する)。 */
+export const PLANS_YML = join(HERE, '..', '..', '_data', 'plans.yml');
+
+/**
+ * plans.yml の `tiers:` を配列で返す。
+ *
+ * @param {string} [ymlPath]
+ * @returns {Record<string, unknown>[]}
+ */
+export function loadTiers(ymlPath = PLANS_YML) {
+  const lines = readFileSync(ymlPath, 'utf8').split(/\r?\n/);
+  const start = lines.findIndex((l) => l === 'tiers:');
+  if (start < 0) throw new Error(`${ymlPath} に tiers: が無い`);
+
+  const tiers = [];
+  let current = null;
+
+  /** 次の非空・非コメント行を返す (ネスト判定のための先読み)。 */
+  const nextMeaningful = (from) => {
+    for (let j = from; j < lines.length; j += 1) {
+      const t = lines[j].trim();
+      if (t !== '' && !t.startsWith('#')) return lines[j];
+    }
+    return null;
+  };
+
+  for (let i = start + 1; i < lines.length; i += 1) {
+    const line = lines[i];
+    if (line.trim() === '' || line.trim().startsWith('#')) continue;
+
+    const item = line.match(/^ {2}- (\w+): (.*)$/);
+    if (item) {
+      current = {};
+      tiers.push(current);
+      current[item[1]] = parseScalar(item[2]);
+      continue;
+    }
+
+    const pair = line.match(/^ {4}(\w+):(.*)$/);
+    if (pair) {
+      const [, key, rest] = pair;
+      const value = rest.replace(/\s+#.*$/, '').trim();
+
+      if (/^[|>]/.test(value)) {
+        throw new Error(
+          `plans.yml: ${key} がブロックスカラー (${value}) だが、このパーサは非対応。` +
+            ' plans.yml を 1 行スカラーに戻すか、パーサを拡張すること。',
+        );
+      }
+
+      if (value === '') {
+        // 値が空 → ネストブロックの開始か、暗黙 null か。次行のインデントで判定する。
+        const next = nextMeaningful(i + 1);
+        const startsNestedBlock = next !== null && /^ {6}|^ {4}- /.test(next);
+        if (!startsNestedBlock) {
+          throw new Error(
+            `plans.yml: ${key} が暗黙 null (値なし) になっている。` +
+              ' このパーサは読み取れないので `null` と明示すること。',
+          );
+        }
+        continue; // specs / bullets / cta のネストは計算に不要なので読み飛ばす
+      }
+
+      current[key] = parseScalar(value);
+      continue;
+    }
+
+    // ネストの中身 (6 スペース以上 / 4 スペースの配列要素) は無視
+    if (/^ {6}/.test(line) || /^ {4}- /.test(line)) continue;
+    // tiers: ブロックの外に出た
+    if (!/^ /.test(line)) break;
+  }
+  return tiers;
+}
+
+/**
+ * 1 プランの `specs:` (カードに並ぶ `- label:` / `value:` の対) を返す。
+ * 未知の `code` なら空配列。
+ *
+ * `loadTiers` は specs を読み飛ばす (料金計算に要らないため)。表示文言の検査にだけ
+ * 必要なものをここで読む — plans.yml を読むコードは必ずこのモジュールを通す、
+ * という約束 (冒頭の注記) を守るため。
+ *
+ * @param {string} code
+ * @param {string} [ymlPath]
+ * @returns {{label: string, value: string}[]}
+ */
+export function loadSpecs(code, ymlPath = PLANS_YML) {
+  const lines = readFileSync(ymlPath, 'utf8').split(/\r?\n/);
+  const specs = [];
+  let inTier = false;
+  let inSpecs = false;
+
+  for (const line of lines) {
+    const tier = line.match(/^ {2}- code: (.*)$/);
+    if (tier) {
+      if (inTier) break; // 目的のプランを読み終えて次のプランに入った
+      inTier = parseScalar(tier[1]) === code;
+      inSpecs = false;
+      continue;
+    }
+    if (!inTier) continue;
+    if (line.trim() === '' || line.trim().startsWith('#')) continue;
+
+    if (/^ {4}specs:\s*$/.test(line)) {
+      inSpecs = true;
+      continue;
+    }
+    if (!inSpecs) continue;
+
+    const label = line.match(/^ {6}- label: (.*)$/);
+    if (label) {
+      specs.push({ label: String(parseScalar(label[1])), value: '' });
+      continue;
+    }
+
+    const value = line.match(/^ {8}value: (.*)$/);
+    if (value && specs.length > 0) {
+      specs[specs.length - 1].value = String(parseScalar(value[1]));
+      continue;
+    }
+
+    inSpecs = false; // specs ブロックの外に出た (cta: など)
+  }
+  return specs;
+}
+
+/** YAML の 1 行スカラーを JS の値にする (行末コメントは落とす)。 */
+export function parseScalar(raw) {
+  const v = raw.replace(/\s+#.*$/, '').trim();
+  if (v === 'null') return null;
+  if (v === 'true') return true;
+  if (v === 'false') return false;
+  if (/^-?\d+$/.test(v)) return Number(v);
+  return v.replace(/^"(.*)"$/, '$1');
+}

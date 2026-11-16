@@ -1,0 +1,25 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://www.deepmosaic.co.jp/#organization",
+  "name": "Deepmosaic合同会社",
+  "alternateName": "Deepmosaic LLC",
+  "url": "https://www.deepmosaic.co.jp",
+  "logo": "https://www.deepmosaic.co.jp/assets/img/logo-font.png",
+  "sameAs": {{ site.data.site.seo.same_as | jsonify }},
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "email": "support@deepmosaic.co.jp",
+    "contactType": "customer service"
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "postalCode": {{ site.data.company.postal_code | jsonify }},
+    "addressRegion": {{ site.data.company.address_region | jsonify }},
+    "addressLocality": {{ site.data.company.address_locality | jsonify }},
+    "streetAddress": {{ site.data.company.street_address | jsonify }},
+    "addressCountry": "JP"
+  }
+}
+</script>

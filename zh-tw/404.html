@@ -1,0 +1,23 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/404.html
+ja_url: /404.html
+source: 404.html
+source_hash: "6283c21f6fc74e52140936d7e8b7e1facd4dddac81f2031fd0535e4c9797d01d"
+title: 找不到頁面
+seo_title: 找不到頁面（404）｜Deepmosaic
+description: 找不到您要尋找的頁面。請從 Deepmosaic 的首頁、說明文件或價格頁面尋找。
+noindex: true
+sitemap: false
+---
+{% include header.html %}
+
+<section class="mx-auto max-w-2xl px-4 py-24 text-center">
+    <h1 class="text-4xl font-bold text-ink">404 Not Found</h1>
+    <p class="mt-4 text-lg text-ink-3">找不到您要尋找的頁面。</p>
+    <p class="mt-2 text-[14px] text-ink-3">請從<a href="/zh-tw/" class="text-accent-soft hover:underline">首頁</a>、{% include ja-link.html href="/docs/" label="說明文件" class="text-accent-soft hover:underline" %}或<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格</a>頁面尋找。</p>
+    <img class="mx-auto max-w-full h-auto mt-8" src="/assets/img/ufo_ushi.webp" alt="UFO 與牛的插圖" width="636" height="592" loading="lazy" decoding="async">
+</section>
+
+{% include footer.html %}

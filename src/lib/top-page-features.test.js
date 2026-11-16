@@ -1,0 +1,524 @@
+// トップページ (index.html) の機能節と表記を固定する回帰テスト。
+//
+//   node --test src/lib/top-page-features.test.js
+//
+//   - タイムライン編集 / ホーム画面のフォルダとタグ / 組織 (Enterprise) の機能節がある
+//   - RELIABILITY に無効の機能を書かない (CLAUDE.md「未実装・無効の機能は書かない」)
+//   - hero 画像はファイル名を変えない (撮り直しは同じ名前で上書きする)
+//   - 表記は「チーム」ではなく「組織」(アプリの表記)
+//   - 機能節に版の断り書き (`_includes/desktop-next-note.html` の部品) を置かない。
+//     フェードとトランジションのカードはアプリの今の操作で書く。
+//
+// 読み取りはこのファイル内で完結させる (`docs-team-quote.test.js` と同じ流儀)。
+
+import { test } from 'node:test'
+import assert from 'node:assert/strict'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+import { assetModelHits, findNames, MODEL_ABBR, MODEL_NAMES } from './name-guard.js'
+
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
+const read = (...parts) => readFileSync(join(ROOT, ...parts), 'utf8')
+
+/** Liquid の `{% comment %}` と HTML コメントを落とす (表示されない文字列は検査対象外)。 */
+function stripComments(source) {
+	return source
+		.replace(/\{%-?\s*comment\s*-?%\}[\s\S]*?\{%-?\s*endcomment\s*-?%\}/g, '')
+		.replace(/<!--[\s\S]*?-->/g, '')
+}
+
+/** タグを落とし、空白を 1 つに潰した素の文字列。 */
+const textOf = (html) => html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ')
+
+/** YAML のコメント行 (`#` で始まる行) を落とす。 */
+const stripYamlComments = (yaml) =>
+	yaml
+		.split('\n')
+		.filter((line) => !line.trimStart().startsWith('#'))
+		.join('\n')
+
+/** `{% comment %} NAME {% endcomment %}` の目印から、その節の `</section>` までの HTML。見つからなければ null。 */
+function markedSection(html, name) {
+	const start = html.indexOf(`{% comment %} ${name} {% endcomment %}`)
+	if (start < 0) return null
+	const end = html.indexOf('</section>', start)
+	return end < 0 ? null : html.slice(start, end)
+}
+
+/** `<img …>` の属性。 */
+const images = (html) =>
+	[...html.matchAll(/<img\s([^>]*)>/g)].map((m) => Object.fromEntries([...m[1].matchAll(/([\w-]+)="([^"]*)"/g)].map((a) => [a[1], a[2]])))
+
+/** `<div class="card …">` のうち、`<h3>` の見出しが `heading` のカードの HTML。見つからなければ null。 */
+function cardOf(html, heading) {
+	const at = html.search(new RegExp(`<h3[^>]*>${heading}</h3>`))
+	if (at < 0) return null
+	const start = html.lastIndexOf('<div class="card', at)
+	const end = html.indexOf('<div class="card', at)
+	return start < 0 ? null : html.slice(start, end < 0 ? undefined : end)
+}
+
+const index = read('index.html')
+const indexShown = stripComments(index)
+
+/** トップが `{% include X %}` で読む部品 (表記の検査対象)。 */
+const indexIncludes = [...new Set([...index.matchAll(/\{%-?\s*include\s+([\w./-]+\.html)/g)].map((m) => m[1]))]
+
+test('補助関数は見つからなければ null / 空を返す (すり抜け防止)', () => {
+	// Arrange / Act / Assert
+	assert.equal(markedSection(index, '存在しない節'), null)
+	assert.equal(cardOf(index, '存在しない見出し'), null)
+	assert.match(cardOf('<div class="card p-5"><h3 class="x">A</h3><p>本文</p></div>', 'A') ?? '', /本文/)
+	assert.deepEqual(images('<p>画像なし</p>'), [])
+	assert.equal(stripComments('A{% comment %}x{% endcomment %}B<!-- y -->C'), 'ABC')
+	assert.equal(stripYamlComments('# a\nb: 1\n  # c'), 'b: 1')
+})
+
+// ── 機能節 ───────────────────────────────────────────────────────────────────
+
+test('タイムライン編集の機能節がある (カット・素材・テキスト・音声・効果)', () => {
+	// Arrange
+	const section = markedSection(index, 'TIMELINE')
+	assert.ok(section, 'index.html に {% comment %} TIMELINE {% endcomment %} の節が無い')
+	const text = textOf(stripComments(section))
+	const words = ['トリム', '分割', '並べ替え', '空白', '画像', 'テキスト', '透かし', 'BGM', 'フェード', 'トランジション']
+
+	// Act
+	const missing = words.filter((w) => !text.includes(w))
+
+	// Assert
+	assert.deepEqual(missing, [], `触れていない機能: ${missing.join(' / ')}`)
+	assert.match(text, /モザイク/, `編集後もモザイクがどうなるかに触れていない: ${text}`)
+})
+
+test('ホーム画面のフォルダとタグ / 組織 (Enterprise) の機能節がある', () => {
+	// Arrange
+	const section = markedSection(index, 'MANAGE')
+	assert.ok(section, 'index.html に {% comment %} MANAGE {% endcomment %} の節が無い')
+	const text = textOf(stripComments(section))
+
+	// Act
+	const missing = ['フォルダ', 'タグ', '組織', 'Enterprise', '招待', '組織コード', '請求書'].filter((w) => !text.includes(w))
+
+	// Assert
+	assert.deepEqual(missing, [], `触れていない機能: ${missing.join(' / ')}`)
+	assert.match(section, /href="\/docs\/#team"/, '組織の管理の使い方 (/docs/#team) へのリンクが無い')
+	assert.match(section, /href="\/enterprise\/inquiry\/"/, '導入相談へのリンクが無い')
+})
+
+test('新しい機能節の画像は実在し、alt / width / height / lazy を持つ', () => {
+	// Arrange
+	const imgs = ['TIMELINE', 'MANAGE'].flatMap((name) => images(markedSection(index, name) ?? ''))
+	assert.ok(imgs.length >= 1, '機能節に画像が 1 枚も無い')
+
+	// Act / Assert
+	for (const img of imgs) {
+		assert.ok(existsSync(join(ROOT, img.src.replace(/^\//, ''))), `画像が無い: ${img.src}`)
+		assert.ok(img.alt, `alt が無い: ${img.src}`)
+		assert.match(img.width ?? '', /^\d+$/, `width が無い: ${img.src}`)
+		assert.match(img.height ?? '', /^\d+$/, `height が無い: ${img.src}`)
+		assert.equal(img.loading, 'lazy', `ヒーロー以外は lazy にする: ${img.src}`)
+	}
+})
+
+test('フェードとトランジションのカードは、はさみからの選択とクリップごとのフェードに触れ、画面に無いパレットを書いていない', () => {
+	// Arrange
+	const card = cardOf(markedSection(index, 'TIMELINE') ?? '', 'フェードとトランジション')
+	assert.ok(card, 'TIMELINE に「フェードとトランジション」のカードが無い')
+	const text = textOf(stripComments(card))
+
+	// Act
+	const missing = ['はさみ', 'フェード', 'つなぎ', 'クリップごと'].filter((w) => !text.includes(w))
+	const leftovers = ['「効果」', 'チップ'].filter((w) => text.includes(w))
+
+	// Assert — 語は docs 04-edit の #edit-fade / #edit-transition と揃える
+	assert.deepEqual(missing, [], `触れていない語: ${missing.join(' / ')} (${text})`)
+	assert.deepEqual(leftovers, [], `画面に無い「効果」のパレットの語がある: ${leftovers.join(' / ')} (${text})`)
+})
+
+// ── 版の断り書きを置かない ─────────────────────────────────────────
+
+test('desktop-next-note の部品は無く、トップのどこからも読まれていない', () => {
+	// Arrange / Act
+	const includers = ['index.html', ...indexIncludes.map((name) => `_includes/${name}`)]
+		.filter((path) => existsSync(join(ROOT, ...path.split('/'))))
+		.filter((path) => /\{%-?\s*include\s+desktop-next-note\.html/.test(read(...path.split('/'))))
+
+	// Assert
+	assert.ok(!existsSync(join(ROOT, '_includes', 'desktop-next-note.html')), '_includes/desktop-next-note.html が残っている')
+	assert.deepEqual(includers, [], `desktop-next-note.html を読んでいる: ${includers.join(' / ')}`)
+})
+
+test('トップ (本文と読み込む部品) の表示文字列に版の断り書きが無い', () => {
+	// Arrange
+	const sources = [
+		['index.html', indexShown],
+		...indexIncludes
+			.filter((name) => existsSync(join(ROOT, '_includes', name)))
+			.map((name) => [`_includes/${name}`, stripComments(read('_includes', name))]),
+	]
+	const wording = [/次回の更新 \(v[\d.]+\)/, /配布中の v\d/, /Desktop 版では次回の更新/, /次回のデスクトップ更新/]
+
+	// Act
+	const found = sources.flatMap(([name, body]) =>
+		wording.filter((re) => re.test(textOf(body))).map((re) => `${name}: ${re}`),
+	)
+
+	// Assert
+	assert.deepEqual(found, [], `版の断り書きがある: ${found.join(' / ')}`)
+})
+
+// ── RELIABILITY に無効の機能を書かない ───────────────────────────────
+
+test('RELIABILITY の節とトップの表示文字列にアノテーションの語が無い', () => {
+	// Arrange
+	const section = markedSection(index, 'RELIABILITY')
+	assert.ok(section, 'index.html に {% comment %} RELIABILITY {% endcomment %} の節が無い')
+
+	// Act / Assert
+	assert.ok(!section.includes('アノテーション'), 'RELIABILITY にアノテーションモードの記述が残っている')
+	assert.ok(!textOf(indexShown).includes('アノテーション'), 'トップの表示文字列にアノテーションが残っている')
+})
+
+// ── hero 画像 (撮り直しは同じファイル名) ─────────────────────────────────
+
+test('hero 画像はファイル名を変えず、LCP 用の fetchpriority="high" のまま', () => {
+	// Arrange / Act (HERO の先頭は検出対象の図なので、先頭ではなく src で探す)
+	const hero = images(index).find((img) => img.src === '/assets/img/screenshots/edit-player-mosaic.webp')
+
+	// Assert
+	assert.ok(hero, 'hero 画像 (edit-player-mosaic.webp) が無い')
+	assert.equal(hero.fetchpriority, 'high')
+	assert.equal(hero.loading, undefined, 'hero を lazy にしてはいけない')
+})
+
+// ── 検出対象の図と語 ─────────────────────────────────────────────────
+//
+// 検出対象の図は HERO のボタン列の上に置く。目的は検索の対象にすることなので、alt だけでなく見える文字列・
+// トップの description・meta_desc (JSON-LD の description) にも同じ語を置く。
+// 図は 4 項目 (男性器・女性器・男女の顔・モザイク) のページ埋め込み SVG (`_includes/detectable-objects.html`)。
+// 見える 1 行と図の読み上げ名は「男性の顔・女性の顔」と分けて書く。
+
+/** 図の見える 1 行 (figcaption) と図の読み上げ名 (<title>) に求める語。 */
+const FIGURE_TERMS = ['男性器', '女性器', '男性の顔', '女性の顔', 'モザイク']
+/** description・meta_desc・llms に求める語 (「男性の顔」「女性の顔」に分けて書く)。 */
+const DETECT_TERMS = ['男性器', '女性器', '男性の顔', '女性の顔']
+
+const missingTerms = (sources, terms) => sources.flatMap(([name, body]) => terms.filter((t) => !body.includes(t)).map((t) => `${name}: ${t}`))
+
+test('HERO のボタン列より前に検出対象の図 (埋め込み SVG の部品) があり、古い webp が残らず、図は lazy でない', () => {
+	// Arrange
+	const section = markedSection(index, 'HERO')
+	assert.ok(section, 'index.html に {% comment %} HERO {% endcomment %} の節が無い')
+	const shown = stripComments(section)
+	const part = stripComments(read('_includes', 'detectable-objects.html'))
+
+	// Act
+	const figAt = shown.indexOf('{% include detectable-objects.html')
+	const buttonsAt = shown.indexOf('data-dl="hero"')
+
+	// Assert
+	assert.ok(figAt >= 0, 'HERO に検出対象の図 (detectable-objects.html) が無い')
+	assert.ok(buttonsAt >= 0, 'HERO にダウンロードボタンが無い')
+	assert.ok(figAt < buttonsAt, '検出対象の図がボタン列より後ろにある')
+	assert.ok(!section.includes('detectable-objects.webp'), 'HERO に古い webp の参照が残っている')
+	assert.ok(!existsSync(assetPath('/assets/img/detectable-objects.webp')), '古い detectable-objects.webp が残っている')
+	assert.doesNotMatch(part, /loading=/, 'ファーストビューの図を lazy にしてはいけない')
+	assert.doesNotMatch(part, /fetchpriority/, 'LCP は hero 動画のまま (図に fetchpriority を付けない)')
+})
+
+test('図の語: HERO の見える文字列と図の読み上げ名に 男性器・女性器・男性の顔・女性の顔・モザイク (陰性対照つき)', () => {
+	// Arrange
+	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
+	const part = stripComments(read('_includes', 'detectable-objects.html'))
+	const title = part.match(/<title[^>]*>([\s\S]*?)<\/title>/)?.[1] ?? ''
+	const sources = [
+		['HERO の表示文字列', heroText],
+		['図の読み上げ名', title],
+	]
+
+	// Act
+	const missing = missingTerms(sources, FIGURE_TERMS)
+	const negative = missingTerms([['HERO の表示文字列', heroText.replaceAll('男性の顔', '')]], FIGURE_TERMS)
+
+	// Assert
+	assert.deepEqual(missing, [], `検出対象の語が無い: ${missing.join(' / ')}`)
+	assert.deepEqual(negative, ['HERO の表示文字列: 男性の顔'])
+})
+
+test('検出対象の語がトップの description・meta_desc・llms にある', () => {
+	// Arrange
+	const description = index.split(/\r?\n/).find((l) => l.startsWith('description:')) ?? ''
+	const metaDesc = JSON.parse(read('_data', 'lang', 'ja.json')).meta_desc ?? ''
+	const sources = [
+		['index.html の description', description],
+		['ja.json の meta_desc', metaDesc],
+		['llms.txt', read('llms.txt')],
+		['llms-full.txt', read('llms-full.txt')],
+	]
+
+	// Act
+	const missing = missingTerms(sources, DETECT_TERMS)
+	const negative = missingTerms([['index.html の description', description.replaceAll('女性の顔', '')]], DETECT_TERMS)
+
+	// Assert
+	assert.deepEqual(missing, [], `検出対象の語が無い: ${missing.join(' / ')}`)
+	assert.deepEqual(negative, ['index.html の description: 女性の顔'])
+	assert.match(description, /^description:.{0,60}除去/, 'description の否定句が先頭から外れた (切り詰めで消える)')
+})
+
+// ── hero の動画と形に沿ったモザイクの比較画像 ──────────────────────────────────────
+
+const assetPath = (src) => join(ROOT, src.replace(/^\//, ''))
+
+test('hero は形に沿ったモザイクのループ動画 (autoplay / muted / loop / playsinline、poster は WebP、source は 3 MB 以下の WebM、フォールバック img と素材の表記)', () => {
+	// Arrange
+	const section = markedSection(index, 'HERO')
+	assert.ok(section, 'index.html に {% comment %} HERO {% endcomment %} の節が無い')
+	const video = section.match(/<video\s([^>]*)>([\s\S]*?)<\/video>/)
+	assert.ok(video, 'HERO に <video> が無い')
+	const [, attrs, inner] = video
+
+	// Act
+	const missing = ['autoplay', 'muted', 'loop', 'playsinline'].filter((a) => !new RegExp(`(^|\\s)${a}(\\s|>|$)`).test(attrs))
+	const poster = attrs.match(/poster="([^"]+)"/)?.[1] ?? ''
+	const source = inner.match(/<source\s[^>]*src="([^"]+)"/)?.[1] ?? ''
+
+	// Assert
+	assert.deepEqual(missing, [], `hero の video に無い属性: ${missing.join(' / ')}`)
+	assert.match(attrs, /\swidth="\d+"/, 'video に width が無い (CLS)')
+	assert.match(attrs, /\sheight="\d+"/, 'video に height が無い (CLS)')
+	assert.ok(poster.endsWith('.webp') && existsSync(assetPath(poster)), `poster が WebP で実在しない: ${poster}`)
+	assert.ok(source.endsWith('.webm') && existsSync(assetPath(source)), `source が WebM で実在しない: ${source}`)
+	assert.ok(statSync(assetPath(source)).size <= 3 * 1024 * 1024, `hero の WebM は 3 MB 以下にする: ${statSync(assetPath(source)).size} bytes`)
+	assert.match(inner, /<img\s[^>]*edit-player-mosaic\.webp/, 'video 非対応環境のフォールバック img (従来の hero 画像) が無い')
+	assert.match(textOf(stripComments(section)), /Pexels/, '素材 (Pexels) の表記が無い')
+})
+
+// ── Web 版への導線 ───────────────────────────────────────────────────
+//
+// 「ブラウザで試す」と DL CTA の Web 版リンクは新規タブで開く。
+// 着地 URL にクエリ (`?login=1` など) を付けない。
+
+/** `<a …>` のうち `data-dl="<name>"` を持つものの属性。見つからなければ null。 */
+function linkAttrs(html, name) {
+	const tag = html.match(new RegExp(`<a\\s[^>]*data-dl="${name}"[^>]*>`))?.[0]
+	return tag ? Object.fromEntries([...tag.matchAll(/([\w-]+)="([^"]*)"/g)].map((a) => [a[1], a[2]])) : null
+}
+
+test('「ブラウザで試す」と CTA の Web 版リンクは target="_blank" rel="noopener noreferrer" で開く', () => {
+	// Arrange
+	const sources = [
+		['index.html の hero-webapp', stripComments(index), 'hero-webapp'],
+		['cta-download.html の cta-webapp', stripComments(read('_includes', 'cta-download.html')), 'cta-webapp'],
+	]
+
+	// Act
+	const found = sources.map(([name, html, dl]) => [name, linkAttrs(html, dl)])
+
+	// Assert
+	for (const [name, attrs] of found) {
+		assert.ok(attrs, `${name} のリンクが無い`)
+		assert.equal(attrs.target, '_blank', `${name} が新規タブで開かない`)
+		assert.equal(attrs.rel, 'noopener noreferrer', `${name} の rel が noopener noreferrer でない`)
+	}
+	assert.equal(linkAttrs('<p>リンクなし</p>', 'hero-webapp'), null)
+})
+
+test('Web 版の URL に自動ログインのクエリ (login=) が無い', () => {
+	// Arrange
+	const yaml = stripYamlComments(read('_data', 'site.yml'))
+
+	// Act
+	const url = yaml.match(/web_app:[\s\S]*?\n\s+url:\s*"([^"]+)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(url, /^https:\/\/app\.deepmosaic\.co\.jp\//, `web_app.url が読めない: ${url}`)
+	assert.doesNotMatch(url, /login=/, `web_app.url に login= が残っている: ${url}`)
+})
+
+test('hero の説明文と動画の aria-label は「自動検出の結果」(素材: Pexels)', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'HERO') ?? '')
+
+	// Act
+	const text = textOf(section)
+	const ariaLabel = section.match(/<video\s[^>]*aria-label="([^"]*)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(text, /自動検出の結果（素材: Pexels）。/, 'hero の説明文が「自動検出の結果（素材: Pexels）。」でない')
+	assert.doesNotMatch(text, /6 人の顔/, '旧い説明文が残っている')
+	assert.equal(ariaLabel, 'Deepmosaic で書き出した動画。自動検出の結果')
+})
+
+test('MOSAIC 節に四角い枠と形に沿ったモザイクの比較画像が対で並び、実在して alt / width / height / lazy を持つ', () => {
+	// Arrange
+	const section = markedSection(index, 'MOSAIC')
+	assert.ok(section, 'index.html に {% comment %} MOSAIC {% endcomment %} の節が無い')
+	const imgs = images(stripComments(section)).filter((img) => (img.src ?? '').includes('/assets/img/samples/shape-compare-'))
+
+	// Act
+	const rects = imgs.filter((img) => img.src.endsWith('-rect.webp'))
+	const shapes = imgs.filter((img) => img.src.endsWith('-shape.webp'))
+
+	// Assert
+	assert.ok(rects.length >= 1 && rects.length === shapes.length, `四角 (${rects.length}) と形に沿ったモザイク (${shapes.length}) が同数で 1 組以上ではない`)
+	for (const img of imgs) {
+		assert.ok(existsSync(assetPath(img.src)), `画像が無い: ${img.src}`)
+		assert.ok(img.alt, `alt が無い: ${img.src}`)
+		assert.match(img.width ?? '', /^\d+$/, `width が無い: ${img.src}`)
+		assert.match(img.height ?? '', /^\d+$/, `height が無い: ${img.src}`)
+		assert.equal(img.loading, 'lazy', `hero 以外は lazy にする: ${img.src}`)
+	}
+	const text = textOf(stripComments(section))
+	assert.deepEqual(findNames(text, MODEL_ABBR), [], 'MOSAIC 節にモデルの名前が残っている (公開面には書かない)')
+	assert.match(text, /形に沿/, 'MOSAIC 節が形に沿ったモザイクに触れていない')
+	assert.match(text, /Pexels/, '素材 (Pexels) の表記が無い')
+})
+
+// ── すでにかかっているモザイクの検出 ──────────────────────────
+//
+// 検出オプションの「モザイク」の紹介の節。「取り除く・元に戻す」機能と誤解されないよう、否定文を
+// 同じ節に置き、「除去」「解除」「復元」と旧名・docs に書かない語を置かない (site-copy-docs-mosaic-label.test.js と同じ方針)。
+
+const EXISTING_MOSAIC_NEGATION = 'モザイクを取り除いたり、元の映像に戻したりすることはできません。見つけた範囲に新しくモザイクをかけ直す機能です。'
+const EXISTING_MOSAIC_BANNED = ['除去', '解除', '復元', '既存モザイク', '既存のモザイク', '実験', 'フラグ', 'CUDA', 'WebGPU', 'ONNX', 'wasm']
+
+test('EXISTING MOSAIC の節が RELIABILITY の後・MOSAIC の前にあり、id="existing-mosaic" を持つ', () => {
+	// Arrange
+	const section = markedSection(index, 'EXISTING MOSAIC')
+	assert.ok(section, 'index.html に {% comment %} EXISTING MOSAIC {% endcomment %} の節が無い')
+
+	// Act
+	const at = index.indexOf('{% comment %} EXISTING MOSAIC {% endcomment %}')
+
+	// Assert
+	assert.match(section, /<section\s[^>]*id="existing-mosaic"/, '節に id="existing-mosaic" が無い (hero の「詳しく」のリンク先)')
+	assert.ok(index.indexOf('{% comment %} RELIABILITY {% endcomment %}') < at, 'RELIABILITY より前にある')
+	assert.ok(at < index.indexOf('{% comment %} MOSAIC {% endcomment %}'), 'MOSAIC より後ろにある')
+	assert.match(stripComments(markedSection(index, 'HERO') ?? ''), /href="#existing-mosaic"/, 'hero の検出対象の説明から節へのリンクが無い')
+})
+
+test('EXISTING MOSAIC の比較画像 2 枚は WebP で実在し、alt / width / height / lazy と素材の表記を持つ', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'EXISTING MOSAIC') ?? '')
+	const imgs = images(section)
+
+	// Act
+	const srcs = imgs.map((img) => img.src)
+
+	// Assert
+	assert.deepEqual(srcs, ['/assets/img/samples/mosaic-detect-1-found.webp', '/assets/img/samples/mosaic-detect-2-reapplied.webp'])
+	for (const img of imgs) {
+		assert.ok(existsSync(assetPath(img.src)), `画像が無い: ${img.src}`)
+		assert.ok(img.alt, `alt が無い: ${img.src}`)
+		assert.equal(img.width, '1280', `width: ${img.src}`)
+		assert.equal(img.height, '720', `height: ${img.src}`)
+		assert.equal(img.loading, 'lazy', `hero 以外は lazy にする: ${img.src}`)
+	}
+	assert.equal((section.match(/<figure\b/g) ?? []).length, 2, '画像は <figure> 2 つで組む')
+	assert.match(textOf(section), /素材: 当社のサンプル動画/, '素材の出典の表記が無い')
+})
+
+test('EXISTING MOSAIC の節に否定文・3 つの要点・docs へのリンクがあり、禁止語が無い', () => {
+	// Arrange
+	const section = stripComments(markedSection(index, 'EXISTING MOSAIC') ?? '')
+	const text = textOf(section)
+	const points = ['位置と範囲', 'ブロック状のモザイク', '粒の大きさを推定', 'かけ直', '「ID 別」', '多角形', '編集ページ', 'Desktop 版・Web 版の両方']
+
+	// Act
+	const missing = points.filter((w) => !text.includes(w))
+	const banned = [
+		...EXISTING_MOSAIC_BANNED.filter((w) => text.includes(w) || section.includes(w)),
+		...findNames(text, MODEL_ABBR),
+		...findNames(section, MODEL_ABBR),
+	]
+
+	// Assert
+	assert.ok(text.includes(EXISTING_MOSAIC_NEGATION), `否定文が無い: ${text}`)
+	assert.deepEqual(missing, [], `触れていない要点: ${missing.join(' / ')}`)
+	assert.deepEqual(banned, [], `節に置かない語がある: ${banned.join(' / ')}`)
+	assert.match(section, /href="\/docs\/#detect-mosaic"/, 'docs の #detect-mosaic へのリンクが無い')
+})
+
+test('すでにかかっているモザイクが description・hero・できること・FAQ・llms に入っている', () => {
+	// Arrange
+	const description = index.split(/\r?\n/).find((l) => l.startsWith('description:')) ?? ''
+	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
+	const entity = stripYamlComments(read('_data', 'entity.yml'))
+	const faq = stripYamlComments(read('_data', 'faq.yml'))
+	const faqQ = 'すでにモザイクがかかっている動画はどうなりますか？'
+
+	// Act
+	const faqAt = faq.indexOf(faqQ)
+	const removalQAt = faq.indexOf('モザイクを除去することはできますか？')
+	const faqAnswer = faq.slice(faqAt).match(/\n\s+a:\s*"([^"]*)"/)?.[1] ?? ''
+
+	// Assert
+	assert.match(description, /女性の顔、すでにかかっているモザイクの位置/, `description: ${description}`)
+	assert.match(heroText, /すでにかかっているモザイクの位置も見つけられます/, 'hero の検出対象の説明に無い')
+	assert.match(entity, /素材にすでにかかっているモザイクの位置と範囲を見つけ、その上から新しいモザイクをかけ直す/, 'entity.yml の can に無い')
+	assert.match(entity, /Locate mosaics already present in the footage/, 'entity.yml の can (en) に無い')
+	assert.ok(faqAt > removalQAt && removalQAt >= 0, 'FAQ は「モザイクを除去することはできますか？」の後に置く')
+	assert.match(faqAnswer, /取り除いたり元の映像に戻したりすることはできません/, `FAQ の回答に否定文が無い: ${faqAnswer}`)
+	for (const w of ['除去', '解除', '復元', '実験']) assert.ok(!faqAnswer.includes(w), `FAQ の回答に「${w}」がある`)
+	for (const file of ['llms.txt', 'llms-full.txt']) {
+		assert.match(read(file), /すでにかかっているモザイクの位置 \(見つけて上からかけ直す。取り除くことはできない\)/, `${file} の検出対象に無い`)
+		assert.match(read(file), /mosaics already present in the footage \(found and re-applied over, never removed\)/, `${file} の検出対象 (en) に無い`)
+	}
+})
+
+// ── 表記: 「チーム」→「組織」 ───────────────────────────────────────────
+
+test('トップ (本文・部品・TRUST BAR・FAQ のデータ) と導入相談ページに「チーム」が無い', () => {
+	// Arrange
+	const sources = [
+		['index.html', indexShown],
+		...indexIncludes.map((name) => [`_includes/${name}`, stripComments(read('_includes', name))]),
+		...['faq', 'site', 'entity', 'plans', 'disclosure', 'mosaic'].map((name) => [
+			`_data/${name}.yml`,
+			stripYamlComments(read('_data', `${name}.yml`)),
+		]),
+		['enterprise/inquiry/index.html', stripComments(read('enterprise', 'inquiry', 'index.html'))],
+	]
+	assert.ok(indexIncludes.includes('faq.html'), `トップの部品一覧が読めていない: ${indexIncludes.join(', ')}`)
+
+	// Act
+	const found = sources.filter(([, body]) => body.includes('チーム')).map(([name]) => name)
+
+	// Assert
+	assert.deepEqual(found, [], `「チーム」が残っている: ${found.join(' / ')}`)
+})
+
+/** `dir` 配下を再帰的に列挙し、`re` に合う相対パス (`/` 区切り) を返す。 */
+const listFiles = (dir, re) =>
+	readdirSync(join(ROOT, dir), { recursive: true })
+		.map(String)
+		.map((p) => `${dir}/${p.split('\\').join('/')}`)
+		.filter((p) => re.test(p))
+
+// 公開面 (トップ / docs の部品 / レイアウト / データ / llms) に精緻化のモデルの名前を書かない
+// (機能の呼び方は「モザイクの精緻化」「物体の形に沿ったモザイク」)。アセットのファイル名にも入れない
+// (`samples` のような普通の語は対象外)。コメントの中は表示されないので見ない。
+test('公開面の本文・alt・データ・llms にモデルの名前が無く、アセット名にも入っていない', () => {
+	// Arrange
+	const htmlFiles = ['index.html', ...listFiles('_includes', /\.html$/), ...listFiles('_layouts', /\.html$/)]
+	const sources = [
+		...htmlFiles.map((f) => [f, stripComments(read(f))]),
+		...listFiles('_data', /\.ya?ml$/).map((f) => [f, stripYamlComments(read(f))]),
+		['llms.txt', read('llms.txt')],
+		...(existsSync(join(ROOT, 'llms-full.txt')) ? [['llms-full.txt', read('llms-full.txt')]] : []),
+	]
+	const assetNames = listFiles('assets', /\.(webp|webm|png|jpe?g|svg|mp4|gif)$/i)
+	assert.ok(htmlFiles.some((f) => f.endsWith('03-detect.html')), `docs の部品が列挙できていない: ${htmlFiles.length} 件`)
+	assert.ok(assetNames.some((p) => p.endsWith('hero-shape.webm')), 'hero の動画が列挙できていない')
+
+	// Act
+	const inText = sources.filter(([, body]) => findNames(body, MODEL_NAMES).length > 0).map(([name]) => name)
+	const inNames = assetNames.filter((p) => assetModelHits(p).length > 0)
+
+	// Assert
+	assert.deepEqual(inText, [], `モデルの名前が残っている: ${inText.join(' / ')}`)
+	assert.deepEqual(inNames, [], `アセット名にモデルの名前が入っている: ${inNames.join(' / ')}`)
+})

@@ -1,0 +1,18 @@
+{%- comment -%}
+FAQ の回答文にプラン条件の実数を差し込んで出力する。
+`_data/faq.yml` は Liquid を通らないので、回答文にはプレースホルダを置き、差し込みはこのファイルだけで行う。
+表示本体 (`_includes/faq.html`) と FAQPage JSON-LD (`_includes/schema/faq.html`) の両方がここを通す。
+数値の出所は `_data/plans.yml` の `max_contracts` / `included_hours` だけ。合計時間は `included_hours × max_contracts` で求める。
+
+プレースホルダの区切りに二重波括弧を使わない (Liquid が `replace:` の引数の途中でタグを終えたと読む)。
+
+params:
+  a  回答文 (プレースホルダを含んでよい)
+
+プレースホルダ (すべて任意):
+  %%LIGHT_MAX%%    Light の最大契約数
+  %%LIGHT_TOTAL%%  Light を上限まで契約したときの月間合計時間
+{%- endcomment -%}
+{%- assign fa_light = site.data.plans.tiers | where: "code", "light" | first -%}
+{%- assign fa_light_total = fa_light.included_hours | times: fa_light.max_contracts -%}
+{{- include.a | replace: "%%LIGHT_MAX%%", fa_light.max_contracts | replace: "%%LIGHT_TOTAL%%", fa_light_total -}}

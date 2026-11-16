@@ -1,0 +1,58 @@
+# `_data/plans.yml` の繁体字中国語 (台湾) の文だけ。数値・URL・コード・並び順・プラン名の正は ja のデータ。
+# tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ。
+# 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/plans.yml"
+_source_hash: "8e26be84d866977137e04be6cd216635db5d719217aa25f57b7d1ea2e350be9c"
+tax_note: "未稅"
+rollout_note: ""
+currency_prefix: ""
+currency_suffix: " 日圓"
+tiers:
+  free:
+    summary: "可先免費試用"
+    bullets:
+      - "自首次啟動當日起 7 天內，可免費匯入累計 2 小時的影片（未註冊為 30 分鐘）"
+      - "免費期間於 7 天或累計 2 小時兩者中較早到達時結束"
+      - "1 台 PC 最多合計 2 小時（重新建立帳號也相同）"
+      - "不需登記信用卡"
+      - "免費期間結束後，仍可繼續編輯與匯出既有專案"
+    cta_label: "免費下載"
+  light:
+    summary: "適合同人與個人拍攝的創作者。額度依每月 1 至 3 部影片的步調設計。"
+    price_unit: "/ 月"
+    specs:
+      - label: "內含時數"
+        value: "每月 5 小時"
+      - label: "同時使用"
+        value: "1 台裝置"
+      - label: "付款方式"
+        value: "信用卡"
+    cta_label: "下載並訂閱"
+    subscribe_label: "訂閱"
+  pro:
+    summary: "適合自由接案的剪輯師與接近全職的個人。"
+    specs:
+      - label: "內含時數"
+        value: "每月 20 小時"
+      - label: "同時使用"
+        value: "1 台裝置"
+      - label: "付款方式"
+        value: "信用卡"
+      - label: "取消訂閱"
+        value: "隨時可取消，無違約金"
+    cta_label: "下載並訂閱"
+    subscribe_label: "訂閱"
+  enterprise:
+    summary: "適合製作公司與後製公司。從 1 個帳號起。"
+    quote_label: "個別報價"
+    quote_note: "將依使用規模與運用方式個別說明"
+    specs:
+      - label: "內含時數"
+        value: "帳號數 × 20 小時，以額度池共用"
+      - label: "帳單"
+        value: "依使用月份開立請款單"
+      - label: "付款方式"
+        value: "請款單付款（銀行轉帳）"
+    note_title: "API 使用與系統整合"
+    note: "若希望透過 API 使用，或整合至貴公司的系統與服務，也請由此洽詢。"
+    cta_label: "洽詢導入事宜"

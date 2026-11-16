@@ -1,0 +1,24 @@
+{%- assign faq_src = site.data.faq -%}
+{%- if page.faq_data %}{%- assign faq_src = site.data[page.faq_data].faq -%}{%- endif -%}
+{%- assign faq_l10n = site.data.l10n[page.lang] -%}
+{%- if faq_l10n -%}{%- if page.faq_data -%}{%- assign faq_src = site.data.l10n[page.lang][page.faq_data].faq -%}{%- else -%}{%- assign faq_src = site.data.l10n[page.lang].faq.items -%}{%- endif -%}{%- endif -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign faq_src = faq_src | where_exp: "i", "i.store_only != true" -%}{%- endunless -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for item in faq_src %}
+    {%- capture answer -%}{% include faq-answer.html a=item.a %}{%- endcapture %}
+    {
+      "@type": "Question",
+      "name": {{ item.q | jsonify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ answer | jsonify }}
+      }
+    }{% unless forloop.last %},{% endunless %}
+    {%- endfor %}
+  ]
+}
+</script>

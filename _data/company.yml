@@ -1,0 +1,15 @@
+# 会社情報の単一の出所。
+# - 参照先: company/asct.html (所在地) / company/about.html (所在地) / company/privacy.html (問い合わせ窓口) /
+#   _includes/schema/organization.html (JSON-LD の PostalAddress)。ページに直書きしない (site-copy-company-address.test.js が検査)。
+# - 電話番号はここに持たない。
+# - postal_code はハイフンありで持ち、表示側で「〒」を付ける。address は region + locality + street の連結 (テストで固定)。
+# - メールアドレスの正は `_data/inquiry.yml` の support_email (contact-email.test.js)。ここには持たない。
+# - 書式は `key: "value"` の 1 階層だけ (テストの極小パーサが読む。ブロックスカラー・ネスト・暗黙 null は使わない)。
+name: "Deepmosaic合同会社"
+name_en: "Deepmosaic LLC"
+representative: "高田茂臣"
+postal_code: "141-0021"
+address_region: "東京都"
+address_locality: "品川区"
+street_address: "上大崎3丁目14番34号プラスワン402"
+address: "東京都品川区上大崎3丁目14番34号プラスワン402"

@@ -1,0 +1,21 @@
+{%- assign crumb_path = page.url | replace: 'index.html', '' -%}{%- assign L = site.data.lang[page.lang] -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": {% if page.lang == 'ja' %}"ホーム"{% else %}{{ L.breadcrumb_home | jsonify }}{% endif %},
+      "item": {% if page.lang == 'ja' %}"https://www.deepmosaic.co.jp/"{% else %}"https://www.deepmosaic.co.jp{{ L.url_prefix }}/"{% endif %}
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": {{ page.title | jsonify }},
+      "item": {{ crumb_path | prepend: "https://www.deepmosaic.co.jp" | jsonify }}
+    }
+  ]
+}
+</script>

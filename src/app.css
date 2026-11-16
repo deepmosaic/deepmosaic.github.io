@@ -1,0 +1,447 @@
+@import "tailwindcss" source(none);
+
+/* ==========================================================================
+   Class sources — Jekyll templates hold most classes; Tailwind v4 must be
+   told where to scan (paths are relative to this file in src/).
+   source(none) above turns off automatic detection: only the files listed
+   here are scanned (not the tests, e2e, text files or documents).
+   ========================================================================== */
+@source "../_layouts/**/*.html";
+@source "../_includes/**/*.html";
+@source "../*.html";
+@source "../docs/**/*.html";
+@source "../price/**/*.html";
+@source "../subscribe/**/*.html";
+@source "../join/**/*.html";
+@source "../company/**/*.html";
+@source "../enterprise/**/*.html";
+@source "../contact/**/*.html";
+@source "../spec/**/*.html";
+@source "../en/**/*.html";
+@source "../zh-tw/**/*.html";
+@source "../_guides/**/*.md";
+@source "./**/*.svelte";
+@source "./main.js";
+@source "./lib/*.js";
+@source not "./lib/*.test.js";
+@source not "./lib/i18n-overflow.js";
+@source not "../_site";
+/* サイトの部品でないファイルの語を class として拾わないようにする。テスト (*.test.js)・e2e の道具 (i18n-overflow.js)・ビルド用の道具 (scripts/) を走査から外し、
+   語 'table' (.table{display:table}) と英語のページの本文の語 shrink (.shrink{flex-shrink:1}) を class として拾わない。 */
+@source not "../scripts";
+@source not inline("table");
+@source not inline("shrink");
+
+/* ==========================================================================
+   Dark design tokens (from the new-app design system) + fonts.
+   Roboto is self-hosted via assets/css/fonts.css; JP falls back to system.
+   ========================================================================== */
+@theme {
+  --color-surface: #1f1f1f;      /* page background */
+  --color-surface-alt: #242424;  /* alternating section bg */
+  --color-panel: #2b2b2b;        /* cards */
+  --color-panel-2: #2f2f2f;      /* elevated cards / faq */
+  --color-elevated: #353535;     /* hover */
+  --color-footer: #1a1a1a;
+  --color-hair: #333333;         /* subtle line */
+  --color-edge: #3a3a3a;         /* default border */
+  --color-edge-strong: #4a4a4a;
+  --color-accent: #4f8be8;
+  --color-accent-soft: #6fa3f0;  /* links / accent hover */
+  --color-success: #4caf50;
+  --color-ink: #f0f0f0;          /* primary text */
+  --color-ink-body: #c8c8c8;     /* body copy in tables/cards */
+  --color-ink-2: #b0b0b0;        /* secondary text */
+  --color-ink-3: #8a8a8a;        /* tertiary text */
+  --color-ink-4: #707070;        /* muted */
+
+  /* --- Renewal design -------------------------
+     Raw hex written inline lets greys drift
+     into 8 shades (#d0d0d0 / #c8c8c8 / #c0c0c0 / #a8a8a8) whose L* differs by
+     ~3% — visually indistinguishable. Those are consolidated here:
+       #d0d0d0 / #c8c8c8 / #c0c0c0 -> --color-ink-body
+       #a8a8a8                     -> --color-ink-2 (existing)
+     --------------------------------------------------------------------- */
+  --color-th: #303030;           /* table / panel header row */
+  --color-row-alt: #292929;      /* zebra row */
+  --color-warning: #ffa726;
+  --color-danger: #ef5350;
+  --color-accent-bright: #9dc2f6; /* emphasised link, link hover */
+  --color-surface-deep: #1c1c1c;  /* CTA gradient start */
+  --color-numeral: #383838;       /* oversized step numbers */
+
+  /* Highlighted card (featured plan / consultation / calculator result).
+     A blue-grey family, deliberately separate from --color-panel so the
+     emphasis does not depend on the accent colour alone. */
+  --color-hi-from: #2f3742;
+  --color-hi-edge: #3f4b5c;
+  --color-hi-ink: #dfe6ee;
+  --color-hi-ink-2: #a8b4c4;
+  --color-hi-ink-3: #8a9aad;
+  --color-success-edge: #3f5a44;
+
+  --font-sans: "Roboto", "Noto Sans JP", ui-sans-serif, system-ui, -apple-system,
+    "Segoe UI", "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", Meiryo,
+    sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", ui-monospace, monospace;
+}
+
+/* 繁体字 (zh-tw のページ = <html lang="zh-Hant-TW">) は TC の書体を先に。
+   ja と en は上の --font-sans のまま。言語で分ける規則はこれと :root:not(:lang(ja)) の下だけ */
+:root:lang(zh) {
+  --font-sans: "Roboto", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* 料金カード (_includes/pricing-cards.html) の仕様行。英中は見出しの dt が長く ("Additional subscriptions")、
+   lg で 3 列ぶんの幅にしたカードでは dt の shrink-0 のままだと行がカードからはみ出すので、dt も折り返させる。
+   utilities 層の shrink-0 に勝つよう、層の外に置く (ja は見出しが短いので shrink-0 のまま) */
+:root:not(:lang(ja)) .plan-card dl > div > dt,
+:root:not(:lang(ja)) .plan-card-featured dl > div > dt {
+  flex-shrink: 1;
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: var(--font-sans);
+    background: var(--color-surface);
+    color: var(--color-ink);
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection {
+    background: rgba(79, 139, 232, 0.35);
+  }
+  /* Tailwind v4 の preflight は button を cursor: default のままにするので、リンクと同じ指の形にそろえる
+     (v4 の移行ガイドの規則。disabled のボタンは除く) */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/* ==========================================================================
+   Components
+   ========================================================================== */
+@layer components {
+  /* Buttons (AppButton: primary / secondary / ghost, sizes via .btn-lg) */
+  .btn-primary,
+  .btn-secondary,
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2
+      text-sm font-medium whitespace-nowrap transition;
+  }
+  .btn-primary {
+    background: var(--color-accent);
+    color: #fff;
+    border: 1px solid transparent;
+  }
+  .btn-primary:hover {
+    background: var(--color-accent-soft);
+  }
+  .btn-secondary {
+    background: var(--color-edge);
+    color: var(--color-ink);
+    border: 1px solid var(--color-edge-strong);
+  }
+  .btn-secondary:hover {
+    background: var(--color-elevated);
+  }
+  .btn-ghost {
+    background: transparent;
+    color: var(--color-ink);
+    border: 1px solid transparent;
+  }
+  .btn-ghost:hover {
+    background: var(--color-edge);
+  }
+  .btn-lg {
+    @apply px-5 py-3 text-base;
+  }
+
+  /* Section kicker (blue eyebrow) */
+  .kicker {
+    color: var(--color-accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  /* Feature / step icon chip */
+  .icon-chip {
+    @apply inline-flex h-[42px] w-[42px] items-center justify-center rounded-[10px];
+    background: rgba(79, 139, 232, 0.14);
+    color: var(--color-accent-soft);
+  }
+
+  /* Responsive 16:9 embed wrapper (kept for any iframe/video use) */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+  }
+  .video-embed iframe,
+  .video-embed video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Docs TOC active link — toggled by the Scrollspy island */
+  .docs-toc a.active {
+    color: var(--color-accent-soft);
+    border-left-color: var(--color-accent);
+  }
+  /* Docs TOC scrollbar: the sidebar is capped to the viewport
+     height, so the OS scrollbar (light track, square thumb) showed up on the dark
+     panel. Thin rounded thumb, no track, slightly brighter on hover. Firefox
+     honours the standard properties; Chromium/WebKit use the pseudo-elements. */
+  nav.docs-toc {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-edge-strong) transparent;
+    scrollbar-gutter: stable;
+  }
+  nav.docs-toc::-webkit-scrollbar {
+    width: 6px;
+  }
+  nav.docs-toc::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  nav.docs-toc::-webkit-scrollbar-thumb {
+    background: var(--color-edge-strong);
+    border-radius: 999px;
+  }
+  nav.docs-toc:hover::-webkit-scrollbar-thumb {
+    background: var(--color-ink-4);
+  }
+
+  /* Optional scroll reveal (gated by .js so no-JS keeps content visible) */
+  .js .animate-on-scroll {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .js .animate-on-scroll.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ======================================================================
+     Components for the renewal design.
+     These exist so the markup never carries raw hex (use a token via var()).
+     ====================================================================== */
+
+  /* --- Cards ---------------------------------------------------------- */
+  .card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+  }
+  /* Highlighted variant: featured plan, consultation, calculator result. */
+  .card-hi {
+    background: linear-gradient(160deg, var(--color-hi-from), var(--color-panel));
+    border: 1px solid var(--color-hi-edge);
+    border-radius: 12px;
+    color: var(--color-hi-ink);
+  }
+
+  /* --- Definition table (label | value) -------------------------------
+     Used ~15 times across /, /price/, /spec/ and /docs/. Stacks on narrow
+     screens; the label column width can be tuned per instance with
+     `style="--kv-label-w: 260px"`. */
+  .kv {
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .kv-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    border-bottom: 1px solid var(--color-hair);
+  }
+  .kv-row:last-child {
+    border-bottom: 0;
+  }
+  @media (min-width: 40rem) {
+    .kv-row {
+      grid-template-columns: var(--kv-label-w, 220px) 1fr;
+    }
+  }
+  .kv-head {
+    background: var(--color-th);
+  }
+  .kv-head .kv-key,
+  .kv-head .kv-val {
+    color: var(--color-ink);
+    font-weight: 700;
+  }
+  .kv-alt {
+    background: var(--color-row-alt);
+  }
+  .kv-key {
+    padding: 0.9rem 1.15rem;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--color-ink-body);
+  }
+  .kv-val {
+    padding: 0.9rem 1.15rem;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--color-ink-2);
+  }
+  /* On wide screens give the value cell a divider so long rows stay readable. */
+  @media (min-width: 40rem) {
+    .kv-val {
+      border-left: 1px solid var(--color-hair);
+    }
+  }
+
+  /* --- Badges (review-status chips, plan flags) ------------------------ */
+  .badge-warn,
+  .badge-danger,
+  .badge-done,
+  .badge-accent {
+    @apply inline-flex items-center rounded px-[7px] py-[2px] text-[11.5px] font-bold
+      whitespace-nowrap;
+  }
+  .badge-warn {
+    background: var(--color-warning);
+    color: var(--color-surface);
+  }
+  .badge-danger {
+    background: var(--color-danger);
+    color: #fff;
+  }
+  .badge-done {
+    background: var(--color-edge);
+    color: var(--color-ink);
+  }
+  .badge-accent {
+    background: var(--color-accent);
+    color: #fff;
+  }
+
+  /* --- Pricing cards --------------------------------------------------- */
+  .plan-card {
+    background: var(--color-panel);
+    border: 1px solid var(--color-hair);
+    border-radius: 12px;
+    padding: 1.85rem 1.6rem;
+  }
+  .plan-card-featured {
+    position: relative;
+    background: linear-gradient(160deg, var(--color-hi-from), var(--color-panel));
+    border: 1px solid var(--color-accent);
+    border-radius: 12px;
+    padding: 1.85rem 1.6rem;
+    box-shadow:
+      0 16px 48px rgb(0 0 0 / 0.45),
+      0 0 60px rgb(79 139 232 / 0.12);
+  }
+
+  /* --- Tabs (preset switcher) ----------------------------------------- */
+  .tab {
+    @apply cursor-pointer rounded-t-lg px-4 py-2 text-sm font-medium transition;
+    background: transparent;
+    color: var(--color-ink-2);
+    border: 1px solid transparent;
+    border-bottom: 1px solid var(--color-hair);
+  }
+  .tab:hover {
+    color: var(--color-ink);
+  }
+  .tab-active {
+    background: var(--color-panel);
+    color: var(--color-ink);
+    border: 1px solid var(--color-hair);
+    border-bottom-color: transparent;
+  }
+  /* JS-disabled fallback: the Tabs island hides panels with [hidden]; without
+     JS every panel stays visible (the presets are a comparison table anyway). */
+  .tabpanels > [role="tabpanel"] + [role="tabpanel"] {
+    margin-top: 1rem;
+  }
+
+  /* --- Oversized step numerals ---------------------------------------- */
+  .numeral {
+    color: var(--color-numeral);
+    font-weight: 700;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Wide content must scroll inside itself, never the page ---------- */
+  .scroll-x {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prose for docs / legal pages (dark) */
+  .rich-prose {
+    color: var(--color-ink-2);
+  }
+  .rich-prose :where(p) {
+    line-height: 2;
+    margin-bottom: 1rem;
+  }
+  .rich-prose :where(a) {
+    color: var(--color-accent-soft);
+  }
+  .rich-prose :where(a):hover {
+    text-decoration: underline;
+  }
+  .rich-prose :where(h1, h2, h3, h4) {
+    color: var(--color-ink);
+  }
+  .rich-prose :where(strong, b) {
+    color: var(--color-ink);
+  }
+  .rich-prose :where(img) {
+    border-radius: 8px;
+    margin-bottom: 1.6rem;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid var(--color-edge);
+  }
+  .rich-prose :where(ul, ol) {
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    list-style: revert;
+  }
+  .rich-prose :where(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+  }
+  .rich-prose :where(th, td) {
+    border: 1px solid var(--color-edge);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    vertical-align: top;
+  }
+  .rich-prose :where(th) {
+    color: var(--color-ink);
+    font-weight: 600;
+  }
+  /* Inline code / key caps in docs (shortcut keys, menu paths). One rule so
+     bare <code> and <kbd> look the same instead of per-element class soup. */
+  .rich-prose :where(code, kbd) {
+    display: inline-block;
+    padding: 0 0.4em;
+    border: 1px solid var(--color-edge-strong);
+    border-radius: 4px;
+    background: var(--color-hair);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    color: var(--color-ink);
+    white-space: nowrap;
+  }
+}

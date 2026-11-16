@@ -1,0 +1,93 @@
+---
+layout: null
+sitemap: false
+---
+{%- assign E = site.data.entity -%}
+{%- assign U = site.url -%}
+{%- assign free = site.data.plans.tiers | where: "code", "free" | first -%}
+# {{ E.name }}
+
+> {{ E.definition.ja }}
+> {{ E.definition.en }}
+
+**重要 / IMPORTANT**
+
+{{ E.disambiguation.ja }}
+{{ E.disambiguation.en }}
+
+- 「モザイク除去」「モザイク解除」「モザイクを消す」「無修正化」を目的とした用途には使用できません。
+- Deepmosaic cannot be used to remove, decensor, uncensor, or reverse mosaic censoring.
+- {{ E.name_origin.ja }}
+- {{ E.name_origin.en }}
+- {{ E.oss_distinction.ja }}
+- {{ E.oss_distinction.en }}
+
+**このソフトが行うこと / What this software does**
+{% for c in E.can %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+**このソフトが行わないこと / What this software does NOT do**
+{% for c in E.cannot %}
+- {{ c.ja }} / {{ c.en }}
+{%- endfor %}
+
+**基本情報 / Key facts**
+
+- 提供元 / Vendor: Deepmosaic合同会社 (Deepmosaic LLC) — {{ U }}
+- 種別 / Type: Windows デスクトップアプリケーション（{{ E.os }}）/ Desktop application for {{ E.os }}
+- 処理場所 / Where processing happens: すべて利用者の PC 内。映像・音声・フレーム画像・検出座標・ファイル名は送信しません / Entirely on the user's own PC; video, audio, frames, detection coordinates and file names are never uploaded
+- 出力 / Output: モザイクを焼き込んだ動画ファイル、および Adobe Premiere Pro 用のモザイク情報 / A video with the mosaic burned in, plus mosaic data for Adobe Premiere Pro
+- 料金 / Pricing: 無料枠（初めて起動した日から {{ free.free_window_days }} 日間・累計 {{ free.included_hours }} 時間・クレジットカード不要）＋ 有料プラン / Free tier ({{ free.free_window_days }} days from first launch, up to {{ free.included_hours }} hours cumulative) plus paid plans
+- 最終更新 / Last updated: {{ site.time | date: '%Y-%m-%d' }}
+
+## 製品 / Product
+
+- [トップページ / Home]({{ U }}/): 製品定義・比較・料金の概要 / product definition, comparison, pricing overview
+- [Deepmosaic とは / What Deepmosaic is]({{ U }}/#what-is-deepmosaic): できること・できないことの一覧 / what it can and cannot do
+- [モザイク除去について / About mosaic removal]({{ U }}/mosaic-removal/): 本製品がモザイク除去ソフトではない理由 / why this is not a mosaic remover
+- [よくある質問 / FAQ]({{ U }}/#faq): 「モザイクを除去できますか？」への回答を含みます / includes the answer to "Can it remove mosaics?"
+
+## ドキュメント / Documentation
+
+- [ドキュメント / User guide]({{ U }}/docs/): Desktop 版のインストールから書き出しまでの全機能の手順 / the full Desktop workflow from install to export
+- [チュートリアル動画 / Tutorial videos]({{ U }}/docs/#about): 基本の使い方 (字幕のみ、人の声なし) Desktop 版 4 本 = ① 検出編 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4 / ② 編集編 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4 / ③ エンコード・申し込み編 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4 / ④ モザイク検出編 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4、Web 版 https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4 / basic how-to videos (captions only, no narration): Desktop in 4 parts (detection / editing / export and plans / mosaic detection) and Web
+- [画面の構成 / Screen layout]({{ U }}/docs/#layout): メニュー・プロフィールメニュー・フッター / menus, profile menu, footer
+- [サインインとライセンス / Sign-in and license]({{ U }}/docs/#license): 無料枠・同時起動 1 台・オフライン時 / free tier, one device at a time, offline behaviour
+- [AI 検出 / AI detection]({{ U }}/docs/#detect): 検出対象は男性器・女性器・男性の顔・女性の顔、すでにかかっているモザイクの位置 (見つけて上からかけ直す。取り除くことはできない) (検出オプションで個別に ON / OFF) / detection targets: male genitalia, female genitalia, male faces, female faces and mosaics already present in the footage (found and re-applied over, never removed) (each can be turned on or off). 検出・解析と、GPU 機で標準で有効なモザイクの精緻化 (四角い枠ではなく物体の形に沿った輪郭にモザイクをかける。設定なし、CUDA 無しは四角い枠) / detection, analysis and, on GPU machines, shape-following mosaic refinement that is on by default: the mosaic follows the object outline instead of the rectangle (no toggle; falls back to rectangles without CUDA). デスクトップ版の検出では枠の軌跡を自動でなめらかに補正 / the desktop edition automatically smooths the detected box trajectories
+- [一括実行 / Detect-and-encode in one go]({{ U }}/docs/#batch)
+- [キュー / Queue]({{ U }}/docs/#queue): 検出とエンコードの待ち行列 / the shared detection and encode queue
+- [検出枠の編集 / Editing detection boxes]({{ U }}/docs/#edit-player): 移動・削除・右クリック操作・1f と ∞ の追加・左ドラッグで描く・消しゴムの消し方と形・反転 (枠の外側にモザイクかぼかし)・ID の統合・「この ID をすべて削除」(手で置いた枠にも)・Shift+ドラッグで多角形の頂点を範囲選択して曲げる・サイドバーの「設定」で編集の初期値 (描いた BBox の持続 / 形 / 種類、HUD、消しゴム、前後に反映、追跡モード) を選ぶ / move, delete, context menu, single-frame and continuous boxes, drawing boxes by dragging, erase, invert (mosaic or blur outside the box), merging IDs, "delete all frames of this ID" (also for hand-drawn boxes), Shift+drag to select polygon vertices and bend them, a Settings dialog in the sidebar for editing defaults
+- [追跡と前後に反映 / Tracking and propagating edits]({{ U }}/docs/#edit-track): 手で置いた ∞ 枠が対象を自動で追う (複数同時、見失うと枠がそこで終わる)、手で直した枠を前後のフレームになじませる (既定 ON、曲げた多角形の形も同じ頂点数のフレームへ配る) / continuous boxes follow the subject automatically (several at once; the box ends where the subject is lost), and manual fixes blend into neighbouring frames (on by default; bent polygon shapes propagate to frames with the same vertex count)r modes and shapes
+- [モザイク設定 / Mosaic settings]({{ U }}/docs/#edit-mosaic): 粒度・不透明度・ふちのなじませ・適用範囲 / granularity, opacity, edge feathering, scope
+- [人物ギャラリー / Person gallery]({{ U }}/docs/#edit-persons): 顔の人物単位の統合とモザイク ON/OFF / merge faces per person, toggle mosaic per person
+- [キーボードショートカット / Keyboard shortcuts]({{ U }}/docs/#shortcuts)
+- [タイムライン編集 / Timeline editing]({{ U }}/docs/#timeline-edit): クリップのトリム・分割・移動・空白、素材の取り込み、テキスト・透かし・BGM・フェード・トランジション / trimming, splitting and moving clips, gaps, imported media, text, watermark, background music, fades and transitions
+- [書き出し / Export]({{ U }}/docs/#edit-encode): モザイクを焼き込んだ動画の書き出し / exporting a video with the mosaic burned in
+- [タイムコードの設定 / Timecode burn-in]({{ U }}/docs/#timecode)
+- [プロジェクトの書き出しと取り込み / Project export and import]({{ U }}/docs/#project-io)
+- [Premiere Pro 連携 / Premiere Pro integration]({{ U }}/docs/#premiere)
+- [アップデート / Updates]({{ U }}/docs/#update)
+- [データの保存場所 / Where data is stored]({{ U }}/docs/#data)
+- [トラブルシューティング / Troubleshooting]({{ U }}/docs/#trouble)
+- [組織の管理 / Organization management]({{ U }}/docs/#team): Enterprise のメンバー招待・権限・アカウント数・請求書 / inviting members, roles, seat count and invoices on Enterprise
+- [Web 版の使い方 / Web (browser) edition guide]({{ U }}/docs/web/): お試し用 (無料プランは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで)・対応ブラウザ・約 1.9GB 上限・Desktop 版との違い / trial use (Free plan: up to {{ site.data.site.web_app.trial_minutes }} minutes per video), supported browsers, the ~1.9 GB limit, differences from Desktop
+
+## 料金と動作環境 / Pricing and system requirements
+
+- [料金 / Pricing]({{ U }}/price/): プランと込み時間 / plans and included hours
+- [有料プランのお申し込み / Subscribe]({{ U }}/subscribe/): アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはこのページから Web 版のアカウントで申し込める (クレジットカード決済。同じアカウントで Desktop 版と Web 版の両方に効く) / subscribe from the profile menu in the app (if you downloaded the Windows version), or on this page with your Web edition account (credit card; the plan applies to the same account in both the Desktop and Web editions)
+- [動作環境 / System requirements]({{ U }}/spec/): 対応 OS・GPU 要件・実測の処理速度・対応フォーマット / OS, GPU, measured throughput, supported formats
+
+## 全文 / Full text
+
+- [llms-full.txt]({{ U }}/llms-full.txt): 仕様・料金・制限事項・FAQ を 1 ファイルに展開したもの / everything expanded into a single document
+
+## Optional
+
+- [会社概要 / Company]({{ U }}/company/about)
+- [利用規約 / Terms of service]({{ U }}/company/terms)
+- [プライバシーポリシー / Privacy policy]({{ U }}/company/privacy)
+- [クッキーポリシー / Cookie policy]({{ U }}/company/cookie)
+- [使用許諾契約書 / End user license agreement]({{ U }}/company/eula)
+- [特定商取引法に基づく表示 / Japanese commercial transactions notice]({{ U }}/company/asct)

@@ -1,0 +1,34 @@
+{%- assign dt_P = site.data.l10n[page.lang].parts -%}{%- assign dt_X = site.data.l10n[page.lang] -%}
+<div class="grid gap-5 md:grid-cols-2">
+
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">
+      {% include icon.html name="ArrowUpFromLine" class="h-[18px] w-[18px] shrink-0 text-warning" %}
+      <h3 class="text-[15px] font-bold text-ink">{% if dt_P %}{{ dt_P.dt_sent_title }}{% else %}送信するもの{% endif %}</h3>
+    </div>
+    <ul class="flex flex-col gap-3">
+      {%- for row in site.data.disclosure.network.sent %}
+      <li class="flex gap-2.5 text-[14px] leading-[1.85] text-ink-body">
+        <span class="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-warning"></span>
+        <span>{% if dt_P %}{{ dt_X.disclosure.network.sent[forloop.index0].item }}{% else %}{{ row.item }}{% endif %}{% if row.note %}<span class="mt-0.5 block text-[12.5px] text-ink-4">{% if dt_P %}{{ dt_X.disclosure.network.sent[forloop.index0].note }}{% else %}{{ row.note }}{% endif %}</span>{% endif %}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+
+  <div class="card p-6">
+    <div class="mb-4 flex items-center gap-2.5">
+      {% include icon.html name="ShieldCheck" class="h-[18px] w-[18px] shrink-0 text-success" %}
+      <h3 class="text-[15px] font-bold text-ink">{% if dt_P %}{{ dt_P.dt_not_sent_title }}{% else %}送信しないもの{% endif %}</h3>
+    </div>
+    <ul class="flex flex-col gap-3">
+      {%- for row in site.data.disclosure.network.not_sent %}
+      <li class="flex gap-2.5 text-[14px] leading-[1.85] text-ink-body">
+        {% include icon.html name="Check" class="mt-[3px] h-4 w-4 shrink-0 text-success" %}
+        <span>{% if dt_P %}{{ dt_X.disclosure.network.not_sent[forloop.index0].item }}{% else %}{{ row.item }}{% endif %}{% if row.note %}<span class="mt-0.5 block text-[12.5px] text-ink-4">{% if dt_P %}{{ dt_X.disclosure.network.not_sent[forloop.index0].note }}{% else %}{{ row.note }}{% endif %}</span>{% endif %}</span>
+      </li>
+      {%- endfor %}
+    </ul>
+  </div>
+
+</div>

@@ -1,0 +1,39 @@
+---
+layout: default
+lang: en
+permalink: /en/enterprise/inquiry/
+ja_url: /enterprise/inquiry/
+source: enterprise/inquiry/index.html
+source_hash: "22f34fca732ed6a47306176998f62a0abe0827182e8b39cf3645196b86d32f88"
+title: Enterprise inquiries
+seo_title: "Enterprise inquiries | Deepmosaic"
+description: "Contact us about Deepmosaic Enterprise (from 1 account): adoption, quotes, invoice payment, or system integration. We reply within 3 business days (Japan)."
+schemas:
+  - breadcrumb
+---
+{% include header.html %}
+
+<section class="pt-16 pb-10">
+  <div class="mx-auto w-[92%] max-w-[1120px]">
+    <nav aria-label="Breadcrumb" class="mb-5 text-[13px] text-ink-4">
+      <a href="/en/" class="hover:text-accent-soft">Home</a>
+      <span class="mx-1.5">/</span>
+      <span class="text-ink-3">Enterprise inquiries</span>
+    </nav>
+    <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Talk to us about getting started with Enterprise</h1>
+    <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
+      {{ site.data.l10n.en.entity.one_liner }}
+      Enterprise is a plan available from 1 account, and your organization can share included hours based on the number of accounts (<a href="/en/price/" class="text-accent-soft hover:underline">Pricing</a>).
+      For adoption inquiries, quotes, inquiries about integrating it into your company's systems or services (quoted separately depending on the details), or requests to pay by invoice or bank transfer, use the form below. Our staff will reply within 3 business days (Japan).
+    </p>
+  </div>
+</section>
+
+<section class="pb-20">
+  <div class="mx-auto w-[92%] max-w-[760px]">
+    <p class="mb-4 text-[13.5px] leading-[1.9] text-ink-3">The confirmation email and our reply will be in Japanese.</p>
+    {% include inquiry-form.html kind="enterprise" %}
+  </div>
+</section>
+
+{% include footer.html %}

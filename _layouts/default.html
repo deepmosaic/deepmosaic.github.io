@@ -1,0 +1,105 @@
+---
+---
+
+<!DOCTYPE html>
+<html lang="{{ site.data.lang[page.lang].my_lang }}"{% if page.no_tracking %} data-no-tracking{% endif %}>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<script>document.documentElement.classList.add('js');</script>
+
+{%- assign L = site.data.lang[page.lang] -%}{%- assign page_desc = page.description | default: L.meta_desc -%}{%- assign i18n_ja_url = page.ja_url | default: page.url | replace: 'index.html', '' -%}{%- assign i18n_listed = site.data.i18n_pages[i18n_ja_url] -%}
+{%- capture default_title -%}{%- if L.seo_brand_suffix -%}{{ page.title }} | {{ L.seo_brand_suffix }}{%- else -%}{{ page.title }}｜{{ site.data.site.seo.brand_suffix }}{%- endif -%}{%- endcapture -%}
+{%- assign seo_title = page.seo_title | default: default_title -%}
+<title>{{ seo_title | escape }}</title>
+<meta name="description" content="{{ page_desc | escape }}">{% if page.noindex %}<meta name="robots" content="noindex, nofollow">{% else %}<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">{% endif %}{% assign canonical_path = page.url | replace: 'index.html', '' %}
+<link rel="canonical" href="https://www.deepmosaic.co.jp{{ canonical_path }}" />
+{%- if i18n_listed %}
+<link rel="alternate" hreflang="ja" href="https://www.deepmosaic.co.jp{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="en" href="https://www.deepmosaic.co.jp/en{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="zh-Hant-TW" href="https://www.deepmosaic.co.jp/zh-tw{{ i18n_ja_url }}" />
+<link rel="alternate" hreflang="x-default" href="https://www.deepmosaic.co.jp/en{{ i18n_ja_url }}" />
+{%- endif %}
+
+<meta name="msvalidate.01" content="612148094E6A2DDC42CD90571766C09E" />
+
+<link rel="apple-touch-icon" sizes="57x57" href="/assets/img/ico/apple-icon-57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="/assets/img/ico/apple-icon-60x60.png">
+<link rel="apple-touch-icon" sizes="72x72" href="/assets/img/ico/apple-icon-72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="/assets/img/ico/apple-icon-76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="/assets/img/ico/apple-icon-114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="/assets/img/ico/apple-icon-120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="/assets/img/ico/apple-icon-144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="/assets/img/ico/apple-icon-152x152.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/assets/img/ico/apple-icon-180x180.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/assets/img/ico/android-icon-192x192.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/img/ico/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="96x96" href="/assets/img/ico/favicon-96x96.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/assets/img/ico/favicon-16x16.png">
+<link rel="manifest" href="/assets/img/ico/manifest.json">
+<meta name="msapplication-TileColor" content="#1f1f1f">
+<meta name="msapplication-TileImage" content="/assets/img/ico/ms-icon-144x144.png">
+<meta name="theme-color" content="#1f1f1f">
+<link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+<meta name="google-site-verification" content="6bC0ENR45CRbQoll9VBbhsvtL69oIJQ1CbenWwUsidU" />
+{% if page.no_tracking %}
+<meta name="referrer" content="no-referrer">
+{% else %}
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-6EKGBQ8QWS"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-6EKGBQ8QWS');
+</script>
+{%- endif %}
+
+{%- assign og_image = page.og_image | default: site.data.site.seo.og_image -%}
+<meta property="og:type" content="website" />
+<meta property="og:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="{{ L.og_image_alt | default: site.data.site.seo.og_image_alt | escape }}" />
+<meta property="og:title" content="{{ seo_title | escape }}" />
+<meta property="og:description" content="{{ page_desc | escape }}" />
+<meta property="og:url" content="https://www.deepmosaic.co.jp{{ canonical_path }}" />
+<meta property="og:site_name" content="Deepmosaic" />
+<meta property="og:locale" content="{{ L.og_lang }}" />
+{%- if i18n_listed -%}{%- assign alt_langs = "ja,en,zh-tw" | split: "," -%}{%- for alt_lang in alt_langs -%}{%- unless alt_lang == page.lang %}
+<meta property="og:locale:alternate" content="{{ site.data.lang[alt_lang].og_lang }}" />
+{%- endunless -%}{%- endfor -%}{%- endif %}
+<meta property="fb:app_id" content="360882787795999" /><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@deepmosaic">
+<meta name="twitter:domain" content="www.deepmosaic.co.jp" />
+<meta name="twitter:creator" content="@deepmosaic">
+<meta name="twitter:title" content="{{ seo_title | escape }}">
+<meta name="twitter:description" content="{{ page_desc | escape }}">
+<meta name="twitter:image" content="https://www.deepmosaic.co.jp{{ og_image }}" />
+<meta name="twitter:image:alt" content="{{ L.og_image_alt | default: site.data.site.seo.og_image_alt | escape }}" />{% include schema/organization.html %}
+{%- if page.schemas contains 'software-application' %}{% include schema/software-application.html %}{% endif -%}
+{%- if page.schemas contains 'faq' %}{% include schema/faq.html %}{% endif -%}
+{%- if page.schemas contains 'breadcrumb' %}{% include schema/breadcrumb.html %}{% endif -%}
+
+<link href="/assets/css/fonts.css" rel="stylesheet" media="screen"/>
+<link href="/assets/dist/app.css?v={{ site.time | date: '%s' }}" rel="stylesheet" media="screen"/>
+
+{% if page.needs_video %}
+<link href="https://vjs.zencdn.net/8.23.9/video-js.css" type="text/css" rel="stylesheet" media="screen"/>
+{% endif %}
+
+{% unless page.no_tracking %}<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "aedf52894436452180c0ae694b54e87b"}'></script>{% endunless %}
+
+</head>
+<body>
+
+{{ content }}
+
+{% if page.needs_video %}
+<script src="https://vjs.zencdn.net/8.23.9/video.min.js"></script>
+{% endif %}
+<script type="module" src="/assets/dist/app.js?v={{ site.time | date: '%s' }}"></script>
+
+</body>
+</html>

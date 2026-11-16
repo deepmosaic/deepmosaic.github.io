@@ -1,0 +1,21 @@
+{%- comment -%}
+日本語のページだけのページ (docs・法務) へのリンク。
+
+  {% include ja-link.html href="/company/terms" label=L.terms class="text-ink-2 hover:text-accent-soft" %}
+
+- 行き先は ja の URL のまま (接頭辞を付けない)。hreflang="ja"。
+- 英中のページでは後ろに印 (en `(Japanese)` / zh-tw `（日文）`、title は「日本語のページです」) を添える。ja では印を出さない。
+- 変数は jl_ 接頭辞 (include は呼び出し側と変数を共有する)。
+- 前後に空白・改行を出さない (空白を落とす Liquid のタグを使う)。
+- inside=true (任意): 印をリンクの中に入れ、title をリンクに付ける。ボタン (btn-*) で使う。
+{%- endcomment -%}
+{%- assign jl_L = site.data.lang[page.lang] -%}
+{%- assign jl_in = false -%}{%- case page.lang -%}{%- when 'en', 'zh-tw' -%}{%- if include.inside -%}{%- assign jl_in = true -%}{%- endif -%}{%- endcase -%}
+{%- if jl_in -%}
+<a href="{{ include.href }}" class="{{ include.class }}" hreflang="ja" title="{{ jl_L.ja_only_title }}">{{ include.label }}<span class="text-[11px] text-ink-3">{{ jl_L.ja_only_badge }}</span></a>
+{%- else -%}
+<a href="{{ include.href }}" class="{{ include.class }}" hreflang="ja">{{ include.label }}</a>
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}
+<span class="ml-1 text-[11px] text-ink-4" title="{{ jl_L.ja_only_title }}">{{ jl_L.ja_only_badge }}</span>
+{%- endif -%}
+{%- endif -%}

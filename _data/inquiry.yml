@@ -1,0 +1,10 @@
+# 問い合わせフォーム (/enterprise/inquiry/ と /contact/) の設定。
+# ページは `enterprise/inquiry/index.html` と `contact/index.html`、フォーム本体は `src/islands/InquiryForm.svelte`。
+#
+# endpoint            送信先。本番のビルド (JEKYLL_ENV=production) はこれを使う。
+#                     ほかのビルドの送信先は README の「問い合わせフォーム」を参照。
+# turnstile_site_key  Cloudflare Turnstile の Site Key (公開値)。空文字の間は widget を描画せず token も送らない。
+# support_email       JS 無効時の代替連絡先 (mailto) と、送信に失敗したときの案内文に使う。
+endpoint: "https://deepmosaic-auth0-updater.deepmosaic.workers.dev/inquiry"
+turnstile_site_key: ""
+support_email: "support@deepmosaic.co.jp"

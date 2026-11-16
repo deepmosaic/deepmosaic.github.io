@@ -1,0 +1,44 @@
+{%- if page.lang == 'en' or page.lang == 'zh-tw' -%}{% include header-intl.html %}{%- else -%}
+{%- capture contact_url -%}/contact/{%- endcapture -%}
+{%- assign u = page.url -%}
+<header class="sticky top-0 z-50 border-b border-hair bg-[rgba(31,31,31,0.85)] backdrop-blur-md"><div class="mx-auto flex h-[60px] w-[92%] max-w-[1120px] items-center gap-3 lg:gap-7">
+
+    <a href="/" class="flex shrink-0 items-center">
+      <img src="/assets/img/logo-font-cropped.png" alt="Deepmosaic" width="189" height="36" class="h-[26px] w-auto">
+    </a>
+
+    <nav class="hidden gap-1 whitespace-nowrap md:flex lg:ml-3">
+      <a href="/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u == '/' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ホーム</a>
+      <a href="/price/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/price' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">料金</a>
+      <a href="/docs/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/docs' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">ドキュメント</a>
+      <a href="/spec/" class="rounded-md px-2 py-1.5 text-sm lg:px-3 {% if u contains '/spec' %}bg-hair text-ink{% else %}text-ink-2 hover:text-ink{% endif %}">動作環境</a>
+    </nav>
+
+    <div class="flex-1"></div>
+
+    {% include lang-switch.html variant="header" %}
+    <a href="/enterprise/inquiry/" aria-label="法人様はこちら" class="btn-secondary hidden md:inline-flex md:px-3 lg:px-4">
+      {% include icon.html name="Building2" class="h-4 w-4" %}<span>法人様<span class="hidden lg:inline">はこちら</span></span>
+    </a>
+
+    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:-ml-1 md:px-3 lg:-ml-4 lg:px-4">
+      {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">無料で</span>ダウンロード</span>
+    </a>
+
+    <div class="md:hidden">
+      <div data-island="mobile-nav" data-edge="right"
+           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price/"},{"label":"ドキュメント","href":"/docs/"},{"label":"動作環境","href":"/spec/"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
+      <noscript>
+        <nav class="flex flex-col items-end gap-1 text-sm">
+          <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>
+          <a href="/price/" class="px-2 py-1 text-ink-2 hover:text-ink">料金</a>
+          <a href="/docs/" class="px-2 py-1 text-ink-2 hover:text-ink">ドキュメント</a>
+          <a href="/spec/" class="px-2 py-1 text-ink-2 hover:text-ink">動作環境</a>
+          <a href="/enterprise/inquiry/" class="px-2 py-1 text-ink-2 hover:text-ink">法人様はこちら</a>
+        </nav>
+      </noscript>
+      {% include lang-switch.html variant="drawer-data" %}
+    </div>
+
+  </div>
+</header>{% endif %}
