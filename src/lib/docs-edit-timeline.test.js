@@ -7,7 +7,7 @@
 //   1. 目次 (`_data/docs_toc.yml` の desktop) は**追加のみ** — 既存の節 ID (契約の 20 個を含む) は
 //      1 つも消えず、新しい 8 個 (NEW_SECTIONS) が目次と本文の両方にある
 //   2. ショートカット表 (`#shortcuts`) の行はアプリのショートカットのうち docs に載せる
-//      72 個と、ID・分類・キーが並び順まで一致する
+//      SHORTCUT_ROW_COUNT 個と、ID・分類・キーが並び順まで一致する
 //      (下の EDIT_SHORTCUTS_FIXTURE が写し。アプリの割当を変えたら、ここと表を同時に直す)
 //   3. タイムライン編集の各機能 (FEATURES の列挙) に本文が触れている
 //   4. 新しいスクリーンショット 8 枚 (NEW_SCREENSHOTS) を参照している
@@ -81,7 +81,8 @@ function shortcutRows(sectionHtml) {
 // 形: [id, group, keys] (keys はアプリのキーの並びのまま)。例外は carry_lock の 1 個だけで、アプリの
 // `['Shift ×2']` は表のキー欄 (`<kbd>Shift</kbd> ×2`) を keyTokens が空白で割るので ['Shift', '×2'] と写す。
 // 範囲選択と曲げ (mouse_vertex_marquee / mouse_vertex_bend) と、
-// motion_key_here / motion_fusion_toggle / tracking_mode_toggle を含む (72 個)。後の 3 個はアプリの並びで bbox_rotate_ccw の直後。
+// motion_key_here / tracking_mode_toggle を含み、製品版の画面に出ない motion_fusion_toggle は含まない。
+// motion_key_here / tracking_mode_toggle はアプリの並びで bbox_rotate_ccw の直後。
 const EDIT_SHORTCUTS_FIXTURE = [
 	['play_pause', '再生', ['Space']],
 	['jkl_transport', '再生', ['J', 'K', 'L']],
@@ -119,7 +120,6 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
 	['bbox_rotate_ccw', 'BBox 編集', ['Shift', 'Q']],
 	['motion_key_here', 'BBox 編集', ['F']],
-	['motion_fusion_toggle', 'BBox 編集', ['Shift', 'F']],
 	['tracking_mode_toggle', 'BBox 編集', ['X']],
 	['mosaic_panel_open', 'ツール', ['G']],
 	['scene_split', 'ツール', ['Ctrl', 'K']],
@@ -166,7 +166,7 @@ const EDIT_SHORTCUTS_FIXTURE = [
  * BBox のコピー / 貼り付け (bbox_copy / bbox_paste、delete_bbox の直後) と BBox A→B をつなぐ
  * (bbox_bridge = Y、凡例専用の bbox_bridge_cancel = Esc、bbox_paste の直後) も含む。
  */
-const SHORTCUT_ROW_COUNT = 76
+const SHORTCUT_ROW_COUNT = 75
 
 /** タイムライン編集の節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
@@ -242,6 +242,7 @@ test(`写しは ${SHORTCUT_ROW_COUNT} 個で、ID の重複も docs に載せな
 	assert.equal(new Set(ids).size, ids.length, '写しに重複した ID がある')
 	assert.ok(!ids.some((id) => id.startsWith('annotation_')), 'docs に載せない annotation_* が写しにある')
 	assert.ok(!EDIT_SHORTCUTS_FIXTURE.some((s) => s.group === 'アノテーション'), 'docs に載せない分類が写しにある')
+	assert.ok(!ids.includes('motion_fusion_toggle'), '製品版の画面に出ない motion_fusion_toggle が写しにある')
 })
 
 // ── 目次 (追加のみ) ────────────────────────────────────────────────────────

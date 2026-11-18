@@ -108,7 +108,7 @@
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">右クリックメニュー</div>
-        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にモザイク)」「反転 (外側にぼかし)」（下の「反転」）、「この BBox を削除」、「この ID をすべて削除」（検出した枠ではチップの ✕ と同じ。手動で追加した連続 bbox / 1 フレームの枠 / 回避マスクでは、その枠を全フレームからまとめて消します。検出した ID に統合した連続 bbox があれば一緒に消え、確認にその件数が出ます。どちらも <kbd>Ctrl+Z</kbd> 1 回で戻せます）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。キーは<a href="#edit-track">追跡とキー</a>を参照してください</div>
+        <div class="kv-val">顔の枠では「男性顔に変更」「女性顔に変更」（検出された性別の修正）。すべての枠で「モザイク対象外にする」「モザイク対象に戻す」（そのトラック全体をモザイクの対象から外す / 戻す）、その下に「反転 (外側にモザイク)」「反転 (外側にぼかし)」（下の「反転」）、「この BBox を削除」、「この ID をすべて削除」（検出した枠ではチップの ✕ と同じ。手動で追加した連続 bbox / 1 フレームの枠 / 回避マスクでは、その枠を全フレームからまとめて消します。検出した ID に統合した連続 bbox があれば一緒に消え、確認にその件数が出ます。どちらも <kbd>Ctrl+Z</kbd> 1 回で戻せます）。連続 bbox に軌跡があるときは「移動軌跡をクリア」。統合できる ID があるときは「ID を統合…」、統合済みの ID では「統合を解除」（下の「ID の統合」）。「形を変更」では、範囲（この BBox / この ID すべて / すべて）を選んで四角 / 楕円 / 多角形に変えられ、「形を既定に戻す」で元の形に戻せます。「ここからつなぐ」、つなぐ元を選んでいるときは「ここへつなぐ」。キーとつなぐ操作は<a href="#edit-track">追跡とキー</a>を参照してください</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">反転（外側にかける）</div>
@@ -311,9 +311,67 @@
       </div>
       <div class="kv-row">
         <div class="kv-key">AI の枠を直したとき</div>
-        <div class="kv-val">直したフレームだけが変わります（枠の右クリックメニューの「動き」の項目は開発用の設定で、製品版では表示されません）</div>
+        <div class="kv-val">直したフレームだけが変わります</div>
       </div>
     </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">つなぐ</h3>
+    <p>離れた 2 つのフレームの枠を選んで、その間をなめらかに動く ∞ 連続 bbox を 1 本作ります。</p>
+    <ol>
+      <li><b>つなぐ元を選びます。</b>始めのフレームで枠を選び、<kbd>Y</kbd> を押します（または枠の右クリックメニューの「ここからつなぐ」）。プレイヤーに「つなぐ元: #K7Q @ 3」のように表示されます</li>
+      <li><b>つなぐ先を選びます。</b>別のフレームへ移って枠を選び、もう一度 <kbd>Y</kbd> を押します（または右クリックメニューの「ここへつなぐ」）</li>
+      <li><b>つながります。</b>「BBox をつなぎました (#K7Q → #K7Q、31 フレーム)」と表示され、2 つの枠の間を動く ∞ 連続 bbox が追加されます</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">つなげる枠</div>
+        <div class="kv-val">両端は AI の枠でも、手動で追加した枠でもかまいません。同じシーンの中の、別のフレームの枠どうしをつなげます</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">元の枠</div>
+        <div class="kv-val">元の AI の枠は消えずに残り、間のフレームではつないだ枠と重なります。つないだ枠は、つなぐ先のフレームで終わります</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">途中を直す</div>
+        <div class="kv-val">つないだ枠は ∞ 連続 bbox なので、一時停止中に途中のフレームで直すと、そこがキーになり、前後がなめらかにつながり直します（上の「キー」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">取り消し（<kbd>Ctrl+Z</kbd>）</div>
+        <div class="kv-val">つないだ直後は <kbd>Ctrl+Z</kbd> 1 回で戻せます。途中を直した後は <kbd>Ctrl+Z</kbd> でつなぐ前には戻らないので、作り直すときは枠の右クリックメニューの「この ID をすべて削除」で消します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">解除（<kbd>Esc</kbd>）</div>
+        <div class="kv-val">つなぐ元を選んだ後にやめるときは <kbd>Esc</kbd> を押します</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">つなげないとき</div>
+        <div class="kv-val">次のときはつながらず、理由が表示されます: 同じフレームの枠どうし（「つなげません: 同じフレームです」）、シーンをまたぐ枠（「つなげません: 場面をまたぐ BBox はつなげません」）、間に回避マスクがある（「つなげません: 間に回避マスクがあります」）、BBox と回避マスクの組（「つなげません: BBox と回避マスクで種類が違うためです」）</div>
+      </div>
+    </div>
+    <h3 id="edit-range" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">区間をまとめて直す</h3>
+    <p>AI の枠を手で直すと、変わるのはそのフレームだけです。数秒〜数分の区間をまとめて直すときは、場面に合わせて次の操作を使います。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">対象が動く</div>
+        <div class="kv-val">一時停止し、追跡モードが OFF の状態で、区間の始めに ∞ 連続 bbox（<kbd>2</kbd>）を置いて対象に合わせ、途中と終わりのフレームで位置と大きさを直します。直したフレームの間は自動でなめらかにつながります（上の「キー」）。始めと終わりに枠があるときは、2 つを<b>つなぐ</b>（<kbd>Y</kbd>）こともできます（上の「つなぐ」）。動きが複雑なときは<b>追跡</b>（<kbd>X</kbd>）で対象を追わせ、ずれたフレームだけを直します（上の「追跡」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">対象があまり動かない</div>
+        <div class="kv-val">直した枠を選んで <kbd>Shift</kbd> を素早く 2 回押し、<kbd>→</kbd> で進むと、同じ位置・大きさ・形が先のフレームへ書かれます（<a href="#edit-player">引き継ぎの固定</a>）。<kbd>Esc</kbd> で解除します</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">区間の枠を一律に広げる・狭める</div>
+        <div class="kv-val">区間の始めと終わりで <kbd>Ctrl+K</kbd> を押して区切り（<a href="#edit-scenes">シーン</a>）、<a href="#edit-mosaic">モザイク設定</a>（<kbd>G</kbd>）の「シーン別」タブで「対象シーン:」にその区間を選んで「サイズ (bbox 拡張率)」を変えます。区間の中の AI の枠だけに効きます。特定の対象だけを変えるときは「ID 別」タブを使います（その ID の全フレームに効きます）</div>
+      </div>
+    </div>
+    <p>次の点に注意してください。</p>
+    <ul>
+      <li>手動で追加した枠は AI の枠に重なり、AI の枠は残ります。AI の枠が大きすぎる・ずれている区間は、消しゴム（<kbd>E</kbd>+右ドラッグを押したまま再生）で続けて消すか、枠の右クリックメニューの「モザイク対象外にする」でその ID 全体をモザイクの対象から外します（<a href="#edit-player">検出枠の操作</a>）</li>
+      <li>キーの間の補間は、一時停止中に追跡モードが OFF の状態で直したときだけ働きます。追跡モードが ON の間と、再生中のドラッグ（軌跡の記録）では補間されません</li>
+      <li>∞ 連続 bbox は、削除するまで先のフレームに同じ位置で出続けます（シーンが切り替わっても止まりません）。終わらせたいフレームで枠を選んで <kbd>Delete</kbd> を押すか、右クリックメニューの「この BBox を削除」を選ぶと、そのフレームから先が消えます</li>
+      <li>つなぐ操作は、同じシーンの中の枠どうしだけです</li>
+      <li>「シーン別」のサイズは、手動で追加した枠（∞ 連続 bbox・つないだ枠）には効きません。これらの枠は、作ったときのサイズを「ID 別」の設定として持つためです。手動で追加した枠のサイズは「ID 別」タブで変えます</li>
+      <li>モザイクがかかる範囲は、プレビューをモザイク適用プレビュー（<kbd>M</kbd>）にすると確かめられます</li>
+    </ul>
   </div>
 </section>
 
@@ -346,7 +404,7 @@
 <section id="edit-toolbar" class="scroll-mt-24">
   {% include docs-h2.html kicker="編集" title="編集ツールバー" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>プレイヤーの下の操作列には、左から<b>再生コントロール</b>（先頭へ / 1 コマ戻る / 再生 / 1 コマ進む / 末尾へ / 空白のみ再生 / 欠落フレームジャンプ / ミュート）、<b>編集ツールバー</b>、時刻の順に並びます。編集ツールバーは縦線で区切った次のまとまりです: 形の選択 / bbox 追加 / 回避マスク追加 / 消しゴム / 現在のフレームをリセット ｜ オーバーレイの表示切替 / プレビュー切替 / 追跡 ｜ 前後に反映 / モザイク設定 ｜ 全編集リセット ｜ ラベル ｜ 再生速度 ｜ ショートカット一覧。追跡と前後に反映のボタンはアイコンだけです。幅が足りないときはツールバーと時刻が 2 段目に折り返します。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
+    <p>プレイヤーの下の操作列には、左から<b>再生コントロール</b>（先頭へ / 1 コマ戻る / 再生 / 1 コマ進む / 末尾へ / 空白のみ再生 / 欠落フレームジャンプ / ミュート）、<b>編集ツールバー</b>、時刻の順に並びます。編集ツールバーは縦線で区切った次のまとまりです: 形の選択 / bbox 追加 / 回避マスク追加 / 消しゴム / 現在のフレームをリセット ｜ オーバーレイの表示切替 / プレビュー切替 / 追跡 ｜ モザイク設定 ｜ 全編集リセット ｜ ラベル ｜ 再生速度 ｜ ショートカット一覧。追跡のボタンはアイコンだけです。幅が足りないときはツールバーと時刻が 2 段目に折り返します。各ボタンにマウスを乗せるとショートカットキーが表示されます。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">空白のみ再生（<kbd>B</kbd>）</div>
@@ -382,29 +440,25 @@
       </div>
       <div class="kv-row">
         <div class="kv-key">{% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %} 追跡（<kbd>X</kbd>）</div>
-        <div class="kv-val">プレビュー切替の右。追跡モードの ON / OFF。ON の間、再生 / <kbd>→</kbd> / ホイール上で進むと ∞ 連続 bbox が対象を追います（<a href="#edit-track">追跡と前後に反映</a>）。編集ページを開いたときは OFF です（サイドバーの「設定」で ON にしておけます）</div>
+        <div class="kv-val">プレビュー切替の右。追跡モードの ON / OFF。ON の間、再生 / <kbd>→</kbd> / ホイール上で進むと ∞ 連続 bbox が対象を追います（<a href="#edit-track">追跡とキー</a>）。編集ページを開いたときは OFF です（サイドバーの「設定」で ON にしておけます）</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">前後に反映（<kbd>Shift+F</kbd>）</div>
-        <div class="kv-val">モザイク設定の左。手で直した枠を前後のフレームになじませるかどうか。既定は ON です（サイドバーの「設定」で変えられます。<a href="#edit-track">追跡と前後に反映</a>）</div>
-      </div>
-      <div class="kv-row">
         <div class="kv-key">現在のフレームをリセット</div>
         <div class="kv-val">現在のフレームの編集（枠の追加・移動・削除）を検出結果の状態に戻します。ショートカット: <kbd>Ctrl+Z</kbd></div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">全編集リセット</div>
         <div class="kv-val">枠の編集・モザイク設定・シーン・人物の統合などすべての編集を破棄します（確認ダイアログ付き・取り消し不可）</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">ラベル（<kbd>C</kbd>）</div>
         <div class="kv-val">ボタンには選択の要約（例:「全 2 ラベル」「顔 · 男性顔」）が表示されます。メニューの上段「表示する（書き出しにも効く）」は局部 / 顔のチェックで、外したラベルはプレビューにも書き出しにも出ません（例: 局部だけを書き出す）。下段「絞り込み（表示と欠落ジャンプのみ）」は全クラス / 局部 / 男性顔 / 女性顔から選び、プレビューとタイムラインに表示する枠と欠落フレームジャンプの対象を絞ります（書き出しには影響しません）。素材にすでにかかっているモザイクの枠があるプロジェクトでは、上段と下段の両方に「モザイク」も表示されます。上段の「モザイク」は検出の後に ON になっていて、書き出しでその範囲にモザイクを上からかけ直します。外すとプレビューにも書き出しにも出ず、開き直しても外したままです</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">再生速度</div>
         <div class="kv-val">0.25x / 0.5x / 1x / 1.5x / 2x / 4x から選択</div>
       </div>
-      <div class="kv-row">
+      <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} ショートカット一覧</div>
         <div class="kv-val">マウスを乗せると<a href="#shortcuts">キーボードショートカットの凡例</a>が表示されます</div>
       </div>
@@ -573,7 +627,7 @@
           <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>検出オーバーレイの表示切替</td></tr>
           <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>bbox / モザイクプレビュー切替</td></tr>
           <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>ツールバーの「ラベル」メニュー（表示するラベルと絞り込み）を開閉</td></tr>
-          <tr data-shortcut="bbox_add_single"><td rowspan="17">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="16">BBox 編集</td><td><kbd>1</kbd></td><td>このフレームのみに bbox 追加</td></tr>
           <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>以降のフレームに連続 bbox 追加</td></tr>
           <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>このフレームのみに回避マスクを追加</td></tr>
           <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>以降のフレームに連続で回避マスクを追加</td></tr>
@@ -587,8 +641,7 @@
           <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>連続 bbox の終端確定を解除 → 現在のフレームをリセット</td></tr>
           <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>選択中の bbox を 15° 回転</td></tr>
           <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>選択中の bbox を -15° 回転（逆回り）</td></tr>
-          <tr data-shortcut="motion_key_here"><td><kbd>F</kbd></td><td>選択中の bbox の今の位置をキーにする（<a href="#edit-track">前後に反映</a>）</td></tr>
-          <tr data-shortcut="motion_fusion_toggle"><td><kbd>Shift+F</kbd></td><td>前後に反映の ON / OFF（手で直した枠を前後のフレームになじませる。既定は ON）</td></tr>
+          <tr data-shortcut="motion_key_here"><td><kbd>F</kbd></td><td>選択中の bbox の今の位置をキーにする（<a href="#edit-track">追跡とキー</a>）</td></tr>
           <tr data-shortcut="tracking_mode_toggle"><td><kbd>X</kbd></td><td>追跡モードの ON / OFF（ON の間、再生 / <kbd>→</kbd> / ホイール上で ∞ 連続 bbox が対象を追う。<a href="#edit-track">追跡</a>）</td></tr>
           <tr data-shortcut="mosaic_panel_open"><td rowspan="2">ツール</td><td><kbd>G</kbd></td><td>モザイク設定パネルを開く</td></tr>
           <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>再生ヘッドの位置で分割（クリップとシーンを同時に割ります。ツールバーのハサミと同じで、<kbd>Ctrl+Shift+Z</kbd> 1 回で両方戻ります）</td></tr>
@@ -626,7 +679,7 @@
           <tr data-shortcut="mouse_edge_click_add"><td>クリック</td><td>選択中の多角形の辺をクリックして頂点を追加</td></tr>
           <tr data-shortcut="mouse_vertex_marquee"><td><kbd>Shift</kbd>+左ドラッグ</td><td>選択中の多角形の頂点を囲んでまとめて選ぶ（つながった区間にまとまる。1 点なら 1 点の選択、タップで解除）</td></tr>
           <tr data-shortcut="mouse_vertex_bend"><td>ドラッグ</td><td>まとめて選んだ頂点の内側をドラッグして、区間の両端を固定したまま曲げる（中央ほど大きく動く）</td></tr>
-          <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 反転 / ID の統合 / 形の変更 / 削除）。タイムラインの ID の行では ID の統合の一覧。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
+          <tr data-shortcut="mouse_context_menu"><td>右クリック</td><td>検出枠のトラック操作メニュー（性別切替 / モザイク除外 / 反転 / ID の統合 / つなぐ（「ここからつなぐ」/「ここへつなぐ」） / 形の変更 / 削除）。タイムラインの ID の行では ID の統合の一覧。タイムラインの帯では複製・コピー・ペースト・削除のメニュー</td></tr>
           <tr data-shortcut="mouse_eraser"><td><kbd>E</kbd>+右ドラッグ</td><td>連続削除（消しゴム）。ツールバーの消しゴムボタンで「触れた BBox を削除 / 触れた部分だけ削除」「円 / 角丸四角」「大きさ」を選べます。押したまま再生 / コマ送りしても続きます</td></tr>
         </tbody>
       </table>
@@ -669,7 +722,7 @@
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} 設定</div>
-        <div class="kv-val">サイドバー下段の歯車で、編集の初期値を選ぶ「設定」を開きます。描いた BBox の持続（以降も / このフレームのみ）・形（四角 / 楕円 / 多角形）・種類（モザイク / 回避マスク）、HUD（枠とチップ）の表示、消しゴムの消し方・形・大きさ、前後に反映の ON / OFF、編集ページを開いたとき追跡モードを ON にするか。変えた値はすぐ保存され、アプリを起動したときの初期値になります（編集中にツールバーで切り替えた値は保存しません）。「既定に戻す」で出荷時の値に戻ります。サイドバーを最小化しているときは出ません</div>
+        <div class="kv-val">サイドバー下段の歯車で、編集の初期値を選ぶ「設定」を開きます。描いた BBox の持続（以降も / このフレームのみ）・形（四角 / 楕円 / 多角形）・種類（モザイク / 回避マスク）、HUD（枠とチップ）の表示、消しゴムの消し方・形・大きさ、編集ページを開いたとき追跡モードを ON にするか。変えた値はすぐ保存され、アプリを起動したときの初期値になります（編集中にツールバーで切り替えた値は保存しません）。「既定に戻す」で出荷時の値に戻ります。サイドバーを最小化しているときは出ません</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 配置</div>
