@@ -2,7 +2,7 @@
 //
 //   node --test src/lib/site-copy-current-pricing.test.js
 //
-//   今の料金: 公開しているのは Light だけ (1 アカウント 2 契約まで)。Pro は新規の受付を終了 (契約中の人はそのまま)。
+//   今の料金: 公開しているのは Hobby (tier の id は `light`) だけ (1 アカウント 1 本まで・合計 月 5 時間)。Pro は新規の受付を終了 (契約中の人はそのまま)。
 //   Enterprise はお見積り (アカウント数 × 20 時間をプール共有・月ごとの請求書払い)。
 //
 //   - docs (日本語だけ) の見える文で、Premiere Pro 以外の「Pro」は `02-account.html` の #plan の案内の 1 か所だけ。

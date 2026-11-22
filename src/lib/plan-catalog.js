@@ -27,7 +27,7 @@
 //
 // ## 合計時間を比べない理由
 //
-// サイトが出す「最大 2 契約（月 10 時間まで）」の 10 は `included_hours × max_contracts`
+// 1 アカウントで使える合計時間 (今は Hobby が 1 本まで・月 5 時間) は `included_hours × max_contracts`
 // の導出値で、どこにも手書きされていない。元の 2 つが合っていれば必ず合う。
 
 import { showsPrice } from '../../scripts/i18n/checks/plan-visibility.mjs';

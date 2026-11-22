@@ -3,7 +3,7 @@
 //   node --test src/lib/site-copy-pricing-cards.test.js
 //
 //   - Pro はカードに出さない。tier は `public: false` で残し (込み時間の突き合わせ・英中の欄のため)、金額の欄を持たない。
-//   - Light は 1 アカウントあたり 2 本まで (`max_contracts: 2`)。主ボタンの配色の featured は Light だけ。
+//   - Hobby (tier の id は `light`) は 1 アカウントあたり 1 本まで (`max_contracts: 1`)。主ボタンの配色の featured は Hobby だけ。
 //   - Enterprise は「お見積り」のカードで、金額の欄を持たない。
 //   - API の語は料金カードの囲み (`note_title` / `note`) だけに許す (ほかの検査は site-copy-enterprise-integration.test.js)。
 //
