@@ -1,0 +1,131 @@
+{%- comment -%}
+source: _includes/docs/02-account.html
+hash:
+  _head: af4397bcf97f87a7
+  license: 20b22c640aa80b00
+  plan: f615556de137e0f0
+  account: 7c9f478c8192e0dc
+  support: 4f9c6c95dcbef49c
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section id="license" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Account" title="Sign-in and license" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>You can use the app for free <strong>for {{ free_plan.free_window_days }} days from the day you first launch it</strong>. Right after downloading, you can try it for up to 30 minutes in total without signing in. Creating a free account raises this to up to {{ free_plan.included_hours }} hours in total. On a single PC, the free allowance is capped at 2 hours in total, even if you sign up again with a different account. The free period ends after {{ free_plan.free_window_days }} days or when you reach the total limit, whichever comes first. No credit card is required. The individual plan (Light) is paid by credit card (Enterprise is paid by bank transfer against an invoice; see <a href="#team">Organization management</a>).</p>
+    <p>Signing in increases your available detection time even on the Free plan, and on PCs with an NVIDIA GPU, it lets you detect with the high-accuracy model (when you're not signed in, detection uses the lightweight model).</p>
+    <ul>
+      <li>Free: Import up to {{ free_plan.included_hours }} hours of video in total for {{ free_plan.free_window_days }} days from the day you first launch it (30 minutes without signing up; no credit card required)</li>
+      <li>Paid plans: See the <a href="/en/price/">pricing page</a> for the included hours of each plan</li>
+    </ul>
+    <p>There are no overage charges. If your allowance isn't enough, you can purchase additional subscriptions to the same plan ({% include contract-limits.html %}).</p><h3 class="mt-6 text-[16px] font-bold text-ink">Signing in</h3>
+    <ol>
+      <li>Press "Sign in" in the profile menu (top right), or "Sign in to get {{ free_plan.included_hours }} h" in the footer.</li>
+      <li>Press "Sign in" on the sign-in screen. The authentication screen opens in your browser.</li>
+      <li>On the authentication screen, enter your email address, then enter the 6-digit confirmation code sent to your email (no password is needed).</li>
+      <li>Once authentication is complete, you return to the app automatically and are signed in.</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 260px">
+      <div class="kv-row">
+        <div class="kv-key">Sign in</div>
+        <div class="kv-val">Sign in by entering the 6-digit confirmation code sent to your email address on the authentication screen. No password is needed. <strong>If you're new, a free account is created automatically the first time you sign in</strong></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Have an organization code? (business)</div>
+        <div class="kv-val">Press this to switch to the "Organization sign-in" screen. Enter the organization code you received from your admin in the "Organization code" field and press "Sign in" to sign in and join the organization at the same time (<a href="#team">Organization management</a>). Press "Back" to return to the previous screen</div>
+      </div>
+    </div>
+    <p>Starting with 2.13, the sign-in screen has these two entry points. You enter your email address on the authentication screen in your browser. <strong>If you have been signing in with a password, you can still sign in to the same account as before by selecting "Sign in" and entering a confirmation code with the same email address</strong> (your plan and usage time carry over unchanged).</p>
+    <p>Your sign-in information is encrypted and stored on your PC, and you're signed in automatically from then on. To sign out, use "Sign out" in the profile menu. To switch to a different account, sign out and then sign in again.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">One device at a time</h3>
+    <p>You can run the app on only one device at a time with the same account. If you sign in on another PC, "Your account is currently signed in on another device" appears. If you select "Continue", the previous device is signed out the next time the app starts on it. When you replace your PC, just sign in on the new one to switch over (to move your projects, see <a href="#project-io">Exporting and importing projects</a>).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">When you're offline</h3>
+    <p>Your sign-in and plan are checked over the internet when the app starts. Detection, editing, and export work without a connection. If the app can't connect to the authentication server at startup, a banner such as "Can't connect to the network (you can keep using local features)." appears at the top of the screen, but you can keep using the app with your most recent sign-in status and plan. If the banner says "Sign in again.", sign in again from the profile menu.</p>
+  </div>
+</section>
+
+<section id="plan" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Account" title="Changing your plan" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2"><p>You can subscribe to a paid plan from the profile menu in the Windows app, or on the <a href="/en/subscribe/">Subscribe to a paid plan</a> page with your Web app account. Either way, the subscription applies to both the Desktop app and the Web app for the same account.</p>
+    <p>To subscribe or change your plan in the app, use the profile menu at the top right of the screen.</p>
+    <ol>
+      <li>Sign in to the app and click the profile icon at the top right of the screen.</li>
+      <li>Select "Plan subscription and management". On the Free plan, the plan selection screen opens; on a paid plan, the payment portal opens in your browser.</li>
+      <li>In the portal, you can subscribe to a paid plan, change your payment method (credit card), or cancel your subscription.</li>
+      <li>When you return to the app after completing the process, your license status is updated automatically.</li>
+    </ol>
+    <p>To subscribe in the Web app, choose a plan on the <a href="/en/subscribe/">Subscribe to a paid plan</a> page, press "Subscribe", and sign in with the same account as the app to go to the credit card payment screen. You can also change your payment method, change your plan, or cancel your subscription from "Plan subscription and management" in the profile menu at the top right of the Web app screen.</p>
+    <p>You can cancel your subscription at any time, with no cancellation fee or other penalty. After you cancel, you can keep using the app within the free allowance.</p>
+    <p>Pro is no longer accepting new subscriptions. If you're currently subscribed, you can keep using it. To change your plan or cancel your subscription, follow the paid plan steps above.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Choose a plan</h3>
+    <p>The Light card shows the monthly price (excluding and including tax), the included hours, and the one-device-at-a-time limit. For plans you can subscribe to more than once, you can choose "Subscribed seats" ({% include contract-limits.html %}). Press "Choose this plan" to open the payment screen in your browser; when payment is complete, "Payment complete" appears in the app. For Enterprise, contact us from "Ask about deployment" (pricing is by quote).</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/plan-select.webp" alt="The &quot;Choose a plan&quot; dialog, showing the monthly price, included hours, and subscribed seats for each plan" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The plan selection screen. Prices and included hours are the same as on the <a href="/en/price/">pricing page</a></figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">When changes and cancellations take effect</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Plan change</div>
+        <div class="kv-val">When you return to the app from the portal, "Changed your plan to X." appears. If it takes a while to apply, wait while "Applying your changes…" is shown, or close it for now and you'll be notified later</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Scheduled cancellation</div>
+        <div class="kv-val">"Your subscription cancellation has been received" appears, and the expiration date ("Valid until X") is shown in the profile menu. You can keep using your paid plan until that date, and you can also withdraw the cancellation from the portal</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Expiration</div>
+        <div class="kv-val">If you launch the app after the expiration date, "Your plan has expired" appears and you're switched to the Free plan. If you subscribe again, your plan is restored</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">When you're running low</div>
+        <div class="kv-val">When you have used 80% of your free available detection time, the app notifies you once per launch with "You have used N% of your free available detection time (… left)." (followed by "You can check plans from the time remaining at the bottom of the screen." if you're signed in, or by the time you gain by signing in if you're not). Pressing the time remaining at the bottom of the screen opens the plan selection screen if you're signed in, or the sign-in screen if you're not. On the Free plan while signed in, "… remaining · View plans" also appears on the detection complete screen and in the confirmation before export</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">When you reach the limit</div>
+        <div class="kv-val">When you reach the total limit or the free period ends, a dialog prompting you to change your plan (or to sign in, if you're not signed in) appears when you try to start detection. Detection or export already in progress doesn't stop</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Free period display</div>
+        <div class="kv-val">The time remaining at the bottom of the screen also shows the number of days left in the free period</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="account" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Account" title="Deleting your account" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>When you're signed in, you can delete your account from the icon shown on the right side of the footer on the home screen. This action can't be undone.</p>
+    <ol>
+      <li>If you're subscribed to a paid plan, first cancel your subscription from "Plan subscription and management" (if a subscription remains, "You still have an active plan subscription." appears and you can't delete your account).</li>
+      <li>Press the "Delete account" icon in the footer, and enter your registered email address on the confirmation screen.</li>
+      <li>"Account deleted" appears, and a confirmation email is sent to you. The app returns to the signed-out state.</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">What is deleted</div>
+        <div class="kv-val">The account you use to sign in (your user information in the authentication service) / usage data on the server (project history, device registrations, and your account's usage time records) / this app's sign-in status and plan information</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">What remains</div>
+        <div class="kv-val">Videos and edit data on your PC (output files are not deleted) / records we are required by law to keep, such as billing history (kept in a form that can't identify individuals) / anonymous per-device usage time (used to manage the free allowance; the link between your account and the devices you signed in on is removed, and only the device records remain after you close your account; Privacy Policy, Section 10)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/delete-account.webp" alt="The account deletion confirmation dialog, with lists of what is deleted and what remains, and an email address field" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Account deletion confirmation screen</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="support" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Account" title="Contact us" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>To report a problem or ask a question, use "Contact us" in the profile menu (sign-in required). The email address you're signed in with is filled in automatically. Enter your message and press "Send", and "We've received your inquiry. It may take a little while for us to reply." appears. Replies are sent to your registered email address.</p>
+    <p>When you report a problem, include the version shown in the footer, what you were doing, and the message that appeared. This helps us investigate faster. If you can't sign in, use the <a href="/en/contact/">contact form</a>.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/feedback.webp" alt="The Contact us dialog, with the signed-in email address and a message field" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Contact us dialog</figcaption>
+    </figure>
+  </div>
+</section>

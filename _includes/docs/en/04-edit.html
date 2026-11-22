@@ -1,0 +1,1193 @@
+{%- comment -%}
+source: _includes/docs/04-edit.html
+hash:
+  edit-overview: 565879aecd57fc2e
+  edit-player: 7bfb22ddfc87c73d
+  edit-zoom: feda739f7e19206f
+  edit-bbox: 41e173027e8fb025
+  edit-track: 162072e3ff60e2d3
+  edit-scenes: 5c6de5784d7983d1
+  edit-toolbar: 404de0fc6f2757b2
+  edit-mosaic: 7255d56ccc21d5ca
+  edit-persons: 5738e40c9482638b
+  shortcuts: c7bf751ef46a11af
+  edit-sidebar: 382da0e993875ac0
+  timeline-edit: 9b9790138c3544d6
+  edit-media: be1280c18a091c35
+  edit-text: 93ef1e830ba73747
+  edit-watermark: 204c0d82dad75bf0
+  edit-audio: f78bc7f9e73c415c
+  edit-fade: 7b456d7488c37274
+  edit-transition: 6e3d65094d0d7f19
+{%- endcomment -%}
+<section id="edit-overview" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Edit page" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Click a video card on the home screen to open the edit page. The screen consists of the header at the top, the sidebar running vertically along the edge (and the drawer that opens next to it), the video player (with the built-in edit toolbar) in the center, and the timeline at the bottom.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Header (left)</div>
+        <div class="kv-val">{% include icon.html name="ArrowLeft" class="inline h-3.5 w-3.5 align-[-2px]" %} Back button, video title, and 9-digit project ID badge (click to copy)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Metadata</div>
+        <div class="kv-val">Video length / total frames / fps / resolution / date added</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Header (right)</div>
+        <div class="kv-val">The Open folder / <a href="#edit-persons">Person gallery</a> / <a href="#premiere">Import into Premiere Pro</a> / <a href="#edit-encode">Export</a> buttons and the save status. Check the export queue under "<a href="#queue">Queue</a>" in the menu bar</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Save status</div>
+        <div class="kv-val">Edits are saved automatically about 1 second after each action. "Saving…", "Unsaved", and "Saved" appear in real time, and "Save failed" appears if saving fails. Unsaved changes are also saved when you start an export, leave the edit page, or close the app</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Sidebar</div>
+        <div class="kv-val">Six items: Media / Text / Watermark / Audio / Fade / Transition. Press one to open a drawer next to it, where you can import media and set up text, background music, and more (<a href="#edit-sidebar">Sidebar and drawer</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Timeline</div>
+        <div class="kv-val">Shows the scene strip, the text, clip, and audio lanes, and a row for each detection class. Press the scissors at a join between clips to choose a fade or a transition (<a href="#edit-player">Player and timeline</a> / <a href="#timeline-edit">Editing clips</a> / <a href="#edit-fade">Fade</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Tooltips</div>
+        <div class="kv-val">Hover over a button, and a tooltip with a description of the function and its shortcut key appears right away (in about 0.15 seconds)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">While loading</div>
+        <div class="kv-val">When you open the edit page, "Loading detection results" appears with the progress until the detection results are ready, and then the player appears with boxes already drawn from the first frame. The first time you open a project detected with an earlier version, "Converting detection results to the new save format" appears (the conversion happens only once)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">No detail data</div>
+        <div class="kv-val">Appears when the detection results file can't be found (for example, because the project folder was moved or deleted). Use "Delete project" on this screen to remove the project from the list</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-overview.webp" alt="The whole edit page (header, player, and timeline)" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The whole edit page</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-player" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Player and timeline" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The player overlays detection boxes (BBoxes) in a different color for each class. Drag a box to edit its position and size directly. The player supports stepping frame by frame and seeking. The timeline at the bottom shows the distribution of detections and the scene (cut) strip, and you can click it to jump to any frame.</p>
+    <p>Detection classes are color-coded: body areas (red) / male face (blue) / female face (pink) / user-created (yellow) / exclusion mask (teal) / mosaic (purple: mosaic already in your footage, only in projects detected with "Mosaic" turned on in the detection options). The label (chip) above each box shows "class name #ID (3-character code) confidence%". Boxes you added manually are labeled "User", exclusion masks are labeled "Exclude", and tracks excluded from mosaic get "[mosaic excluded]". To hide the chips, turn off "Show BBox labels (name, ID, probability)" in "Settings" in the sidebar (the boxes stay visible. <a href="#edit-sidebar">Sidebar and drawers</a>).</p>
+    <p>Mosaic (purple) boxes are polygons (up to 255 points), and as with other polygon boxes, you can move their points to fix the shape ("Range-selecting and bending points" below, <a href="#detect-mosaic">Finding existing mosaic and reapplying it</a>).</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-player.webp" alt="The player with detection box overlays and the timeline. The area inside each box is where mosaic is applied" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Player with BBox overlays and timeline</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Playback controls</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Play / step frames</div>
+        <div class="kv-val">Go to start (<kbd>Home</kbd>) / Back 1 frame (<kbd>←</kbd>) / Play/pause (<kbd>Space</kbd>) / Forward 1 frame (<kbd>→</kbd>) / Go to end (<kbd>End</kbd>). <kbd>PageUp</kbd> / <kbd>PageDown</kbd> move 10 frames. You can also step frames with the mouse wheel, and <kbd>Shift</kbd>+wheel moves 10 frames. If you move forward with <kbd>Shift</kbd>+<kbd>→</kbd> (or <kbd>Shift</kbd>+wheel up) while a BBox is selected, you advance one frame at a time while keeping that box's shape ("Step frames while carrying over the shape" under "Working with detection boxes" below)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Seek</div>
+        <div class="kv-val">Drag the slider, or click / drag the timeline. The time and frame number (frame N / M) are shown</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Mute (<kbd>V</kbd>)</div>
+        <div class="kv-val">Mutes the preview audio. Doesn't affect export</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Toggle overlay (<kbd>H</kbd>)</div>
+        <div class="kv-val">Hides all detection boxes, labels, IDs, and confidence scores so you can check only the video. Your edits don't change</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Playback speed</div>
+        <div class="kv-val">Choose from 0.25x / 0.5x / 1x / 1.5x / 2x / 4x in the toolbar (<kbd>,</kbd> to slow down, <kbd>.</kbd> to speed up)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-hud-off.webp" alt="The player with the detection overlay hidden" width="1188" height="411" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Overlay hidden (<kbd>H</kbd>). Useful when you want to check only the video</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Working with detection boxes</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Select</div>
+        <div class="kv-val">Click a box to show a thick border and 8 handles. A dotted line outside the box also shows how far the edge feather reaches (as with mask feather in Premiere Pro, half the setting's width outside the outline. It isn't shown when edge feather is 0, for tracks excluded from mosaic, or when the overlay is hidden (<kbd>H</kbd>))</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Move / resize</div>
+        <div class="kv-val">Drag inside a box to move it, or drag a handle to resize it. You can drag even during playback</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Delete</div>
+        <div class="kv-val">Select a box and press <kbd>Delete</kbd>, double-click the box, or choose "Delete this BBox" from the right-click menu. Deletion applies only to the box in that frame (boxes with the same ID in other frames remain)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Continuous delete (eraser)</div>
+        <div class="kv-val">Hold down <kbd>E</kbd> and drag on the video with the right mouse button to use the eraser. By default, it deletes the boxes the circle touches from that frame. With the eraser button in the toolbar, you can choose how to erase (Delete touched BBoxes / Delete only touched parts), the shape (Circle / Rounded rectangle), and the size (8-120px). With "Delete only touched parts", the erased area stays cut out of the box's shape (as a polygon), and if a manually added box is split in two, each piece becomes a separate box. If you play or step frames with the wheel while holding the button, you can keep erasing boxes in the frames as they go by (a right-drag without <kbd>E</kbd>, or releasing the right button without moving it, opens the usual right-click menu)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Delete by ID (X on the chip)</div>
+        <div class="kv-val">Press the X at the right end of a detected box's chip to delete that ID's boxes from all frames at once. A confirmation shows the number of frames to be deleted. Chips of manually added boxes don't have an X, but "Delete all of this ID" in the right-click menu does the same thing</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Right-click menu</div>
+        <div class="kv-val">For face boxes, "Change to male face" and "Change to female face" (to correct the detected gender). For all boxes, "Exclude from mosaic" and "Include in mosaic again" (excludes the whole track from mosaic, or includes it again), followed by "Invert (mosaic outside)" and "Invert (blur outside)" ("Invert" below), "Make exclusion mask" ("Change back to mosaic" for an exclusion mask. <a href="#edit-bbox">Changing existing boxes into exclusion masks</a>), "Delete this BBox", and "Delete all of this ID" (for detected boxes, the same as the X on the chip. For manually added continuous BBoxes, single-frame boxes, and exclusion masks, it deletes that box from all frames at once. Any continuous BBoxes merged into a detected ID are deleted along with it, and the confirmation shows how many. Either way, one <kbd>Ctrl+Z</kbd> undoes it). When a continuous BBox has a motion path, "Clear motion path". When there are IDs that can be merged, "Merge IDs…", and for merged IDs, "Unmerge" ("Merging IDs" below). With "Change shape", choose a scope (this BBox / all of this ID / all) and change the shape to rectangle / ellipse / polygon. "Reset shape to default" restores the original shape. "Connect from here", and when a connection source is chosen, "Add as waypoint" and "Connect to here". For keyframes and connecting boxes, see <a href="#edit-track">Tracking and keyframes</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Invert (apply outside)</div>
+        <div class="kv-val">Right-click a box and choose "Invert (mosaic outside)" or "Invert (blur outside)" to turn on invert for that ID. For an inverted box, the menu item changes to "Turn off invert (apply inside)", which restores it. Not available for exclusion masks. For where it applies and how to switch it on the "By ID" tab, see "Invert (apply outside)" in the <a href="#edit-mosaic">Mosaic settings panel</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Merging IDs</div>
+        <div class="kv-val">If the same subject has been split into different IDs, right-click the box you want to keep and choose "Merge IDs…". A list of IDs that can be merged ("IDs to merge into #XXX") opens, nearest first. Select the ID you want to combine, and it is merged into the ID you right-clicked. Each row in the list shows the #ID and class name, the segment (frames and time), and how many frames later or earlier it is (or "Adjacent"), and the selected box appears at the top marked "Selected". You can also select with <kbd>↑</kbd> / <kbd>↓</kbd> and <kbd>Enter</kbd>, and close the list with <kbd>Esc</kbd>. When there are more than 8, use "N more IDs" to show the rest. Right-clicking an ID row in the timeline below opens the same list. Once merged, they are treated as a single ID (in timeline rows, per-ID mosaic settings, and export), and any frames between them without boxes are interpolated automatically. You can merge IDs of the same class that don't appear at the same time (subjects that appear at the same time are different subjects). When no IDs can be merged, the list shows "No IDs can be merged"</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Merging continuous BBoxes</div>
+        <div class="kv-val">You can also merge continuous BBoxes (∞) with each other, or a continuous BBox with a detected ID. If you right-click a continuous BBox and choose a detected ID, the detected ID is the one kept (that row in the list shows "The detected ID becomes the main one"). When two continuous BBoxes overlap in time, the one that starts first is cut off just before the other one starts (unmerging restores it). Exclusion masks can't be merged</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Undoing and unmerging</div>
+        <div class="kv-val">Right after merging, one <kbd>Ctrl+Z</kbd> takes you back to before the merge. To undo a merge later, right-click the merged box and choose "Unmerge (N IDs)", or right-click the ID row in the timeline and choose "Unmerge (N IDs)" at the end of the list</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Range-selecting and bending points (<kbd>Shift</kbd>+left-drag)</div>
+        <div class="kv-val">Select a polygon box, then hold down <kbd>Shift</kbd> and left-drag around points to select them together (they are grouped into a connected segment. If you enclose just one point, that point is selected. A short tap or <kbd>Esc</kbd> clears the selection). Drag a point inside the selected segment to bend it with both ends of the segment fixed, so the middle moves the most. If you enclose all the points, the shape moves without changing. If you drag a point at an end of the segment, only that point moves. While multiple points are selected, you can't delete points with <kbd>Delete</kbd> (select and delete them one at a time)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Mosaic exclusion notice</div>
+        <div class="kv-val">When any track is excluded, "N tracks excluded from mosaic" is always shown. "Apply mosaic to all again" includes them all again at once. Excluded areas don't get mosaic even when you export</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Preview margin and outside the video</div>
+        <div class="kv-val">In the preview, there is a margin around the video on all sides (about 15% on each side, dark gray), and a thin line marks the edge of the video. You can move or enlarge a box so that it extends into the margin, so even when a person is leaving the frame, you can place an ellipse or other shape without squashing it. The part that extends beyond the video isn't exported, but inside the video, mosaic is applied in that shape right up to the edge. A new box must overlap the video, and dragging only in the margin doesn't draw one</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Detection boxes cut off at the edge</div>
+        <div class="kv-val">A detection box cut off at the edge of the frame is automatically extended beyond the edge of the frame, based on the box size in the frames before and after it touches the edge. Mosaic is drawn only inside the frame, but its shape (such as an ellipse) is based on the extended box, so even when a face is leaving the frame, the mosaic shape isn't squashed at the edge. This applies to both the preview and the export. This automatic extension is available for videos detected with version 2.8.1 or later</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Draw a box (left-drag)</div>
+        <div class="kv-val">Left-drag on an empty area of the video to draw a box in the shape selected in the toolbar's shape picker (rectangle / ellipse / polygon). For a polygon, click to place points, and close it by clicking the starting point, pressing <kbd>Enter</kbd>, or double-clicking. By default, a drawn box is a continuous BBox that continues into later frames. In the shape picker menu, you can change "Drawn BBox" to "This frame only", and "Drawn BBox type" to "Exclusion mask". Dragging only in the margin doesn't draw a box (draw it so it overlaps the video). To move the view while zoomed in, use <kbd>Ctrl</kbd>+left-drag (middle-button drag also works)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">How manually added boxes appear</div>
+        <div class="kv-val">The chip of a manually added box shows "User", and its ID is a 3-character code, the same as for detected boxes (for example, #K7Q). In the timeline, it appears in the "User" row</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Carrying over mosaic settings</div>
+        <div class="kv-val">When you add a box on top of a detected box, or near one (with a gap of no more than 5% of the shorter side of the frame), the mosaic settings in effect for that detected box (type, blur, opacity, block size) are copied to it. The block size is fixed so that it looks the same as that detected box. You can change the copied settings at any time on the "By ID" tab of <a href="#edit-mosaic">Mosaic settings</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Step frames while carrying over the shape (<kbd>Shift</kbd>+<kbd>→</kbd>)</div>
+        <div class="kv-val">Click a box to select it, then hold down <kbd>Shift</kbd> and press <kbd>→</kbd> (or scroll the wheel up). You advance one frame at a time with the position, size, and shape the box had when you started holding <kbd>Shift</kbd>, and that box is overwritten in each frame you advance to. The chip of the box being carried over shows "[carrying over]". Everything until you release <kbd>Shift</kbd> counts as one action, and one <kbd>Ctrl+Z</kbd> undoes it all. Frames where that box doesn't exist are skipped, and if not a single frame could be written, "This BBox isn't in the frames you moved to, so its shape couldn't be carried over." appears. <kbd>Shift</kbd>+<kbd>←</kbd> goes back one frame without carrying over the shape. The shape isn't carried over during playback with the play button, when you move 10 frames with <kbd>PageDown</kbd>, for single-frame manual boxes, or in segments of imported media</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Locking carry-over (<kbd>Shift</kbd> twice)</div>
+        <div class="kv-val">Select a box and press <kbd>Shift</kbd> twice quickly to make carry-over "locked", so it continues even after you release <kbd>Shift</kbd>. The chip shows "[carry-over: locked]". While locked, <kbd>→</kbd> or wheel up without <kbd>Shift</kbd> also advances while carrying over the shape (<kbd>PageDown</kbd> and the play button don't carry it over). Press <kbd>Shift</kbd> twice quickly again, or press <kbd>Esc</kbd>, to unlock. If you select a different box while locked, that box's shape is carried over from the next time you advance. On systems where software such as a Japanese input method (IME) uses a single press of <kbd>Shift</kbd>, locking may not work</div>
+      </div>
+    </div>
+    <p>Selecting, adding, and erasing detection boxes work only when the playhead is in a segment of the original video (the detection source). Segments of <a href="#edit-media">imported media</a> aren't subject to AI detection, so they have no boxes.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-context-menu.webp" alt="The menu shown when you right-click a detection box (change gender, exclude from mosaic, delete)" width="1188" height="568" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The box's right-click menu</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Timeline</h3>
+    <p>From top to bottom, the timeline shows the toolbar, the ruler, the <a href="#edit-scenes">scene (cut) strip</a>, the text, clip, and audio lanes (<a href="#timeline-edit">Editing clips</a>), and a row for each detection class. Each class row shows bands for the segments that have detections. Manually added boxes appear in the "User" row, and exclusion masks in the "Exclude" row. Use {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} at the start of a row to expand it into a row for each tracking ID. Right-click an ID row to open the list of IDs that can be merged into that ID ("Merging IDs" above. For merged IDs, "Unmerge" appears at the end of the list). Right-clicking doesn't move the playhead to that position. Tracks excluded from mosaic are shown faded. The timeline is laid out in the time of the exported video, so when you trim or move a clip, the detection bands move with it.</p>
+    <p>Zoom the timeline up to 16x with <kbd>Ctrl</kbd>+wheel or the zoom buttons at the left end of the toolbar. For changing the height and collapsing the timeline, see <a href="#timeline-edit">Editing clips</a>.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-timeline.webp" alt="The timeline, with the scene strip and a class row expanded into a row for each tracking ID" width="1188" height="304" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Timeline (scene strip, and a class row expanded into ID rows)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-zoom" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Zoom and pan" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>To fit boxes precisely around small subjects, you can zoom the player's video up to 8x. While zoomed in, you can still move, resize, add, and delete boxes as usual.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Zoom in / out</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+wheel (zooms around the cursor position), the <kbd>+</kbd> / <kbd>-</kbd> keys, or the {% include icon.html name="Maximize2" class="inline h-3.5 w-3.5 align-[-2px]" %} buttons at the top right of the player. The current zoom level is shown between the buttons</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Pan (move the view)</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+left-drag, or drag with the middle button (wheel). Doesn't work when you aren't zoomed in (100%). Left-dragging on an empty area draws a box</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Reset</div>
+        <div class="kv-val">Press the <kbd>0</kbd> key or the "Reset zoom" button to return to 100% and center the view</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-zoom.webp" alt="The player zoomed in, with the zoom level and zoom buttons at the top right" width="1188" height="411" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Zoomed in. Useful for fine box adjustments</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-bbox" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Adding detection boxes (1f and ∞)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Where nothing was detected, you can add boxes manually with the "1f" (a square with a + and 1f) and "∞" (a square with ∞) buttons in the toolbar. An added box is placed in the center of the current frame as the "User" class (yellow), so drag it to adjust its position and size. <a href="#edit-mosaic">Mosaic settings</a> (including per-ID settings) apply to manual boxes as well.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f (<kbd>1</kbd>)</div>
+        <div class="kv-val">Places a box in this frame only. The frames before and after aren't affected. Useful for patching a "Gap" (a few frames where detection drops out)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ continuous BBox (<kbd>2</kbd>)</div>
+        <div class="kv-val">The box continues in the same position in every frame from the one where you placed it onward. If you don't want it to continue to the end of the video, delete the box at the frame where you want it to end (the range up to just before the deleted frame becomes its confirmed range)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Moving a continuous BBox</div>
+        <div class="kv-val">Drag the ∞ box during playback to record the movement as a motion path, so the box follows the subject as it moves. To delete a recorded path, use "Clear motion path" in the right-click menu. To have a box follow the subject automatically, use <a href="#edit-track">tracking</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Undo</div>
+        <div class="kv-val">If the last edit was merging IDs, deleting all, applying a shape to a range, or changing a class into exclusion masks, <kbd>Ctrl+Z</kbd> undoes only that (<a href="#edit-player">Working with detection boxes</a>). Otherwise, right after you end an ∞ box by deleting it, it first undoes the confirmed end (shown as "Unfreeze" in the shortcut legend); if there is none, it reverts the edits in the current frame, the same as "Reset current frame"</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Exclusion mask (areas without mosaic)</h3>
+    <p>To keep mosaic off just part of the area it covers (for example, to show only the hands next to a face), place an exclusion mask. No mosaic is applied inside an exclusion mask, and that area is shown and exported as the original video. Exclusion masks don't follow the subject, so for a moving subject, drag the mask into position.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f exclusion mask (<kbd>3</kbd>)</div>
+        <div class="kv-val">Places it in this frame only</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ continuous exclusion mask (<kbd>4</kbd>)</div>
+        <div class="kv-val">Continues it into the frames after the one where you placed it (end it the same way as a continuous BBox: delete it at the frame where you want it to end)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Shape and drawing</div>
+        <div class="kv-val">Placed in the shape selected in the toolbar's shape picker (rectangle / ellipse / polygon). Set "Drawn BBox type" in the shape picker menu to "Exclusion mask" to draw exclusion masks with a left-drag</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Display</div>
+        <div class="kv-val">The box and chip are teal and labeled "Exclude", and the mask appears in the "Exclude" row of the timeline. In the mosaic preview (<kbd>M</kbd>), you can see how the mosaic is cut out</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Edge feather</div>
+        <div class="kv-val">The edge of an exclusion mask is blended in with the same edge feather setting as manual boxes. Size (box expansion) has no effect</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro</div>
+        <div class="kv-val">Exclusion masks aren't passed to <a href="#premiere">Premiere Pro integration</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Changing existing boxes into exclusion masks</h3>
+    <p>You can also change detected boxes and manually added boxes into exclusion masks later. Inside a box changed into an exclusion mask, other overlapping mosaics aren't applied either.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Changing one at a time</div>
+        <div class="kv-val">Right-click a box and select "Make exclusion mask". For a detected box, all frames of that ID (including merged IDs) become an exclusion mask. For a manually added box, that box becomes an exclusion mask. To change it back, right-click the exclusion mask and select "Change back to mosaic"</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Changing a whole class at once</div>
+        <div class="kv-val">In the "By class" tab of <a href="#edit-mosaic">Mosaic settings</a> (<kbd>G</kbd>), choose a class and press "Make all of this class exclusion masks". A confirmation showing the number of IDs appears. It applies to the detected IDs of that class that exist at that time (for "Face", both male and female faces; manually added boxes and IDs added later aren't included). "Change all of this class back to mosaic" changes them back all at once. Either way, one <kbd>Ctrl+Z</kbd> undoes it</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Display</div>
+        <div class="kv-val">A box changed into an exclusion mask is shown in teal as "Exclude", like other exclusion masks, and appears in the "Exclude" row of the timeline. IDs changed into exclusion masks can't be merged. If you merge IDs and then change the ID into an exclusion mask, the IDs separated by "Unmerge" go back to mosaic</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro and earlier versions</div>
+        <div class="kv-val">Changes into exclusion masks aren't passed to <a href="#premiere">Premiere Pro integration</a>. If you open and save the project in a version of Deepmosaic earlier than 2.18, detected boxes changed into exclusion masks go back to mosaic (they go back to being hidden, so no area is left uncovered)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic-class-avoid.webp" alt="After pressing &quot;Make all of this class exclusion masks&quot; on the By class tab of the mosaic settings panel, a confirmation showing the number of target IDs appears" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">"Make all of this class exclusion masks" on the By class tab and the confirmation with the number of IDs</figcaption>
+    </figure>
+    <p>Adding, moving, and deleting boxes are all saved automatically and reflected in the <a href="#edit-encode">export</a>. Only the detection results and the edge feather value are passed to <a href="#premiere">Premiere Pro integration</a>. Box edits on this screen (moving, changing shapes, deleting, exclusion masks, and so on) aren't passed.</p>
+  </div>
+</section><section id="edit-track" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Tracking and keyframes" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>"Tracking" automatically fits an ∞ continuous BBox you placed by hand to the subject's movement as the video plays. Turn it on or off with the button in the control row. "Keyframes" use the frames you corrected by hand as reference points for the movement, and automatically connect the frames between one keyframe and the next.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Tracking</h3>
+    <ol>
+      <li><b>Place a box.</b> Place or draw an ∞ continuous BBox (<kbd>2</kbd>) and fit it to the subject (<a href="#edit-bbox">Adding detection boxes</a>)</li>
+      <li><b>Turn on tracking mode.</b> Press the tracking button ({% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %}) in the control row, or press <kbd>X</kbd></li>
+      <li><b>Move forward.</b> Play the video, press <kbd>→</kbd>, or scroll the wheel up, and the box moves to follow the subject</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Tracking mode (<kbd>X</kbd>)</div>
+        <div class="kv-val">While it's on, moving forward (playback / <kbd>→</kbd> / wheel up) tracks the subject. Moving back, such as with <kbd>←</kbd>, doesn't track. Press it again to turn it off</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Boxes that are tracked</div>
+        <div class="kv-val">All ∞ continuous BBoxes visible in the current frame are tracked. You don't need to select them. Multiple boxes can be tracked at the same time, with no limit on the number. The more boxes there are, the slower tracking becomes, and playback waits for tracking accordingly. 1f boxes and exclusion masks aren't tracked ("Exclusion masks can't be tracked.")</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Playback speed</div>
+        <div class="kv-val">While tracking, the video plays at 1x speed or slower. If tracking can't keep up, playback pauses until it catches up</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">When it stops</div>
+        <div class="kv-val">When the subject is lost, leaves the frame, or the scene changes, tracking stops and the reason appears (for example, "Stopped tracking because the target was lost here."). In that case, <b>the ∞ box ends at the last frame that could be tracked</b> and doesn't continue past it. When tracking reaches the end of the video, "Tracked to the end of the video." appears</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Undo (<kbd>Ctrl+Z</kbd>)</div>
+        <div class="kv-val">The result of one tracking run, even when multiple boxes were tracked at the same time, can be undone all at once with one <kbd>Ctrl+Z</kbd>, back to before tracking started (the end of each box is restored too)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Boxes already tracked</div>
+        <div class="kv-val">A box that has been tracked once isn't tracked again when you play the video again. If you correct a box by hand with tracking mode on, it is tracked again from the corrected frame onward (up to just before the next frame you corrected by hand). To track again from the beginning, delete the box and place it again</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Tracking type</div>
+        <div class="kv-val">"High-accuracy tracking" is selected automatically on PCs with a GPU, and "Standard tracking" on other PCs. Standard tracking is used while detection is running. After tracking starts, hover over the tracking button to see which tracking is in use, such as "In use: High-accuracy tracking (GPU)"</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Newer detection engine required</div>
+        <div class="kv-val">If "Tracking needs a newer detection engine." appears, apply the <a href="#update">update</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Keyframes</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">When you correct an ∞ continuous BBox</div>
+        <div class="kv-val">For an ∞ box that hasn't been tracked, the frame you corrected by hand becomes a "keyframe", and the frames between it and the previous keyframe are connected smoothly and automatically. If you correct a tracked ∞ box with tracking mode off, only the corrected frame changes</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Keyframe (<kbd>F</kbd>)</div>
+        <div class="kv-val">Makes the selected box's current position a keyframe without moving it</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">When you correct an AI box</div>
+        <div class="kv-val">Only the corrected frame changes</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Connecting</h3>
+    <p>Use boxes in separate frames as points to create one ∞ continuous BBox that moves between them following the subject's movement. Besides the start and the end, you can place any number of points along the way (waypoints).</p>
+    <ol>
+      <li><b>Place the start point.</b> Select a box at the starting frame and press <kbd>Y</kbd> (or select "Connect from here" in the box's right-click menu). The bottom left of the player shows something like "Connect from: #K7Q @ 3" with a guide to the next step</li>
+      <li><b>Place waypoints if needed.</b> Move to a frame along the way, select a box that fits the subject, and press <kbd>Shift+Y</kbd> (or select "Add as waypoint" in the right-click menu). You can place as many as you like. Placing one again on the same frame replaces it ("Replaced the point on the same frame.")</li>
+      <li><b>Connect at the end point.</b> Select a box at the ending frame and press <kbd>Y</kbd> (or select "Connect to here" in the right-click menu). The points are connected right away with smooth interpolation, and a message such as "Connected the BBoxes (#K7Q → #K7Q, 31 frames)" appears. When you placed waypoints, their number is also shown</li>
+      <li><b>Tracking runs in order.</b> The connected section goes into the "Tracking queue", and the boxes between the points are corrected to follow the subject's movement ("Tracking queue" below). You don't have to wait for it to finish; you can go on to the next connection or other edits</li>
+    </ol>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-bridge-guide.webp" alt="After selecting a box and pressing Y, a guide for the next step appears at the lower left of the player" width="1188" height="425" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The guide while connecting. Press Shift+Y for a waypoint, and Y on the last frame</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Boxes you can connect</div>
+        <div class="kv-val">The boxes used as points can be AI boxes or manually added boxes. You can connect boxes in different frames within the same scene (the same applies to waypoints)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">When the subject can't be followed</div>
+        <div class="kv-val">When tracking loses the subject, the part that could be followed is applied, and the rest stays smoothly interpolated (the row in the tracking queue shows something like "Lost the target at f120"). When the start point is an exclusion mask, or when you connect boxes in adjacent frames, the connection is made with interpolation only and doesn't go into the tracking queue. When tracking can't be used, the connection is also made with interpolation only, and "Couldn't follow the subject, so the BBoxes were connected with smooth interpolation." appears</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Using a continuous BBox as a point</div>
+        <div class="kv-val">When the box at the start point or a waypoint is an ∞ continuous BBox, it changes to a box on that frame only when you use it as a point (if the box was placed on that frame, it becomes a single-frame box; if it continues from an earlier frame, it ends just before this frame and a single-frame box is created on this frame). When the box at the end point is an ∞ continuous BBox, that box ends just before the point (it's removed if it was placed on that frame) and is replaced by the connected box</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">The original boxes</div>
+        <div class="kv-val">The original AI box isn't removed, and in the frames in between it overlaps the connected box. Single-frame boxes used as points are removed. The connected box ends at the frame of the end point</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Correcting the middle</div>
+        <div class="kv-val">A box connected by tracking is treated as an already tracked box. If you correct a frame in the middle with tracking mode (<kbd>X</kbd>) on, it is tracked again from there up to just before the next point. With it off, only the corrected frame changes. For a box connected entirely with smooth interpolation, if you correct it at a frame in the middle while paused, that frame becomes a keyframe and the frames before and after it are reconnected smoothly ("Keyframes" above)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Undo (<kbd>Ctrl+Z</kbd>)</div>
+        <div class="kv-val">Right after connecting, one <kbd>Ctrl+Z</kbd> takes you back to before connecting (if you used a continuous BBox as a point, it goes back to the original continuous BBox. The same applies after tracking in the tracking queue finishes, as long as you haven't made other edits). After you correct the middle, <kbd>Ctrl+Z</kbd> doesn't take you back to before connecting, so to start over, delete the box with "Delete all of this ID" in its right-click menu</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Stop (<kbd>Esc</kbd>)</div>
+        <div class="kv-val">To stop after placing points, press <kbd>Esc</kbd>. If boxes at the points were changed to single-frame boxes, they stay that way (pressing <kbd>Ctrl+Z</kbd> right after <kbd>Esc</kbd> restores all of them to the original continuous BBoxes; this isn't possible if you make another edit in between)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Correcting the section before tracking</div>
+        <div class="kv-val">If you correct a box in the section by hand while it's waiting in the tracking queue or being tracked, that connection is removed from the queue and the boxes stay interpolated ("Tracking was canceled because the box in this segment was edited by hand. The interpolated box is kept.")</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">When boxes can't be connected</div>
+        <div class="kv-val">In these cases the boxes aren't connected and the reason appears: boxes in the same frame ("Can't connect: it's the same frame."), boxes in different scenes ("Can't connect: BBoxes in different scenes can't be connected."), an exclusion mask in between ("Can't connect: there's an exclusion mask in between."), and a BBox paired with an exclusion mask ("Can't connect: a BBox and an exclusion mask are different types.")</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Tracking queue</h3>
+    <p>Tracking for connected sections goes into the "Tracking queue" and runs one job at a time, in order. On PCs with a GPU, contour refinement (like <a href="#detect-options">mosaic refinement</a>, it fits the box to the shape of the object) also runs after tracking. When a job finishes, the interpolated boxes between the points are replaced with the result of tracking (and refinement). Boxes on the frames of the points you placed by hand don't change.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-tracking-queue-panel.webp" alt="The Tracking queue panel, listing one running job (Tracking, the frames of points A and B, and its progress), one queued job, and one finished job, with the queued sections shown as bands above the seek bar" width="1188" height="528" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The Tracking queue panel (running, queued, and finished)</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Panel and indicators</div>
+        <div class="kv-val">When there are connected sections, a small indicator such as "Tracking 45% · 2 waiting" (with a progress bar) appears above the player. Press it to open the "Tracking queue" panel, and press "—" on the panel to go back to the small indicator. You can drag the panel and the small indicator, and their position and open state carry over the next time you open the edit page. The status bar at the bottom of the screen also shows the progress, such as "● Tracking 45% (3 jobs)", and pressing it opens or closes the panel (it shows "Tracking: nothing queued" when there's nothing, and "● Tracking error" when, for example, a section lost the target)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Reading the panel</div>
+        <div class="kv-val">From the top: the running job (state "Tracking", "Refining outline", or "Paused", the ID, the frames of points A and B, the progress %, the speed, and the estimated time left), the "Queued · N" list, and the "Finished · N" list. The bottom of the panel shows the estimated time left for everything, such as "About 2 min 10 s left in total", and "All jobs processed" when everything is done</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Pause / cancel</div>
+        <div class="kv-val">Press "Pause" on the running row to stop it, and "Resume" to continue from where it stopped. If you stop the job with ✕ ("Cancel"), the boxes stay interpolated</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Reorder / remove</div>
+        <div class="kv-val">↑ ("Move up") on a queued row swaps it with the one before it. If you remove it with ✕ ("Remove from queue"), the boxes in that section stay interpolated</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Review / retry</div>
+        <div class="kv-val">Press "Review" on a finished row to move to the start of that section and select the resulting box. A row where the target was lost is shown in red, such as "Lost the target at f120". The part followed before the target was lost is applied, and the rest stays interpolated. "Retry" puts it back in the queue. When tracking stops partway, "Tracking could not be completed" appears. "Clear finished" removes the finished rows from the list all at once</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Other operations</div>
+        <div class="kv-val">Tracking mode (<kbd>X</kbd>) and re-tracking after you correct a box by hand take priority. Meanwhile, the queue pauses and resumes automatically when they finish. While detection is running, contour refinement isn't done and only the tracking result is applied ("Detection is running, so only the tracking result was applied without refining the outline.")</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">PCs without refinement</div>
+        <div class="kv-val">On PCs without a GPU, PCs whose GPU has less than 4 GB of memory, or when the AI model for mosaic refinement hasn't been downloaded, contour refinement isn't done and the job finishes with tracking only</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Leaving the edit page</div>
+        <div class="kv-val">The tracking queue works only while the edit page is open. If you leave the edit page, export, or send to Premiere Pro while jobs are unfinished, a confirmation "Tracking is not finished" appears. If you continue, the unfinished sections stay interpolated</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Bands on the seek bar</div>
+        <div class="kv-val">The sections in the queue are shown as bands above the seek bar (progress for the running job, green when finished). You can hide them with "Show tracking segments on the seek bar" in "Settings" in the sidebar</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Fixing a range of frames at once</h3>
+    <p>When you correct an AI box by hand, only that frame changes. To fix a range of several seconds to several minutes at once, use the following actions depending on the situation.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">The subject moves</div>
+        <div class="kv-val">Use the boxes at the start and the end (and along the way) as points and <b>connect</b> them by tracking (<kbd>Y</kbd> / <kbd>Shift+Y</kbd>) ("Connecting" above). To fix them by hand, pause with tracking mode off, place an ∞ continuous BBox (<kbd>2</kbd>) at the start of the range and fit it to the subject, then correct its position and size at frames in the middle and at the end. The frames between the corrected frames are connected smoothly and automatically ("Keyframes" above). When the movement is complex, let <b>tracking</b> (<kbd>X</kbd>) follow the subject and correct only the frames where the box drifts ("Tracking" above)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">The subject barely moves</div>
+        <div class="kv-val">Select the corrected box, press <kbd>Shift</kbd> twice quickly, and advance with <kbd>→</kbd>. The same position, size, and shape are written to the frames ahead (<a href="#edit-player">Locking carry-over</a>). Press <kbd>Esc</kbd> to unlock</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Enlarging or shrinking all boxes in a range</div>
+        <div class="kv-val">In the "By time" tab of <a href="#edit-mosaic">Mosaic settings</a> (<kbd>G</kbd>), press "Add range", set the start and end to the range, and change "Size (box expansion)". It applies to all boxes in the range (including manually added boxes). To change them by scene, choose that scene in "Target scene:" in the "By scene" tab (press <kbd>Ctrl+K</kbd> at the start and the end of the range to split it. <a href="#edit-scenes">Scenes</a>). To change only a specific subject, use the "By ID" tab (it applies to all frames of that ID)</div>
+      </div>
+    </div>
+    <p>Keep the following in mind.</p>
+    <ul>
+      <li>Manually added boxes overlap AI boxes, and the AI boxes remain. In ranges where an AI box is too large or off, erase it continuously with the eraser (play while holding <kbd>E</kbd>+right-drag), or use "Exclude from mosaic" in the box's right-click menu to exclude that whole ID from mosaic (<a href="#edit-player">Working with detection boxes</a>)</li>
+      <li>Interpolation between keyframes works only when you correct a box while paused with tracking mode off. It doesn't happen while tracking mode is on or when you drag during playback (which records a motion path)</li>
+      <li>An ∞ continuous BBox keeps appearing in the same position in the frames ahead until you delete it (it doesn't stop when the scene changes). Select the box at the frame where you want it to end and press <kbd>Delete</kbd>, or select "Delete this BBox" in the right-click menu, and it's removed from that frame onward</li>
+      <li>Connecting works only between boxes within the same scene</li>
+      <li>Manually added boxes (∞ continuous BBoxes and connected boxes) keep the size from when they were created as a "By ID" setting. Values you set after that in "All", "By scene", "By time", and so on also apply to manually added boxes (the setting changed last takes priority. <a href="#edit-mosaic">Mosaic settings panel</a>)</li>
+      <li>To check the area the mosaic covers, switch the preview to the mosaic preview (<kbd>M</kbd>)</li>
+    </ul>
+  </div>
+</section>
+
+<section id="edit-scenes" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Scenes (cuts)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>During detection, cuts in the video (changes of scene) are detected automatically and shown as scene strips at the top of the timeline. A scene is the unit within which the block size is kept consistent when "Automatic pixel size" is on, and also the unit for changing <a href="#edit-mosaic">Mosaic settings</a> per scene.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Go to a scene</div>
+        <div class="kv-val">Click a strip to jump to the first frame of that scene. Each strip shows a number (#1, #2, ...), and you can hover over it to see its range</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Split (<kbd>Ctrl+K</kbd>)</div>
+        <div class="kv-val">Use the {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} button in the timeline toolbar (to the right of the zoom buttons), or <kbd>Ctrl+K</kbd>, to split the scene in two at the current frame. Use this for cuts the automatic detection missed, or where you want to change settings within the same cut</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Adjusting boundaries</div>
+        <div class="kv-val">Drag the border between strips to move the end of the scene before it and the start of the scene after it at the same time</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Delete</div>
+        <div class="kv-val">Use the X (Delete this scene) that appears when you hover over a strip to merge the scene with the adjacent one</div>
+      </div>
+    </div>
+    <p>Scene changes are saved as edit data, and the detection results themselves don't change. "Reset all edits" returns the scenes to their automatically detected state. Splitting a scene doesn't cut the exported video. To cut the video itself into pieces, split a clip (<kbd>Ctrl+Shift+K</kbd>, <a href="#timeline-edit">Editing clips</a>).</p>
+  </div>
+</section>
+
+<section id="edit-toolbar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Edit toolbar" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The control row below the player contains, from the left, the <b>playback controls</b> (Go to start / Back 1 frame / Play / Forward 1 frame / Go to end / Play blank frames only / Missing frame jump / Mute), the <b>edit toolbar</b>, and the time. The edit toolbar is divided by vertical lines into these groups: Shape picker / Add BBox / Add exclusion mask / Eraser / Reset current frame | Toggle overlay / Switch preview / Tracking | Mosaic settings | Reset all edits | Labels | Playback speed | Keyboard shortcuts. The Tracking button shows only an icon. When there isn't enough width, the toolbar and the time wrap onto a second row. Hover over each button to see its shortcut key.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Play blank frames only (<kbd>B</kbd>)</div>
+        <div class="kv-val">To the right of "Go to end" in the playback controls. Automatically skips frames that contain detection boxes and plays only the frames without a BBox, one after another. Useful for checking for anything missed</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Missing frame jump</div>
+        <div class="kv-val">The two buttons to the right of "Play blank frames only" jump back or forward to frames with no detections (shortcuts: <kbd>[</kbd> / <kbd>]</kbd>). The target classes are the ones selected under "Filter" in the lower section of the "Labels" menu in the toolbar</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Switch preview (<kbd>M</kbd>)</div>
+        <div class="kv-val">To the right of Toggle overlay. Switches between the BBox view and the mosaic preview. The mosaic view shows, on the spot, a result close to what will be exported</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Shape picker</div>
+        <div class="kv-val">At the start of the toolbar. Choose the shape (rectangle / ellipse / polygon) of the boxes you add or draw (<kbd>W</kbd> for ellipse, <kbd>O</kbd> for polygon; press again for rectangle). In the menu, use "Drawn BBox" to choose whether drawn boxes continue to "This and later frames" or stay on "This frame only", and use "Drawn BBox type" to choose "Mosaic" or "Exclusion mask". Values switched here apply only to the current editing session. Choose the defaults used at startup in "Settings" in the sidebar (<a href="#edit-sidebar">Sidebar and drawer</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Add BBox (1f / ∞)</div>
+        <div class="kv-val">Adds a box in the shape selected in the shape picker at the center of the current frame. "1f" (a square with a + and 1f) adds it to this frame only, and "∞" (a square with ∞) shows it continuously in all later frames. When the screen is narrow, only icons are shown. After adding a box, drag to adjust it (<a href="#edit-bbox">Adding detection boxes</a>). Shortcuts: <kbd>1</kbd> / <kbd>2</kbd></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Add exclusion mask (1f / ∞)</div>
+        <div class="kv-val">The dotted-square buttons to the right of Add BBox. Places an exclusion mask (an area without mosaic) in the shape selected in the shape picker at the center of the current frame. "1f" places it in this frame only, and "∞" (a dotted square with ∞) continues it in later frames (<a href="#edit-bbox">Exclusion mask</a>). Shortcuts: <kbd>3</kbd> / <kbd>4</kbd></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Eraser</div>
+        <div class="kv-val">Settings for the <kbd>E</kbd>+right-drag eraser (how to erase: Delete touched BBoxes / Delete only touched parts; shape: Circle / Rounded rectangle; size: 8-120px). Pressing the button doesn't turn on the eraser. You always erase with <kbd>E</kbd>+right-drag</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Mosaic settings (<kbd>G</kbd>)</div>
+        <div class="kv-val">Opens the mosaic settings panel (<a href="#edit-mosaic">next section</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %} Tracking (<kbd>X</kbd>)</div>
+        <div class="kv-val">To the right of Switch preview. Turns tracking mode on or off. While it's on, moving forward with playback / <kbd>→</kbd> / wheel up makes ∞ continuous BBoxes follow the subject (<a href="#edit-track">Tracking and keyframes</a>). It is off when you open the edit page (you can have it on by default in "Settings" in the sidebar)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Reset current frame</div>
+        <div class="kv-val">Returns the edits in the current frame (adding, moving, and deleting boxes) to the state of the detection results. Shortcut: <kbd>Ctrl+Z</kbd> (depending on the last edit, that is undone first; see <a href="#edit-bbox">Undo</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Reset all edits</div>
+        <div class="kv-val">Discards all edits, including box edits, mosaic settings, scenes, and person merges (asks for confirmation first; can't be undone)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Labels (<kbd>C</kbd>)</div>
+        <div class="kv-val">The button shows a summary of the selection (for example, "All 2 labels" or "Face · Male face"). The upper section of the menu, "Show (also applies to export)", has check boxes for body areas / face. Labels you uncheck appear in neither the preview nor the export (for example, to export only body areas). The lower section, "Filter (view and missing-frame jump only)", lets you choose from all classes / body areas / male face / female face to narrow down the boxes shown in the preview and the timeline and the targets of the missing frame jump (it doesn't affect export). In projects that have boxes for mosaic already in your footage, "Mosaic" also appears in both the upper and lower sections. "Mosaic" in the upper section is checked after detection, and export reapplies mosaic over that area. If you uncheck it, that area appears in neither the preview nor the export, and it stays unchecked even after you reopen the project</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Playback speed</div>
+        <div class="kv-val">Choose from 0.25x / 0.5x / 1x / 1.5x / 2x / 4x</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} Keyboard shortcuts</div>
+        <div class="kv-val">Hover over it to show the <a href="#shortcuts">keyboard shortcut legend</a></div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-toolbar.webp" alt="Edit toolbar" width="1172" height="48" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Edit toolbar</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-mosaic" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Mosaic settings panel" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>You can set how the mosaic looks in 5 scopes (tabs). When several settings apply to the same box in the same frame, <b>the setting changed last</b> takes priority ("Setting priority" below). Drag the panel's header to move it anywhere, and drag its bottom-right corner to resize it (you can also select the corner and adjust it with the arrow keys, or double-click it to restore the default size). You can keep editing with the panel open. When you change a value, the change appears immediately in the mosaic preview (<kbd>M</kbd>).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Scope tabs</div>
+        <div class="kv-val">All (global defaults) / By class (body areas, face, and so on. In projects that have boxes for <a href="#detect-mosaic">existing mosaic</a>, "Mosaic" also appears) / By ID (individual tracked subjects) / By scene (per cut) / By time (a time range. "By time" below). On the By ID, By scene, and By time tabs, choose the target from the drop-down list. A scope with an override shows "Overridden", and you can remove each override individually with "Clear". The "By class" tab also has "Make all of this class exclusion masks" and "Change all of this class back to mosaic" (<a href="#edit-bbox">Changing existing boxes into exclusion masks</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Confidence threshold</div>
+        <div class="kv-val">Only detections at or above the specified confidence are shown and get mosaic (0-100%; a global setting that doesn't depend on the tab)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Type</div>
+        <div class="kv-val">Mosaic (blocks) / Blur (Gaussian blur). Default: Mosaic</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Size (box expansion)</div>
+        <div class="kv-val">Enlarges or shrinks the detection box from its center to adjust the mosaic area (0.50x to 2.00x). Default: 1.05x. Make it larger if you want to leave some margin</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Opacity</div><div class="kv-val">How strongly the mosaic/blur is blended in (0-100%). At the default of 100%, the subject is fully covered. The lower the value, the less it hides, so normally leave it at 100%</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Edge feather</div>
+        <div class="kv-val">Feathers the edges of the mosaic area to blend them with the background (0-64px). Default: 6px. It means the same as "Mask Feather" for masks in Premiere Pro, feathering half inward and half outward from the outline (the value is the combined inner and outer width). When you select a box in the player, the outer range the feather reaches is shown as a dotted line. The edges of exclusion masks are blended in with the same value</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Blur strength</div>
+        <div class="kv-val">Shown only when the type is "Blur". The higher the number (2-64), the stronger the blur. Until you move it, it shows "Auto (n)" and follows the edge feather width (the same look as before). After you move it, changing the edge feather no longer changes the blur strength. Use the reset button ("Back to Auto") to go back to "Auto". The value is kept even if you change the type back to "Mosaic". It isn't passed to <a href="#premiere">Premiere Pro integration</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Pixel size</div>
+        <div class="kv-val">The "Set pixel size" button opens the settings screen. The current setting is shown below the button (for example, Fixed: 53 blocks across, By size range: 42-96 blocks across, or Proportional by split count /16). Block size is expressed as the number of blocks across the width of the frame (the more blocks, the finer), so the mosaic looks the same even when video resolutions differ. Shown only when the type is "Mosaic". On the "By ID", "By scene", and "By time" tabs, you can press it after choosing a target. Press "Apply" to apply the setting to the open tab (All / By class / By ID / By scene / By time). "Cancel" changes nothing. The initial value for newly detected videos is set in <a href="#detect-options">detection options</a> (the default is Fixed)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Reading the settings screen</div>
+        <div class="kv-val">The preview and the graph are on the left. Drag the ellipse box in the preview to move it, or use its bottom-right handle to resize it, and mosaic is applied inside the box with the actual blocks. For the preview image, choose a person or a test pattern, or replace it with your own image. The graph shows the relationship between the target size (horizontal axis, as a proportion of the frame width) and the number of blocks (vertical axis, finer toward the top), and you can change it by dragging the lines and handles. The result at the top right shows the number of blocks for the current box (for example, 53 blocks across) and what determined it (range, split count, lower limit, upper limit, and so on). The minimum mosaic under the self-regulation standard (long side / 100 when the long side is 400px or more, minimum 4px) always takes precedence, so you can't choose a number of blocks finer than that</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Fixed</div>
+        <div class="kv-val">The setting used when "Automatic pixel size" is off. Uses the same block size for all frames and all targets. Specify it with "Blocks across the width" (the default is 53 blocks across. Fewer blocks are coarser, and more blocks are finer)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">By size range</div>
+        <div class="kv-val">Choose this with "Automatic pixel size" on. Sets the number of blocks across the width for each range of target size (the representative box size for each combination of cut and ID, expressed as a proportion of the frame width). You can have 1 to 6 ranges, and you can add, delete, or reset them to the default. Within the same cut and the same ID, the block size stays constant and doesn't flicker from frame to frame</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Proportional by split count</div>
+        <div class="kv-val">Choose this with "Automatic pixel size" on. Divides the target size by "Fineness (split count across the target)" (8-64, default 16) and uses the result as the length of one side of a block. The larger the target appears, the larger the blocks, and the higher the value, the finer the mosaic. "Coarsest block" (N or more blocks across) sets a limit on how coarse it can get (you can also choose no limit). Within the same cut and the same ID, the block size stays constant</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Earlier projects</div>
+        <div class="kv-val">Earlier settings are converted to the new settings when you open the project. Automatic (target-based) and fixed (resolution-based) settings look the same as before. Manual (split count) settings are converted to "Proportional by split count", which splits based on the target size rather than the box width, so the block size may change even with the same split count (coarser for tall targets and finer for wide targets). When a setting is converted, the settings screen shows "Converted your previous manual setting (split count N)"</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Sharp colors</div>
+        <div class="kv-val">Takes each block's color from a single sample point instead of the area average (equivalent to Sharp Colors in Premiere Pro; off by default)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Invert (apply outside)</div>
+        <div class="kv-val">Shown only when you select a detected subject or an added box on the "By ID" tab (not available for exclusion masks or on the "All", "By class", "By scene", and "By time" tabs; off by default). When it's on, the inside of the box stays as the original video, and mosaic / blur (using that box's type, block, and blur settings) is applied outside the box (the background). It affects both the mosaic preview (<kbd>M</kbd>) and the export. When several inverted boxes are in the same frame, areas inside any of them are kept. It isn't included in "Make these settings the default", and it isn't carried over when settings are copied automatically to a box you add (pieces split off with the eraser inherit all the settings of the original box). It is the same setting as "Invert (mosaic outside)" and "Invert (blur outside)" in the box's right-click menu (<a href="#edit-player">Working with detection boxes</a>). Projects with inverted boxes can't be sent to Premiere Pro (<a href="#premiere">Premiere Pro integration</a>)</div>
+      </div>
+    </div>
+    <p>Reset each item to its default value with the {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} button at its right end. Press "Make these settings the default" on the "All" tab to make those settings the initial settings for <b>the next video you detect</b> (the settings of this video don't change).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">By time</h3>
+    <p>On the "By time" tab, you can change how the mosaic looks for each time range of the video.</p>
+    <ol>
+      <li>Move the playhead to the start of the range and press "Add range". A 5-second range starting at the playhead is created and selected (it has the same settings as "All")</li>
+      <li>Set the "Start" and "End". Type them in the min:sec:frame format (e.g. 1:05:12), or move the playhead and press "Use current position"</li>
+      <li>Change the type, size, opacity, and so on, the same way as on the other tabs</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Selecting and deleting ranges</div>
+        <div class="kv-val">Choose a range in "Range". "Delete this range" deletes it. If the start is after the end, "Start must be before end" appears</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Bands on the timeline</div>
+        <div class="kv-val">Ranges set by time are shown as bands below the scene bands on the timeline. Click a band to open the "By time" tab with that range selected. The bands of ranges that don't take effect (for example, after "All" was changed later. "Setting priority" below) are shown faded</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Clip edits</div>
+        <div class="kv-val">Ranges are kept in the time of the original video, so even if you split, trim, or move clips, they apply to the same part of the original video (when a clip uses the same part twice, they apply in both places). You can't set a range that covers only imported media or gaps ("This range has no part of the original video (ranges over only media or gaps can't be set)")</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Which boxes</div>
+        <div class="kv-val">It applies to both detected boxes and manually added boxes in the range (except IDs with "Invert (apply outside)" turned on)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic-time.webp" alt="The By time tab of the mosaic settings panel, with a range created with &quot;Add range&quot; selected and the Start and End fields and &quot;Use current position&quot; shown" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The By time tab. Select a range and set its start and end</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Setting priority</h3>
+    <p>When settings from "All", "By class", "By ID", "By scene", and "By time" overlap on the same box in the same frame, <b>the setting changed last</b> takes priority, and all items of that setting are used as they are (items aren't mixed).</p>
+    <ul>
+      <li>A setting counts as "changed" when you actually change a value in the panel (including resetting it to the default with {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %}) and when you add or change a range on the By time tab. Choosing the same value again doesn't change the order</li>
+      <li>If you change "All" later, the By class, By ID, By scene, and By time settings made before it no longer take effect, and all items take the values of "All". Even if you change the value back, the order isn't restored</li>
+      <li>When you open a setting that doesn't take effect on its tab, a message such as "This setting has no effect because "All" was changed later" appears. Press "Prioritize this setting" to make that setting the one changed last without changing its values, so it takes effect again</li>
+      <li>When a change makes other settings stop taking effect, a notification such as "2 other settings no longer take effect after this change" appears. Press "Undo" in the notification to go back to the values and order before that change (only the most recent change. If you made another edit in between, "Couldn't undo (another edit was made after it)" appears)</li>
+      <li>"By ID" settings added automatically when you add or paste a box or connect boxes (<a href="#edit-player">Carrying over mosaic settings</a>) don't count as "changed". Right after the box is created, it looks the same as before, and settings changed after that take priority</li>
+      <li>For IDs with "Invert (apply outside)" turned on, the settings of that ID are used regardless of the order. The per-ID settings of boxes for <a href="#detect-mosaic">existing mosaic</a> (including the block settings added by detection) are also used regardless of the order. Mosaic exclusion, exclusion masks, and the confidence threshold also apply regardless of the order</li>
+      <li>Projects created before 2.18 look the same as before when you open them (settings without a recorded order take priority in the previous order: By ID, By class, By scene, All)</li>
+      <li>If you open a project in a version of Deepmosaic earlier than 2.18, the By time settings and the order are ignored, and the previous order is used (if you save it in that version, the By time settings and the order are lost)</li>
+      <li>By time settings aren't passed to <a href="#premiere">Premiere Pro integration</a></li>
+    </ul>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic-priority.webp" alt="The By ID tab of the mosaic settings panel, showing &quot;This setting has no effect because &quot;All&quot; was changed later&quot; and &quot;Prioritize this setting&quot;" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">A By ID setting that has no effect because "All" was changed later, with "Prioritize this setting"</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic.webp" alt="The mosaic settings panel, where you specify the type, block size, and opacity of the mosaic" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Mosaic settings panel (All)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic-track.webp" alt="The By ID tab of the mosaic settings panel, with a target ID selected and shown as Overridden" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The By ID tab. When you change settings for the selected target only, it shows "Overridden"</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-mosaic-scene.webp" alt="The By scene tab of the mosaic settings panel" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The By scene tab. You can change how the mosaic looks for each cut</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-persons" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Person gallery" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Open "Person gallery" (<kbd>P</kbd>) in the header to see the detected faces grouped by person (detections with low face likelihood are not included in any person and go to "Others"). You can turn mosaic on or off and correct the gender for each person, and if the same person was detected as separate people, you can merge them into one. You can drag the panel to move it.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Person card</div>
+        <div class="kv-val">Representative image, gender badge, number of tracks, time on screen, and time of first appearance. Click a card to jump to the frame where the person first appears</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Correcting the gender</div>
+        <div class="kv-val">Click the gender badge and choose "Set as male face", "Set as female face", or "Revert to detection results". This changes which class-specific mosaic setting (male face / female face) applies</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Mosaic on / off</div>
+        <div class="kv-val">"Turn mosaic off" excludes all of that person's tracks from mosaic (for example, to keep mosaic off the faces of people other than the performers). "Turn mosaic back on" restores them</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Merging people</div>
+        <div class="kv-val">Drag and drop a card onto another card (including the "Others" card) to merge them as the same person. Merged cards show "Unmerge". Tracking IDs merged on the timeline or from the right-click menu also appear as one person in the person gallery</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Others</div>
+        <div class="kv-val">Face tracks that couldn't be grouped into a person are collapsed into "Others: N tracks (Brief appearance a, Small face b, Low face likelihood c, and Undetermined d)". Press it to list them by reason, and use "Show more" to show the next 60 at a time. Here too, you can turn mosaic on or off one track at a time, and drag and drop a track onto another card to merge it</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Regroup people</div>
+        <div class="kv-val">If the same person isn't grouped together, for example in a long video, use "Regroup people" in the panel to group the faces in the video again. This can take a few minutes, and the progress message "Regrouping people…" is shown while it runs (you can't close the panel until it finishes). From the second run on, the video isn't read again, so it finishes sooner. If many faces aren't grouped into people, the message "In long videos, some faces may not be grouped into people." appears. The button appears only for projects that a supported detection engine (2.7.2 or later) can handle (it isn't available in the Web app)</div>
+      </div>
+    </div>
+    <p>For projects detected with an older version, "This video was detected with an older version. To use the people list, run detection again." appears. In that case, load the video again and run detection.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-persons.webp" alt="The person gallery panel. Detected faces are lined up as cards, one per person" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Person gallery</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="shortcuts" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Editing" title="Keyboard shortcuts" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>This is a list of the shortcuts you can use on the edit page. You can also hover over {% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} at the right end of the toolbar to show the same list. Shortcuts don't work while you're typing text.</p>
+    <ul>
+      <li>Rows in the "Timeline" category work while the timeline is shown (not while it's collapsed). Undo is separate from <kbd>Ctrl+Z</kbd> for detection boxes: timeline edits use <kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+Y</kbd></li>
+      <li><kbd>Delete</kbd> acts on a different target depending on where you last worked. If you last touched the player (video), it deletes the selected detection box; if you last touched the timeline, it deletes the selected clip, text, or audio track. <kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd> (copy / paste) work the same way: in the player they act on detection boxes, and on the timeline they act on clips, text, and audio tracks (selecting text in the sidebar also counts as touching the timeline)</li>
+      <li>Press <kbd>Shift</kbd> twice quickly to lock shape carry-over; press it twice again or press <kbd>Esc</kbd> to unlock. This may not work in environments where an input method (IME), such as Japanese input, uses a single press of <kbd>Shift</kbd></li>
+    </ul>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-shortcuts.webp" alt="The edit page with the shortcut legend shown" width="1280" height="1100" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Shortcut legend</figcaption>
+    </figure>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr><th class="w-[8.5em]">Category</th><th class="w-[11em]">Key</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr data-shortcut="play_pause"><td rowspan="6">Playback</td><td><kbd>Space</kbd></td><td>Play / pause</td></tr>
+          <tr data-shortcut="jkl_transport"><td><kbd>J</kbd> / <kbd>K</kbd> / <kbd>L</kbd></td><td>Stop / Stop / Play (compatible with Premiere Pro)</td></tr>
+          <tr data-shortcut="mute_toggle"><td><kbd>V</kbd></td><td>Mute / unmute</td></tr>
+          <tr data-shortcut="speed_down"><td><kbd>,</kbd></td><td>Decrease playback speed</td></tr>
+          <tr data-shortcut="speed_up"><td><kbd>.</kbd></td><td>Increase playback speed</td></tr>
+          <tr data-shortcut="blank_only_toggle"><td><kbd>B</kbd></td><td>Play blank frames only (skips frames that have a BBox)</td></tr>
+          <tr data-shortcut="step_fwd"><td rowspan="9">Frame navigation</td><td><kbd>→</kbd></td><td>Forward 1 frame (if you hold <kbd>Shift</kbd> while a BBox is selected, it moves forward 1 frame and carries over the shape of that box. While carry-over is locked, the shape carries over even without <kbd>Shift</kbd>)</td></tr>
+          <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>Back 1 frame</td></tr>
+          <tr data-shortcut="carry_lock"><td><kbd>Shift</kbd> twice</td><td>Lock / unlock shape carry-over (press <kbd>Shift</kbd> twice quickly. While locked, <kbd>→</kbd> and the wheel also carry over the shape without <kbd>Shift</kbd>. <kbd>Esc</kbd> also unlocks)</td></tr>
+          <tr data-shortcut="step_fwd_10"><td><kbd>PageDown</kbd></td><td>Forward 10 frames</td></tr>
+          <tr data-shortcut="step_back_10"><td><kbd>PageUp</kbd></td><td>Back 10 frames</td></tr>
+          <tr data-shortcut="go_start"><td><kbd>Home</kbd></td><td>Go to start</td></tr>
+          <tr data-shortcut="go_end"><td><kbd>End</kbd></td><td>Go to end</td></tr>
+          <tr data-shortcut="jump_prev_empty"><td><kbd>[</kbd></td><td>Previous missing frame</td></tr>
+          <tr data-shortcut="jump_next_empty"><td><kbd>]</kbd></td><td>Next missing frame</td></tr>
+          <tr data-shortcut="frame_zoom_in"><td rowspan="6">Zoom and view</td><td><kbd>+</kbd> / <kbd>=</kbd></td><td>Zoom in on frame</td></tr>
+          <tr data-shortcut="frame_zoom_out"><td><kbd>-</kbd></td><td>Zoom out on frame</td></tr>
+          <tr data-shortcut="frame_zoom_reset"><td><kbd>0</kbd></td><td>Reset zoom</td></tr>
+          <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>Show / hide detection overlay</td></tr>
+          <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>Switch BBox / mosaic preview</td></tr>
+          <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>Open / close the "Labels" menu in the toolbar (labels to show and filter)</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="17">BBox editing</td><td><kbd>1</kbd></td><td>Add a BBox to this frame only</td></tr>
+          <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>Add a continuous BBox to the following frames</td></tr>
+          <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>Add an exclusion mask to this frame only</td></tr>
+          <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>Add a continuous exclusion mask to the following frames</td></tr>
+          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>W</kbd></td><td>Set the shape of BBoxes you add / draw to ellipse (press again to switch back to rectangle)</td></tr>
+          <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>Set the shape of BBoxes you add / draw to polygon (press again to switch back to rectangle)</td></tr>
+          <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>Delete the selected BBox (when you last worked in the player)</td></tr>
+          <tr data-shortcut="bbox_copy"><td><kbd>Ctrl+C</kbd></td><td>Copy the selected BBox (when you last worked in the player)</td></tr>
+          <tr data-shortcut="bbox_paste"><td><kbd>Ctrl+V</kbd></td><td>Paste the copied BBox into the current frame (when you last worked in the player)</td></tr>
+          <tr data-shortcut="bbox_bridge"><td><kbd>Y</kbd></td><td>Set the selected BBox as the connection source / connect. Select a BBox in another frame and press it again to create a continuous BBox that connects the points by following the subject's movement (when you last worked in the player. "Connect from here" and "Connect to here" in the right-click menu do the same. A single <kbd>Ctrl+Z</kbd> undoes it)</td></tr>
+          <tr data-shortcut="bbox_bridge_mid"><td><kbd>Shift+Y</kbd></td><td>Add the selected BBox as a waypoint (while a connection source is set. When you last worked in the player. "Add as waypoint" in the right-click menu does the same)</td></tr>
+          <tr data-shortcut="bbox_bridge_cancel"><td><kbd>Esc</kbd></td><td>Clear the connection source (stop without connecting after placing points)</td></tr>
+          <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>Unfreeze continuous BBox → reset current frame</td></tr>
+          <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>Rotate selected BBox by 15°</td></tr>
+          <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>Rotate selected BBox by -15° (counterclockwise)</td></tr>
+          <tr data-shortcut="motion_key_here"><td><kbd>F</kbd></td><td>Make the current position of the selected BBox a keyframe (<a href="#edit-track">Tracking and keyframes</a>)</td></tr>
+          <tr data-shortcut="tracking_mode_toggle"><td><kbd>X</kbd></td><td>Turn tracking mode on / off (while it's on, the ∞ continuous BBox follows the target during playback, with <kbd>→</kbd>, and when you scroll the wheel up. See <a href="#edit-track">Tracking</a>)</td></tr>
+          <tr data-shortcut="mosaic_panel_open"><td rowspan="2">Tools</td><td><kbd>G</kbd></td><td>Open mosaic settings panel</td></tr>
+          <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>Split at the playhead (splits the clip and the scene at the same time. Same as the scissors in the toolbar; a single <kbd>Ctrl+Shift+Z</kbd> undoes both)</td></tr>
+          <tr data-shortcut="timeline_clip_split"><td rowspan="10">Timeline</td><td><kbd>Ctrl+Shift+K</kbd></td><td>Split at the playhead (when the timeline has focus. Same as <kbd>Ctrl+K</kbd>)</td></tr>
+          <tr data-shortcut="timeline_clip_delete"><td><kbd>Backspace</kbd></td><td>Delete the selected clip / text / audio track</td></tr>
+          <tr data-shortcut="timeline_undo"><td><kbd>Ctrl+Shift+Z</kbd></td><td>Undo timeline edit</td></tr>
+          <tr data-shortcut="timeline_redo"><td><kbd>Ctrl+Shift+Y</kbd></td><td>Redo timeline edit</td></tr>
+          <tr data-shortcut="timeline_nudge_back"><td><kbd>Ctrl+←</kbd></td><td>Move the selected element 1 frame earlier</td></tr>
+          <tr data-shortcut="timeline_nudge_fwd"><td><kbd>Ctrl+→</kbd></td><td>Move the selected element 1 frame later</td></tr>
+          <tr data-shortcut="timeline_duplicate"><td><kbd>Ctrl+D</kbd></td><td>Duplicate selected element</td></tr>
+          <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>Copy the selected element (when you last worked on the timeline)</td></tr>
+          <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>Paste the copied element (text and audio at the playhead, clips after the selected clip. When you last worked on the timeline)</td></tr>
+          <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>Delete the selected element (when you last worked on the timeline)</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="8">Page</td><td><kbd>P</kbd></td><td>Open / close person gallery</td></tr>
+          <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>Open / close media (sidebar)</td></tr>
+          <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>Open / close the text / watermark / audio / fade / transition drawer (the item you opened last)</td></tr>
+          <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>Collapse / expand timeline</td></tr>
+          <tr data-shortcut="sidebar_collapse_toggle"><td><kbd>Ctrl+Shift+B</kbd></td><td>Minimize / expand sidebar</td></tr>
+          <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>Open export dialog</td></tr>
+          <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>Open project folder</td></tr>
+          <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Import into Premiere Pro</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">Mouse</td><td>Wheel</td><td>Step forward / back a frame (10 frames with <kbd>Shift</kbd>. While a box is selected, scrolling up with <kbd>Shift</kbd> held moves forward 1 frame and carries over the shape, like <kbd>Shift</kbd>+<kbd>→</kbd>, and scrolling down moves back 1 frame. While carry-over is locked, scrolling up carries over the shape even without <kbd>Shift</kbd>)</td></tr>
+          <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+wheel</td><td>Zoom the frame in or out around the cursor position</td></tr>
+          <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+left-drag</td><td>Pan the frame (works only while zoomed in. Dragging with the middle button also works)</td></tr>
+          <tr data-shortcut="mouse_draw"><td>Left-drag</td><td>Left-drag on an empty area to draw a BBox in the shape chosen in the shape picker (rectangle / ellipse / polygon). For polygons, click to place points, and close the shape with the start point / <kbd>Enter</kbd> / double-click. A short tap clears the selection</td></tr>
+          <tr data-shortcut="mouse_dblclick_delete"><td>Double-click</td><td>Delete the BBox</td></tr>
+          <tr data-shortcut="mouse_rotate_handle"><td>Drag</td><td>Drag the rotation handle of the selected BBox to rotate it (in 15-degree steps with <kbd>Shift</kbd>)</td></tr>
+          <tr data-shortcut="mouse_vertex_drag"><td>Drag</td><td>Drag a polygon point to reshape it</td></tr>
+          <tr data-shortcut="mouse_vertex_add"><td>Double-click</td><td>Double-clicking a polygon edge also adds a point (1 point per double-click)</td></tr>
+          <tr data-shortcut="mouse_vertex_delete"><td>Click+<kbd>Delete</kbd></td><td>Click a point to select it, then press <kbd>Delete</kbd> to delete it (a polygon can't have fewer than 3 points)</td></tr>
+          <tr data-shortcut="mouse_handle_drag"><td>Drag</td><td>Drag a handle of the selected polygon to reshape the curve (<kbd>Alt</kbd> moves one side only)</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_drag"><td><kbd>Alt</kbd>+drag</td><td><kbd>Alt</kbd>+drag a polygon point to pull out handles (turns a corner into a curve)</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_click"><td><kbd>Alt</kbd>+click</td><td><kbd>Alt</kbd>+click a polygon point to turn it back into a corner</td></tr>
+          <tr data-shortcut="mouse_anchor_ctrl_click"><td><kbd>Ctrl</kbd>+click</td><td><kbd>Ctrl</kbd>+click a polygon point to delete it (the polygon won't go below 3 points)</td></tr>
+          <tr data-shortcut="mouse_edge_click_add"><td>Click</td><td>Click an edge of the selected polygon to add a point</td></tr>
+          <tr data-shortcut="mouse_vertex_marquee"><td><kbd>Shift</kbd>+left-drag</td><td>Drag around points of the selected polygon to select them together (they're grouped into one connected segment. If it's 1 point, that single point is selected; tap to clear)</td></tr>
+          <tr data-shortcut="mouse_vertex_bend"><td>Drag</td><td>Drag inside the points you selected together to bend the segment while both of its ends stay fixed (points nearer the middle move more)</td></tr>
+          <tr data-shortcut="mouse_context_menu"><td>Right-click</td><td>Track menu for the detection box (switch gender / exclude from mosaic / invert / exclusion mask ("Make exclusion mask" / "Change back to mosaic") / merge IDs / connect ("Connect from here" / "Add as waypoint" / "Connect to here") / change shape / delete). On an ID row of the timeline, the list for merging IDs. On a bar of the timeline, a menu to duplicate, copy, paste, and delete</td></tr>
+          <tr data-shortcut="mouse_eraser"><td><kbd>E</kbd>+right-drag</td><td>Delete continuously (eraser). With the eraser button in the toolbar, you can choose "Delete touched BBoxes / Delete only touched parts", "Circle / Rounded rectangle", and "Size". It keeps working if you play or step frames while holding it down</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="edit-sidebar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Sidebar and drawer" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Open the timeline editing features from the sidebar that runs vertically along the edge of the edit page. Press an item to open a drawer (a pull-out settings panel) next to it, and press the same item again to close it. You can keep working in the player and the timeline while the drawer is open.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Images" class="inline h-3.5 w-3.5 align-[-2px]" %} Media (<kbd>A</kbd>)</div>
+        <div class="kv-val">Import video, audio, and image media and add it to the timeline (<a href="#edit-media">Media</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Type" class="inline h-3.5 w-3.5 align-[-2px]" %} Text</div>
+        <div class="kv-val">Burn text into the video (<a href="#edit-text">Text</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Stamp" class="inline h-3.5 w-3.5 align-[-2px]" %} Watermark</div>
+        <div class="kv-val">Overlay an image such as a logo on the entire video (<a href="#edit-watermark">Watermark</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Music" class="inline h-3.5 w-3.5 align-[-2px]" %} Audio</div>
+        <div class="kv-val">Adjust the original video's volume and audio tracks such as background music (<a href="#edit-audio">Audio and background music</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Blend" class="inline h-3.5 w-3.5 align-[-2px]" %} Fade</div>
+        <div class="kv-val">Set the fade length in seconds for the start and end of the whole exported video, and for the start and end of the selected clip (<a href="#edit-fade">Fade</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="ArrowLeftRight" class="inline h-3.5 w-3.5 align-[-2px]" %} Transition</div>
+        <div class="kv-val">Set the type and length of the switching effect added at a join between clips. The sidebar label is also "Transition" (<a href="#edit-transition">Transition</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><kbd>T</kbd> key</div>
+        <div class="kv-val">Opens or closes the drawer of the item you opened last, from Text through Transition ("Watermark" the first time)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} Settings</div>
+        <div class="kv-val">The gear at the bottom of the sidebar opens "Settings", where you choose the default values for editing: the persistence of BBoxes you draw (this and later frames / this frame only), their shape (rectangle / ellipse / polygon) and type (mosaic / exclusion mask), whether the HUD (boxes and chips) is shown, whether the box chips are shown ("Show BBox labels (name, ID, probability)"; the boxes stay visible when it's off), the eraser's erase mode, shape, and size, whether tracking mode is on when you open the edit page, and whether the sections in the tracking queue are shown on the seek bar ("Show tracking segments on the seek bar"). "Settings" opens without darkening the screen, and you can drag its header to move it, so you can change settings while looking at the preview (it appears in the center each time you open it). Changed values are saved immediately and become the defaults when you start the app (values you switch in the toolbar while editing are not saved). "Reset to default" restores the factory values. The gear isn't shown while the sidebar is minimized</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} Position</div>
+        <div class="kv-val">The button at the end of the sidebar switches whether the sidebar and drawer are on the left or the right side of the screen</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Drawer width</div>
+        <div class="kv-val">Drag the edge of the drawer on the player side to change its width between 240 and 520px. You can also select the edge and press the <kbd>←</kbd> / <kbd>→</kbd> keys to adjust it in 16px steps. Double-click to return to the default 300px</div>
+      </div>
+    </div>
+    <p>The drawer width and its left or right position carry over the next time you open the edit page.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-sidebar-media.webp" alt="The edit page with the drawer opened by pressing &quot;Media&quot; in the sidebar. Imported media are listed" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Sidebar and drawer (with Media open)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="timeline-edit" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Editing clips" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The "Clip lane" of the timeline shows the sequence of the exported video as bars (clips). At first there is a single clip of the original video (the detection source). You can trim, split, and delete to cut unwanted parts, or add <a href="#edit-media">imported media</a> before or after it. The <a href="#edit-text">text</a> lane is above the clip lane and the <a href="#edit-audio">audio</a> lane is below it, and all lanes are laid out on the exported video's time.</p>
+    <p>Your edits show up in the preview as is and are included when you <a href="#edit-encode">export</a>. Mosaic is applied to the sections from the original video.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Select</div>
+        <div class="kv-val">Click a bar to select it. A delete button (X) appears at the top right of the bar</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Trim</div>
+        <div class="kv-val">Drag the left or right edge of a bar to trim the start or end of the clip (minimum 1 frame). The edge snaps when it gets close to a scene boundary or the playhead. Imported videos can be extended up to the length of the media, and image clips to any length</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Split (<kbd>Ctrl+K</kbd> / <kbd>Ctrl+Shift+K</kbd>)</div>
+        <div class="kv-val">Use the {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} button to the right of the timeline zoom buttons, or <kbd>Ctrl+K</kbd> (<kbd>Ctrl+Shift+K</kbd> when the timeline has focus), to split the clip in two at the playhead and split the scene at the same time. The clip bar immediately becomes two, a cut mark (diagonal lines and scissors) appears at the join, and the scene strip gets a new number. The second half is selected, so you can go on to trim or delete it. A single "Undo" restores both the clip and the scene</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Delete</div>
+        <div class="kv-val">Select a clip and press the delete button (X) on the bar, press the <kbd>Backspace</kbd> / <kbd>Delete</kbd> key, or choose "Delete" from the right-click menu. Later clips move forward to close the gap (ripple delete)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Reorder and move</div>
+        <div class="kv-val">Grab a bar and drag it left or right to reorder it according to where you drop it. It snaps to the edges of other clips, scene boundaries, and the playhead. You can also move it past the current end. Use <kbd>Ctrl+←</kbd> / <kbd>Ctrl+→</kbd> to move the selected clip 1 frame at a time</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Gap</div>
+        <div class="kv-val">If you place a clip away from the previous clip, the space between them becomes a gap (black screen, no sound), and a bar with diagonal lines shows "Gap N frames". The exported video also has a black screen with no sound there. To close a gap, drag the clip to the edge of the previous clip (it snaps to the edge)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Join</div>
+        <div class="kv-val">A {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} badge (scissors) appears at each join between clips. Press the badge to open a small menu where you choose "Fade" or "Transition". When you choose one, the corresponding tab in the sidebar (<a href="#edit-fade">Fade</a> / <a href="#edit-transition">Transition</a>) opens with that join in focus. Set the length in seconds and the type there</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Filmstrip</div>
+        <div class="kv-val">Video clip bars show thumbnails of their content (filmstrip). Image clips show the image itself. Until the thumbnails finish loading, the bars are shown in a plain color</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-timeline-clips.webp" alt="The clip lane of the timeline. The original video is split, with a media clip and a gap inserted, and the text lane above and the audio lane below" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Clip lane (trim, split, gap) and the text and audio lanes</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Right-click menu and clipboard</h3>
+    <p>Right-click a clip, text, or audio track bar to show a menu with "Duplicate", "Copy", "Paste", and "Delete". If you right-click an empty area of a lane, only "Paste" appears. The menu items and the shortcuts do the same thing.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Duplicate (<kbd>Ctrl+D</kbd>)</div>
+        <div class="kv-val">Duplicates a clip right after it, text right after its bar, and an audio track at the same position</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Copy / Paste (<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>)</div>
+        <div class="kv-val">Pastes the copied element. Text and audio tracks go at the playhead, and clips go right after the selected clip (or, if no clip is selected, the clip at the playhead). The clipboard holds only the one element you copied last, and it is separate from your computer's clipboard (it works only within the edit page)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Delete (<kbd>Delete</kbd>)</div>
+        <div class="kv-val">Deletes the selected element. If you last worked in the player, <kbd>Delete</kbd> deletes a detection box instead (<a href="#shortcuts">Shortcuts</a>)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-timeline-menu.webp" alt="The menu shown by right-clicking a clip on the timeline (Duplicate, Copy, Paste, Delete)" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Timeline right-click menu</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Undo and history</h3>
+    <p>Timeline edits (clips, text, audio, watermark, fade, transition, and adding media) are recorded in a history separate from detection box edits. Use "Undo" (<kbd>Ctrl+Shift+Z</kbd>) / "Redo" (<kbd>Ctrl+Shift+Y</kbd>) to the right of the timeline zoom buttons to go one step at a time, or choose an entry in the list from the {% include icon.html name="History" class="inline h-3.5 w-3.5 align-[-2px]" %} history button to undo everything back to that operation at once. The list shows operation names such as "Split", "Trim", "Move", and "Add text" with their times, newest first, and keeps up to 100 entries. The history is cleared when you reopen the video.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Timeline height and collapsing</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Changing the height</div>
+        <div class="kv-val">Drag the top edge of the timeline to change its height between 220 and 720px (at least 200px always remains for the player). You can also select the top edge and press the <kbd>↑</kbd> / <kbd>↓</kbd> keys to adjust it in 16px steps. Double-click to return to the default 400px</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Collapsing (<kbd>Ctrl+Shift+T</kbd>)</div>
+        <div class="kv-val">The {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} button at the right end of the toolbar collapses the timeline to just the toolbar row, so the player can use more of the screen. Press it again to expand the timeline</div>
+      </div>
+    </div>
+    <p>The height and the collapsed state carry over the next time you open the edit page.</p>
+  </div>
+</section>
+
+<section id="edit-media" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Media (importing assets)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>In the media panel, which you open with "Media" (<kbd>A</kbd>) in the sidebar, import the video, audio, and image media you want to use on the timeline. Imported media is copied into the project folder, so you can keep using it even if you move the original file (it's also included in the zip when you <a href="#project-io">export the project</a>).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Importing</div>
+        <div class="kv-val">Use "Import media" to choose the type (video / audio / image) and select a file, or drag and drop files from File Explorer onto the edit page</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Supported formats and limits</div>
+        <div class="kv-val">Video: the same formats as in <a href="#import">Loading videos</a> (up to 2GB per file) / Audio: MP3, WAV, AAC, M4A, FLAC, OGG, Opus (up to 200MB) / Image: PNG, JPEG, WebP, BMP (up to 50MB)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Adding to the timeline</div>
+        <div class="kv-val">"Add to timeline" on a media row places a video at the end as a clip, and audio at the playhead as an audio track. You can also drag media onto a lane to place it wherever you like (videos and images on the clip lane, audio on the audio lane)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Images</div>
+        <div class="kv-val">"Add to timeline" places an image as a 5-second image clip, and you can drag the edge of the bar to stretch or shrink it to any length. Choose "Set as watermark" to use the image as a logo over the entire video (<a href="#edit-watermark">Watermark</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Video audio</div>
+        <div class="kv-val">In sections where an imported video is placed as a clip, the export doesn't include that video's audio, and those sections are silent (audio tracks such as background music still play). To use the audio of an imported video, drop the same media onto the audio lane as well</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Deleting media</div>
+        <div class="kv-val">The delete button on a row deletes the media from the project. The file itself is also deleted, so you can't undo this (timeline undo doesn't restore it either). Media used on the timeline can't be deleted</div>
+      </div>
+    </div>
+    <p>Imported media isn't covered by AI detection. Mosaic isn't applied to media sections, and you can't add detection boxes or use the eraser there. For footage that needs mosaic, first load it as a video, run detection, export it, and then import the result.</p>
+  </div>
+</section>
+
+<section id="edit-text" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Text" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Use "Text" in the sidebar to burn text into the video. You can add as many text items as you like and set the display range, position, and format of each. The display range is specified with frame numbers of the exported video.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Adding</div>
+        <div class="kv-val">"Add text" adds a text item reading "Text" at the bottom center, shown throughout the video. Select it from the list to edit it</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Display range</div>
+        <div class="kv-val">Enter the start and end frame numbers. "Set to playhead" enters the playhead position. Select the "Show until the end" check box to show the text until the end of the video</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Position</div>
+        <div class="kv-val">Drag the text in the preview to move it freely to any position. To set it numerically, use "Position X / Y (%)" (the position from the top left). Choosing a "Position preset" (9 positions from top left to bottom right) aligns the text with a 2% margin from the edge</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Size</div>
+        <div class="kv-val">Specify the text height as a percentage of the video height (2 to 50%, default 6%)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Font and bold</div>
+        <div class="kv-val">There are 5 fonts: Gothic (default) / Yu Gothic / Mincho / MS Gothic / BIZ UDGothic. You can also make the text "Bold". If a font isn't installed on your computer, the text is burned in with a font of the same family, or with Gothic if none is available. Fonts without a bold style (such as MS Gothic) are rendered at normal weight</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Color, outline, and opacity</div>
+        <div class="kv-val">Text color (default: white), outline width (0 to 25% of the text height, default 8%) and color (default: black), and opacity (default 100%)</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Text lane</h3>
+    <p>Above the clip lane of the timeline, a bar showing the display range appears for each text item, one row per item (text lane). Drag a bar to move it together with its display range, or drag either end to change the start or end. Selecting a bar also selects the same text in the text panel. Right-click to duplicate, copy, paste, or delete.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-text.webp" alt="The text, font, and position set in the text panel, with the text over the preview and bars in the text lane" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Text panel and text lane</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-watermark" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Watermark" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Use "Watermark" in the sidebar to overlay one image, such as a logo, on the entire exported video. Import the image in the <a href="#edit-media">media panel</a> first (you can also set it with "Set as watermark" on an image in the media panel).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Image</div>
+        <div class="kv-val">Choose one of the imported images. "None" removes the watermark</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Position</div>
+        <div class="kv-val">Choose from 9 positions from top left to bottom right (default: bottom right)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Size</div>
+        <div class="kv-val">Specify the image width as a percentage of the video width (1 to 100%, default 15%). The aspect ratio is kept</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Opacity</div>
+        <div class="kv-val">0 to 100% (default 80%)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Horizontal margin / Vertical margin</div>
+        <div class="kv-val">Specify the distance from the edge of the video as a percentage of the video width / height (0 to 50%, default 2%)</div>
+      </div>
+    </div>
+    <p>To add a text watermark, use <a href="#edit-text">text</a> shown over the entire video.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-watermark.webp" alt="The image, position, and size set in the watermark panel, with a logo overlaid in a corner of the preview" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Watermark panel</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-audio" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Audio and background music" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Use "Audio" in the sidebar to adjust the audio of the original video and audio tracks such as background music. On export, the audio of the original video and all audio tracks are layered (mixed) into the output.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Audio of the detected video</div>
+        <div class="kv-val">Volume of the original video (-40 to +12dB) and mute</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Adding audio tracks</div>
+        <div class="kv-val">Use "Add to timeline" on audio media in the media panel (the track is placed at the playhead), or drag audio media onto the audio lane. If you place video media on the audio lane, you can use just the audio of that video</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Volume / Mute</div>
+        <div class="kv-val">-40 to +12dB for each track. Mute temporarily silences just that track</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Fade in / Fade out</div>
+        <div class="kv-val">Fades the start and end of each track over 0 to 20 seconds</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Audio lane and waveform</h3>
+    <p>Below the clip lane of the timeline, a bar appears for each audio track, one row per track (audio lane). The bar shows the waveform of the background music, so you can line things up while seeing where the music builds up or goes silent. Drag a bar to move it, or drag either end to trim the part that is used (the start and end of the song). Background music keeps playing across gaps between clips. For audio whose length is unknown, "length unknown" is shown instead of a bar.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-audio.webp" alt="The volume and fade of background music set in the audio panel, with a waveform drawn on a bar in the audio lane" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Audio panel and audio lane waveform</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-fade" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Fade" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Fade the exported video in from black and out to black. There are two kinds: "Overall fade", applied to the start and end of the whole video, and "Clip fade", applied to the start and end of each clip. For the overall fade, enter the seconds in "Fade" in the sidebar. For clip fades, enter them in the section for the selected join, which opens when you choose "Fade" from the scissors at a join, or in the "Selected clip" section, which appears when you select a clip. You enter the seconds only in the sidebar (not on the timeline).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Choosing from the scissors</div>
+        <div class="kv-val">Press the {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} badge (scissors) at a join between clips (or select it and press <kbd>Enter</kbd> / <kbd>Space</kbd>) to open a menu with 2 items, "Fade" and "Transition". Use <kbd>↑</kbd> / <kbd>↓</kbd> to move between the items, and press <kbd>Esc</kbd> or click outside the menu to close it. Choosing "Fade" opens "Fade" in the sidebar with that join in focus ("Transition" is covered in <a href="#edit-transition">Transition</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Overall fade</div>
+        <div class="kv-val">In "Fade" in the sidebar, enter the fade-in and fade-out seconds for the whole video. Once you enter them, a ramp (triangle mark) of that length appears at the ends of the ruler</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Clip fade</div>
+        <div class="kv-val">In the section for the selected join, enter the fade out of the clip before the join and the fade in of the clip after it. For the start of the first clip or the end of the last clip in the video, select the clip and enter the value in the "Selected clip" section. Once entered, a ramp appears at the bottom edge of the bar. Only the video of that clip fades (for clips of the original video, the audio fades too), and the watermark and text don't darken</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Adjusting the seconds</div>
+        <div class="kv-val">Specify the length in seconds (0 to 20 seconds; 0 seconds means no fade). The actual number of frames that fade is shown next to the seconds. Clicking a ramp (or selecting it and pressing <kbd>Enter</kbd>) also opens "Fade" in the sidebar, and if you open it from a clip's ramp, that clip is selected. "Clear" removes both fades of the selected clip or join</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Where fades can't be added</div>
+        <div class="kv-val">You can't add a clip fade to a clip end on the side of a join that has a transition. The input field in the sidebar is disabled, and the reason is shown. Remove the transition to set the fade</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Go to start / Go to end</div>
+        <div class="kv-val">The buttons in "Fade" in the sidebar move the playhead to the start / end of the video. The overall fade applies only at both ends, so use these to check how it looks in the preview</div>
+      </div>
+    </div>
+    <p>Fades appear in the preview just as they do on export. Frames where the overall fade and a clip fade overlap get both. Set fades for each audio track in <a href="#edit-audio">Audio and background music</a>, and the switching at joins between clips in <a href="#edit-transition">Transition</a>.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-join-menu.webp" alt="The scissors badge at the first join on the timeline has been pressed, and a menu with 2 items, &quot;Fade&quot; and &quot;Transition&quot;, is open just below it. A transition bar with diagonal lines appears at the join" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Menu opened from the scissors at a join (Fade / Transition)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-fade.webp" alt="&quot;Fade&quot; in the sidebar, opened by clicking the ramp of the first clip. An overall fade in of 1 second, an overall fade out of 1.5 seconds, and a fade in of 1 second for the selected clip are entered. Because the next join has a transition, the clip fade-out field can't be used and the reason is shown. Ramps appear at both ends of the ruler and at the bottom left of the first clip" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Fade settings in the sidebar (overall and selected clip)</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-transition" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Timeline editing" title="Transition" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Add a switching effect (transition) at the join between adjacent clips. Press the scissors at a join and choose "Transition" to open "Transition" in the sidebar (the drawer heading is also "Transition") with that join in focus, then choose the type and length. You enter the type and length only in the sidebar (not on the timeline). When there is only one clip, there is no join, so you can't add one. You can't add a clip <a href="#edit-fade">fade</a> to a clip end on the side of a join that has a transition.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Type</div>
+        <div class="kv-val">8 types: Fade / Dissolve / Wipe (left, right) / Slide (left, right) / Fade to black / Fade to white</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Adding a transition</div>
+        <div class="kv-val">Press the {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} badge (scissors) at a join on the timeline and choose "Transition" from the menu. The row for that join is selected in the sidebar's list of joins (each row shows the previous clip and the next clip). Choose a type ("None" removes it) and set the length from 0.1 to 5 seconds. Once added, a bar with diagonal lines appears at the join, with the same length as the overlap of the clips before and after it. Because the clips before and after overlap by that length, the whole video becomes that much shorter</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Bar and badge</div>
+        <div class="kv-val">Clicking the bar with diagonal lines (or selecting it and pressing <kbd>Enter</kbd>) opens "Transition" in the sidebar directly, without the menu. Hover over the badge to see the current type and seconds</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Joins with a gap</div>
+        <div class="kv-val">You can't add a transition at a join with a gap (black screen) in between. The reason is shown in that join's row in the sidebar (gaps aren't closed automatically). If you create a gap there after setting a transition, the transition stops taking effect, and it works again when you close the gap</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Clip fade</div>
+        <div class="kv-val">At a join that has clip fades, the row shows the note "If you add a transition, the fades at this join are ignored on export." The fades aren't removed automatically</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Preview</div>
+        <div class="kv-val">During the overlap, the clips before and after are combined and shown with the same kind of switching as on export. On the later clip's side, the preview doesn't show mosaic (it is applied on export)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-transition.webp" alt="&quot;Transition&quot; in the sidebar, opened by clicking the bar with diagonal lines at a join. Fields for choosing the type and seconds are listed for each join: the first join is Dissolve 0.5 seconds and the second is None. Scissors badges and bars with diagonal lines appear at the joins on the timeline" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Transition settings opened by clicking a join bar</figcaption>
+    </figure>
+  </div>
+</section>

@@ -1,0 +1,15 @@
+{%- comment -%}
+source: _includes/docs/store-edition.html
+hash:
+  _head: bc70f214912ee6e5
+{%- endcomment -%}
+{%- if site.data.site.distribution.store_enabled or page.lang != 'ja' -%}
+<h3 id="install-store" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">Microsoft Store 版與安裝程式版的差異</h3>
+<p>Microsoft Store 版可使用的功能、帳號與方案（包括在應用程式中訂閱方案、變更方案與取消訂閱）都與安裝程式版相同。只有以下幾點不同。</p>
+<ul>
+  <li><strong>更新</strong>：Microsoft Store 版沒有應用程式內的更新對話方塊與「檔案 ▸ 檢查更新」（<a href="#update">更新</a>）</li>
+  <li><strong>隨附的第三方軟體</strong>：由於 Microsoft Store 版的套件內容為唯讀且已簽署，因此無法就地替換隨附的 FFmpeg（可以使用依照 GPL 另行取得、修改的 FFmpeg。<a href="#licenses">隨附的第三方軟體與授權</a>）</li>
+  <li><strong>Premiere Pro 整合</strong>：要在 Microsoft Store 版中使用 Premiere Pro 整合，需要更新增效模組（0.1.21 以上版本）。執行「匯入至 Premiere Pro」，並依照指示進行更新（<a href="#premiere">Premiere Pro 整合</a>）</li>
+  <li><strong>解除安裝</strong>：確認畫面中沒有核取方塊，設定與登入資訊（<code>%USERPROFILE%\.deepmosaic</code>）以及專案資料夾都會保留。不再需要的資料夾，請在解除安裝後於檔案總管中刪除（請注意，儲存在專案資料夾中的匯出影片也會一併刪除）</li>
+</ul>
+{%- endif -%}

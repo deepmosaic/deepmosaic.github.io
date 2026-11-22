@@ -1,0 +1,131 @@
+{%- comment -%}
+source: _includes/docs/02-account.html
+hash:
+  _head: af4397bcf97f87a7
+  license: 20b22c640aa80b00
+  plan: f615556de137e0f0
+  account: 7c9f478c8192e0dc
+  support: 4f9c6c95dcbef49c
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section id="license" class="scroll-mt-24">
+  {% include docs-h2.html kicker="帳號" title="登入與授權" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>可免費使用的期間為<strong>自首次啟動當日起 {{ free_plan.free_window_days }} 天</strong>。下載後不需登入即可立即試用，累計最多 30 分鐘。免費註冊帳號後，可增加到累計 {{ free_plan.included_hours }} 小時。在同 1 台電腦上，即使以其他帳號重新註冊，免費額度合計最多仍為 2 小時。免費期間會在 {{ free_plan.free_window_days }} 天屆滿或達到累計上限時結束，以先到者為準。不需要登記信用卡。個人方案（Light）以信用卡付款（Enterprise 以請款單銀行轉帳付款。<a href="#team">組織管理</a>）。</p>
+    <p>登入後，即使是免費方案，可偵測時間也會增加；在搭載 NVIDIA GPU 的電腦上，還能以高精度模型進行偵測（未登入時會以輕量模型偵測）。</p>
+    <ul>
+      <li>免費：自首次啟動當日起 {{ free_plan.free_window_days }} 天內，可匯入累計最多 {{ free_plan.included_hours }} 小時的影片（未註冊為 30 分鐘／不需登記信用卡）</li>
+      <li>付費方案：各方案的內含時數請參閱<a href="/zh-tw/price/">價格頁面</a></li>
+    </ul>
+    <p>不會產生超額費用。額度不足時，可追加訂閱同一方案（{% include contract-limits.html %}）。</p><h3 class="mt-6 text-[16px] font-bold text-ink">登入</h3>
+    <ol>
+      <li>按下個人資料選單（右上）中的「登入」，或頁尾的「登入即可增加到 {{ free_plan.included_hours }} 小時」</li>
+      <li>按下登入畫面中的「登入」。瀏覽器會開啟驗證畫面</li>
+      <li>在驗證畫面中輸入電子郵件地址，再輸入寄到電子郵件的 6 位數驗證碼（不需要密碼）</li>
+      <li>驗證完成後，會自動返回應用程式並完成登入</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 260px">
+      <div class="kv-row">
+        <div class="kv-key">登入</div>
+        <div class="kv-val">在驗證畫面中輸入寄到電子郵件地址的 6 位數驗證碼即可登入。不需要密碼。<strong>首次使用者在第一次登入時，會自動建立免費帳號</strong></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">持有組織代碼者（企業）</div>
+        <div class="kv-val">按下後會切換到「組織登入」畫面。在「組織代碼」欄中輸入從管理員取得的組織代碼並按下「登入」，即可在登入的同時加入組織（<a href="#team">組織管理</a>）。按「← 返回」可回到原本的畫面</div>
+      </div>
+    </div>
+    <p>自 2.13 起，登入畫面的入口改為這 2 個。電子郵件地址需在瀏覽器的驗證畫面中輸入。<strong>先前以密碼使用的使用者，只要從「登入」以相同的電子郵件地址輸入驗證碼，也能以與先前相同的帳號登入</strong>（方案與使用時間會直接延續）。</p>
+    <p>登入資訊會加密儲存在電腦中，下次起會自動登入。「登出」可從個人資料選單進行。若要切換到其他帳號，請先登出再重新登入。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">同時只能在 1 台裝置上使用</h3>
+    <p>同一個帳號同時只能在 1 台裝置上啟動。在其他電腦上登入時，會顯示「您的帳號目前已在其他裝置登入」，選擇「繼續」後，先前的裝置會在下次啟動時登出。更換電腦時，也只要在新電腦上登入即可轉移（專案的搬移請參閱<a href="#project-io">專案的匯出與匯入</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">離線時</h3>
+    <p>登入與方案的確認會在啟動時透過網際網路進行，偵測、編輯與匯出則不需連線即可運作。啟動時若無法連線到驗證伺服器，畫面上方會顯示「無法連線到網路（仍可繼續使用本機功能）。」等橫幅，但仍可維持上次的登入狀態與方案繼續使用。若橫幅中出現「請重新登入。」，請從個人資料選單重新登入。</p>
+  </div>
+</section>
+
+<section id="plan" class="scroll-mt-24">
+  {% include docs-h2.html kicker="帳號" title="變更方案" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2"><p>付費方案可從 Windows 版應用程式的個人資料選單訂閱，或從<a href="/zh-tw/subscribe/">申請付費方案</a>頁面以網頁版的帳號訂閱。無論從哪裡訂閱，都會以同一個帳號同時反映到桌面版與網頁版。</p>
+    <p>在應用程式中訂閱或變更方案時，請從畫面右上角的個人資料選單進行。</p>
+    <ol>
+      <li>登入應用程式，按一下畫面右上角的個人資料圖示</li>
+      <li>選擇「方案訂閱與管理」後，若為免費方案，會開啟選擇方案的畫面；若為付費方案，會在瀏覽器中開啟付款入口網站</li>
+      <li>可在入口網站上訂閱付費方案、變更付款方式（信用卡），以及取消訂閱</li>
+      <li>完成手續後返回應用程式，授權狀態會自動更新</li>
+    </ol>
+    <p>若要在網頁版訂閱，請在<a href="/zh-tw/subscribe/">申請付費方案</a>頁面選擇方案並按下「訂閱」，再以與應用程式相同的帳號登入，就會進入信用卡付款畫面。變更付款方式、變更方案與取消訂閱，也可從網頁版畫面右上角個人資料選單中的「方案訂閱與管理」進行。</p>
+    <p>可隨時取消訂閱，不收取違約金等費用。取消訂閱後，仍可在免費額度的範圍內繼續使用。</p>
+    <p>Pro 已停止受理新的訂閱。目前訂閱中的使用者可繼續使用。變更方案與取消訂閱，可依上述付費方案的步驟進行。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">選擇方案</h3>
+    <p>Light 的卡片上會列出月費（未稅、含稅）、內含時數，以及同時啟動 1 台的條件。可重複訂閱的方案，則可選擇「訂閱帳號數」（{% include contract-limits.html %}）。按下「選擇此方案」後，會在瀏覽器中開啟付款畫面，完成後應用程式會顯示「付款完成」。Enterprise 請從「洽詢導入事宜」聯絡我們（金額採報價方式）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/plan-select.webp" alt="「選擇方案」對話方塊。顯示各方案的月費、內含時數與訂閱帳號數" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">選擇方案的畫面。金額與內含時數和<a href="/zh-tw/price/">價格頁面</a>的內容相同</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">變更與取消訂閱的生效時間</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">變更方案</div>
+        <div class="kv-val">從入口網站返回應用程式後，會顯示「已將方案變更為 〇〇。」。若需要較長時間才能反映，可在顯示「正在套用變更內容…」時等候；即使先關閉，之後也會收到通知</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">預約取消訂閱</div>
+        <div class="kv-val">會顯示「已受理您的訂閱取消申請」，個人資料選單中會顯示到期日（有效期限至 〇〇）。在期限前仍可繼續使用付費方案，也可從入口網站撤回取消訂閱</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">到期</div>
+        <div class="kv-val">超過期限後啟動時，會顯示「方案已到期」，並切換為免費方案。再次訂閱即可恢復</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">剩餘時間不多時</div>
+        <div class="kv-val">免費的可偵測時間使用達 80% 後，每次啟動時會通知 1 次「您已使用 N% 的免費可偵測時間（剩餘 …）。」（已登入時會附上「可從畫面下方的剩餘時間查看方案。」，未登入時會附上登入後可增加的時間）。按下畫面下方的剩餘時間後，已登入時會開啟選擇方案的畫面，未登入時會開啟登入畫面。以免費方案登入時，偵測完成畫面與匯出前的確認中也會顯示「剩餘 … · 查看方案」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">達到上限時</div>
+        <div class="kv-val">達到累計上限或免費期間結束後，嘗試開始偵測時會顯示提示變更方案（未登入時則提示登入）的對話方塊。進行中的偵測與匯出不會停止</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">免費期間的顯示</div>
+        <div class="kv-val">畫面下方的剩餘時間中，也會顯示免費期間的剩餘天數</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="account" class="scroll-mt-24">
+  {% include docs-h2.html kicker="帳號" title="刪除帳號" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>已登入時，可從首頁畫面頁尾右側顯示的圖示刪除帳號。此操作無法復原。</p>
+    <ol>
+      <li>若正在訂閱付費方案，請先從「方案訂閱與管理」取消訂閱（若仍有訂閱，會顯示「您仍有有效的方案訂閱」，無法刪除）</li>
+      <li>按下頁尾的「刪除帳號」圖示，在確認畫面中輸入註冊的電子郵件地址</li>
+      <li>會顯示「已刪除帳號」，並收到確認郵件。應用程式會回到未登入狀態</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">會刪除的資料</div>
+        <div class="kv-val">用於登入的帳號（驗證服務上的使用者資訊）/ 伺服器上的使用資料（專案記錄、裝置註冊、帳號的使用時間記錄）/ 此應用程式的登入狀態與方案資訊</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">會保留的資料</div>
+        <div class="kv-val">電腦上的影片與編輯資料（產出的檔案不會被刪除）/ 計費記錄等依法令須留存的記錄（以無法識別個人的形式保留）/ 以裝置為單位的匿名使用時間（用於管理免費額度。登入後使用過的裝置與帳號之間的關聯會被刪除，只有裝置的記錄會在刪除帳號後保留。隱私權政策第 10 項）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/delete-account.webp" alt="刪除帳號的確認對話方塊。列出會刪除與會保留的資料，以及電子郵件地址的輸入欄" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">刪除帳號的確認畫面</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="support" class="scroll-mt-24">
+  {% include docs-h2.html kicker="帳號" title="聯絡我們" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>問題回報與疑問，可從個人資料選單中的「聯絡我們」送出（需要登入）。電子郵件地址會自動填入目前登入的地址，輸入內文後按「送出」，會顯示「已收到您的詢問。回覆可能需要一些時間，請耐心等候。」。回覆會寄到註冊的電子郵件地址。</p>
+    <p>回報問題時，若附上頁尾顯示的版本、發生問題時的操作，以及顯示的訊息，可加快調查。無法登入時，請使用<a href="/zh-tw/contact/">聯絡表單</a>。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/feedback.webp" alt="聯絡我們對話方塊。目前登入的電子郵件地址與內文的輸入欄" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">聯絡我們對話方塊</figcaption>
+    </figure>
+  </div>
+</section>

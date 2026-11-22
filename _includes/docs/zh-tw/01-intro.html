@@ -1,0 +1,229 @@
+{%- comment -%}
+source: _includes/docs/01-intro.html
+hash:
+  _head: f97072e0e98f2a64
+  about: bac4ce37afa0da1f
+  install: dbaef673d0c653e4
+  setup: 3a8a5016951f0997
+  layout: ea774362376d4dbf
+  theme: 1ad3ef16adc8f0cd
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+{%- assign spec_storage = site.data.l10n[page.lang].spec.windows | where: "key", "儲存空間" | first -%}
+<section id="about" class="scroll-mt-24">
+  {% include docs-h2.html kicker="入門" title="簡介" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2"><p>Deepmosaic 是一款 Windows 桌面應用程式，透過 AI（深度學習）物體偵測，自動完成為影片加上馬賽克的作業。從載入影片、AI 偵測、編輯偵測結果，到匯出已燒錄馬賽克的影片，全都能在應用程式內完成。<b>本軟體是用來「加上」馬賽克的工具，不具備從已套用馬賽克的影像中去掉馬賽克，或還原原始影像的功能。</b></p>
+    <p>本頁是 Windows 版（Deepmosaic Desktop）的使用指南。關於免安裝、可直接在瀏覽器中使用的網頁版，請參閱<a href="/zh-tw/docs/web/">網頁版使用說明</a>（<a href="#web">與桌面版的差異</a>也整理在本頁末尾）。</p><h3 class="mt-6 text-[16px] font-bold text-ink">以影片了解基本使用方式</h3>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4" type="video/mp4">若無法播放影片，請從<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4">這裡</a>開啟。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">桌面版 ① 偵測篇：從匯入影片到 AI 偵測（僅日文字幕，約 1 分半鐘）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4" type="video/mp4">若無法播放影片，請從<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4">這裡</a>開啟。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">桌面版 ② 編輯篇：馬賽克的新增、修正與追蹤（僅日文字幕，約 2 分半鐘）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4" type="video/mp4">若無法播放影片，請從<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4">這裡</a>開啟。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">桌面版 ③ 匯出與訂閱篇：匯出與方案（僅日文字幕，約 1 分鐘）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4" type="video/mp4">若無法播放影片，請從<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4">這裡</a>開啟。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">桌面版 ④ 馬賽克偵測篇：找出既有馬賽克並重新套用（僅日文字幕，約 1 分鐘）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4" type="video/mp4">若無法播放影片，請從<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4">這裡</a>開啟。</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">網頁版：在瀏覽器中從載入影片、AI 偵測、編輯到匯出的基本流程（僅日文字幕，約 3～4 分鐘）</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">作業流程</h3>
+    <ol>
+      <li><a href="#import">載入影片</a> — 檔案 / 資料夾 / 拖放。載入的影片會以「專案」的形式排列在首頁畫面上</li>
+      <li><a href="#detect">以 AI 偵測</a> — 決定偵測範圍與對象（身體部位 / 男性臉部 / 女性臉部 / <a href="#detect-mosaic">既有馬賽克</a>）後開始。處理會在背景進行，並可透過<a href="#queue">佇列</a>依序處理多部影片</li>
+      <li><a href="#edit-overview">在編輯頁面確認與修正</a> — 新增或刪除偵測框、調整馬賽克的外觀、確認漏偵測</li>
+      <li><a href="#edit-encode">匯出</a> — 匯出已燒錄馬賽克的影片。也可以<a href="#premiere">將偵測結果傳給 Premiere Pro</a></li>
+    </ol>
+  </div>
+</section><section id="install" class="scroll-mt-24">
+  {% include docs-h2.html kicker="入門" title="安裝" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>請從 Microsoft Store 取得。按下方按鈕會開啟 Microsoft Store 的產品頁面，請按「取得」（或「安裝」）。也可以在 Microsoft Store 應用程式中搜尋「Deepmosaic」（若要直接在 Microsoft Store 應用程式中開啟，請按<a href="{{ site.data.lang[page.lang].app_store_protocol_link }}">這裡</a>）。不需要系統管理員權限。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">支援的作業系統</div>
+        <div class="kv-val">Windows 10（2004 版以上）/ 11（64 位元）。macOS 版正在開發中（<a href="/zh-tw/spec/">系統需求</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">應用程式語言</div>
+        <div class="kv-val">應用程式的畫面支援日文、英文與繁體中文。第一次啟動時會依 Windows 顯示語言選擇（日文、英文、中文以外的語言會使用英文），之後可在個人資料選單（右上）的語言列切換（<a href="#layout">畫面配置</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">安裝位置</div>
+        <div class="kv-val">由 Windows 管理的應用程式資料夾（無法變更）。「開始」功能表中會加入「Deepmosaic」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">更新</div>
+        <div class="kv-val">新版本由 Microsoft Store 提供並自動更新（<a href="#update">更新</a>）。設定與偵測結果會沿用。以早於 2.8.0 的版本偵測的專案，會在啟動時自動轉換為新的儲存格式（專案資料夾內的 <code>project.db</code>）。轉換期間，首頁畫面會顯示「正在將偵測結果轉換為新的儲存格式（n / N）」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">使用者授權合約</div>
+        <div class="kv-val">第一次啟動時在「開始使用之前」中確認並同意（<a href="#setup">初始設定</a>）</div>
+      </div>
+    </div>
+    <div class="my-5">{% include download-button.html dl="docs-install" paired=true %}{%- include store-button.html dl="docs-install-store" wrap="mt-3 first:mt-0" note="Windows 10（2004 版以上）/ 11（64 位元）。安裝後即可立即試用，不需登入" %}</div>
+    <h3 id="install-migrate" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">安裝程式版停止提供與移轉至 Microsoft Store 版</h3>
+    <p>從官方網站下載的安裝程式版（應用程式畫面中顯示為「exe 版」）於 2026 年 12 月 31 日之後將無法再使用。在此之前仍可繼續使用。請儘早移轉至 Microsoft Store 版。費用、使用條款與功能皆不變。</p>
+    <ul>
+      <li>會沿用的項目：專案資料夾、設定與登入資訊、AI 模型等會由 Microsoft Store 版直接沿用。方案與帳號綁定，因此可繼續使用</li>
+      <li>安裝程式版 2.18 以後，啟動時會顯示移轉公告（按「稍後」關閉後，在下次啟動前不會再顯示）。於 2027 年 1 月 1 日以後啟動時，會顯示停止提供的畫面，無法操作</li>
+      <li>在 2026 年 12 月 31 日之前，安裝程式版仍會收到應用程式內的更新</li>
+    </ul>
+    <ol>
+      <li>安裝 Microsoft Store 版（使用上方按鈕，或應用程式公告中的「從 Microsoft Store 下載」）</li>
+      <li>先結束安裝程式版，再啟動 Microsoft Store 版，確認設定與專案已沿用</li>
+      <li>確認可正常運作後，解除安裝安裝程式版（<a href="#uninstall">解除安裝</a>）。2.18 以後的安裝程式版，在已安裝 Microsoft Store 版的電腦上，不會刪除與 Microsoft Store 版共用的設定、登入資訊與 AI 模型等（確認畫面也不會顯示刪除資料的核取方塊）</li>
+    </ol>
+    <p>解除安裝 2.18 之前的安裝程式版時，請<strong>不要勾選</strong>確認畫面中的「<span lang="ja" data-ja-allowed>アプリのデータとプロジェクトフォルダを削除する</span>」（此項目以日文顯示，意為：刪除應用程式資料與專案資料夾）（與 Microsoft Store 版共用的設定、偵測結果與專案資料夾也會被刪除）。AI 模型等會被刪除，Microsoft Store 版會在下次啟動時重新取得。若先以應用程式內的更新升級至 2.18 以後，這些資料就不會被刪除。</p>
+    {%- include docs/zh-tw/store-edition.html -%}
+  </div>
+</section>
+
+<section id="setup" class="scroll-mt-24">
+  {% include docs-h2.html kicker="入門" title="初始設定" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <h3 class="mt-6 text-[16px] font-bold text-ink">同意使用者授權合約</h3>
+    <p>第一次啟動時，在初始設定之前會顯示「開始使用之前」對話方塊。確認使用者授權合約與服務條款（可從對話方塊中的連結查看全文）後，勾選「我同意使用者授權合約及服務條款」並按下「同意並繼續」，就會開始設定。選擇「不同意（結束）」時，應用程式會結束。使用者授權合約或服務條款修訂時，啟動時會顯示「使用者授權合約與服務條款已更新」，請重新同意。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">下載資料</h3>
+    <p>偵測引擎與輕量的偵測模型已包含在應用程式中。第一次啟動時，會自動下載 AI 偵測所需的模型資料（{{ spec_storage.val }}）。下載期間會顯示整體進度（%）與剩餘時間，完成前無法進行其他操作。依網路速度而定，可能需要數分鐘到十幾分鐘。</p>
+    <p>高精度模型等部分資料，會在進入首頁畫面後於背景取得。取得完成前的偵測會使用輕量模型，偵測選項畫面會顯示「正在準備高精度模型（剩餘約 N MB） — 這次將以輕量模型進行偵測。」</p>
+    <p>下載完成後，會自動執行偵測與匯出的運作測試（「運作測試中…」）。若發現問題，只會自動重新下載相關的資料。完成後會自動切換到首頁畫面，並顯示「安裝完成」（不需要按「繼續」）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">設定期間無法進行的操作</h3>
+    <p>在下載與運作測試完成前，選單中除了「檔案 ▸ 結束」與「說明」（「教學影片」除外）以外都會停用，關閉視窗與重新載入畫面的操作也會被阻止。若中途結束，下次啟動時只會取得不足的部分並繼續。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">出現錯誤時</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">完整性檢查失敗</div>
+        <div class="kv-val">取得的檔案已損毀。按「重新下載」只會重新取得相關的檔案（會自動重試，最多 2 次）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">缺少相依執行階段元件</div>
+        <div class="kv-val">找不到偵測引擎運作所需的 Windows 元件。請從「開啟支援表單」附上環境資訊（作業系統版本等）與我們聯絡</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">自我測試失敗</div>
+        <div class="kv-val">下載雖已完成，但偵測引擎的運作測試失敗。請從「開啟支援表單」附上顯示的訊息與環境資訊（作業系統版本等）與我們聯絡</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">下載沒有進展</div>
+        <div class="kv-val">確認網路連線後按「重試」，或重新啟動應用程式。已取得的檔案會直接沿用，只會重新取得不足的部分</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">準備 GPU 加速（僅限搭載 NVIDIA GPU 的電腦）</h3>
+    <p>在搭載 NVIDIA GPU 的電腦上，第一次會自動取得加速用的元件（NVIDIA 提供。下載約 1.7 GB，解壓縮後約 2.4 GB）。沒有 NVIDIA GPU 的電腦不會取得。取得完成前會以 CPU 運作（功能不變，但處理會變慢）。取得期間，畫面右下的「GPU 加速」會顯示進度，取得完成後，之後的偵測會以 GPU 執行。</p>
+    <p>取得失敗時，右下的顯示會出現「取得失敗。請按「重試」，或於下次啟動時再次取得」。請確認網路連線後按「重試」，或重新啟動應用程式（下次啟動時會自動重新取得）。關於其作為第三方軟體的處理方式，請參閱<a href="#licenses">隨附的第三方軟體與授權</a>。</p>
+  </div>
+</section>
+
+<section id="layout" class="scroll-mt-24">
+  {% include docs-h2.html kicker="入門" title="畫面配置" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>視窗由上而下依序為「選單列」、「各畫面（首頁 / 偵測選項 / 偵測 / 編輯）」與「頁尾」。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">選單列「檔案」</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選取影片檔案</div>
+        <div class="kv-val">選擇 1 部影片並載入（<a href="#import">載入影片</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">選取影片資料夾</div>
+        <div class="kv-val">一次載入資料夾第一層中的影片。想一次偵測多部影片時，請使用此項目</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">選取專案資料夾</div>
+        <div class="kv-val">變更偵測結果與編輯資料的儲存位置（<a href="#import">專案資料夾</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">匯入專案</div>
+        <div class="kv-val">匯入已匯出的專案（.zip）（<a href="#project-io">專案的匯出與匯入</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">檢查更新</div>
+        <div class="kv-val">檢查應用程式、引擎及模型與資源的更新（<a href="#update">更新</a>）。僅安裝程式版提供此項目</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">結束</div>
+        <div class="kv-val">結束應用程式。執行中的偵測會中斷，下次啟動時可從首頁畫面的「已中斷的偵測」繼續（<a href="#detect">AI 偵測</a>）。匯出請參閱<a href="#queue">佇列</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">選單列「佇列」</h3>
+    <p>在同一處查看與操作偵測與匯出的等候清單。執行中與等待中的工作數會以徽章顯示（<a href="#queue">佇列</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">選單列「說明」</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">授權</div>
+        <div class="kv-val">可查看隨附的第三方軟體與首次取得的第三方軟體的授權。清單的每一列只顯示軟體名稱，按下該列即可展開內容（<a href="#licenses">隨附的第三方軟體與授權</a>）。也可以在這裡確認使用中的版本與發行類型</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">說明文件</div>
+        <div class="kv-val">以預設瀏覽器開啟本頁</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">教學影片</div>
+        <div class="kv-val">開啟教學影片清單。按下卡片即可在應用程式內播放該影片，按「返回清單」可回到清單。付費方案也能使用（無法載入的影片不會列在清單中）。初始設定期間無法使用</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/help-tutorial-list.webp" alt="從選單列的「說明」▸「教學影片」開啟影片清單的狀態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">教學影片清單。按下卡片即可播放</figcaption>
+    </figure>
+    <p>「說明」中的「授權」與「說明文件」在初始設定期間也能使用。在早於 2.13 的版本與 2.14 中，這 2 個項目也位於個人資料選單中。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">顯示語言</h3>
+    <p>個人資料選單（右上）的「主題」列正下方，有日本語、English、繁體中文 3 個按鈕。按下後畫面的語言會立即切換，下次啟動時也會以選擇的語言顯示。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">個人資料選單（右上）</h3>
+    <p>按一下頭像（或使用者名稱）即可開啟。其中列有登入狀態與方案、登入、組織（屬於企業方案的組織時）、方案的訂閱與管理（免費方案時開啟選擇方案的畫面，付費方案時開啟付款入口網站）、聯絡我們、登出、切換主題，以及切換顯示語言。「授權」與「說明文件」位於選單列的「說明」中。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/profile-menu.webp" alt="已開啟右上角個人資料選單的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">個人資料選單。變更方案、聯絡我們、切換主題都從這裡進行</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">頁尾</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">GPU</div>
+        <div class="kv-val">用於偵測的 GPU 名稱。未能辨識時會顯示「無」，並以 CPU 處理</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">方案</div>
+        <div class="kv-val">付費（付費方案）/ Free / 未登入 / 已達上限</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">剩餘時間</div>
+        <div class="kv-val">「本月剩餘」（付費方案）或「剩餘可偵測時間」（免費）與已使用比例的長條。訂閱多份相同方案時，會加上「×N」。免費額度無限制的帳號會顯示「剩餘可偵測時間：無限制」。免費方案也會一併顯示剩餘天數（例如：「剩餘可偵測時間：1 小時 30 分鐘 · 還有 5 天」）。免費方案時這裡是按鈕，已登入時會開啟選擇方案的畫面，未登入時會開啟登入畫面。請參閱<a href="#usage">使用時間的計算方式</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">登入即可增加到 {{ free_plan.included_hours }} 小時</div>
+        <div class="kv-val">未登入時顯示的按鈕。登入（免費）後，可偵測時間的上限會從 30 分鐘增加到 {{ free_plan.included_hours }} 小時</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">專案資料夾</div>
+        <div class="kv-val">目前儲存位置的路徑</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">刪除帳號</div>
+        <div class="kv-val">已登入時顯示在首頁畫面的圖示（<a href="#account">刪除帳號</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">版本</div>
+        <div class="kv-val">目前使用的 Deepmosaic 版本（聯絡我們時請一併提供）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="theme" class="scroll-mt-24">
+  {% include docs-h2.html kicker="入門" title="主題（淺色 / 深色）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>可在個人資料選單的「主題」中切換「依照 OS 的設定」、「淺色模式」、「深色模式」。預設為依照 OS 的設定。選擇的設定會儲存下來，下次啟動時也會以相同的主題顯示。影像預覽與偵測框的顏色不受主題影響，維持不變。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home-light.webp" alt="淺色模式的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">淺色模式的首頁畫面</figcaption>
+    </figure>
+  </div>
+</section>

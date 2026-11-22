@@ -460,9 +460,10 @@ function completeSite() {
 	return files
 }
 
-test('checks/complete: 台帳の鍵は 9 本 (アプリの 8 本 + 会社概要) で、join を含む (テストの前提)', () => {
-	assert.equal(LEDGER_KEYS.length, 9)
+test('checks/complete: 台帳の鍵は 11 本 (アプリの 8 本 + 会社概要 + docs の 2 本) で、join を含む (テストの前提)', () => {
+	assert.equal(LEDGER_KEYS.length, 11)
 	assert.ok(LEDGER_KEYS.includes('/join/') && LEDGER_KEYS.includes('/company/about'))
+	assert.ok(LEDGER_KEYS.includes('/docs/') && LEDGER_KEYS.includes('/docs/web/'))
 })
 
 test('checks/complete: 正しい模型は 0 件 (陽性対照)', async () => {

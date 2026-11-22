@@ -1,0 +1,208 @@
+{%- comment -%}
+source: _includes/docs/05-export.html
+hash:
+  edit-encode: 9c59c9f24f80a6c7
+  timecode: f748d055179c7e6f
+  encode-progress: 191c6d9ebd950d22
+  project-io: bdb4091349742833
+  premiere: 534b4c27621fd5be
+  review: ec4663a63313a8de
+{%- endcomment -%}
+<section id="edit-encode" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Export" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Use the "Export" button in the edit page header (<kbd>Ctrl+Enter</kbd>) to set up the export. Press "Start" to add the job to the <a href="#queue">queue</a>, and follow its progress in a <a href="#encode-progress">dedicated window</a>. Any unsaved edits are saved automatically when the export starts.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Format</div>
+        <div class="kv-val">MP4 (H.264) / MP4 (H.265 / HEVC) / MOV (ProRes 422) / MOV (ProRes 422 HQ) / WebM (VP9) / WebM (AV1) / MKV (H.264) / MKV (H.265) / AVI (H.264; for compatibility with editing software, always exported on the CPU as H.264 without B-frames) / MOV (DV) / MOV (DNxHR SQ) / MOV (DNxHR HQ) / MOV (DNxHR HQX 10bit) / MOV (CineForm)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Resolution</div>
+        <div class="kv-val">Same as source video / 4K DCI (4096x2160) / 4K UHD (3840x2160) / QHD (2560x1440) / Full HD (1920x1080) / HD (1280x720) / SD (854x480) / SD NTSC (720x480) / SD PAL (720x576) (for DV)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Frame rate</div>
+        <div class="kv-val">Same as source video / 23.976 (film) / 24 / 25 (PAL) / 29.97 (NTSC) / 30 / 50 / 59.94 / 60 fps</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Bitrate</div>
+        <div class="kv-val">Auto (quality-based, CRF 18) / 50 / 20 / 10 / 5 / 2 Mbps. For DV / DNxHR / CineForm, the bitrate is determined by the format and can't be selected</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Timecode</div>
+        <div class="kv-val">"Burn in timecode" burns the timecode into the video. Use "Settings" to change the text size, position, color, and display format (<a href="#timecode">Timecode settings</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">NVENC GPU encoding</div>
+        <div class="kv-val">Hardware encoding on an NVIDIA GPU. With a driver older than 570, a warning appears and the video is exported on the CPU (libx264). It isn't used for formats the GPU doesn't support, such as ProRes / VP9 / AV1</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Save location</div>
+        <div class="kv-val">By default, the file name is the same as the source video (with the extension of the selected format). To prevent accidental overwrites, you're asked to confirm the folder every time</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Previous settings</div>
+        <div class="kv-val">The format, resolution, frame rate, bitrate, timecode, GPU, and save folder you used last time become the defaults for the next export</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Warning</div>
+        <div class="kv-val">If there is nothing to apply mosaic to (no detections, everything excluded, and so on), "Mosaic will not apply to any area." appears. <a href="#review">Check for missed detections</a> before you export</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Record timecode</div>
+        <div class="kv-val">Choose "None" (default), "Carry over the source video timecode", or "Custom value" to record timecode information in the exported file (it isn't drawn on the video). This is a separate setting from "Burn in timecode", which burns the timecode into the video, and you can use both together. Enter a custom value in the format <span class="font-mono text-[12.5px]">HH:MM:SS:FF</span>. Drop-frame uses the format <span class="font-mono text-[12.5px]">HH:MM:SS;FF</span> and is available only at 29.97 / 59.94 fps. If the value doesn't match the format, you're notified before the export starts. "Carry over the source video timecode" is available only when the frame rate is "Same as source video". If the source video has no timecode, the timecode starts at <span class="font-mono text-[12.5px]">00:00:00:00</span>. If the timeline starts partway through the source video, the timecode starts from the source timecode at that point. In MKV, the timecode is kept only as a tag, and some editing software doesn't read it, so MOV is recommended. This setting applies only to the current export and doesn't become the default for the next one</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/edit-encode.webp" alt="Export settings dialog" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Export settings dialog</figcaption>
+    </figure>
+    <p>The mosaic block size is adjusted automatically so that it doesn't fall below the self-regulation standard (the long side divided by 100, minimum 4px) for the export resolution. Even when you export 4K media at Full HD, the output video meets this standard.</p>
+    <p>Areas covered by an <a href="#edit-bbox">exclusion mask</a> get no mosaic and are exported as the original video, and their edges blend in with the edge feather. For a detection box that runs off the edge of the frame, mosaic is applied to the part inside the frame, based on the shape extended beyond the edge of the frame during detection (the shape isn't squashed at the edge).</p>
+    <p>"MOV (ProRes 422)" exports in ProRes 422. Its image quality (bitrate) is lower than "MOV (ProRes 422 HQ)", so the files are smaller (roughly 2/3 the size). In earlier versions, choosing "MOV (ProRes 422)" still exported in 422 HQ. If you need the same quality as before, choose "MOV (ProRes 422 HQ)".</p>
+    <p>"MOV (DV)" can export only 720×480 (29.97 fps) and 720×576 (25 fps). "MOV (DNxHR …)" and "MOV (CineForm)" can export only videos whose width and height are even numbers, and "MOV (CineForm)" also requires a width that is a multiple of 16 and a height of 32 or more (otherwise, the reason is shown when you start). All of these formats use a MOV container, and the files are dozens of times larger than H.264, so keep an eye on the free space at the save location.</p>
+  </div>
+</section>
+
+<section id="timecode" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Timecode settings" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>To open these settings, turn on "Burn in timecode" in the export settings and press "Settings" next to it. Burned-in timecode helps reviewers refer to positions in the video when you export a review copy (for example, to share with others for checking).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Text size (px)</div>
+        <div class="kv-val">Any number. Default: 64px (actual pixels at the export resolution)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Position</div>
+        <div class="kv-val">Top left / Top center / Top right / Center / Bottom left / Bottom center / Bottom right. Default: Bottom right</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Color</div>
+        <div class="kv-val">White / Black / Yellow / Green. Default: White</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Draw an outline</div>
+        <div class="kv-val">Adds an outline around the text so it stays readable on bright backgrounds (on by default)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Display format</div>
+        <div class="kv-val">HH:MM:SS:frames (default) / HH:MM:SS / HH:MM:SS.milliseconds / Frame number</div>
+      </div>
+    </div>
+    <p>When the setting is on, the timecode also appears with the same look in the edit page preview and in the <a href="#encode-progress">progress window</a> preview.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/encode-timecode.webp" alt="Timecode settings dialog opened over the export settings" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Timecode settings</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="encode-progress" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Export progress window" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>When you start an export, a progress window opens as a separate window for each job. The job continues even if you close it, and you can reopen it at any time with "Open progress in a separate window" in the <a href="#queue">queue</a>.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Preview</div>
+        <div class="kv-val">Shows the frame being exported at regular intervals (with the timecode when timecode burn-in is on). Right after the start, "Extracting the first frame…" appears, and while the job is waiting its turn, "Waiting in queue" appears</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Progress</div>
+        <div class="kv-val">The percentage complete, "Frame N / M", "Speed (fps)", and "Time remaining". When the export finishes, "Complete ✓" appears; when it's stopped, "Canceled"; and when it fails, "Failed" with the error details</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Output info</div>
+        <div class="kv-val">The output path, format, and resolution</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Pause / Resume</div>
+        <div class="kv-val">Pauses the export. Useful when you want to lighten the load on your PC while you do other work</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Cancel</div>
+        <div class="kv-val">Stops the export (it can't be resumed). The partially written file is deleted</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Close</div>
+        <div class="kv-val">Only closes the window. The job continues</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/encode-progress.webp" alt="Export progress window, showing a preview of the frame being processed, the percentage complete, speed, and time remaining" width="720" height="580" loading="lazy" decoding="async" style="max-width:720px;width:100%;height:auto;margin:0 auto" class="block rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Progress window</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="project-io" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Exporting and importing projects" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>You can package a project (detection results and edit data) into a single zip file and hand it over to another PC or another person. This lets you split the work, for example by running detection on your own PC and asking someone else to review and correct the results.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Export</h3>
+    <p>Choose "Export project" from the video card menu on the home screen, and specify where to save the file. The zip contains the source video (if it's still in the project folder), detection results, edit data, scenes, thumbnails, representative face images, and the media you added in timeline editing (video, audio, and images). If the source video can't be found, a message tells you so, and everything except the video is exported.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Import</h3>
+    <p>Choose "File ▸ Import project" from the menu and select the zip. The imported project is extracted into the current project folder and added to the home screen.</p>
+    <p>If a project with the same project ID is already on your PC, "Matching project found" appears, and you choose one of the following.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Import edits</div>
+        <div class="kv-val">Keeps your existing project as is and replaces only the edit data with the contents of the zip. Any timeline media in the zip that you don't already have is added before the replacement (your existing media isn't deleted). The edit data from before the replacement is backed up automatically. Use this to apply the changes when someone you asked to do the work sends the project back</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Add as new project</div>
+        <div class="kv-val">Assigns a new ID and adds it as a separate project. Your existing project doesn't change</div>
+      </div>
+    </div>
+    <p>While the project is being imported, the progress (extracting, then registering) is shown. On the PC that imported the exported project, you can edit it, export it, and send it to Premiere Pro right away.</p>
+  </div>
+</section>
+
+<section id="premiere" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Premiere Pro integration" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>From the video card menu or the button in the edit page header (<kbd>Ctrl+Shift+P</kbd>), you can automatically import the detected mosaic information into an Adobe Premiere Pro project. Before sending, the app automatically checks Premiere Pro itself, the plug-in, and whether Premiere Pro is running, and if anything isn't ready, it guides you through the setup steps. This feature is available only in the Windows app.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Requirements</h3>
+    <ul>
+      <li>Adobe Premiere Pro 25.3 or later is installed</li>
+      <li>You're signed in to the Creative Cloud desktop app (required to install the plug-in automatically)</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">First-time setup</h3>
+    <ol>
+      <li>Press "Import into Premiere Pro". If the plug-in isn't installed yet, "Download and install" appears. Press it to download and install the Premiere Pro plug-in (UXP) for Deepmosaic</li>
+      <li>"The plug-in has been installed." appears. If Premiere Pro was already running, restart it and then run the import again</li>
+      <li>If Premiere Pro isn't running, "Premiere Pro must be started to send the detection results." appears. Press "Start and send"</li>
+    </ol>
+    <p>If the Creative Cloud component can't be found, "The Creative Cloud component needed for automatic installation was not found" appears. Install or update the Creative Cloud desktop app, or install the plug-in manually from "Open plug-in folder".</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Sending and results</h3>
+    <p>When you send, the "Premiere Pro integration" widget appears at the bottom right of the screen and moves from "Processing in Premiere Pro…" to "Import into Premiere Pro complete". Premiere Pro then does the following to the sequence in the open project.</p>
+    <ul>
+      <li>The original clip is duplicated onto the video track above, and Premiere Pro's standard "Mosaic" effect is applied along with a "Crop" effect keyframed to match the detection boxes (1 clip per detected object)</li>
+      <li>The boxes from the detection results, the block size set by the pixel size, and the overall edge feather value are carried over. Changes made on the edit page (adding, moving, deleting, or reshaping boxes, mosaic exclusions, and exclusion masks, including existing boxes changed into exclusion masks) and "Blur strength" and "By time" in the mosaic settings are not carried over, but they are applied when you export</li>
+      <li>When many objects overlap at the same time, more tracks are added (up to 15 tracks)</li>
+    </ul>
+    <p>If any box in a project has "Invert (apply outside)" turned on in the mosaic settings, the project isn't sent (Premiere Pro can't reproduce inversion, so the outside would be output without being hidden). In that case, "Sending was stopped because N settings use Invert (apply outside). Premiere Pro can't reproduce inversion, so the outside would be exported without being covered. Turn off Invert, or export from this app." appears. Turn off inversion, or export with this app.</p>
+    <p>After the import, you can adjust the position and block size with normal Premiere Pro editing. If there's no response for a while after sending, "Timed out" appears. Check that the plug-in panel is open in Premiere Pro, then try again.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/premiere-setup.webp" alt="Guidance dialog shown when you press Import into Premiere Pro" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Premiere Pro integration guidance. The next step shown depends on what is ready</figcaption>
+    </figure>
+  </div>
+</section><section id="review" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Export and integration" title="Checking for missed detections" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>AI detection isn't perfect. Before you export, check and correct the results with the following tools. <strong>Responsibility for the final check and for how the content is expressed rests with the creator.</strong></p>
+    <ul>
+      <li><strong>Jump to missing frames</strong>: Press <kbd>[</kbd> and <kbd>]</kbd> to move back and forth between frames where detection drops out. Use this to track down a "Gap" (detections exist before and after but are missing in between). To narrow down the classes while checking (for example, body areas only), use "Filter" in the "Labels" menu on the toolbar</li>
+      <li><strong>Play blank frames only</strong> (<kbd>B</kbd>): Plays only the frames with no detections, one after another, so you can find places where something is visible but has no box</li>
+      <li><strong>Mosaic preview</strong> (<kbd>M</kbd>): Review the whole video in a view close to the exported result. You can also hide the overlay (<kbd>H</kbd>) to see only the original video</li>
+      <li><strong>Overview on the timeline</strong>: Detected segments are shown as bands by class and by tracking ID. If a band for the same ID is broken, that is where tracking was interrupted</li>
+      <li><strong>Person gallery</strong> (<kbd>P</kbd>): Review face detections grouped by person, and decide for each person whether mosaic is needed</li>
+      <li><strong>Confidence threshold</strong>: Temporarily hide low-confidence detections to sort things out, then lower the threshold to pick them up again</li>
+      <li><strong>Safety margin</strong>: Use "Size (box expansion)" to scale detection boxes between 0.5x and 2x, so you can leave a margin instead of cutting it close</li>
+      <li><strong>Add and delete manually</strong>: Where nothing was detected, add a box with <kbd>1</kbd> (1 frame) / <kbd>2</kbd> (all following frames). Delete false detections with a right-click or with the eraser (<kbd>E</kbd>+right-drag). To leave parts without mosaic, use an <a href="#edit-bbox">exclusion mask</a> with <kbd>3</kbd> / <kbd>4</kbd></li>
+    </ul>
+    <p>The cases AI struggles with (extreme backlighting, heavy motion blur, partial occlusion, compositions that are rare in the training data, and animation / 3DCG) are listed on the <a href="/en/#privacy">home page</a>. If your media falls into any of these cases, review it more carefully.</p>
+  </div>
+</section>

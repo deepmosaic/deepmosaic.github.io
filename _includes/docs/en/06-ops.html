@@ -1,0 +1,212 @@
+{%- comment -%}
+source: _includes/docs/06-ops.html
+hash:
+  update: 674b8a8acb575bcc
+  data: 7a765554184ed2fc
+  uninstall: ace89672cd475884
+  usage: fcaca34f38d68f04
+  spec: 4188ede813dd8d40
+  trouble: 4a8ff06983eb17f7
+  web: 70f28eb8f301c594
+  licenses: 80968f0a3bfde9cc
+{%- endcomment -%}
+<section id="update" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="Updates" %}<div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>In the Microsoft Store edition, new versions are delivered by Microsoft Store and installed automatically. AI models are downloaded and replaced automatically at startup when new ones are available. The following describes the installer edition (until December 31, 2026; see <a href="#install-migrate">Switching</a>).</p>
+    <p>The installer edition automatically checks for a new version when it starts. If an update is available, a dialog appears, and you choose either "Update now" or "Later".</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">When it checks automatically</div>
+        <div class="kv-val">Right after launch, then every hour, and when you return to the window. While detection or export is running, the dialog waits until it finishes</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Update now</div>
+        <div class="kv-val">Downloads and applies the new version, and the app restarts automatically. If a process is running, update after it finishes</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Later</div>
+        <div class="kv-val">No further automatic checks are made during this session. The app checks again the next time it starts</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Detection engine</div>
+        <div class="kv-val">Included in the app and updated together with it</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">AI models</div>
+        <div class="kv-val">If newer ones are available at launch, they are downloaded and replaced automatically (the same mechanism as the initial setup)</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Checking manually</h3>
+    <p>Select "File ▸ Check for updates" in the menu to see "Current", "Latest", and "Status" for three items: the app, the engine, and models and assets. When "Updates are available" is shown, you can apply them with "Update now" (the app) or "Update models and assets". "Check again" checks once more. If the app can't connect to the network, "Check your network connection, then try again." appears.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/update-check.webp" alt="The Check for updates dialog, showing the current and latest versions of the app, engine, and models and assets" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Check for updates</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="data" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="Where data is stored" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Deepmosaic does not send your videos or their detection results to a server. Everything is saved in the following locations on your PC.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Project folder</div>
+        <div class="kv-val">Default: <code>C:\Users\&lt;user name&gt;\deepmosaic</code>. Each video has its own subfolder containing a database that holds the detection results and edit data (<code>project.db</code>), thumbnails, representative face images, and more. Loaded videos themselves are not copied; they are referenced from their original location. Media added in timeline editing (video, audio, and images) is copied to the <code>assets</code> subfolder and is also included when you <a href="#project-io">export the project</a> (<a href="#import">Project folder</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key"><code>%USERPROFILE%\.deepmosaic</code></div>
+        <div class="kv-val">Settings (config.json), the catalog of the home list, folders, and tags (<code>catalog.db</code>), encrypted sign-in information, the device ID, and logs (<code>logs\app.log</code>; logs for each detection are in <code>logs\runs</code>). When you contact us, we may ask you to attach the logs</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><code>%LOCALAPPDATA%\deepmosaic</code></div>
+        <div class="kv-val">AI models, the GPU runtime (PCs with an NVIDIA GPU only), and more (about 10GB in total). Managed automatically by the initial setup and the check at launch. The detection engine and video processing tools are included in the app</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Exported videos</div>
+        <div class="kv-val">The save location you specified when exporting. The app does not manage them</div>
+      </div>
+    </div>
+    <p>If you put the project folder inside a cloud-synced folder (such as OneDrive), autosave during editing can conflict with syncing and result in "Save failed". We recommend a local folder.</p>
+    <p><code>project.db</code> and <code>catalog.db</code> are databases managed by the app. While the app is running, do not open them with other tools or modify their contents (doing so can corrupt your data). Make backups or copies after you quit the app, and if there are files whose names start with <code>project.db</code> (<code>-wal</code> / <code>-shm</code>), copy them as well.</p>
+  </div>
+</section>
+
+<section id="uninstall" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="Uninstall" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li>Open Windows "Settings" > "Apps" > "Installed apps"</li>
+      <li>Find "Deepmosaic" in the list and select "Uninstall" (administrator privileges are not required)</li>
+    </ol><p>You can uninstall the Microsoft Store edition in the same way. There is no check box on the confirmation screen, and your settings, sign-in information, and project folders are left on your PC (<a href="#install-store">Differences between the Microsoft Store edition and the installer edition</a>).</p>
+    <p>When you uninstall the installer edition, the AI models and other data (<code>%LOCALAPPDATA%\deepmosaic</code>, about 10GB) are deleted automatically (if you reinstall, they are downloaded again during the initial setup; from version 2.18, the installer edition doesn't delete them on a PC where the Microsoft Store edition is installed).If you select the "<span lang="ja" data-ja-allowed>アプリのデータとプロジェクトフォルダを削除する (中の書き出し動画も削除されます)</span>" (Delete app data and project folders; exported videos inside are also deleted. This item appears in Japanese) check box on the uninstall confirmation screen, your settings and sign-in information (<code>%USERPROFILE%\.deepmosaic</code>) and the project folders that Deepmosaic created (detection results and edit data, including any exported videos saved inside those folders) are also deleted. If you leave it unselected, these remain. Original videos and exported videos outside the project folders are not deleted. Nothing is deleted when you update.</p>
+    <p>To delete the account itself, see <a href="#account">Deleting your account</a>.</p>
+  </div>
+</section><section id="usage" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="How usage time is measured" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+      <li><strong>What is measured</strong>: The running time of each video whose detection has completed is added to a cumulative total. The remaining time appears in the footer ("Detection time remaining" on the Free plan, "Remaining this month" on paid plans)</li>
+      <li><strong>When time is counted</strong>: Time is added <strong>when detection completes</strong>. Export is not counted. Even if you narrow the detection range, the length of the whole video is counted</li>
+      <li><strong>How limits apply</strong>: There are no overage charges. If your allowance is not enough, you can add more subscriptions to the same plan ({% include contract-limits.html %}, <a href="/en/price/">pricing page</a>)</li>
+      <li><strong>Free period</strong>: You can use the Free plan for {{ free_plan.free_window_days }} days from the day you first launch a new version. It ends when you reach the total limit or the number of days, whichever comes first</li>
+      <li><strong>What is not counted</strong>: Running detection again on the sample project is not counted. Detecting the same video again is not counted twice</li>
+      <li><strong>When little time remains</strong>: Once you have used 80% of the free allowance, "You have used N% of your free available detection time (… left)." appears once each time you launch the app. When it is used up, a dialog appears when you start detection, prompting you to change your plan (or to sign in, if you are not signed in)</li>
+      <li><strong>What is sent</strong>: For measuring usage time, the only data sent is usage (seconds of video), file hash values, and the hash value of the device identifier (the device identifier is used to manage the free allowance, and it cannot be used to identify a device or an individual; while you are signed in, it is linked to your account). In addition, to investigate problems and improve the app, we send records of screen navigation and operations (recorded with fixed names; they do not include text you type), records of how the app runs such as processing times and errors, and error diagnostic reports when an error occurs (file names and paths are not sent). <strong>File names, video, and the coordinates of detection results are not sent</strong>. For details, see the <a href="/en/#privacy">data transmission disclosure</a> and the {% include ja-link.html href="/company/privacy" label="Privacy Policy" %} (Sections 12 and 13)</li>
+    </ul>
+  </div>
+</section>
+
+<section id="spec" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="System requirements" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>OS: Microsoft Windows 10, 11 (64-bit)</li>
+      <li>Memory: 8GB or more (16GB recommended)</li>
+      <li>GPU: NVIDIA GeForce RTX 3000 series or later (CUDA-capable) + the latest driver. GPUs below the RTX 3000 series have not been tested. The app also runs on the CPU on PCs without a GPU, but processing is much slower, and mosaic refinement (mosaic that follows the shape of the object) is not available. On a PC whose GPU has less than 4 GB of memory, detection uses the lightweight model, and mosaic refinement is not available. Export with NVENC requires driver 570 or later</li>
+      <li>Storage: About 10GB for AI models and other data during the initial setup</li>
+      <li>Internet connection: Required to download the models during the initial setup and for license authentication</li>
+    </ul>
+    <p>Measured processing speeds by GPU, the list of supported formats, and the status of a macOS version are on the <a href="/en/spec/">system requirements page</a>. For the requirements of the browser version, see <a href="/en/docs/web/#requirements">Supported browsers and requirements for the Web app</a>.</p>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="Troubleshooting" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <h3 class="mt-2 text-[16px] font-bold text-ink">Setup</h3>
+    <ul>
+      <li>If downloads keep repeating at startup: Check your connection, then restart the app. Only corrupted data is downloaded again automatically.</li>
+      <li>If "Integrity check failed" keeps appearing: Try "Download again", and if that doesn't help, <a href="#support">contact us</a>. If "Self-test failed" or "Missing runtime dependency" appears: Contact us from "Open support form", including the message that was shown (see the list of errors in <a href="#setup">Initial setup</a>).</li>
+      <li>If "GPU acceleration" at the bottom right of the screen shows "Failed to get the files. Press "Retry", or they will be fetched again the next time the app starts": Check your connection and press "Retry", or restart the app (it fetches the files again automatically the next time it starts). Until the download finishes, you can run detection on the CPU, but it is slower.</li>
+      <li>If "Windows security is temporarily blocking the detection engine from starting" appears: Windows features such as Smart App Control may hold a newly downloaded detection engine for a few minutes until its safety check is complete. The initial setup screen retries automatically every few minutes, so wait without closing it (you can also press "Retry now" to try again). If it still continues after a while, check the status in Windows Security app > App &amp; browser control > Smart App Control settings (you can open the Windows Security app by searching for it from the Start menu), and if that doesn't help, <a href="#support">contact us</a>. When an update brings a new detection engine, the app keeps running on the current detection engine until the check is complete, and switches automatically as soon as it is.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Sign-in and plans</h3>
+    <ul>
+      <li>If the app stays on "Opening the sign-in page…" even though you authenticated in the browser: Close it with "Cancel", then press "Sign in" again.</li>
+      <li>If the confirmation code email doesn't arrive: Check your spam folder. It can take a few minutes to arrive, so wait a little, then resend the code on the sign-in page.</li>
+      <li>If you previously signed in with a password: From "Sign in", enter the confirmation code using the same email address, and you can sign in to the same account as before (<a href="#license">Sign-in and license</a>).</li>
+      <li>If "You cannot sign in right now. Try again later." appears: The authentication service is temporarily unreachable. Wait a while, then press "Sign in" again. If it continues, contact us through the <a href="/en/contact/">contact form</a>.</li>
+      <li>If "Your account is currently signed in on another device" appears: You can use one device at a time. Press "Continue" to switch to this device (<a href="#license">Sign-in and license</a>).</li>
+      <li>If an offline banner appears at the top of the screen: Local features keep working as usual. Only when "Sign in again." appears, sign in again from the profile menu.</li>
+      <li>If a plan change isn't reflected in the app: The app checks for changes when you bring its window back to the front (if at least 1 minute has passed since the last check), when you open the detection options, and every 5 minutes while the window is visible, and reflects a change within a few seconds (while detection is running, it is reflected after detection finishes). If it still doesn't change, restart the app.</li>
+      <li>If the remaining time doesn't go down or up: Usage time is added when detection completes. The larger free allowance from signing in takes effect the next time you launch the app after signing in.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Loading and detection</h3>
+    <ul>
+      <li>If existing mosaic isn't found: Make sure you ran detection with "Mosaic" turned on in the detection options, then check the following in order: whether the blocks are too small (especially in 4K media), whether it is blur or a blacked-out area (only block-style mosaic is supported), whether it is semi-transparent overlaid mosaic or blocks in the same color as the background, and whether you ran detection on a PC without a GPU (the results can differ slightly). For ranges that weren't found, draw additional boxes on the edit page (<a href="#detect-mosaic">Finding existing mosaic and reapplying it</a>).</li>
+      <li>If detection is extremely slow: Check that the GPU is recognized (the GPU indicator in the footer) and that your NVIDIA driver is up to date. Without a GPU, the app runs in CPU mode and is slower.</li>
+      <li>If no preview appears on the detection options screen: If "Could not get the video information" is shown, the file may be corrupted or in an unsupported format. If "The video processing files needed for the preview were not found" is shown, restart the app and let it finish downloading the required files.</li>
+      <li>If "Could not create the project folder in the save location for detection results" appears (on the detection options screen, "Can't create the project folder in the save location for detection results" is shown): The problem is not the video's location: the app can't write to the save location for detection results (the project folder). Choose the save location again ("File ▸ Select a project folder" in the menu, or "Choose the project folder again" on the detection options screen), or press "Use the default location". If folder protection in your security software is blocking writes, allow Deepmosaic, and also check the folder's access permissions. If the save location is on an external drive or a network folder, check the connection (<a href="#import">Project folder</a>).</li>
+      <li>If "No videos that can be processed were found" appears even though you chose a folder: Videos in subfolders aren't included. Choose the folder that directly contains the videos.</li>
+      <li>If you can't press "Start": The model files are being checked. Wait a while, or press "Retry" if an error is shown. If you have reached your limit, you need to change your plan (or sign in, if you aren't signed in). You also can't press it if your remaining available detection time is shorter than the full length of the video; the reason is shown above "Start" (the full length is counted even if you narrow the range; see <a href="#detect-options">Detection options</a>).</li>
+      <li>If a video you ran detection on doesn't appear on the home screen: "All videos" shows only videos in the current project folder that were created with the account you are signed in with. Videos saved in another project folder can be found from the "Other folders" row in the sidebar (<a href="#import">Project folder</a>).</li>
+      <li>If "Sign in to use the high-accuracy model" appears: Once you sign in, PCs with a GPU can use the high-accuracy model from the next detection (until then, detection uses the lightweight model). If "Preparing the high-accuracy model" appears, detection uses the lightweight model until the download finishes.</li>
+      <li>If an interrupted detection can't be resumed: Check the reason shown on the card. It can't be resumed if, for example, the original video was moved or changed, or the project has been edited. In that case, "Discard" it, then load the video again (<a href="#detect">AI detection</a>).</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Editing</h3>
+    <ul>
+      <li>If "No detail data" appears: The project folder has been moved or deleted. Move it back to its original location, or remove the project from the list with "Delete project" and load the video again.</li>
+      <li>If "Save failed" appears: The app can't write to the project folder. Check the free disk space, the folder permissions, and conflicts with cloud sync (<a href="#data">Where data is stored</a>).</li>
+      <li>If the gender of a face is detected the wrong way around: You can correct it from the box's right-click menu or in the <a href="#edit-persons">Person gallery</a>.</li>
+      <li>If an ∞ box you placed manually disappears partway through: An ∞ box ends just before the frame where it was deleted. Add it again with <kbd>2</kbd> at the position where you want it to continue.</li>
+      <li>If "This project caused a problem the last time the app was launched" appears on the home screen: Press "Check". If no problem is found, you can open the project as usual. If a problem is found, try restoring it from the last saved state with "Repair".</li>
+      <li>If "N projects failed to convert" appears: Press "Retry". If it keeps happening, <a href="#support">contact us</a>.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Export</h3>
+    <ul>
+      <li>If "GPU encoding requires NVIDIA driver 570 or later" appears: Until you update the driver, the video is output using the CPU (it takes longer, but the result is the same).</li>
+      <li>If an export ends in "Failed": Check the free space and permissions of the save location, and whether the output file is open in another app. The error details appear below "Failed" in the progress window.</li>
+      <li>If "Mosaic will not apply to any area." appears: There are no detections, or all tracks have been excluded from mosaic. Check this on the edit page.</li>
+      <li>If you closed the progress window: You can reopen it with "Open progress in a separate window" under "Queue" in the menu bar.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Premiere Pro integration</h3>
+    <ul>
+      <li>If "Adobe Premiere Pro was not found on this PC." appears: Install Premiere Pro 25.3 or later.</li>
+      <li>If "The Creative Cloud component needed for automatic installation was not found" appears: Install or update the Creative Cloud desktop app and sign in to it, or install the plug-in manually from "Open plug-in folder".</li>
+      <li>If sending ends in "Timed out": Try again with the Deepmosaic panel open in Premiere Pro. Right after you install the plug-in, you need to restart Premiere Pro.</li>
+    </ul>
+    <p>If this doesn't solve the problem, contact us through <a href="#support">Contact us</a> in the app or the <a href="/en/contact/">contact form</a>. Attaching the version shown in the footer and <code>%USERPROFILE%\.deepmosaic\logs\app.log</code> (for detection problems, also the file updated around the time of that detection in <code>%USERPROFILE%\.deepmosaic\logs\runs</code>, where the log of each detection is kept) helps us investigate faster.</p>
+  </div>
+</section>
+
+<section id="web" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="About the Web app (browser version)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>There is also a Web app that requires no installation and that you can use with the same account from a browser such as Chrome or Edge. Detection, editing, and export are all processed inside the browser, and your video is not sent to a server. The detection targets and the features of the edit page are the same as in the Desktop app, but there are some differences, such as these: export formats are limited to MP4 (H.264) / WebM (VP9 / AV1), it handles videos up to about 1.9GB and in practice only mp4 / mov, and it has no Premiere Pro integration, project import, resuming of interrupted detections, or regrouping of people.</p>
+    <p>How to use it, the supported browsers, and a list of differences from the Desktop app are covered in <a href="/en/docs/web/">Web app guide</a>.{% if site.data.site.web_app.enabled %} You can open the Web app at <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a>.{% endif %}</p>
+  </div>
+</section><section id="licenses" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Maintenance" title="Bundled third-party software and licenses" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The Desktop app includes the following third-party software. In the app, you can see the same list and the full text of each license from "Help ▸ Licenses" in the menu bar. The list shows only the software names; press a row to open its details, such as the version, license, provider, and where to get the source.</p>
+    <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.3 (ffmpeg.exe / ffprobe.exe and 7 DLLs)</h3>
+    <ul>
+      <li>License: GNU General Public License version 3 (GPL v3). The full text is at <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
+      <li>Version and build: n8.1.3-27-g8dca1586f4. Built by BtbN/FFmpeg-Builds (release autobuild-2026-10-31-12-59, win64-gpl-shared-8.1). It is a shared build configured with <code>--enable-gpl --enable-version3</code>, consisting of ffmpeg.exe / ffprobe.exe and the FFmpeg DLLs that they load at run time (avcodec-62.dll, avdevice-62.dll, avfilter-11.dll, avformat-62.dll, avutil-60.dll, swresample-6.dll, and swscale-9.dll). Libraries including libx264, libx265, and libxvid (all GPL v2 or later) are statically linked into these DLLs. The list of linked libraries and their licenses can be found in "Help ▸ Licenses" in the app (ffmpeg-NOTICE.txt).</li>
+      <li>Where to get the source code (Corresponding Source under Section 6 of GPL v3): <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README-win64-gpl-shared-8.1.txt" target="_blank" rel="noopener noreferrer">https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README-win64-gpl-shared-8.1.txt</a>. We provide, free of charge, the source code of FFmpeg itself and of all libraries statically linked into its DLLs (av*.dll / sw*.dll), together with the build instructions (for as long as we distribute this FFmpeg and for at least 3 years after the last distribution). If you can't obtain it, <a href="#support">contact us</a>.</li>
+      <li>It is bundled as a separate program used to load and export videos, and it is not linked into the Deepmosaic app itself.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime 1.26</h3>
+    <ul>
+      <li>Provider: Microsoft Corporation. License: MIT License. Source: <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>Used for inference with the detection models.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Microsoft Visual C++ Redistributable</h3>
+    <ul>
+      <li>Provider: Microsoft Corporation. The runtime DLLs required to run the app (vcruntime140 / msvcp140 and others) are bundled as redistributable code as defined in the Microsoft Visual Studio license terms.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Third-party software downloaded on first launch (PCs with an NVIDIA GPU only)</h3>
+    <p>The following components are not included in the app. They are downloaded automatically from our distribution source the first time, and only on PCs with an NVIDIA GPU (about 1.7 GB to download, about 2.4 GB after extraction). They are not downloaded on PCs without an NVIDIA GPU. Until the download finishes, the app runs on the CPU, with the same features.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">NVIDIA CUDA / cuDNN and others (GPU acceleration components)</h3>
+    <ul>
+      <li>Provider: NVIDIA Corporation. On PCs with an NVIDIA GPU, NVIDIA Corporation software (CUDA / cuDNN and others) is downloaded from our distribution source in accordance with its license terms and saved on this PC. The downloaded software is used only for processing on the GPU.</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime CUDA execution provider</h3>
+    <ul>
+      <li>Provider: Microsoft Corporation. License: MIT License (the same as the bundled ONNX Runtime). Source: <a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>Downloaded together with the NVIDIA components above so that inference with the detection models can run on an NVIDIA GPU.</li>
+    </ul>
+  </div>
+</section>

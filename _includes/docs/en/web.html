@@ -1,0 +1,304 @@
+{%- comment -%}
+source: _includes/docs/web.html
+hash:
+  _head: af4397bcf97f87a7
+  about: 3d02c0ed1646ea51
+  requirements: 6503c8a47ff19463
+  start: 1e62edd448db4b35
+  diff: 832687ab5f24bb89
+  home: dcaeeedb299ca5b8
+  timeline: 5a2ed6025ecd2703
+  run: 86b78ee3a74031e2
+  export: 45037ef3206dcffc
+  storage: 85ac216abaa7bd0e
+  plan: 8dabdd81bc8fb6a3
+  team: 21707a42cd89ab73
+  trouble: 01efa3c72779e074
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section id="about" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Introduction" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The Web app is a version of Deepmosaic that you use in your browser with no installation. Everything from loading a video through AI detection, editing the detection results, and exporting a video with mosaic burned in is processed <b>entirely inside the browser on your PC</b>. Video, audio, frame images, and detection results are never sent to a server. The only communication is for signing in and checking your plan, downloading the AI models, recording usage (records of screen navigation and actions, and figures such as processing time and the format and length of videos), and reporting errors ({% include ja-link.html href="/company/privacy" label="Privacy Policy" %}).</p>
+    <p><b>The Web app is for trials.</b> It can process videos up to {{ site.data.site.web_app.trial_minutes }} minutes each. For longer videos, a large number of videos, or videos over 1.9GB, use the Desktop app (<a href="#requirements">Video length</a>). Accounts on paid plans and organization (Enterprise) accounts don't have this length limit.</p>
+    <p>Your account, plan, and free allowance hours are shared with the Desktop app. The detection targets (body areas / male faces / female faces) and the features of the edit page are also the same, so for details on each operation, see the <a href="/en/docs/">Desktop app guide</a>. This page covers the requirements and differences specific to the Web app.</p>
+    {% if site.data.site.web_app.enabled %}<p>You can open the Web app at <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a>.</p>{% endif %}
+  </div>
+</section>
+
+<section id="requirements" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Supported browsers and requirements" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>When the Web app starts, it checks your browser's features and shows guidance if anything is missing. If a required feature is missing, you can't use the Web app. If a recommended feature is missing, you can continue in "slow mode".</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Browser (required)</div>
+        <div class="kv-val">A browser that supports WebCodecs: Google Chrome / Microsoft Edge 119 or later, or Safari 17 or later. <b>We recommend the latest version of Chrome or Edge</b>. Firefox is not among the browsers we test, and detection of long videos may fail partway through</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">In-browser storage (required)</div>
+        <div class="kv-val">Copies of your videos and the models are saved in the browser (OPFS). Not available in an incognito window (the name of this window differs by browser)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">HTTPS (required)</div>
+        <div class="kv-val">Open the app from a URL that starts with https:// (normally this is already the case)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">WebGPU (recommended)</div>
+        <div class="kv-val">Runs AI detection on the GPU. Starting with 2.6.5, in environments that support WebGPU, detection is about 2.5 times faster than before, and mosaic refinement takes about 20% less time. Without WebGPU, the app runs on the CPU (WebAssembly), but it takes several times to more than ten times as long. WebGPU is normally enabled in Chrome / Edge</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Video size</div>
+        <div class="kv-val">Up to about 1.9GB per video. For a larger video, "This video (N GB) exceeds the limit the browser version can handle (about 1.9 GB). Use the desktop app." appears (N is the size of the video)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Video length</div>
+        <div class="kv-val">On the Free plan, up to {{ site.data.site.web_app.trial_minutes }} minutes per video (judged by the full length of the video). For a longer video, guidance about the Desktop app appears before detection starts, and the video is not processed. Accounts on paid plans and organization (Enterprise) accounts have no limit</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Video format</div>
+        <div class="kv-val">mp4 / mov / m4v (with a codec the browser can play, usually H.264). For MKV / WebM / AVI / WMV / FLV / TS / MPEG, a message with the name of the format appears, such as "This format (MKV) isn't supported in the browser version. Convert it to mp4 (H.264), or use the desktop app."</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Memory</div>
+        <div class="kv-val">Long and high-resolution videos use a lot of memory. We recommend closing other tabs and heavy apps before you start processing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Getting started" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li><b>Sign in.</b> You must sign in to use the Web app. Open it from "Try it in your browser" on this website's home page, and the sign-in screen appears. Press "Sign in" and enter the 6-digit confirmation code sent to your email (no password is needed; if you're new, a free account is created automatically). If you previously signed in with a password, enter a confirmation code for the same email address, and you sign in to the same account as before. Starting with 2.13, the sign-in screen has two entry points, the same as the Desktop app: "Sign in" and "Have an organization code? (business)" (<a href="/en/docs/#license">Sign-in and license</a>)</li>
+      <li><b>Get the models the first time.</b> The AI models are downloaded into the browser (the progress is shown). After that, the app uses the models already in the browser</li>
+      <li><b>Load a video.</b> Drag and drop it onto the screen, or select it from "File" in the menu. The video is copied into the browser and appears as a project on the home screen. The first time you load a video, a screen asks you to confirm that you agree to the End User License Agreement and the Terms of Service (if you don't agree, loading is canceled). Your agreement is recorded per browser, so you are asked again in a different browser</li>
+      <li><b>Set the detection options and start.</b> The detection range, detection targets, pixel size settings, and batch run are the same as in the Desktop app (<a href="/en/docs/#detect-options">Detection options</a>). Detection runs in a floating window, and you can do other things in the meantime</li>
+      <li><b>Edit and export.</b> The features and shortcuts of the edit page are the same as in the Desktop app (<a href="/en/docs/#edit-overview">Edit page</a>). For exporting, see <a href="#export">Exporting and downloading</a></li>
+    </ol>
+    <p>The first time you use the <a href="/en/docs/#edit-persons">person gallery</a>, a screen asks you to confirm an additional download of the face identification model (about 249MB). An estimated time based on your connection speed is shown, and if you stop partway, you can resume from where you left off.</p>
+  </div>
+</section>
+
+<section id="diff" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Differences from the Desktop app" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Detection</div>
+        <div class="kv-val">Nearly the same (the 3 detection targets and "Mosaic" (mosaic already in the footage), the detection range, pixel size settings (fixed / by size range / proportional by split count), batch run, and automatic scene detection). In the Web app, "Mosaic" can be used together with body areas and faces (in the Desktop app they are mutually exclusive, and turning on "Mosaic" detects only mosaic boxes; see <a href="/en/docs/#detect-mosaic">Existing mosaic</a>). <b>Starting with 2.6.1, mosaic refinement is also available in the Web app</b> (with a GPU and browser that support WebGPU shader-f16; a refinement model of about 175 MB is downloaded in addition as a related file). In environments that don't support it, mosaic is applied in rectangular boxes. As a guide, processing speed is less than half that of the Desktop app. <b>Automatic smoothing of detected box motion (trajectory) (<a href="/en/docs/#detect">AI detection</a>) is available only in the Desktop app</b> and is not part of detection in the Web app. "Import without detection" (importing a video into the edit page without detection; it doesn't use detection time; the Free plan's limit of {{ site.data.site.web_app.trial_minutes }} minutes per video applies, the same as for detection) is also available</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Edit page</div>
+        <div class="kv-val">The same (editing and drawing boxes, adding 1f / ∞ boxes and exclusion masks, the eraser with <kbd>E</kbd>+right-drag and its erase mode, shape, and size, carrying shapes over (<kbd>Shift</kbd>+<kbd>→</kbd> / <kbd>Shift</kbd>+wheel up, and locking by pressing <kbd>Shift</kbd> twice), keyframes for ∞ continuous BBoxes (<kbd>F</kbd>), placing points and connecting them by tracking (<kbd>Y</kbd> / <kbd>Shift+Y</kbd>) and the tracking queue, copying and pasting boxes (<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>), showing and filtering labels, the dotted line showing the edge feather range of the selected box, selecting and bending a range of polygon points with <kbd>Shift</kbd>+left-drag, "Invert (apply outside)" in the right-click menu, changing existing boxes into exclusion masks ("Make exclusion mask" in the right-click menu and changing a whole class at once on the By class tab), merging IDs ("Merge IDs…" in a box's right-click menu and right-clicking an ID row in the timeline, merging continuous BBoxes, and unmerging), the preview margin and mosaic that extends outside the video, the 5 tabs of the mosaic settings (including "By time"), setting priority (the setting changed last takes priority), and carrying settings over, blur strength, scenes, the person gallery, zoom, shortcuts, "Settings" in the sidebar (moving it by dragging and the setting for showing chips), and timeline editing). <b>"Regroup people" in the person gallery is available only in the Desktop app</b>. <a href="/en/docs/#edit-track">Tracking</a> (<kbd>X</kbd>) is also available, but tracking in the Web app is "Standard tracking" only ("High-accuracy tracking", which uses the GPU, is available only in the Desktop app). <b>In the Web app, the tracking queue does tracking only and doesn't refine contours</b> (in the Desktop app, contour refinement also runs after tracking on PCs with a GPU). Minimizing the sidebar (<kbd>Ctrl+Shift+B</kbd>) conflicts with the browser's shortcut for showing or hiding the bookmarks bar, so if it doesn't work, use the sidebar's minimize button. For differences in timeline editing, see <a href="#timeline">Timeline editing</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Organizing projects on the home screen</div>
+        <div class="kv-val">The same (folders and tags, and the "Other folders" row). Folders and tags are saved in the browser (<a href="#home">Organizing projects on the home screen</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Export formats</div>
+        <div class="kv-val">3 formats: MP4 (H.264) / WebM (VP9) / WebM (AV1). H.265, ProRes, DV, DNxHR, CineForm, MKV, and AVI are available only in the Desktop app. If you select a format the browser doesn't support, it switches to MP4 (H.264)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Resolution / frame rate / bitrate</div>
+        <div class="kv-val">The same 7 resolutions. The frame rate is "Same as source video" only (it can't be converted). With the bitrate set to "Auto", the bitrate is determined by the resolution</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Timecode</div>
+        <div class="kv-val">The same (burning timecode into the video, and settings for text size, position, color, and display format). Recording timecode in the file is available only in the Desktop app</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">GPU encoding</div>
+        <div class="kv-val">If the browser supports it, you can select it as "GPU encoding" (there is no NVIDIA driver requirement)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Save location</div>
+        <div class="kv-val">Specify it in the browser's save dialog, or save to the browser first and then download (<a href="#export">Exporting and downloading</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Premiere Pro integration</div>
+        <div class="kv-val">Not available (Desktop app only)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Exporting and importing projects</div>
+        <div class="kv-val">Exporting and importing zip files is not yet available in the Web app (it is in preparation). Instead, you can save the detection results and edit data with "Download detection data" (<a href="#export">Exporting and downloading</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Resuming interrupted detection</div>
+        <div class="kv-val">Not available (Desktop app only). In the Web app, a detection that stopped partway starts over from the beginning. The "Interrupted detections" and "Unused project folders" notices on the home screen are also Desktop app only</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Organization management (Enterprise)</div>
+        <div class="kv-val">The same (invites and permissions, number of accounts, invoices, and usage). For how to join, see <a href="#team">Organization management</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Updates</div>
+        <div class="kv-val">There are no automatic update notifications. Reloading the page always gives you the latest version</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Running at the same time</div>
+        <div class="kv-val">Up to 1 detection and 1 export per account (detection and export can run at the same time). Jobs running in the Desktop app also count toward this limit</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Offline</div>
+        <div class="kv-val">Checking your sign-in requires a connection, so when you're offline, the Web app shows "Can't connect to the server" and can't be used. The Desktop app can detect, edit, and export offline after setup</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Video length</div>
+        <div class="kv-val">Because the Web app is for trials, on the Free plan it processes only videos up to {{ site.data.site.web_app.trial_minutes }} minutes each (no limit for accounts on paid plans and organization accounts). The Desktop app has no limit on the length of a video (the free allowance hours are shared). For long videos or a large number of videos, use the Desktop app</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="home" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Organizing projects on the home screen" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>In the left sidebar of the home screen, you can organize projects with <b>folders</b> and <b>tags</b>. It works the same as in the Desktop app (<a href="/en/docs/#import">Loading videos</a>).</p>
+    <ul>
+      <li><b>Folders</b>: Create a folder with "New folder" at the top of the list. You can also create subfolders from a folder's menu. To move a video, use "Move to folder" in the video card's menu (which also opens with a right-click), or drag the card onto a folder in the sidebar. Drop it on "All videos" to remove it from its folder</li>
+      <li><b>Tags</b>: Add and remove tags in the tag field of the video card's menu. Select a tag under "Filter by tag" in the sidebar to show only the videos with that tag</li>
+      <li><b>"Other folders"</b>: Projects outside the current project folder are grouped in the "Other folders" row in the sidebar (the row isn't shown when there are none). Folders and tags can't be used for these projects, so to organize one, select "Switch to this project folder" in the video card's menu</li>
+    </ul>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Where folders and tags are saved</div>
+        <div class="kv-val">Folders and tags are saved in the project folder in the browser. They are not shared with the Desktop app (or with other browsers / PCs)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Multiple tabs</div>
+        <div class="kv-val">If you change folders or tags in several tabs of the same browser at the same time, the content of the tab that saved last is kept. Change them in one tab only</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Video card menu</div>
+        <div class="kv-val">"Open project folder", "Premiere Pro", and "Copy project" are not available. Instead, the Web app has "Download detection data" (<a href="#export">Exporting and downloading</a>)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Timeline editing" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Timeline editing on the edit page works the same way as in the Desktop app. Add media and effects from the left sidebar (Media / Text / Watermark / Audio / Fade / Transition), and edit clips (trim, split, reorder, and delete them), <b>gaps</b> between clips, <b>text</b>, and <b>audio</b> (background music). Your edits are reflected in the export as they are (<a href="/en/docs/#edit-overview">Edit page</a>).</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Importing media</div>
+        <div class="kv-val">Import video, audio, and image media by selecting them from "Import media" in the media panel, or by dragging and dropping files onto the edit page. Media is saved in the project in the browser, and the preview loads it from a temporary URL inside the browser (a <b>Blob URL</b>). Until the media finishes loading, such as right after you open the page, that part of the preview may appear black</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Gaps</div>
+        <div class="kv-val">Gaps placed between clips are exported as a black screen with no sound (the same result as in the Desktop app). Background music keeps playing across gaps</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Text, watermark, fade, and transition</div>
+        <div class="kv-val">The same. On export, the browser burns them into the video. The longer the transition, the more memory is used during export</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Audio</div>
+        <div class="kv-val">The audio of the original video is mixed with audio tracks such as background music and exported (AAC for MP4, Opus for WebM). The audio of imported video clips is not included in the export (the same as in the Desktop app)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Image clips</div>
+        <div class="kv-val">The same. Image media can be placed on the timeline as clips of any length and are included in the export at that length. In exports from the Web app, the transparent parts of transparent PNGs become black</div>
+      </div>
+    </div>
+    <p>Mosaic is applied to the sections of the original video that AI detected. Imported media is not a target of detection.</p>
+  </div>
+</section>
+
+<section id="run" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Run window and queue" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>The progress of detection and export and the queue appear in a <b>floating window</b> that sits on top of the screen. You can drag its header to move it. When you minimize it, it stays as a small chip in the bottom-right corner of the screen, and you can click the chip to bring it back. While it is shown, you can keep working on the home screen and the edit page.</p>
+    <p>Use "Queue" in the menu bar to check and manage the waiting list of detections and exports (reordering, pausing, and canceling work the same as in the Desktop app's <a href="/en/docs/#queue">Queue</a>). If another tab or the Desktop app is running a job with the same account, a confirmation asking whether to take it over appears when you start a new job.</p>
+  </div>
+</section>
+
+<section id="export" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Exporting and downloading" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Save with the save dialog</div>
+        <div class="kv-val">In Chrome / Edge, when an export starts, you specify the file to save to in the browser's save dialog, and the video is exported directly to it</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Save in the browser and download</div>
+        <div class="kv-val">In browsers that don't support the save dialog, the video is first exported to the project in the browser. When it finishes, press "Download" in the export progress window (or in the queue row) to save it as a file</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Download detection data</div>
+        <div class="kv-val">Saves the project's detection results and edit data as a JSON file (as a copy or backup). Media files imported in timeline editing are not included</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="storage" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Data storage and automatic deletion" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Copies of the videos you load, detection results, edit data, media imported in timeline editing, how projects are organized on the home screen (folders and tags), videos exported to the browser, and AI models are all saved in the browser's storage for this site. They are not saved on a server.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">AI models</div>
+        <div class="kv-val">Models that haven't been used for 7 days are deleted automatically (they are downloaded again the next time you run detection)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Projects</div>
+        <div class="kv-val">Not deleted automatically. Delete them from the home screen when you no longer need them. If the browser runs out of space, loading fails</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Deleting browser data</div>
+        <div class="kv-val">If you delete the site data in your browser settings, all projects and models are erased. Download anything you want to keep first</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Other browsers / PCs</div>
+        <div class="kv-val">Storage is separate for each browser. To continue working in a different environment, download the exported videos and detection data and move them over</div>
+      </div>
+    </div>
+    <p>The first time you load a video, the browser may ask for permission for "persistent storage". If you allow it, the browser is less likely to delete the data automatically when it runs low on space.</p>
+  </div>
+</section>
+
+<section id="plan" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Plans and usage time" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Your account, plan, and usage time are shared with the Desktop app. With a free account, you can detect up to {{ free_plan.included_hours }} hours of video in total for {{ free_plan.free_window_days }} days from the day you first use the Desktop app or the Web app (the free period is shared with the Desktop app), and the remaining time is shown in the footer. Usage time is added when detection completes; export is not counted. For the hours included in paid plans and their prices, see the <a href="/en/price/">pricing page</a>.</p>
+    <p>Subscribe to a plan, change it, or cancel your subscription from the profile menu. The payment page opens in a new tab, and when you finish and return to the original tab, the change is applied automatically. For Enterprise, use "Ask about deployment" on the plan selection screen to contact us on the Enterprise inquiry page (in a new tab).</p>
+  </div>
+</section>
+
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Organization management (Enterprise)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>With an account that has joined an Enterprise organization, you can use "Organization" in the profile menu to invite members and manage their permissions, check the organization code, and view usage on the same screens as the Desktop app (to change the number of accounts or cancel your subscription, contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a>). For permissions and the steps to get started, see <a href="/en/docs/#team">Organization management (Enterprise)</a> in the Desktop app guide.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Joining with an organization code</div>
+        <div class="kv-val">On the sign-in screen, press "Have an organization code? (business)", enter the code in the "Organization code" field, and then press "Sign in". When you finish authentication and return to this page, you join the organization. You can't join from the menu after signing in, so if you are already signed in, sign out first and then enter the code again. An account can belong to only one organization, and you can't join if you already belong to another organization</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Viewing invoices / PDF</div>
+        <div class="kv-val">"View" and "PDF" in "Invoices" open in a new browser tab. For contracts paid by bank transfer, we send invoices by email (they don't appear in "Invoices")</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Web app" title="Troubleshooting" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>If "Open this page from a URL that starts with https://." appears: Change the URL in the address bar to https://app.deepmosaic.co.jp/.</li>
+      <li>If a message says your browser is missing features: Update Chrome / Edge to the latest version. Storage can't be used in an incognito window (the name differs by browser), so open the app in a normal window.</li>
+      <li>If "Can't connect to the server" appears: Check your network connection and press "Retry".</li>
+      <li>If detection is extremely slow: WebGPU may be disabled. Update your browser to the latest version and update your graphics driver. Closing other tabs and heavy apps also helps.</li>
+      <li>If you can't load a video: For videos over about 1.9GB, use the Desktop app. For formats other than mp4 / mov / m4v, convert the video to mp4 (H.264), or use the Desktop app.</li>
+      <li>If the save dialog for export doesn't appear: The video is saved in the browser. When the export finishes, press "Download" in the export progress window or in the queue.</li>
+      <li>If the problem isn't solved: Contact us through "Contact us" in the profile menu, and include your browser type and version.</li>
+    </ul>
+  </div>
+</section>

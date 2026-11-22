@@ -1,0 +1,85 @@
+# `_data/docs_toc.yml` (docs の目次) の英語の文だけ。ja と同じ入れ子・同じ id・同じ順で、群の名前 (title) と項目の名前 (label) を訳す。
+# id は ja と同じ値を写す (本文の `<section id>` とアプリ・他のページの深いリンクが使う)。
+# ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/docs_toc.yml"
+_source_hash: "5ef0c421981a51689f2853c9b55073d55356eca4c86987fa0bfa919a479dca07"
+desktop:
+  - title: "Getting started"
+    items:
+      - { id: about, label: "Introduction" }
+      - { id: install, label: "Installation" }
+      - { id: setup, label: "Initial setup" }
+      - { id: layout, label: "Screen layout" }
+      - { id: theme, label: "Theme" }
+  - title: "Account and plans"
+    items:
+      - { id: license, label: "Sign-in and license" }
+      - { id: plan, label: "Changing your plan" }
+      - { id: account, label: "Deleting your account" }
+      - { id: support, label: "Contact us" }
+  - title: "Loading and detection"
+    items:
+      - { id: import, label: "Loading videos" }
+      - { id: detect-options, label: "Detection options" }
+      - { id: detect-mosaic, label: "Existing mosaic" }
+      - { id: batch, label: "Batch run" }
+      - { id: detect, label: "AI detection" }
+      - { id: queue, label: "Queue" }
+  - title: "Editing"
+    items:
+      - { id: edit-overview, label: "Edit page" }
+      - { id: edit-player, label: "Player and timeline" }
+      - { id: edit-zoom, label: "Zoom and pan" }
+      - { id: edit-bbox, label: "Adding detection boxes" }
+      - { id: edit-track, label: "Tracking and keyframes" }
+      - { id: edit-scenes, label: "Scenes (cuts)" }
+      - { id: edit-toolbar, label: "Edit toolbar" }
+      - { id: edit-mosaic, label: "Mosaic settings panel" }
+      - { id: edit-persons, label: "Person gallery" }
+      - { id: shortcuts, label: "Keyboard shortcuts" }
+  - title: "Timeline editing"
+    items:
+      - { id: edit-sidebar, label: "Sidebar and drawer" }
+      - { id: timeline-edit, label: "Editing clips" }
+      - { id: edit-media, label: "Media (importing assets)" }
+      - { id: edit-text, label: "Text" }
+      - { id: edit-watermark, label: "Watermark" }
+      - { id: edit-audio, label: "Audio and background music" }
+      - { id: edit-fade, label: "Fade" }
+      - { id: edit-transition, label: "Transition" }
+  - title: "Export and integration"
+    items:
+      - { id: edit-encode, label: "Export" }
+      - { id: timecode, label: "Timecode settings" }
+      - { id: encode-progress, label: "Progress window" }
+      - { id: project-io, label: "Exporting and importing projects" }
+      - { id: premiere, label: "Premiere Pro integration" }
+      - { id: review, label: "Checking for missed detections" }
+  - title: "Maintenance"
+    items:
+      - { id: update, label: "Updates" }
+      - { id: data, label: "Where data is stored" }
+      - { id: uninstall, label: "Uninstall" }
+      - { id: usage, label: "How usage time is measured" }
+      - { id: spec, label: "System requirements" }
+      - { id: trouble, label: "Troubleshooting" }
+      - { id: web, label: "About the Web app" }
+      - { id: licenses, label: "Licenses of bundled software" }
+  - title: "Organization"
+    items:
+      - { id: team, label: "Organization management (Enterprise)" }
+web:
+  - title: "Web app"
+    items:
+      - { id: about, label: "Introduction" }
+      - { id: requirements, label: "Supported browsers and requirements" }
+      - { id: start, label: "Getting started" }
+      - { id: diff, label: "Differences from the Desktop app" }
+      - { id: home, label: "Organizing projects on the home screen" }
+      - { id: timeline, label: "Timeline editing" }
+      - { id: run, label: "Run window and queue" }
+      - { id: export, label: "Exporting and downloading" }
+      - { id: storage, label: "Data storage and automatic deletion" }
+      - { id: plan, label: "Plans and usage time" }
+      - { id: team, label: "Organization management (Enterprise)" }
+      - { id: trouble, label: "Troubleshooting" }

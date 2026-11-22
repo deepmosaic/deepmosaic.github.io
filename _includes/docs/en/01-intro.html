@@ -1,0 +1,229 @@
+{%- comment -%}
+source: _includes/docs/01-intro.html
+hash:
+  _head: f97072e0e98f2a64
+  about: bac4ce37afa0da1f
+  install: dbaef673d0c653e4
+  setup: 3a8a5016951f0997
+  layout: ea774362376d4dbf
+  theme: 1ad3ef16adc8f0cd
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+{%- assign spec_storage = site.data.l10n[page.lang].spec.windows | where: "key", "Storage" | first -%}
+<section id="about" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Getting started" title="Introduction" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2"><p>Deepmosaic is a Windows desktop application that automates adding mosaic to videos with AI (deep learning) object detection. Everything from loading a video to AI detection, editing the detection results, and exporting a video with the mosaic burned in happens inside the app. <b>This software is for applying (adding) mosaic. It has no feature for taking off mosaic from footage that already has mosaic applied, or for restoring the original footage.</b></p>
+    <p>This page is the guide to the Windows app (Deepmosaic Desktop). For the Web app, which runs in your browser with no installation, see the <a href="/en/docs/web/">Web app guide</a> (the <a href="#web">differences from the Desktop app</a> are also summarized at the end of this page).</p><h3 class="mt-6 text-[16px] font-bold text-ink">Video guides to the basics</h3>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4" type="video/mp4">If the video doesn't play, open it <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-1-detect.mp4">here</a>.</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop app (1) Detection: from loading a video to AI detection (Japanese subtitles only, about 1.5 min)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4" type="video/mp4">If the video doesn't play, open it <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-2-edit.mp4">here</a>.</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop app (2) Editing: adding, correcting, and tracking mosaic (Japanese subtitles only, about 2.5 min)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4" type="video/mp4">If the video doesn't play, open it <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-3-export.mp4">here</a>.</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop app (3) Export and subscription: exporting and plans (Japanese subtitles only, about 1 min)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4" type="video/mp4">If the video doesn't play, open it <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-desktop-4-mosaic.mp4">here</a>.</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Desktop app (4) Mosaic detection: finding existing mosaic and reapplying it (Japanese subtitles only, about 1 min)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <video controls preload="none" playsinline poster="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.png" width="960" height="540" class="w-full h-auto rounded-[10px] border border-edge"><source src="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4" type="video/mp4">If the video doesn't play, open it <a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/media/tutorial/tutorial-web-basic.mp4">here</a>.</video>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Web app: the basic flow in your browser, from loading a video to AI detection, editing, and export (Japanese subtitles only, about 3 to 4 min)</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Workflow</h3>
+    <ol>
+      <li><a href="#import">Load videos</a>: from a file, a folder, or by drag and drop. Loaded videos appear on the home screen as "projects"</li>
+      <li><a href="#detect">Detect with AI</a>: choose the detection range and targets (body areas / male faces / female faces / <a href="#detect-mosaic">existing mosaic</a>) and start. Processing runs in the background, and the <a href="#queue">queue</a> lets you process multiple videos one after another</li>
+      <li><a href="#edit-overview">Review and correct on the edit page</a>: add or delete detection boxes, adjust how the mosaic looks, and check for missed detections</li>
+      <li><a href="#edit-encode">Export</a>: export a video with the mosaic burned in. You can also <a href="#premiere">hand the detection results over to Premiere Pro</a></li>
+    </ol>
+  </div>
+</section><section id="install" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Getting started" title="Installation" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Get it from Microsoft Store. The button below opens the Microsoft Store listing page; select "Get" (or "Install"). You can also find it by searching for "Deepmosaic" in the Microsoft Store app (to open it directly in the Microsoft Store app, <a href="{{ site.data.lang[page.lang].app_store_protocol_link }}">click here</a>). Administrator rights aren't required.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Supported OS</div>
+        <div class="kv-val">Windows 10 (version 2004 or later) / 11 (64-bit). A macOS version is in development (<a href="/en/spec/">System requirements</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">App language</div>
+        <div class="kv-val">The app's screens are available in Japanese, English, and Traditional Chinese. On first launch, the language is chosen to match the Windows display language (English for any language other than Japanese, English, or Chinese), and you can switch it in the language row of the profile menu (top right) (<a href="#layout">Screen layout</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Install location</div>
+        <div class="kv-val">An app folder managed by Windows (can't be changed). "Deepmosaic" is added to the Start menu</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Updates</div>
+        <div class="kv-val">New versions are delivered by Microsoft Store and installed automatically (<a href="#update">Updates</a>). Your settings and detection results are kept. Projects detected with versions earlier than 2.8.0 are automatically converted to the new save format (<code>project.db</code> in the project folder) when the app starts. During the conversion, the home screen shows "Converting detection results to the new save format (n / N)"</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">End User License Agreement</div>
+        <div class="kv-val">You review and accept it in "Before you start" when you first launch the app (<a href="#setup">Initial setup</a>)</div>
+      </div>
+    </div>
+    <div class="my-5">{% include download-button.html dl="docs-install" paired=true %}{%- include store-button.html dl="docs-install-store" wrap="mt-3 first:mt-0" note="Windows 10 (version 2004 or later) / 11 (64-bit). Try it right after installing, with no sign-in required" %}</div>
+    <h3 id="install-migrate" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">End of the installer edition and switching to the Microsoft Store edition</h3>
+    <p>The installer edition downloaded from our website (shown as the "installer (exe) version" in the app) will stop working after December 31, 2026. You can keep using it until then. Please switch to the Microsoft Store edition soon. Pricing, terms of use, and features stay the same.</p>
+    <ul>
+      <li>What carries over: The Microsoft Store edition uses your existing project folders, settings and sign-in information, and AI models and other data as is. Your plan is tied to your account, so you can keep using it</li>
+      <li>From version 2.18 of the installer edition, a notice about switching appears when the app starts (if you close it with "Later", it doesn't appear again until the next launch). If you start it on or after January 1, 2027, a "discontinued" screen appears and you can't use the app</li>
+      <li>Until December 31, 2026, the installer edition still receives in-app updates</li>
+    </ul>
+    <ol>
+      <li>Install the Microsoft Store edition (with the button above, or "Download from Microsoft Store" in the app's notice)</li>
+      <li>Quit the installer edition, then start the Microsoft Store edition and check that your settings and projects have carried over</li>
+      <li>Once it works properly, uninstall the installer edition (<a href="#uninstall">Uninstall</a>). From version 2.18, the installer edition doesn't delete the settings, sign-in information, and AI models and other data shared with the Microsoft Store edition on a PC where the Microsoft Store edition is installed (the check box for deleting data isn't shown either)</li>
+    </ol>
+    <p>If you uninstall an installer edition older than 2.18, <strong>do not select</strong> the "<span lang="ja" data-ja-allowed>アプリのデータとプロジェクトフォルダを削除する</span>" (Delete app data and project folders. This item appears in Japanese) check box on the confirmation screen (doing so also deletes the settings, detection results, and project folders shared with the Microsoft Store edition). The AI models and other data are deleted, and the Microsoft Store edition downloads them again the next time it starts. If you first update to 2.18 or later with the in-app update, they aren't deleted.</p>
+    {%- include docs/en/store-edition.html -%}
+  </div>
+</section>
+
+<section id="setup" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Getting started" title="Initial setup" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Agreeing to the End User License Agreement</h3>
+    <p>On first launch, the "Before you start" dialog appears before the initial setup. Review the End User License Agreement and the Terms of Service (you can read the full text from the links in the dialog), select the "I agree to the End User License Agreement and the Terms of Service" check box, and press "Agree and continue" to start the setup. If you choose "Decline (quit)", the app quits. When the End User License Agreement or the Terms of Service is revised, "The End User License Agreement and Terms of Service have been updated" appears when the app starts, so agree to them again.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Downloading data</h3>
+    <p>The detection engine and the lightweight detection model are included in the app. On first launch, the model data needed for AI detection is downloaded automatically ({{ spec_storage.val }}). During the download, the overall progress (%) and the time remaining are shown, and you can't do anything else until it finishes. Depending on your connection speed, it can take anywhere from a few minutes to more than ten minutes.</p>
+    <p>Some data, such as the high-accuracy model, is fetched in the background after you reach the home screen. Until that finishes, detection uses the lightweight model, and the detection options screen shows "Preparing the high-accuracy model (about N MB left) — the lightweight model will be used for detection this time."</p>
+    <p>When the download finishes, a test run of detection and export ("Test run in progress…") starts automatically. If a problem is found, only the affected data is downloaded again automatically. When it is done, the app moves to the home screen on its own and shows "Installation complete" (you don't need to press "Continue").</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">What you can't do during setup</h3>
+    <p>Until the download and the test run finish, all menu items except "File ▸ Quit" and "Help" (other than "Tutorials") are disabled, and closing the window or reloading the screen is also blocked. If you quit partway through, the app fetches only the missing data and resumes the next time it starts.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">If an error appears</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Integrity check failed</div>
+        <div class="kv-val">A downloaded file is corrupted. Press "Download again" to fetch only the affected file again (the app retries automatically up to 2 times)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Missing runtime dependency</div>
+        <div class="kv-val">A Windows component that the detection engine needs was not found. Contact us through "Open support form", and include details of your environment (such as the OS version)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Self-test failed</div>
+        <div class="kv-val">The download finished, but the test run of the detection engine failed. Contact us through "Open support form", and include the message that was shown and details of your environment (such as the OS version)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Download is stuck</div>
+        <div class="kv-val">Check your connection and press "Retry", or restart the app. Files that were already downloaded are used as they are, and only the missing ones are downloaded again</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Preparing GPU acceleration (PCs with an NVIDIA GPU only)</h3>
+    <p>On PCs with an NVIDIA GPU, the acceleration components (from NVIDIA; about 1.7 GB to download, about 2.4 GB after extraction) are fetched automatically the first time. They are not fetched on PCs without an NVIDIA GPU. Until they are fetched, the app runs on the CPU (the features are the same, but processing is slower). While they are being fetched, the progress appears in "GPU acceleration" at the bottom right of the screen, and once they are fetched, later detections run on the GPU.</p>
+    <p>If fetching fails, the indicator at the bottom right shows 'Failed to get the files. Press "Retry", or they will be fetched again the next time the app starts'. Check your connection and press "Retry", or restart the app (the files are fetched again automatically the next time it starts). For how these are handled as third-party software, see <a href="#licenses">Bundled third-party software and licenses</a>.</p>
+  </div>
+</section>
+
+<section id="layout" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Getting started" title="Screen layout" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>From top to bottom, the window consists of the menu bar, the screens (Home / Detection options / Detection / Edit), and the footer.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Menu bar: "File"</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Select a video file</div>
+        <div class="kv-val">Selects one video and loads it (<a href="#import">Loading videos</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Select a video folder</div>
+        <div class="kv-val">Loads all the videos directly inside a folder at once. Use this when you want to detect multiple videos together</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Select a project folder</div>
+        <div class="kv-val">Changes the save location for detection results and edit data (<a href="#import">Project folder</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Import project</div>
+        <div class="kv-val">Imports an exported project (.zip) (<a href="#project-io">Exporting and importing projects</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Check for updates</div>
+        <div class="kv-val">Checks for updates to the app, the engine, and the models and assets (<a href="#update">Updates</a>). Available only in the installer edition</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Quit</div>
+        <div class="kv-val">Quits the app. Any detection in progress is interrupted, and the next time the app starts, you can resume it from "Interrupted detections" on the home screen (<a href="#detect">AI detection</a>). For exports, see <a href="#queue">Queue</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Menu bar: "Queue"</h3>
+    <p>Lets you check and manage the waiting list of detection and export jobs in one place. A badge shows the number of running and waiting jobs (<a href="#queue">Queue</a>).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Menu bar: "Help"</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Licenses</div>
+        <div class="kv-val">Shows the licenses of the bundled third-party software and the third-party software downloaded on first launch. The list shows only the software names; press a row to open its details (<a href="#licenses">Bundled third-party software and licenses</a>). You can also check your version and its distribution type here</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Documentation</div>
+        <div class="kv-val">Opens this page in your default browser</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Tutorials</div>
+        <div class="kv-val">Opens the list of tutorial videos. Select a card to play that video in the app, and select "Back to list" to go back to the list. You can use it on paid plans too (videos that can't be loaded aren't listed). Not available during the initial setup</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/help-tutorial-list.webp" alt="The list of videos opened from Help ▸ Tutorials in the menu bar" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The list of tutorial videos. Select a card to play it</figcaption>
+    </figure>
+    <p>"Licenses" and "Documentation" in "Help" are available even during the initial setup. In versions before 2.13 and in 2.14, these two items were also in the profile menu.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Display language</h3>
+    <p>Just below the "Theme" row in the profile menu (top right), there are 3 buttons: Japanese, English, and Traditional Chinese, each written in its own language. When you press one, the screen language switches immediately, and the app also uses the selected language the next time it starts.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Profile menu (top right)</h3>
+    <p>Click your avatar (or user name) to open it. It shows your sign-in status and plan, and has items to sign in, open your organization (when you belong to an organization on a business plan), manage your plan subscription (the plan selection screen opens on the Free plan, and the payment portal opens on a paid plan), contact us, sign out, switch the theme, and switch the display language. "Licenses" and "Documentation" are in "Help" on the menu bar.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/profile-menu.webp" alt="The profile menu opened at the top right of the home screen" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The profile menu. Change your plan, contact us, and switch the theme from here</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Footer</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">GPU</div>
+        <div class="kv-val">The name of the GPU used for detection. If no GPU is recognized, "None" is shown and processing runs on the CPU</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Plan</div>
+        <div class="kv-val">Paid (on a paid plan) / Free / Not signed in / Limit reached (you have reached your limit)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Time remaining</div>
+        <div class="kv-val">"Remaining this month" (paid plan) or "Detection time remaining" (free), with a bar showing the percentage used. If you have more than one subscription to the same plan, "×N" is added. For an account with an unlimited free allowance, "Detection time remaining: unlimited" is shown. On the Free plan, the number of days left is also shown (for example, "Detection time remaining: 1 h 30 min · 5 days left"). On the Free plan, this works as a button: it opens the plan selection screen when you're signed in, and the sign-in screen when you're not. See <a href="#usage">How usage time is measured</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Sign in to get {{ free_plan.included_hours }} h</div>
+        <div class="kv-val">A button shown when you're not signed in. Signing in (free) raises the limit on available detection time from 30 min to {{ free_plan.included_hours }} hours</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Project folder</div>
+        <div class="kv-val">The path of the current save location</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Delete account</div>
+        <div class="kv-val">An icon shown on the home screen when you're signed in (<a href="#account">Deleting your account</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Version</div>
+        <div class="kv-val">The version of Deepmosaic you're using (include it when you contact us)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="theme" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Getting started" title="Theme (light / dark)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Use "Theme" in the profile menu to switch between "Use OS setting", "Light mode", and "Dark mode". By default, the app follows the OS setting. Your choice is saved, and the app uses the same theme the next time it starts. The video preview and the detection box colors stay the same regardless of the theme.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home-light.webp" alt="The home screen in light mode" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The home screen in light mode</figcaption>
+    </figure>
+  </div>
+</section>

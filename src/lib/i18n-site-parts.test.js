@@ -418,3 +418,16 @@ test('checks/parts: 価格の数値の違い・zh-tw の ¥・日圓の欠け・
 	const missing = runParts({ 'index.html': JA_PAGE, 'en/index.html': `<html>${cta(' data-i18n-allow="mosaic_removal"')}</html>` })
 	assert.ok(missing.some((e) => /料金カード/.test(e)), missing.join('\n'))
 })
+
+test('checks/parts: 英中の docs はインストールの節のボタン (docs-install・docs-install-store) だけを比べず、ほかの data-dl の違いは捕まえる', () => {
+	const jaDocs = '<html><a data-dl="header">x</a><a data-dl="docs-install">x</a><a data-dl="footer">x</a></html>'
+	const intlDocs = '<html><a data-dl="header">x</a><a data-dl="docs-install-store">x</a><a data-dl="footer">x</a></html>'
+	assert.deepEqual(runParts({ 'docs/index.html': jaDocs, 'en/docs/index.html': intlDocs, 'zh-tw/docs/index.html': intlDocs }), [])
+
+	const other = runParts({ 'docs/index.html': jaDocs, 'en/docs/index.html': intlDocs.replace('data-dl="footer"', 'data-dl="docs-footer"') })
+	assert.ok(other.some((e) => /en\/docs\/index\.html.*data-dl/.test(e)), other.join('\n'))
+
+	// docs 以外のページでは、同じボタンの違いも捕まえる
+	const price = runParts({ 'price/index.html': jaDocs, 'en/price/index.html': intlDocs })
+	assert.ok(price.some((e) => /en\/price\/index\.html.*data-dl/.test(e)), price.join('\n'))
+})

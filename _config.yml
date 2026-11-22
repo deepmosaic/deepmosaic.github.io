@@ -52,8 +52,12 @@ defaults:
 # sitemap の lastmod (_plugins/last_modified_at.rb): ページのソースのパス → 追加で見るパス (本文やデータを別のファイルに持つページ)。
 # そのページの lastmod は、自分のファイルと追加のパスのうち一番新しいコミットの日時になる
 last_modified_at_extra_paths:
-  docs/index.html: [_includes/docs]
+  docs/index.html: [_includes/docs, ":(exclude)_includes/docs/en", ":(exclude)_includes/docs/zh-tw"]
   docs/web/index.html: [_includes/docs/web.html]
+  en/docs/index.html: [_includes/docs/en, _data/l10n/en/docs_toc.yml]
+  en/docs/web/index.html: [_includes/docs/en/web.html, _data/l10n/en/docs_toc.yml]
+  zh-tw/docs/index.html: [_includes/docs/zh-tw, _data/l10n/zh-tw/docs_toc.yml]
+  zh-tw/docs/web/index.html: [_includes/docs/zh-tw/web.html, _data/l10n/zh-tw/docs_toc.yml]
   price/index.html: [_data/plans.yml]
   subscribe/index.html: [_data/plans.yml]
   en/price/index.html: [_data/plans.yml, _data/l10n/en/plans.yml]

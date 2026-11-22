@@ -1,0 +1,164 @@
+{%- comment -%}
+source: _includes/docs/07-team.html
+hash:
+  _head: 4c6f3cd5b77d47d5
+  team: 0d1800558237c808
+{%- endcomment -%}
+{%- assign ent = site.data.plans.tiers | where: "code", "enterprise" | first -%}
+{%- assign ent_t = site.data.l10n[page.lang].plans.tiers.enterprise -%}
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="組織" title="組織管理（Enterprise）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Enterprise 方案由組織內的多個帳號共用 1 份合約。邀請與移除成員、查看組織代碼、查看全組織的用量，都在應用程式內的「組織管理」中進行。請款單會以電子郵件寄送（變更帳號數或取消訂閱，請透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>提出）。</p>
+    <p><strong>個人資料選單中的「組織」只會對已加入 Enterprise 組織的帳號顯示。</strong>開啟個人資料選單（右上）後，「組織」會出現在免費方案與付費方案顯示「方案訂閱與管理」的位置。價格與內含時數請參閱<a href="/zh-tw/price/">價格頁面</a>（{{ ent.min_seats }} 個帳號起）。</p>
+    <p>選取「組織」後會開啟「組織管理」對話方塊，左側會列出各個項目。<strong>管理員會看到 權限 / 帳單 / 請款單 / 用量 4 個項目</strong>，成員則會看到 權限 / 用量 2 個項目，右側會顯示所選項目的內容。左上會顯示「以管理員身分加入」或「以成員身分加入」。若顯示「準備中」，請稍待一段時間後再重新開啟。</p><h3 class="mt-6 text-[16px] font-bold text-ink">權限（管理員與成員）</h3>
+    <p>組織的成員有「管理員」與「成員」2 種權限。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">管理員</div>
+        <div class="kv-val">可以邀請成員、重新傳送邀請電子郵件、取消邀請、移除成員與變更權限、查看合約狀態，以及查看組織代碼</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">成員</div>
+        <div class="kv-val">可以查看成員清單與組織的用量。無法進行邀請（包括重新傳送邀請電子郵件）或與帳單相關的操作</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">帳單名義人</div>
+        <div class="kv-val">即提出申請的管理員。清單中會顯示為「帳單負責人」，無法移除，也無法變更為成員。管理員只有 1 位時，同樣無法移除或變更該管理員</div>
+      </div>
+    </div>
+    <p>成員清單會列出名稱（或電子郵件地址）、權限與<strong>最後登入</strong>的日期（無法取得最後登入日期時，會改為顯示加入日期）。清單上方會顯示「已使用 N / M 個帳號」與可用的帳號數。變更權限與移除成員，請從清單中的各列進行。</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">邀請成員</h3>
+    <p><strong>只有管理員可以邀請成員及重新傳送邀請電子郵件。</strong>以成員權限開啟時，「權限」中不會顯示邀請欄位，而是顯示相關說明。若想邀請新的使用者，請向組織的管理員提出。</p>
+    <ol>
+      <li>管理員在「權限」中指定受邀者的電子郵件地址與權限（管理員 / 成員）後送出邀請</li>
+      <li>對方會收到邀請電子郵件。以<strong>收到邀請電子郵件的電子郵件地址</strong>登入（第一次使用的人，也可以直接從登入畫面的「登入」開始）後，即會自動加入組織並開始使用應用程式。若要使用其他電子郵件地址，請使用下方的「以組織代碼加入」</li>
+      <li>尚未加入的邀請會連同有效期限（「有效期限至 〇〇」）保留在「邀請中」清單中。按下「重新傳送」可重新寄送邀請電子郵件，按下「取消」可使邀請失效</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">邀請也計為 1 個帳號</div>
+        <div class="kv-val">帳號數以「已加入的成員 ＋ 尚未加入的邀請」計算。沒有可用的帳號數時無法邀請，請取消不需要的邀請，或透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>與我們聯絡以追加帳號數</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">重新傳送的間隔</div>
+        <div class="kv-val">無法在短時間內連續傳送。請間隔約 1 分鐘後再試一次</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">邀請的期限</div>
+        <div class="kv-val">超過期限的邀請會標示為已過期，並保留在清單中。按下「重新傳送」即可延長期限，並以相同的電子郵件地址重新邀請</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">收不到郵件時</div>
+        <div class="kv-val">請先確認垃圾郵件資料夾，若地址無誤，請向管理員要求「重新傳送」。若仍然收不到，可以使用下一節的「以組織代碼加入」</div>
+      </div>
+    </div><h3 class="mt-6 text-[16px] font-bold text-ink">以組織代碼加入</h3>
+    <p>也可以不使用邀請電子郵件，改以組織共用的「組織代碼」加入。適用於人數較多，或希望在公司內部發放代碼、讓每個人自行加入的情況。組織代碼會在合約生效時，以開通通知郵件寄送（請參閱下方的「導入流程」）。</p>
+    <ol>
+      <li>管理員在「<strong>帳單</strong>」中確認組織代碼（會以 <code>ABCD-1234-EFGH</code> 的形式每 4 個字元分隔顯示，可用旁邊的按鈕複製）。<strong>組織代碼只會對管理員顯示</strong></li>
+      <li>要加入的人在登入畫面按下「持有組織代碼者（企業）」，在「組織代碼」欄位輸入該代碼後，按下「登入」。在瀏覽器中完成驗證後，就會加入組織並回到應用程式</li>
+    </ol>
+    <p><strong>加入的入口只有登入畫面的「組織代碼」欄位。</strong>無法從登入後的選單加入。若已經登入，請先登出，再於登入畫面的「組織代碼」欄位輸入代碼並重新登入。</p>
+    <p>即使組織代碼錯誤或帳號數不足，登入本身仍會成功，只是不會加入組織。若個人資料選單中沒有出現「組織」，請向管理員確認代碼與可用的帳號數後，依上述步驟重新登入。<strong>任何知道組織代碼的人都能加入。請勿分享給無關的人。</strong>1 個帳號只能加入 1 個組織。若已隸屬於其他組織，會顯示「您已隸屬於其他組織。」而無法加入。</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">從開通通知郵件中的連結加入</h3>
+    <p>從 2.13 起，可以從開通通知郵件中的連結開啟應用程式並加入，不需要手動輸入組織代碼。</p>
+    <ol>
+      <li>開啟開通通知郵件中的連結後，瀏覽器會顯示「開啟 Deepmosaic」頁面。按下「以應用程式開啟」（若尚未安裝應用程式，請先從 Microsoft Store 安裝應用程式）</li>
+      <li>應用程式會啟動（若已在執行中，則會移到最上層），登入畫面會以「組織登入」開啟，且已填入組織代碼</li>
+      <li>按下「登入」並完成登入後，即會加入組織</li>
+    </ol>
+    <p><strong>管理員不需輸入組織代碼。</strong>從管理員用的連結開啟時不會填入組織代碼，請直接以收到開通通知郵件的電子郵件地址登入。若應用程式沒有開啟，請複製頁面上的組織代碼，在應用程式的登入畫面按下「持有組織代碼者（企業）」，並貼到「組織代碼」欄位中。</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Enterprise 方案的內容</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">價格</div>
+        <div class="kv-val"><strong>{{ ent_t.quote_label }}</strong>（{{ ent_t.quote_note }}）</div>
+      </div>
+      {%- for s in ent_t.specs %}
+      {%- assign kv_odd = forloop.index | modulo: 2 %}
+      <div class="kv-row{% if kv_odd == 1 %} kv-alt{% endif %}">
+        <div class="kv-key">{{ s.label }}</div>
+        <div class="kv-val">{{ s.value }}</div>
+      </div>
+      {%- endfor %}
+      {%- assign kv_odd = ent.specs.size | modulo: 2 %}
+      <div class="kv-row{% if kv_odd == 0 %} kv-alt{% endif %}">
+        <div class="kv-key">{{ ent_t.note_title }}</div>
+        <div class="kv-val">{{ ent_t.note }}</div>
+      </div>
+    </div>
+    <p><a href="/zh-tw/enterprise/inquiry/">{{ ent_t.cta_label }}</a></p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">導入流程（報價與付款）</h3>
+    <p>Enterprise 採<strong>依報價簽訂合約</strong>的方式（{{ ent.min_seats }} 個帳號起）。無法直接從應用程式內申請。</p>
+    <ol>
+      <li>請透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>與我們聯絡。我們會詢問預計使用的帳號數與需求</li>
+      <li>我們會寄送報價單。報價單中記載<strong>公司名稱、帳號數、每個帳號的單價、每個帳號的偵測時間（或無限制）、維護管理費用、月費所包含的範圍、合約形式與付款期限</strong>。同時會一併寄送交易條件書與訂購單</li>
+      <li>若同意報價內容，請以訂購單訂購。確認訂單後，我們會寄送訂單確認書</li>
+      <li>每個使用月份，我們會寄送該月份（1 個月份，不按日比例計算）的請款單。請以<strong>銀行轉帳</strong>付款（轉帳手續費由客戶負擔。付款期限記載於報價單與請款單）</li>
+      <li>一經確認入帳，<strong>合約即生效</strong>。同時，我們會將<strong>記載組織代碼的「<span lang="ja" data-ja-allowed>組織のご利用を開始できます</span>」（現在可以開始使用組織）開通通知郵件</strong>，寄送至報價時登記的電子郵件地址</li>
+      <li>安裝應用程式，並以<strong>收到開通通知郵件的電子郵件地址登入</strong>後，即會自動以組織的管理員身分加入（管理員不需輸入組織代碼）。其他成員在登入畫面按下「持有組織代碼者（企業）」，在「組織代碼」欄位輸入開通通知郵件中的組織代碼並登入，即可加入（請參閱上方的「以組織代碼加入」「從開通通知郵件中的連結加入」）</li>
+      <li>從「組織管理」邀請成員（請參閱上方的「邀請成員」）</li>
+    </ol>
+    <p>合約的狀態（狀態、付款方式、下次續約）、帳號數與每個帳號的偵測時間，以及組織代碼，都可以在應用程式內的「組織管理」＞「帳單」中確認。<strong>只有管理員可以開啟「帳單」與「請款單」。</strong></p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">付款方式</div>
+        <div class="kv-val">依本公司開立的請款單進行<strong>銀行轉帳</strong>（轉帳手續費由客戶負擔）。匯款帳戶記載於請款單</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">請款週期</div>
+        <div class="kv-val">我們會<strong>每個使用月份開立 1 個月份</strong>的請款單（不按日比例計算）。付款期限為報價單中記載的天數（標準為開立後 30 天）。使用期間只會依已確認入帳的月份延長。沒有最低使用期間，也沒有初始費用</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">變更帳號數</div>
+        <div class="kv-val">帳號數的增減，請透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>與我們聯絡。我們會依變更後的帳號數重新報價，並反映在次月以後的請款單（可減少的下限請見下方）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">可減少的下限</div>
+        <div class="kv-val"><strong>不能少於使用中的數量，也不能少於 1 個帳號</strong>（「使用中」是指成員正在使用的帳號數。若想減少到低於此數，請先移除成員）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">取消訂閱</div>
+        <div class="kv-val">取消訂閱與付款方式的相關諮詢，請透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>（或聯絡我們）提出。沒有違約金</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">無法確認付款時</div>
+        <div class="kv-val">若持續處於無法確認付款的狀態，<strong>整個組織的 Enterprise 功能將會停止</strong>（不只管理員，所有成員皆受影響）。一經確認入帳即會恢復</div>
+      </div>
+    </div>
+    <p>先前以信用卡簽約的組織，可以在「帳單」中變更帳號數及使用付款入口網站（變更付款方式、查看收據、取消訂閱），並在「請款單」中查看過去的請款。</p><h3 class="mt-6 text-[16px] font-bold text-ink">請款單（過去的請款）</h3>
+    <p><strong>以銀行轉帳簽約時，請款單會以 PDF 透過電子郵件寄送。</strong>請款單不會顯示在應用程式的「請款單」中（會顯示「尚無請款單。」）。以下說明適用於先前以信用卡簽約的組織。</p>
+    <p>「組織管理」＞「請款單」會依新到舊的順序列出所有過去的請款。<strong>只有管理員可以開啟「請款單」。</strong></p>
+    <p>付款後，狀態可能需要一段時間才會變為「已付款」。按下「重新整理」可重新取得最新的狀態。銀行轉帳會在確認入帳後反映。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">列出的項目</div>
+        <div class="kv-val">帳單日期、請款單編號、期間（請款單上記載的計費期間）、金額、狀態。已付款的金額與請款金額不同時，也會一併顯示該金額</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">狀態</div>
+        <div class="kv-val">會顯示為「草稿」「未付款」「已付款」「已作廢」「無法收款」其中之一</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">較舊的請款單</div>
+        <div class="kv-val">按下清單末尾的「載入更多」，即可每次載入 10 筆更早的請款單</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">檢視 / PDF</div>
+        <div class="kv-val">按下各列的「檢視」會在瀏覽器中開啟請款單，按下「PDF」則可儲存為檔案</div>
+      </div>
+    </div><h3 class="mt-6 text-[16px] font-bold text-ink">用量（共用額度與明細）</h3>
+    <p>Enterprise 的內含時數並非按成員個人計算，而是<strong>全組織共用的額度池</strong>。</p>
+    <ul>
+      <li><strong>額度池的大小</strong>：帳號數 × 每個帳號的偵測時間。每個帳號的偵測時間依各份合約於報價單中訂定（標準為 {{ ent.included_hours }} 小時 / 月）。也有<strong>偵測時間無限制的合約</strong>。管理員可以在「帳單」中確認「每個帳號的偵測時間：N 小時 / 月（全組織共用）」或「偵測時間：無限制」</li>
+      <li><strong>各成員的明細</strong>：以清單顯示誰使用了多少。由於額度池是共用的，1 個人使用較多時，其他成員的剩餘時間也會減少</li>
+      <li><strong>重設日</strong>：會顯示本期的開始日與結束日。超過結束日後會開始下一個期間，用量歸零。<strong>未用完的部分不會結轉至下一期</strong></li>
+      <li><strong>計算方式</strong>：加總已完成偵測之影片的播放長度。詳情請參閱<a href="#usage">使用時間的計算方式</a></li>
+      <li><strong>顯示</strong>：「用量」中會顯示本期的使用時間、上限與剩餘時間（未滿 1 小時時會顯示到分與秒）。無限制的合約會顯示「已使用 N（無限制）」。辦理合約手續前會顯示「本期額度尚未開始（簽約手續前）」</li>
+    </ul>
+    <p>管理員與成員都可以查看用量。</p></div>
+</section>

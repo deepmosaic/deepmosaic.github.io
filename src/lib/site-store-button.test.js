@@ -4,8 +4,10 @@
 //
 //   - 配布はサイト配布版 (インストーラ) と Store 版の 2 通り。ダウンロードの既定はインストーラ。
 //   - Store のボタンは `_includes/store-button.html` だけが描く。`store_enabled` が false の間は何も出さない (空の要素も残さない)。
-//   - 置き場所はヒーロー (hero-store)・DL の CTA (cta-store、トップ / 料金 / 動作環境)・docs の #install (docs-install-store、ja だけ)・
+//   - 置き場所はヒーロー (hero-store)・DL の CTA (cta-store、トップ / 料金 / 動作環境)・docs の #install (docs-install-store)・
 //     /join/ の「アプリをまだ入れていない方」(join-store)。英中のページも同じ位置。ヘッダーとドロワーには置かない。
+//   - 英中の docs の #install は Microsoft Store 版の入手の手順なので、`store_enabled` によらず Store のボタンだけを主ボタンで出す
+//     (部品の `st_docs_intl`。インストーラのボタンは `paired` で出さない)。
 //   - /join/ は計測しないページ (`no_tracking: true`) なので、部品は data-dl を出さず目印 (data-store-button) だけを出す。
 //   - ビルド出力の検査は `scripts/i18n/checks/store.mjs` (check-site のモジュール)。true の出力は `scripts/check-store-toggle.mjs` が
 //     切り替えを true にした写しのデータでビルドして確かめる。ここではその検査の単体 (作った _site の模型で陽性対照と陰性対照) を見る。
@@ -18,7 +20,7 @@ import { tmpdir } from 'node:os'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { makeContext } from '../../scripts/i18n/check-site.mjs'
-import check, { checkStore, expectedPlacements, LEGAL_STORE_MARKS, readStoreEnabled, STORE_LABELS, SUBSCRIBE_PAGES } from '../../scripts/i18n/checks/store.mjs'
+import check, { checkStore, DOCS_INTL_PLACEMENTS, expectedPlacements, LEGAL_STORE_MARKS, readStoreEnabled, STORE_LABELS, SUBSCRIBE_PAGES } from '../../scripts/i18n/checks/store.mjs'
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
@@ -72,11 +74,30 @@ test('readStoreEnabled: true / false / 無い (陽性対照と陰性対照)', ()
 
 // ---- 2. 部品 ----
 
-test('store-button.html: 全体が store_enabled の if の中にあり、false のときは何も出さない', () => {
+test('store-button.html: 全体が store_enabled (または英中の docs) の if の中にあり、それ以外のページでは何も出さない', () => {
 	const src = stripComments(read('_includes/store-button.html'))
-	const m = src.match(/^\s*\{%-?\s*if site\.data\.site\.distribution\.store_enabled\s*-?%\}([\s\S]*)\{%-?\s*endif\s*-?%\}\s*$/)
+	const m = src.match(
+		/^\s*(\{%-\s*assign st_docs_intl = false\s*-%\}\{%-\s*if ([^%]*?)\s*-%\}\{%-\s*assign st_docs_intl = true\s*-%\}\{%-\s*endif\s*-%\})\s*\{%-?\s*if site\.data\.site\.distribution\.store_enabled or st_docs_intl\s*-?%\}([\s\S]*)\{%-?\s*endif\s*-?%\}\s*$/,
+	)
 	assert.ok(m, 'if の外に出力がある (false のときに空の要素や空白以外が残る)')
+	// st_docs_intl は英中 (ja 以外) の docs のページだけ
+	assert.equal(m[2], "page.lang != 'ja' and page.url contains '/docs/'")
 	assert.equal((src.match(/\{%-?\s*if\b/g) ?? []).length, (src.match(/\{%-?\s*endif\b/g) ?? []).length)
+})
+
+test('store-button.html: 英中の docs では主ボタン (btn-primary)、それ以外は副ボタン、note はボタンの下の補足文', () => {
+	const src = stripComments(read('_includes/store-button.html'))
+	const tag = src.match(/<a\s[^>]*>/)?.[0] ?? ''
+	assert.match(tag, /class="\{% if st_docs_intl %\}btn-primary\{% else %\}btn-secondary\{% endif %\}/)
+	assert.match(src, /<\/a>\{% if include\.note %\}<p class="mt-2 text-sm text-ink-4">\{\{ include\.note \}\}<\/p>\{% endif %\}/)
+})
+
+test('download-button.html: paired が真のときは何も出さず、それ以外の出力は unless の中', () => {
+	const src = stripComments(read('_includes/download-button.html'))
+	const m = src.match(/^\s*\{%-\s*assign db_P = [^%]*-%\}\s*\{%-\s*unless include\.paired\s*-%\}([\s\S]*)\{%\s*endunless\s*-%\}\s*$/)
+	assert.ok(m, 'unless include.paired の外に出力がある')
+	assert.match(m[1], /<a\s[^>]*app_download_link/)
+	assert.equal((src.match(/\{%-?\s*unless\b/g) ?? []).length, (src.match(/\{%-?\s*endunless\b/g) ?? []).length)
 })
 
 test('store-button.html: href は app_store_product_id から作る掲載ページ、ファイル DL ではない', () => {
@@ -122,6 +143,14 @@ test('置き場所: ヒーロー (3 言語)・DL の CTA・docs の #install・/
 	const install = read('_includes/docs/01-intro.html')
 	const sec = install.slice(install.indexOf('<section id="install"'), install.indexOf('</section>', install.indexOf('<section id="install"')))
 	assert.equal(includesOf(sec, 'docs-install-store'), 1, 'docs の #install')
+	// 英中の docs の #install: Store のボタン 1 つ、インストーラのボタンは paired (出さない)
+	for (const lang of ['en', 'zh-tw']) {
+		const src = read(`_includes/docs/${lang}/01-intro.html`)
+		const s = src.slice(src.indexOf('<section id="install"'), src.indexOf('</section>', src.indexOf('<section id="install"')))
+		assert.equal(includesOf(s, 'docs-install-store'), 1, `${lang} の docs の #install`)
+		const dls = stripComments(s).match(/\{%-?\s*include download-button\.html[^%]*%\}/g) ?? []
+		assert.ok(dls.every((d) => /\bpaired=true\b/.test(d)), `${lang} の docs の #install にインストーラのボタンがある`)
+	}
 	for (const rel of ['join/index.html', 'en/join/index.html', 'zh-tw/join/index.html']) {
 		const src = stripComments(read(rel))
 		const box = src.slice(src.indexOf('data-join-install'))
@@ -137,12 +166,13 @@ test('ヘッダー・ドロワー・フッターには Store のボタンを置�
 	}
 })
 
-test('expectedPlacements: 4 か所 (docs は ja だけ)', () => {
+test('expectedPlacements: 4 か所 (docs は ja と英中)', () => {
 	const list = expectedPlacements()
 	const ids = (id) => list.filter((p) => p.id === id).map((p) => p.file).sort()
 	assert.deepEqual(ids('hero-store'), ['en/index.html', 'index.html', 'zh-tw/index.html'])
 	assert.deepEqual(ids('cta-store'), ['en/index.html', 'en/price/index.html', 'en/spec/index.html', 'index.html', 'price/index.html', 'spec/index.html', 'zh-tw/index.html', 'zh-tw/price/index.html', 'zh-tw/spec/index.html'])
-	assert.deepEqual(ids('docs-install-store'), ['docs/index.html'])
+	assert.deepEqual(ids('docs-install-store'), ['docs/index.html', 'en/docs/index.html', 'zh-tw/docs/index.html'])
+	assert.deepEqual(DOCS_INTL_PLACEMENTS.map((p) => p.file), ['en/docs/index.html', 'zh-tw/docs/index.html'])
 	assert.deepEqual(ids('join-store'), ['en/join/index.html', 'join/index.html', 'zh-tw/join/index.html'])
 	for (const p of list) assert.equal(p.tracked, p.id !== 'join-store', `${p.file} ${p.id}`)
 })
@@ -233,10 +263,37 @@ test('check (false): 何も出ていなければ 0 件、Store のボタンや�
 	}
 })
 
+test('check (false): 英中の docs の Store のボタン 1 つだけを許し、欠け・数・URL・文・計測・ほかのボタンやリンクを検出', () => {
+	const clean = { 'index.html': '<p>x</p>' }
+	const docs = (lang, extra = '') => `<html><body><p>x</p>${btn('docs-install-store', lang).replace('btn-secondary', 'btn-primary')}${extra}</body></html>`
+	withSite({ ...clean, 'en/docs/index.html': docs('en'), 'zh-tw/docs/index.html': docs('zh-tw') }, (ctx) => {
+		assert.deepEqual(checkStore(ctx, false), [])
+		assert.deepEqual(check(ctx), [], 'site.yml の false を読む')
+	})
+	for (const [what, rel, html, re] of [
+		['ボタンが無い', 'en/docs/index.html', '<html><body><p>x</p></body></html>', /docs-install-store のボタンが 0 個/],
+		['2 つ出ている', 'en/docs/index.html', docs('en', btn('docs-install-store', 'en')), /docs-install-store のボタンが 2 個/],
+		['URL が違う', 'zh-tw/docs/index.html', docs('zh-tw').replace(STORE_URL, 'https://apps.microsoft.com/detail/X'), /href/],
+		['文が言語と違う', 'en/docs/index.html', `<html>${btn('docs-install-store', 'en', { label: STORE_LABELS.ja })}</html>`, /文/],
+		['data-dl が無い', 'zh-tw/docs/index.html', `<html>${btn('docs-install-store', 'zh-tw', { tracked: false })}</html>`, /data-dl/],
+		['ほかのボタンも出ている', 'en/docs/index.html', docs('en', btn('cta-store', 'en')), /store_enabled が false なのに Store のボタン/],
+		['ほかの掲載ページへのリンク', 'zh-tw/docs/index.html', docs('zh-tw', `<a href="${STORE_URL}">x</a>`), /apps\.microsoft\.com/],
+		['Web 版の docs (置き場所でない)', 'en/docs/web/index.html', docs('en'), /store_enabled が false/],
+		['ja の docs', 'docs/index.html', `<html>${btn('docs-install-store', 'ja')}</html>`, /store_enabled が false/],
+	]) {
+		withSite({ ...clean, [rel]: html }, (ctx) => {
+			const errors = checkStore(ctx, false)
+			assert.ok(errors.length > 0 && errors.every((e) => e.startsWith(`${rel}:`)), `${what}: ${errors.join(' / ')}`)
+			assert.ok(errors.some((e) => re.test(e)), `${what}: ${errors.join(' / ')}`)
+		})
+	}
+})
+
 test('check (true): 4 か所 × 言語に正しいボタンがあれば 0 件、欠け・URL・文・計測の違いを検出', () => {
 	withSite(enabledFiles(), (ctx) => assert.deepEqual(checkStore(ctx, true), []))
 	const cases = [
 		['ボタンが欠ける', (f) => ({ ...f, 'zh-tw/spec/index.html': '<html></html>' }), /zh-tw\/spec\/index\.html.*cta-store/],
+		['英中の docs のボタンが欠ける', (f) => ({ ...f, 'en/docs/index.html': '<html></html>' }), /en\/docs\/index\.html.*docs-install-store/],
 		['ページが無い', (f) => { const g = { ...f }; delete g['en/join/index.html']; return g }, /en\/join\/index\.html/],
 		['2 つ出ている', (f) => ({ ...f, 'index.html': f['index.html'] + btn('hero-store', 'ja') }), /index\.html.*hero-store.*2/],
 		['URL が違う', (f) => ({ ...f, 'price/index.html': btn('cta-store', 'ja', { href: 'ms-windows-store://pdp/?productid=9PDKMKWHN9RW' }) }), /price\/index\.html.*href/],

@@ -1,0 +1,347 @@
+{%- comment -%}
+source: _includes/docs/03-detect.html
+hash:
+  import: 2a8122318c96e079
+  detect-options: a03416edad21b53c
+  detect-mosaic: 3fd831c82bdc9d38
+  batch: aacda8c5fc093c4a
+  detect: 6d5b9f8d5343d1cc
+  queue: ffd9410f19c11593
+{%- endcomment -%}
+<section id="import" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="載入影片" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>載入影片有 3 種方式。無論使用哪種方式，載入後都會接著開啟<a href="#detect-options">偵測選項</a>畫面。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選取影片檔案</div>
+        <div class="kv-val">從選單的「檔案」選取。在對話方塊中選取 1 部影片</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">選取影片資料夾</div>
+        <div class="kv-val">一次載入資料夾內的影片。對象<b>僅限所選資料夾的第一層</b>（不含子資料夾），依檔案名稱遞增排序，最多 100 部。超過 100 部時只會載入前 100 部，並會顯示通知</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">拖放</div>
+        <div class="kv-val">將影片檔案直接拖放到首頁畫面。可同時拖放多個檔案，影片以外的檔案會自動忽略</div>
+      </div>
+    </div>
+    <p>尚未載入任何範例以外的影片時，清單下方會顯示「新增影片即可開始」的區塊。拖放影片檔案，或從「選取影片」選擇（與選單的「選取影片檔案」相同）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/import-menu.webp" alt="開啟「檔案」選單的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">「檔案」選單。也可以將影片拖放到畫面上載入。處理結果的儲存位置可透過「選取專案資料夾」變更</figcaption>
+    </figure>
+    <p><b>支援的格式</b>：mp4 / avi / mkv / mov / wmv / flv / webm / ts / m2ts / m4v / mpg / mpeg（副檔名不分大小寫）。從資料夾載入時，即使副檔名相符，無法作為影片讀取的檔案也會被排除，並會顯示排除的數量。</p>
+    <p><b>一次載入多部影片時</b>，第 1 部會顯示在偵測選項畫面中。按下「開始」後，<b>該設定會套用至其餘所有影片</b>，並依序處理。不過，偵測範圍的指定只對第 1 部有效，第 2 部之後會以整部影片為對象。在偵測處理已經執行中時載入的影片，也會加入等候清單，並在執行中的處理結束後自動開始（<a href="#queue">佇列</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">專案資料夾</h3>
+    <p>載入的影片會以「專案」管理，偵測結果、編輯資料與縮圖會儲存在每部影片各自的專案資料夾中。專案資料夾的位置預設為 <code>C:\Users\&lt;使用者名稱&gt;\deepmosaic</code>，若不存在會自動建立。可從選單的「檔案 ▸ 選取專案資料夾」變更到其他位置（外接磁碟機等），變更後載入的影片會儲存在新的位置。</p>
+    <p>首頁畫面的「所有影片」中，會列出<b>位於目前的專案資料夾、且由目前登入的帳號建立的專案</b>。若有儲存在其他專案資料夾的專案，左側的側邊欄會顯示附有數量的<b>「其他資料夾」</b>列（0 個時不顯示），選取後即可在同一個清單中查看。</p>
+    <p>「其他資料夾」中的影片屬於其他專案資料夾，因此無法使用資料夾與標籤（也無法拖曳到側邊欄的資料夾）。若要分類，從影片卡片的選單（也可按右鍵開啟）選擇「切換到此專案資料夾」，該影片所在的資料夾就會成為目前的專案資料夾。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home.webp" alt="首頁畫面（已處理影片清單）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">首頁畫面（已處理影片清單）。拖放時由這個畫面接收</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">範例專案</h3>
+    <p>使用免費方案（包括未登入的情況）且首頁畫面上沒有任何影片時，會自動新增範例影片，並以附有「範例」徽章的卡片顯示（會顯示「已新增範例影片」）。範例是只偵測臉部的結果，可以直接試用編輯與匯出。編輯頁面會顯示「此範例為臉部偵測。身體部位的偵測請使用您自己的影片試試看。」重新偵測範例不會減少可偵測時間。刪除後不會再次新增。付費方案不會新增範例。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">「基本使用方式」卡片</h3>
+    <p>免費方案會在「所有影片」的開頭顯示「基本使用方式（3 分鐘）」卡片（大圖示顯示時位於清單的第一格，範例等影片排在其右側）。按一下即可在應用程式內播放影片（按 <kbd>Esc</kbd> 關閉）。可透過卡片的「不再顯示」隱藏，之後可從選單列的「說明」▸「教學影片」播放。付費方案不會顯示此卡片。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">顯示格式</h3>
+    <p>可在清單右上角從 3 種顯示格式中選擇。所選的顯示格式之後也會沿用。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">大圖示</div>
+        <div class="kv-val">以大尺寸排列縮圖的預設顯示。適合想以圖片辨識內容時使用</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">並排顯示</div>
+        <div class="kv-val">每部影片以 1 個橫向列顯示，並附上狀態、解析度、檔案大小與新增日期</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">詳細資料</div>
+        <div class="kv-val">表格格式。名稱、狀態、新增日期、長度、解析度、偵測數與標籤會排成欄，按一下欄標題即可排序（專案 ID 可透過卡片選單的「複製專案 ID」取得）。解析度欄會顯示原始影片的大小（以先前版本加入的專案，若能找到原始影片，在編輯頁面開啟一次後就會變為原始影片的大小）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home-tile.webp" alt="「並排顯示」的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">並排顯示。每部影片橫向排列，可連同狀態與解析度一起確認</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home-detail.webp" alt="「詳細資料」顯示的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">詳細資料。按一下欄標題即可排序</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">影片卡片的操作</h3>
+    <p>按一下卡片即可開啟<a href="#edit-overview">編輯頁面</a>。卡片右上角的 {% include icon.html name="Menu" class="inline h-3.5 w-3.5 align-[-2px]" %} 選單中有下列項目。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">開啟編輯畫面</div>
+        <div class="kv-val">開啟<a href="#edit-overview">編輯頁面</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">複製專案 ID</div>
+        <div class="kv-val">將聯絡我們時等情況會用到的專案 ID 複製到剪貼簿</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">重新命名</div>
+        <div class="kv-val">變更清單與編輯頁面中顯示的名稱（原始影片的檔案名稱不會改變，檔案也不會移動）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">開啟專案資料夾</div>
+        <div class="kv-val">以檔案總管開啟此影片的專案資料夾</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">匯入至 Premiere Pro</div>
+        <div class="kv-val">將偵測結果傳送到 Adobe Premiere Pro（<a href="#premiere">Premiere Pro 整合</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">匯出專案</div>
+        <div class="kv-val">將專案打包成 1 個 zip（<a href="#project-io">專案的匯出與匯入</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">複製專案</div>
+        <div class="kv-val">連同偵測結果、編輯資料與時間軸素材一起複製，並指派新的專案 ID。原始影片位於專案外時，會參照同一個檔案（不會複製）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">刪除</div>
+        <div class="kv-val">連同專案資料夾一起刪除（會先確認，無法復原）。刪除匯出中的專案時，該匯出也會停止。因其他應用程式使用中而無法刪除的資料夾，會在下次啟動時刪除，並顯示「N 個資料夾正在使用中，將於下次啟動時刪除。」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">移至資料夾、標籤</div>
+        <div class="kv-val">可移至側邊欄的資料夾，或加上、移除標籤（「其他資料夾」中的影片無法使用）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home-card-menu.webp" alt="開啟影片卡片選單的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">影片卡片的選單</figcaption>
+    </figure>
+    <p><b>若要一次刪除多個專案</b>，按下清單上方的「選取模式」，按一下卡片加以選取（也可使用「全部選取」），再按下「刪除選取項目」。確認對話方塊之後，所選的專案會連同資料夾一起刪除。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/home-select-mode.webp" alt="在選取模式下選取 1 張卡片的首頁畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">選取模式。可一次刪除多個專案</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">首頁畫面的通知</h3>
+    <p>首頁畫面的清單上方，只在需要時才會顯示下列通知。</p>
+    <ul>
+      <li>「正在將偵測結果轉換為新的儲存格式（n / N）」：正在將以舊版本偵測的專案轉換為新的儲存格式（<code>project.db</code>）。失敗時會顯示「有 N 個專案轉換失敗」，請按下「重試」</li>
+      <li>「N 個未使用的專案資料夾（X GB）」：偵測停止或失敗時留下的資料夾（不會顯示在首頁）。按下「查看清單」後，清單開啟時只會勾選沒有偵測結果的資料夾（有偵測結果的資料夾，可能是已完成但登記資料已遺失的專案，請自行只選取需要的項目）。「全部勾選」會選取包含有偵測結果的資料夾在內的所有項目，「全部取消勾選」會清除所有勾選。按下「刪除」會刪除已勾選的資料夾（按「取消」則不會刪除任何項目）。按「關閉」可隱藏此通知</li>
+      <li>「此專案在上次啟動時發生問題」：上次啟動期間應用程式當機，或資料已損壞的專案，會在不開啟的情況下另外隔離。按「檢查」若沒有問題就會恢復原狀，按「修復」會嘗試從上一次儲存的內容還原</li>
+    </ul>
+  </div>
+</section>
+
+<section id="detect-options" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="偵測選項" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>載入影片後會開啟偵測選項畫面。在此決定要偵測影片的「哪個區段」、以「什麼為對象」，然後按下「開始」。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/detect-options.webp" alt="偵測選項畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">偵測選項畫面（預覽、偵測範圍、偵測對象）</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">預覽</div>
+        <div class="kv-val">目前指定之影格的靜態畫面。移動滑桿或變更數值輸入後，會顯示該位置的畫面，方便大致決定範圍</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">偵測範圍</div>
+        <div class="kv-val">預設為整部影片。可透過滑桿的兩端，或「開始」「結束」的數值輸入，以影格為單位指定。標題中會像 <span class="font-mono text-[12.5px]">00:00:00 (#0) ~ 00:00:10 (#300)</span> 這樣並列顯示時間與影格編號</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">新增範圍</div>
+        <div class="kv-val">可指定多個分開的區段。重疊或相連的範圍會自動合併為 1 個，開始與結束顛倒時也會對調後解讀。有 2 個以上的範圍時，可用 {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %} 個別刪除，全部刪除後會回到整部影片</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">預估所需時間</div>
+        <div class="kv-val">偵測範圍下方會顯示「預估所需時間：約 N 分鐘（高精度模型 / 此電腦實測 N fps）」（只以「馬賽克」偵測時為「（馬賽克掃描 / 約 N fps）」）。會根據此電腦的運作測試與過去偵測的實測值計算。尚無實測值時會顯示「完成運作測試或首次偵測後，會顯示預估所需時間」，可能需要很長時間時會顯示「可能需要較長時間 — 縮小偵測範圍即可縮短」。沒有 GPU 的電腦會以 CPU 處理，因此可能需要實際播放時間的 10 倍以上。可偵測時間有上限的方案，還會一併顯示「時間額度會依影片的完整長度扣除（指定範圍時也相同）」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">偵測對象</div>
+        <div class="kv-val">從「身體部位」「男性臉部」「女性臉部」「馬賽克」中選擇（預設為「馬賽克」以外的 3 項開啟，「馬賽克」關閉）。此處的選擇會儲存下來，之後載入影片時也會沿用。桌面版開啟「馬賽克」後，身體部位與臉部的勾選以及馬賽克的初始設定會停用，並顯示「只偵測馬賽克的框。不使用身體部位與臉部的偵測，以及馬賽克的初始設定」（網頁版可與身體部位、臉部同時使用。<a href="/zh-tw/docs/web/#diff">與桌面版的差異</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">像素大小</div>
+        <div class="kv-val">以「設定像素大小」按鈕開啟設定畫面，決定馬賽克格的大小（畫面的說明請參閱<a href="#edit-mosaic">馬賽克設定</a>）。按鈕下方會顯示目前的設定（例如「固定：橫向 53 個馬賽克格」）。馬賽克格的大小以畫面寬度上排列的格數來定義，因此即使影片的解析度不同，看起來也一樣。預設為固定（橫向 53 個馬賽克格），所有影格、所有對象都會套用相同大小的馬賽克格。按下「套用」的內容會儲存下來，從下次偵測起也會作為初始值。偵測後可隨時從編輯頁面的<a href="#edit-mosaic">馬賽克設定</a>變更</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">偵測後的處理</div>
+        <div class="kv-val">開啟「偵測後直接以批次執行到匯出」後，偵測完成後會不經確認直接進行到匯出（<a href="#batch">批次執行</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">GPU 顯示（右上）</div>
+        <div class="kv-val">用於偵測的 GPU 名稱。若辨識到支援 CUDA 的 GPU 且已登入，會<b>自動</b>選擇高精度模型，其他情況則選擇輕量模型（無法手動選擇）。即使是搭載 GPU 的電腦，在取得高精度模型期間，「開始」上方也會顯示「正在準備高精度模型 — 這次將以輕量模型進行偵測。」；未登入時則會顯示「使用高精度模型需要先登入 — 這次將以輕量模型進行偵測。」（附「登入」按鈕）。這兩種情況下，該次都會以輕量模型偵測。GPU 記憶體不足 4 GB 的機型會以輕量模型偵測，也不會使用馬賽克精修（貼合物體形狀的馬賽克）（會顯示「此 GPU 的記憶體不足，將使用輕量模型偵測。」）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">模型確認</div>
+        <div class="kv-val">開啟畫面時會確認模型檔案是否存在，若有不足會自動下載。確認完成前無法按下「開始」。失敗時可按「重試」重新取得</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">馬賽克精修</div>
+        <div class="kv-val">AI 會在偵測到的框內建立貼合物體形狀的輪廓，並依該形狀而非方形框套用馬賽克。<b>在有支援 CUDA 的 NVIDIA GPU 的環境中預設啟用</b>，此畫面不會顯示設定或說明。分開的部位會成為各自的輪廓，在編輯頁面中可直接以該形狀操作（若要改回方形，在編輯頁面按右鍵選擇「變更形狀」）。所需時間會變長（參考值：在搭載 GPU 的電腦上，每 1 分鐘影片約增加 107 秒）。<b>沒有支援 CUDA 的 NVIDIA GPU 的環境無法使用，</b>會以方形框套用馬賽克</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">馬賽克</div>
+        <div class="kv-val">開啟後，會找出素材中既有的方塊狀馬賽克的範圍，並以多邊形框（標籤「馬賽克」，紫色）顯示在編輯頁面中。匯出時，會以從找到的馬賽克格推估的大小，在該範圍上重新套用 Deepmosaic 的馬賽克。推估的馬賽克格會作為該對象依 ID 的馬賽克設定（像素大小「固定」的橫向馬賽克格數）填入，因此可在<a href="#edit-mosaic">馬賽克設定</a>的「依 ID」分頁中變更。自行變更的設定，即使重新偵測也不會被覆寫。匯出解析度下的最小馬賽克格（自主規範標準）和一般馬賽克一樣會優先適用。所需時間會變長，也會計入偵測範圍下方的「預估所需時間」。偵測引擎不支援時，偵測記錄中會顯示「此偵測引擎不支援偵測既有馬賽克，因此將略過此項目並繼續偵測」，並只偵測其餘的對象。詳情請參閱<a href="#detect-mosaic">找出既有馬賽克並重新套用</a></div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <div class="grid gap-3 sm:grid-cols-2">
+        <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="以方形框直接為 6 人的臉部套用馬賽克的影格" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+        <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="同一影格經過精修後，沿著臉部形狀套用的馬賽克" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      </div>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">左：維持方形框 / 右：貼合物體形狀的馬賽克。同一部影片的同一影格，只變更設定後匯出的結果（素材：Pexels）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/detect-options-panel.webp" alt="偵測對象與馬賽克初始設定"
+           width="316" height="524" loading="lazy" decoding="async" style="max-width:316px;width:100%;height:auto;margin:0 auto"
+           class="block rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">偵測對象與馬賽克初始設定</figcaption>
+    </figure>
+    <p>偵測所需的時間大致與處理的影格數成正比。若只想處理長片中的一部分，縮小偵測範圍即可縮短等待時間。另外，即使縮小範圍，可偵測時間（使用額度）仍以整部影片的長度計算。同一部影片再次偵測時不會重複計算。</p>
+    <p><b>剩餘的可偵測時間少於影片的總長度</b>時，偵測也會在開始前停止。「開始」按鈕上方會顯示類似「剩餘的可偵測時間（1 小時 30 分鐘）不足以偵測 120 分鐘的影片。請確認您的方案。」的訊息，且無法按下「開始」。即使縮小偵測範圍，也會以整部影片的長度計算，因此無法透過指定範圍來開始。剩餘時間可在頁尾確認（<a href="#usage">使用時間的計算方式</a>）。</p>
+    <p>授權到期、超過使用量上限，或免費期間結束時，此畫面會顯示提示變更方案的對話方塊，且無法開始偵測（請參閱<a href="#plan">變更方案</a>）。</p>
+    <p>開啟偵測選項畫面時（在此畫面重新選擇儲存位置時也一樣），會確認<b>能否寫入偵測結果的儲存位置（專案資料夾）</b>。無法寫入時，無法按下「開始」，並會顯示原因「無法寫入儲存位置（專案資料夾），因此無法開始」。請使用一併顯示的「重新選取專案資料夾」「改回預設位置」（目前的儲存位置不是預設位置時）「再確認一次」按鈕，變更儲存位置，或排除原因後重新確認。影片的存放位置與此無關。若是透過選單的「選取專案資料夾」變更儲存位置，會在下次開啟偵測選項畫面時確認（<a href="#import">專案資料夾</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">不偵測直接匯入</h3>
+    <p>以右側面板最上方的開關開啟「不偵測直接匯入」後，不會進行偵測，而是將影片直接匯入編輯畫面。框請在編輯頁面中自行新增（<a href="#edit-bbox">新增偵測框</a>）。「開始」按鈕會變為「匯入」，執行中顯示「匯入中」，完成後顯示「匯入完成」。<b>不會消耗偵測時間</b>（比剩餘偵測時間更長的影片也能匯入）。不過，與偵測相同，在授權到期、超過使用量上限或免費期間結束時無法開始。開啟期間無法使用偵測對象、偵測範圍與偵測後的批次執行，也不會進行場景的自動判定（編輯頁面會以只有 1 個場景的狀態開始）。馬賽克的初始設定（像素大小）會用於新增的框。此開關不會儲存，每次開啟畫面時都會恢復為關閉。</p>
+  </div>
+</section><section id="detect-mosaic" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="找出既有馬賽克並重新套用" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>找出素材中既有的方塊狀馬賽克的位置與範圍，並在匯出時於其上重新套用 Deepmosaic 的馬賽克。適合想依自己的標準，重新統一素材中馬賽克格大小或範圍不一的馬賽克時使用。此功能並非用來拿掉既有的馬賽克，也無法還原為原始影像。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">步驟</h3>
+    <ol>
+      <li>在<a href="#detect-options">偵測選項</a>的「偵測對象」中開啟「馬賽克」。桌面版會停用身體部位與臉部的勾選以及馬賽克的初始設定，只偵測馬賽克的框（網頁版可與身體部位、臉部一起偵測）</li>
+      <li>按下「開始」。<a href="#detect">AI 偵測</a>的進度中會加入「偵測既有馬賽克」的階段</li>
+      <li>偵測完成後開啟<a href="#edit-overview">編輯頁面</a>，以紫色的多邊形框（標籤「馬賽克」）確認找到的範圍</li>
+      <li>視需要修正框。多邊形的點可以移動（<a href="#edit-player">播放器與時間軸</a>）。若要變更馬賽克格的大小，在<a href="#edit-mosaic">馬賽克設定</a>的「依 ID」分頁中選取該對象後變更</li>
+      <li><a href="#edit-encode">匯出</a>後，會以從找到的馬賽克格推估的大小，在框的範圍上重新套用馬賽克</li>
+    </ol>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">如何解讀結果</h3>
+    <ul>
+      <li>時間軸上會出現「馬賽克」列（在臉部的列之後）。展開後，找到的範圍會依 ID 分成各自的列</li>
+      <li>工具列的標籤（C）中，上排與下排都會出現「馬賽克」。取消上排的「馬賽克」後，預覽與匯出中都不會出現（<a href="#edit-toolbar">編輯工具列</a>）</li>
+      <li>馬賽克設定的依類別分頁中也會出現「馬賽克」，因此可一次變更所有找到之範圍的外觀。推估的馬賽克格會作為依 ID 的設定填入，自行變更的設定即使重新偵測也不會被覆寫</li>
+      <li>從馬賽克對象中排除的追蹤軌跡，框的標籤會加上「[已排除馬賽克]」</li>
+      <li>同一個馬賽克在中途分裂成不同的 ID 時，以框的右鍵選單中的「合併 ID…」合併為 1 個。未找到的影格或範圍，可補畫框或以<a href="#edit-track">追蹤</a>補上（<a href="#edit-overview">編輯頁面</a>、<a href="#edit-toolbar">編輯工具列</a>）</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">限制</h3>
+    <ul>
+      <li>馬賽克格過小的馬賽克無法找出。特別是 4K 素材中，拍得較小的對象上的細小馬賽克容易被遺漏</li>
+      <li>模糊、塗黑與填色不在對象範圍內（只會找出方塊狀的馬賽克）</li>
+      <li>與背景顏色相同的方塊，或半透明疊加的馬賽克較難找出</li>
+      <li>只出現 1 至 2 個影格的範圍，因無法確認而會被捨去。在畫面邊緣被切斷的馬賽克，或正在進入畫面途中的馬賽克也較難找出</li>
+      <li>在沒有 GPU 的電腦上，用於偵測的縮小影像的製作方式不同，因此結果可能會略有差異</li>
+    </ul>
+    <p>自動偵測並非 100% 準確。匯出前，請在編輯頁面確認整部影片（<a href="#review">檢查漏偵測</a>）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">預估所需時間</h3>
+    <ul>
+      <li>與身體部位、臉部一起偵測時，所需時間與關閉「馬賽克」時相比，GPU 約為 1.1 至 1.2 倍，CPU 約為 1.5 至 1.6 倍</li>
+      <li>只以「馬賽克」偵測時，1 小時的 1080p 影片，GPU 約需 9 分鐘、CPU 約需 31 分鐘</li>
+    </ul>
+    <p>兩者都會因電腦的效能與素材而異。也會計入偵測範圍下方的「預估所需時間」。</p>
+  </div>
+</section>
+
+<section id="batch" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="從偵測到匯出的批次執行" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在偵測選項中開啟「偵測後直接以批次執行到匯出」並按下「開始」後，偵測完成後不需開啟編輯頁面，就會自動進行到匯出已燒錄馬賽克的影片。一次載入多部影片時，會套用至所有影片。</p>
+    <ol>
+      <li>按下「開始」後會顯示「批次處理前請先確認」。確認自動偵測並非 100% 準確（對象較小、移動快速、只拍到一部分，或在暗處、逆光、嚴重失焦，以及與訓練資料傾向不同的角度等情況下，可能無法偵測），然後按下「我了解，執行批次處理」</li>
+      <li>接著會開啟<a href="#edit-encode">匯出設定</a>。選擇儲存資料夾後，檔案名稱會依原始影片名稱自動命名，若已有同名檔案，會在結尾加上 _2, _3 …。按下「開始」即開始偵測</li>
+      <li>偵測完成後，匯出會直接加入<a href="#queue">佇列</a>並依序匯出。進度可從選單列的「佇列」確認</li>
+    </ol>
+    <p>批次執行會省略在編輯頁面確認結果的步驟，因此<b>公開或散布輸出的影片前，請務必親自確認整部影片</b>。馬賽克的初始設定會使用以「設定像素大小」套用的內容，以及在馬賽克設定面板中按下「將此設定設為預設」的內容。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/detect-options-batch.webp" alt="開啟「偵測後直接以批次執行到匯出」的偵測選項畫面" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">開啟批次執行的偵測選項畫面</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/batch-warning.webp" alt="「批次處理前請先確認」的確認對話方塊" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">批次執行前顯示的確認</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="detect" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="AI 偵測" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在<a href="#detect-options">偵測選項</a>中按下「開始」後，AI 會自動偵測影片中的對象物體。處理會依「準備 → 前置處理 → 偵測 → 分析 → 精修馬賽克」5 個階段進行（不使用馬賽克精修時為 4 個階段），在偵測選項中開啟「馬賽克」時，會加入尋找既有馬賽克的階段「偵測既有馬賽克」（<a href="#detect-mosaic">找出既有馬賽克並重新套用</a>）。畫面會顯示整體進度、處理速度（fps）與剩餘時間。要使用的階段從開始時就會全部顯示。可暫停、繼續或取消處理。載入多部影片時的等候清單，可從選單列的「<a href="#queue">佇列</a>」確認。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/detect.webp" alt="偵測進度畫面（5 階段步驟指示器 + 各步驟所需時間 + 進度列）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">偵測進度畫面（步驟指示器 + 各步驟所需時間 + 進度列。使用馬賽克精修時為 5 個階段。開啟「馬賽克」後會加入「偵測既有馬賽克」的階段）</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">如何查看進度</div>
+        <div class="kv-val">上方的步驟顯示中，已完成的階段會整個上色，執行中的階段會上色到目前的進度。進度列代表整體偵測的比例。其下方會依序顯示目前的步驟名稱、處理中的影格數、速度（fps）、「經過時間」（開始偵測後經過的時間）、「〇〇的剩餘時間」（該步驟的剩餘時間參考）與「整體剩餘時間」。有些步驟不會顯示剩餘時間。「精修馬賽克」階段只計算有對象框的影格，並顯示「n / N 目標影格」，整體進度也會分配較大的比例給此階段，以接近實際所需時間的速度推進</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">暫停 / 繼續</div>
+        <div class="kv-val">暫停處理。繼續後會從中斷處接著處理</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">取消</div>
+        <div class="kv-val">在「要停止偵測嗎？」的確認後停止。進度會遺失，為該次偵測建立的專案資料夾也會被刪除（之後無法繼續。若想中途停下、稍後再繼續，請使用「暫停」）。有等待中的影片時，可選擇「僅停止此影片」（進行下一部影片）或「全部停止」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">在背景執行</div>
+        <div class="kv-val">關閉畫面並回到首頁畫面。偵測會繼續進行，進度可從選單列的「<a href="#queue">佇列</a>」確認。按下畫面右上角的「_」（縮小）時，畫面右下角會留下小型的進度顯示（迷你播放器），按一下即可回到偵測畫面。迷你播放器也可以暫停與取消</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">完成</div>
+        <div class="kv-val">會顯示「處理完成」，並在首頁畫面新增卡片。按「返回首頁」回到清單。已登入的免費方案還會顯示「剩餘 … · 查看方案」。<a href="#batch">批次執行</a>時會顯示「偵測完成」，匯出會加入佇列（可按「查看匯出進度」確認）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">記錄</div>
+        <div class="kv-val">畫面右側會顯示偵測的記錄（預設為摺疊）。可依等級與步驟篩選（文字搜尋、「複製顯示中的行」與「開啟記錄資料夾」為開發用，正式版不會顯示）。更新停止時會顯示「已 N 秒沒有回應」。完成後或發生錯誤時，會顯示「各步驟耗時」的表格。應用程式的顯示語言為英文或繁體中文時，記錄的各行也會以該語言顯示（部分行可能仍以日文顯示）。聯絡我們時一併傳送的記錄，不論顯示語言為何，都是日文原文。回報問題時附上此記錄，可加快調查</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">繼續或捨棄已中斷的偵測</h3>
+    <p>因結束應用程式或電腦停止等原因而中途停止的偵測，會在下次啟動時於首頁畫面的「所有影片」上方以「已中斷的偵測」排列，左側的側邊欄也會顯示附有數量的「已中斷的偵測」列。卡片上會像「已中斷（DETECT 42%）」這樣顯示停止的階段與進度。按下「繼續」後，會從停止位置附近（而非從頭）繼續偵測。按下「捨棄」並確認後，會刪除偵測的中間結果與代理影片（不會刪除原始影片）。若因找不到或已變更原始影片、已編輯、由較新版本的應用程式建立等原因而無法繼續，卡片上會顯示原因，且無法按下「繼續」（顯示「更新引擎後即可繼續」時，請套用<a href="#update">更新</a>）。</p>
+    <p>處理期間會顯示各步驟的進度與預估所需時間。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/detect-cancel.webp" alt="偵測中按下「取消」時的確認對話方塊" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">取消的確認。按「否」會繼續處理</figcaption>
+    </figure><p>在畫面邊緣被切斷的對象，偵測時會將偵測框補全到畫面外並記錄下來。匯出時只會在畫面內繪製馬賽克，因此即使是逐漸移出畫面的對象，馬賽克的形狀也不會在畫面邊緣被壓扁（<a href="#edit-player">播放器與時間軸</a>）。</p><p>桌面版的偵測會自動平滑修正偵測框的移動（軌跡）。可抑制每個影格的細微晃動，以及只有 1 個影格跳開的框，使馬賽克不易閃爍。不需要設定。貼著畫面邊緣的邊會保持原樣，因此不影響上述將框補全到畫面外的功能。此修正會套用於以支援修正的版本偵測的影片（在此之前偵測的影片不會改變）。</p>
+    <details class="my-4 rounded-[10px] border border-edge bg-panel-2">
+      <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">查看支援的偵測對象</summary>
+      <div class="px-4 pb-4">
+        {% include detectable-objects.html id_prefix="docs-detectable" class="block h-auto w-[min(420px,100%)] rounded-[10px] border border-edge" %}
+        <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">偵測對象有「身體部位」「男性臉部」「女性臉部」3 種，以及「馬賽克」（<a href="#detect-mosaic">素材中既有的馬賽克</a>），可在<a href="#detect-options">偵測選項</a>中個別開啟或關閉。</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="queue" class="scroll-mt-24">
+  {% include docs-h2.html kicker="載入與偵測" title="佇列（偵測與匯出的等候清單）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>偵測與匯出以 1 個等候清單（佇列）管理，可從選單列的「佇列」確認與操作。按鈕上的徽章是執行中與等待中工作的總數。偵測一次處理 1 部，匯出也一次處理 1 部，完成後下一個工作會自動開始。<a href="#detect-options">不偵測直接匯入</a>的工作會附上「匯入」徽章。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">偵測（執行中）</div>
+        <div class="kv-val">顯示步驟、整體進度、速度、剩餘時間與影格數。也可以在這裡按「開啟詳細資訊」前往偵測畫面，或進行暫停 / 繼續、取消</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">偵測（等待中）</div>
+        <div class="kv-val">可透過拖曳，或「上移」「下移」調換順序。按「從佇列移除」即可取消</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">匯出</div>
+        <div class="kv-val">執行中的列會顯示速度、剩餘時間與影格數。可以排序、「在另一個視窗開啟進度」、暫停 / 繼續、取消，以及刪除已完成的工作（<a href="#encode-progress">進度視窗</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">與網頁版同時使用</div>
+        <div class="kv-val">以同一個帳號在<a href="/zh-tw/docs/web/">網頁版</a>執行處理時，會顯示「網頁版的處理正在執行中，新的工作將在其完成後開始。」，桌面版這邊的工作會等待</div>
+      </div>
+    </div>
+    <p>關閉視窗後佇列仍會保留。結束應用程式時，執行中的偵測會中斷，可在下次啟動時從首頁畫面的「已中斷的偵測」繼續（<a href="#detect">AI 偵測</a>）。留在佇列中的匯出，無法在下次啟動時繼續（請重新從編輯頁面開始）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/queue.webp" alt="佇列的視窗。偵測執行中的列顯示步驟與進度" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">佇列（偵測執行中）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/queue-encode.webp" alt="佇列的視窗。排列著匯出的工作" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">佇列（匯出的工作）</figcaption>
+    </figure>
+  </div>
+</section>

@@ -1,0 +1,1193 @@
+{%- comment -%}
+source: _includes/docs/04-edit.html
+hash:
+  edit-overview: 565879aecd57fc2e
+  edit-player: 7bfb22ddfc87c73d
+  edit-zoom: feda739f7e19206f
+  edit-bbox: 41e173027e8fb025
+  edit-track: 162072e3ff60e2d3
+  edit-scenes: 5c6de5784d7983d1
+  edit-toolbar: 404de0fc6f2757b2
+  edit-mosaic: 7255d56ccc21d5ca
+  edit-persons: 5738e40c9482638b
+  shortcuts: c7bf751ef46a11af
+  edit-sidebar: 382da0e993875ac0
+  timeline-edit: 9b9790138c3544d6
+  edit-media: be1280c18a091c35
+  edit-text: 93ef1e830ba73747
+  edit-watermark: 204c0d82dad75bf0
+  edit-audio: f78bc7f9e73c415c
+  edit-fade: 7b456d7488c37274
+  edit-transition: 6e3d65094d0d7f19
+{%- endcomment -%}
+<section id="edit-overview" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="編輯頁面" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在首頁畫面按一下影片卡片，就會開啟編輯頁面。畫面由上方的「頁首」、沿邊緣直向排列的「側邊欄」（以及在其旁邊開啟的抽屜面板）、中央的「影片播放器（內建編輯工具列）」與下方的「時間軸」組成。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">頁首左側</div>
+        <div class="kv-val">{% include icon.html name="ArrowLeft" class="inline h-3.5 w-3.5 align-[-2px]" %} 返回按鈕、影片標題、9 位數的專案 ID 標章（按一下即可複製）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">中繼資訊</div>
+        <div class="kv-val">影片長度 / 總影格數 / fps / 解析度 / 新增日期</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">頁首右側</div>
+        <div class="kv-val">開啟資料夾 / <a href="#edit-persons">人物圖庫</a> / <a href="#premiere">匯入至 Premiere Pro</a> / <a href="#edit-encode">匯出</a> 等按鈕，以及儲存狀態的顯示。匯出的等候清單可在選單列的「<a href="#queue">佇列</a>」中查看</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">儲存狀態</div>
+        <div class="kv-val">編輯內容會在操作後約 1 秒自動儲存。即時顯示「儲存中…」「未儲存」「已儲存」，失敗時會顯示「儲存失敗」。開始匯出時、離開編輯頁面時與關閉應用程式時，也會儲存尚未儲存的部分</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">側邊欄</div>
+        <div class="kv-val">媒體 / 文字 / 浮水印 / 音訊 / 淡化 / 轉場 共 6 個項目。按下後會在旁邊開啟抽屜面板，可匯入素材，或設定文字、背景音樂等（<a href="#edit-sidebar">側邊欄與抽屜面板</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">時間軸</div>
+        <div class="kv-val">排列著場景列、文字、片段與音訊的通道，以及各偵測類別的列。按下片段接點上的剪刀，即可選擇淡化或轉場（<a href="#edit-player">播放器與時間軸</a> / <a href="#timeline-edit">編輯片段</a> / <a href="#edit-fade">淡化</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">工具提示</div>
+        <div class="kv-val">將滑鼠移到按鈕上，就會立即（約 0.15 秒）以工具提示顯示該功能的說明與快捷鍵</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">載入中的顯示</div>
+        <div class="kv-val">開啟編輯頁面後，在偵測結果全部就緒之前會顯示「正在載入偵測結果」與進度，接著顯示播放器，且從第一個影格起就已顯示框。第一次開啟以舊版偵測的專案時，會顯示「正在將偵測結果轉換為新的儲存格式」（只會轉換 1 次）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">沒有詳細資料</div>
+        <div class="kv-val">找不到偵測結果的檔案時會顯示（例如移動或刪除了專案資料夾）。可用此畫面的「刪除專案」將其從清單中移除</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-overview.webp" alt="整個編輯頁面（頁首、播放器、時間軸）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">整個編輯頁面</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-player" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="播放器與時間軸" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>播放器會以各類別的顏色疊加顯示偵測框（BBox）。可直接拖曳框來編輯位置與大小。支援逐格移動與跳轉，下方的時間軸會繪製偵測的分布與場景（鏡頭）列，按一下即可跳至任意影格。</p>
+    <p>偵測類別會以顏色區分：身體部位（紅）/ 男性臉部（藍）/ 女性臉部（粉紅）/ 使用者建立（黃）/ 排除遮罩（青綠）/ 馬賽克（紫，素材上原本就有的馬賽克。僅限在偵測選項中開啟「馬賽克」後偵測的專案）。框上方的標籤會顯示「類別名稱 #ID（3 字元的代碼） 信賴度%」；手動新增的框會標示「使用者」，排除遮罩會標示「排除」，排除於馬賽克對象之外的追蹤軌跡則會加上「[已排除馬賽克]」。在側邊欄的「設定」中關閉「顯示 BBox 標籤（名稱、ID、機率）」後，就不會顯示標籤（框仍會顯示。<a href="#edit-sidebar">側邊欄與抽屜面板</a>）。</p>
+    <p>馬賽克（紫）的框是多邊形（最多 255 點），與其他多邊形的框一樣，可以移動頂點來修正形狀（下方的「頂點的範圍選取與彎曲」、<a href="#detect-mosaic">找出既有馬賽克並重新套用</a>）。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-player.webp" alt="疊加顯示偵測框的播放器與時間軸。框的內側就是套用馬賽克的範圍" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">疊加顯示 BBox 的播放器與時間軸</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">播放控制</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">播放 / 逐格移動</div>
+        <div class="kv-val">移至開頭（<kbd>Home</kbd>）/ 後退 1 個影格（<kbd>←</kbd>）/ 播放、暫停（<kbd>Space</kbd>）/ 前進 1 個影格（<kbd>→</kbd>）/ 移至結尾（<kbd>End</kbd>）。按 <kbd>PageUp</kbd> / <kbd>PageDown</kbd> 移動 10 個影格。也可用滑鼠滾輪逐格移動，<kbd>Shift</kbd>+滾輪則移動 10 個影格。選取 BBox 時，以 <kbd>Shift</kbd>+<kbd>→</kbd>（或 <kbd>Shift</kbd>+滾輪向上）前進，會沿用該框的形狀逐格前進（下方「偵測框的操作」中的「沿用形狀逐格前進」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">跳轉</div>
+        <div class="kv-val">拖曳滑桿、在時間軸上按一下 / 拖曳，以及時間與影格編號（frame N / M）的顯示</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">靜音（<kbd>V</kbd>）</div>
+        <div class="kv-val">關閉預覽的聲音。不影響匯出</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">切換疊加層顯示（<kbd>H</kbd>）</div>
+        <div class="kv-val">隱藏所有偵測框、標籤、ID 與機率，只確認影像。編輯內容不會改變</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">播放速度</div>
+        <div class="kv-val">在工具列中從 0.25x / 0.5x / 1x / 1.5x / 2x / 4x 選擇（按 <kbd>,</kbd> 變慢、按 <kbd>.</kbd> 變快）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-hud-off.webp" alt="隱藏偵測疊加層的播放器" width="1188" height="411" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">隱藏疊加層（<kbd>H</kbd>）。適合只想確認影像時使用</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">偵測框的操作</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選取</div>
+        <div class="kv-val">按一下框，會顯示粗框與 8 個控點。同時，邊緣羽化所及的範圍會以虛線顯示在框的外側（與 Premiere Pro 的遮色片羽化相同，寬度為設定值的一半，位於輪廓外側。邊緣羽化為 0、框屬於不套用馬賽克的追蹤軌跡，或已隱藏疊加層（<kbd>H</kbd>）時不會顯示）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">移動 / 變更大小</div>
+        <div class="kv-val">拖曳框的內側即可移動，拖曳控點即可變更大小。播放中也可以拖曳</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">刪除</div>
+        <div class="kv-val">選取後按 <kbd>Delete</kbd>、按兩下框，或使用右鍵選單的「刪除此 BBox」。刪除只會套用到該影格的框（同一 ID 的其他影格會保留）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">連續刪除（橡皮擦）</div>
+        <div class="kv-val">在影像上按住 <kbd>E</kbd> 鍵，同時按住右鍵拖曳，即可當作橡皮擦。預設會從該影格刪除碰到圓圈的框。可用工具列的橡皮擦按鈕選擇擦除方式（刪除觸碰到的 BBox / 僅刪除觸碰到的部分）、形狀（圓形 / 圓角矩形）與大小（8～120px）。使用「僅刪除觸碰到的部分」時，擦除後的痕跡會以框的形狀（多邊形）保留下來；手動新增的框被分成 2 塊時，每一塊會各自成為獨立的框。按住不放時播放或用滾輪逐格移動，也能接著擦除經過的影格中的框（沒有按住 <kbd>E</kbd> 的右鍵拖曳，或右鍵沒有移動就放開時，會開啟一般的右鍵選單）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">刪除整個 ID（標籤的 ✕）</div>
+        <div class="kv-val">按下偵測到的框的標籤右端的 ✕，會從所有影格一次刪除該 ID 的框。刪除前會出現確認訊息，並顯示要刪除的影格數。手動新增的框的標籤不會顯示 ✕，但可用右鍵選單的「刪除此 ID 的全部」達到相同效果</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">右鍵選單</div>
+        <div class="kv-val">臉部的框有「變更為男性臉部」「變更為女性臉部」（修正偵測到的性別）。所有的框都有「排除於馬賽克對象之外」「重新納入馬賽克對象」（將整條追蹤軌跡排除於馬賽克對象之外 / 恢復），其下方是「反轉（外側套用馬賽克）」「反轉（外側套用模糊）」（下方的「反轉」）、「設為排除遮罩」（排除遮罩的框則為「改回馬賽克」。<a href="#edit-bbox">將既有的框改為排除遮罩</a>）、「刪除此 BBox」、「刪除此 ID 的全部」（用於偵測到的框時，與標籤的 ✕ 相同。用於手動新增的連續 BBox / 1 個影格的框 / 排除遮罩時，會從所有影格一次刪除該框。若有合併到偵測 ID 的連續 BBox 也會一併刪除，確認中會顯示其數量。兩者都可用 <kbd>Ctrl+Z</kbd> 按 1 次復原）。連續 BBox 有軌跡時會有「清除移動軌跡」。有可合併的 ID 時會有「合併 ID…」，已合併的 ID 則有「取消合併」（下方的「ID 合併」）。使用「變更形狀」可選擇範圍（此 BBox / 此 ID 全部 / 全部）並改為矩形 / 橢圓 / 多邊形，使用「將形狀重設為預設」可恢復原本的形狀。「從這裡連接」，已選擇連接來源時則有「設為中間點」「連接到這裡」。關鍵影格與連接操作請參閱<a href="#edit-track">追蹤與關鍵影格</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">反轉（套用於外側）</div>
+        <div class="kv-val">在框上按右鍵並選擇「反轉（外側套用馬賽克）」或「反轉（外側套用模糊）」，該 ID 就會切換為反轉。反轉中的框的選單會變成「取消反轉（套用於內側）」，選擇後即可恢復。排除遮罩不會顯示此項目。套用的位置與在「依 ID」分頁的切換方式，請參閱<a href="#edit-mosaic">馬賽克設定面板</a>的「反轉（套用於外側）」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">ID 合併</div>
+        <div class="kv-val">同一個對象卻被分成不同的 ID 時，在要保留的框上按右鍵並選擇「合併 ID…」。可合併的 ID 清單（「要合併到 #XXX 的 ID」）會依距離由近到遠開啟，選擇要合併的 ID 後，就會合併到按右鍵的 ID。清單的每一列會列出 #ID 與類別名稱、區段（影格與時間）、相隔幾個影格之後 / 之前（或「相鄰」），選取中的框會在開頭顯示「已選取」。也可以用 <kbd>↑</kbd> / <kbd>↓</kbd> 與 <kbd>Enter</kbd> 選擇，按 <kbd>Esc</kbd> 關閉。超過 8 個時，可用「還有 N 個」顯示其餘項目。在下方時間軸中各 ID 的列上按右鍵，也會開啟相同的清單。合併後會當作 1 個 ID 處理（時間軸的列、依 ID 的馬賽克設定與匯出皆是如此），中間若有沒有框的影格會自動內插。可合併的是同一類別、且沒有在同一時間出現的 ID（同時出現的是不同的對象）。沒有可合併的 ID 時，清單中會顯示「沒有可合併的 ID」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">連續 BBox 的合併</div>
+        <div class="kv-val">連續 BBox（∞）之間，以及連續 BBox 與偵測到的 ID 也可以合併。在連續 BBox 上按右鍵並選擇偵測到的 ID 時，會保留偵測到的 ID（清單的該列會顯示「偵測到的 ID 會成為主體」）。連續 BBox 之間的時間重疊時，會將較早開始的一方在另一方開始之前截斷（取消合併後即恢復原狀）。排除遮罩無法合併</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">合併的復原與取消</div>
+        <div class="kv-val">剛合併後，按 1 次 <kbd>Ctrl+Z</kbd> 就能回到合併前的狀態。之後要恢復時，可在合併目標的框上按右鍵並選擇「取消合併（N 個 ID）」，或在時間軸的 ID 列上按右鍵，選擇清單最後的「取消合併（N 個 ID）」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">頂點的範圍選取與彎曲（<kbd>Shift</kbd>+左鍵拖曳）</div>
+        <div class="kv-val">選取多邊形的框後，按住 <kbd>Shift</kbd> 並以左鍵拖曳圈住頂點，即可一次選取圈住的頂點（會整合為相連的區段。只有 1 點時為選取 1 點，短按一下或按 <kbd>Esc</kbd> 即可解除）。拖曳所選區段內側的頂點，會在固定區段兩端的情況下彎曲，越靠中央移動越大。圈住所有頂點時，會保持形狀移動。拖曳區段端點的頂點時，只有該 1 點會移動。選取多個頂點時，無法按 <kbd>Delete</kbd> 刪除頂點（請一次選取 1 點後再刪除）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">排除馬賽克的提示</div>
+        <div class="kv-val">有排除於對象之外的追蹤軌跡時，會持續顯示「N 條追蹤軌跡已排除馬賽克」。可用「全部恢復套用馬賽克」一次恢復。排除的部分在匯出時也不會套用馬賽克</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">預覽的留白與框外</div>
+        <div class="kv-val">預覽中，影像的上下左右有留白（每邊約 15%，深灰色），影像的邊界會畫上細框線。框可以移動或放大到超出影像、延伸至留白的位置，即使人物走出畫面，也能放置橢圓等形狀而不被壓扁。超出的部分不會匯出，但影像內側會維持該形狀，一直套用馬賽克到影像邊緣。新繪製的框必須與影像重疊，只拖曳留白無法繪製</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">在畫面邊緣被截斷的偵測框</div>
+        <div class="kv-val">碰到畫面邊緣而被截斷的偵測框，會依碰到邊緣前後影格的大小，自動補足到畫面外。馬賽克只會繪製在畫面內，但形狀（橢圓等）是依補足後的框決定，因此即使臉部走出畫面，馬賽克的形狀也不會在邊緣被壓扁。預覽與匯出都會反映。此補足功能適用於以 2.8.1 以上版本偵測的影片</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">繪製框（左鍵拖曳）</div>
+        <div class="kv-val">在影像的空白處以左鍵拖曳，即可繪製工具列形狀選擇中所選形狀（矩形 / 橢圓 / 多邊形）的框。多邊形是按一下放置頂點，再按一下起點 / 按 <kbd>Enter</kbd> / 按兩下即可封閉。繪製的框預設是會延續到之後影格的連續 BBox，可在形狀選擇選單的「繪製的 BBox」中改為「僅此影格」，在「繪製的 BBox 類型」中改為「排除遮罩」。只拖曳留白無法繪製框（請繪製成與影像重疊）。放大時要移動影格，請使用 <kbd>Ctrl</kbd>+左鍵拖曳（中鍵拖曳也可以）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">手動新增的框的顯示</div>
+        <div class="kv-val">手動新增的框的標籤會顯示「使用者」，ID 與偵測到的框一樣是 3 字元的代碼（例：#K7Q）。在時間軸中會排列在「使用者」的列</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">沿用馬賽克設定</div>
+        <div class="kv-val">在偵測到的框上重疊新增框，或在其附近（間隔在畫面短邊的 5% 以內）新增框時，會複製該偵測框所套用的馬賽克設定（類型、模糊、不透明度、馬賽克格的大小）。馬賽克格的大小會固定為與該偵測框看起來相同。複製的設定隨時可在<a href="#edit-mosaic">馬賽克設定</a>的「依 ID」分頁中變更</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">沿用形狀逐格前進（<kbd>Shift</kbd>+<kbd>→</kbd>）</div>
+        <div class="kv-val">按一下框將其選取，按住 <kbd>Shift</kbd> 並按 <kbd>→</kbd>（或將滾輪向上）前進，會以開始按 <kbd>Shift</kbd> 時的位置、大小與形狀逐格前進，並覆寫前進到的影格中的該框。沿用中的框的標籤會顯示「[沿用中]」。到放開 <kbd>Shift</kbd> 為止是 1 個操作，按 1 次 <kbd>Ctrl+Z</kbd> 即可一併復原。前進到的影格中沒有該框時會略過，連 1 個影格都無法寫入時，會顯示「前進到的影格中沒有此 BBox，無法沿用形狀。」。<kbd>Shift</kbd>+<kbd>←</kbd> 會不沿用形狀後退 1 個影格。以播放按鈕播放、以 <kbd>PageDown</kbd> 移動 10 個影格、僅 1 個影格的手動框，以及匯入素材的區段，都不會沿用</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">固定沿用（<kbd>Shift</kbd> ×2）</div>
+        <div class="kv-val">選取框後快速按 2 次 <kbd>Shift</kbd>，會進入放開 <kbd>Shift</kbd> 後仍持續沿用的「固定」狀態，標籤會顯示「[沿用：固定]」。固定期間，不按 <kbd>Shift</kbd> 的 <kbd>→</kbd> 或滾輪向上也會沿用形狀前進（<kbd>PageDown</kbd> 與播放按鈕不會沿用）。再快速按 2 次 <kbd>Shift</kbd>，或按 <kbd>Esc</kbd> 即可解除。固定期間重新選擇其他框，下次前進時就會沿用該框的形狀。在輸入法（IME）等軟體會使用單按 <kbd>Shift</kbd> 的環境中，可能無法進入固定狀態</div>
+      </div>
+    </div>
+    <p>只有在播放指標位於原始影片（偵測來源）的區段時，才能選取、新增偵測框與使用橡皮擦。<a href="#edit-media">匯入的素材</a>區段不在 AI 偵測的範圍內，因此沒有框。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-context-menu.webp" alt="在偵測框上按右鍵時的選單（變更性別、排除於馬賽克對象之外、刪除）" width="1188" height="568" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">框的右鍵選單</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">時間軸</h3>
+    <p>時間軸由上而下依序為工具列、刻度、<a href="#edit-scenes">場景（鏡頭）列</a>、文字、片段與音訊的通道（<a href="#timeline-edit">編輯片段</a>），以及各偵測類別的列。類別的列會以色條畫出有偵測的區段，手動新增的框排列在「使用者」列，排除遮罩排列在「排除」列。可用列首的 {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} 展開為各追蹤 ID 的列。在 ID 的列上按右鍵，會開啟可合併到該 ID 的 ID 清單（上方的「ID 合併」。已合併的 ID 會在清單最後顯示「取消合併」）。按右鍵不會移動到該位置。排除於馬賽克對象之外的追蹤軌跡會以淡色顯示。時間軸依匯出影像的時間排列，因此修剪或移動片段時，偵測的色條也會一起移動。</p>
+    <p>時間軸可用 <kbd>Ctrl</kbd>+滾輪，或工具列左端的放大、縮小按鈕放大到最多 16 倍。高度的變更與摺疊請參閱<a href="#timeline-edit">編輯片段</a>。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-timeline.webp" alt="時間軸。場景列，以及展開類別列後的各追蹤 ID 列" width="1188" height="304" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">時間軸（場景列與類別列 → 展開 ID 列）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-zoom" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="縮放與平移" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>為了精確對齊小對象的框，可將播放器的影像放大到最多 8 倍。放大時也能照常移動框、變更大小、新增與刪除。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">放大 / 縮小</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+滾輪（以游標位置為中心縮放）、<kbd>+</kbd> / <kbd>-</kbd> 鍵，或播放器右上的 {% include icon.html name="Maximize2" class="inline h-3.5 w-3.5 align-[-2px]" %} 按鈕。目前的倍率會顯示在按鈕之間</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">平移（移動顯示位置）</div>
+        <div class="kv-val"><kbd>Ctrl</kbd>+左鍵拖曳，或中鍵（滾輪）拖曳。沒有放大時（原始大小）不會移動。在空白處以左鍵拖曳會繪製框</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">重設</div>
+        <div class="kv-val">按 <kbd>0</kbd> 鍵或「重設縮放」按鈕，即可回到原始大小並置中</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-zoom.webp" alt="放大顯示的播放器。右上有倍率與縮放按鈕" width="1188" height="411" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">放大顯示。適合細部對齊框</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-bbox" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="新增偵測框（1f 與 ∞）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>沒有偵測到的地方，可用工具列的「1f」（內有＋的方框，附有 1f）與「∞」（內有 ∞ 的方框）按鈕手動新增框。新增的框會以「使用者」類別（黃）放在目前影格的中央，請拖曳以對齊位置與大小。<a href="#edit-mosaic">馬賽克設定</a>（包括依 ID）也會直接套用到手動的框。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f（<kbd>1</kbd>）</div>
+        <div class="kv-val">只在此影格放置框。不影響前後的影格。適合修補只有幾個影格沒有偵測到的「中間缺漏」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ 連續 BBox（<kbd>2</kbd>）</div>
+        <div class="kv-val">從放置的影格起，之後的所有影格都會在相同位置延續框。不想延續到影片結尾時，請在要結束的影格刪除框（刪除影格之前的部分會確定為有效範圍）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">移動連續 BBox</div>
+        <div class="kv-val">一邊播放一邊拖曳 ∞ 的框，其移動會記錄為軌跡，可讓框跟隨被攝體的移動。記錄的軌跡可用右鍵選單的「清除移動軌跡」清除。要讓框自動跟隨對象時，請使用<a href="#edit-track">追蹤</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">復原</div>
+        <div class="kv-val">若上一個編輯是 ID 的合併、全部刪除、對範圍套用形狀或依類別改為排除遮罩，<kbd>Ctrl+Z</kbd> 只會復原該編輯（<a href="#edit-player">偵測框的操作</a>）。其他情況下，以刪除方式結束 ∞ 框後立刻按下，會先取消已確定的結尾（快捷鍵說明中為「解除凍結」）；若沒有，則與「重設目前影格」相同，將目前影格的編輯復原</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">排除遮罩（不套用馬賽克的範圍）</h3>
+    <p>想讓重疊的馬賽克只空出其中一部分時（例如只想讓臉旁邊的手部露出），請放置排除遮罩。排除遮罩的內側不會套用馬賽克，會以原本的影像顯示與匯出。排除遮罩不會追蹤，對於移動的對象，請拖曳以對齊位置。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">1f 排除遮罩（<kbd>3</kbd>）</div>
+        <div class="kv-val">只放置在此影格</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">∞ 連續排除遮罩（<kbd>4</kbd>）</div>
+        <div class="kv-val">從放置的影格起延續到之後的影格（結束方式與連續 BBox 相同，在要結束的影格刪除）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">形狀與繪製</div>
+        <div class="kv-val">會以工具列形狀選擇中所選的形狀（矩形 / 橢圓 / 多邊形）放置。將形狀選擇選單的「繪製的 BBox 類型」設為「排除遮罩」後，即可用左鍵拖曳繪製排除遮罩</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">顯示</div>
+        <div class="kv-val">框與標籤為青綠色的「排除」，排列在時間軸的「排除」列。可在馬賽克套用預覽（<kbd>M</kbd>）中確認馬賽克被挖空的樣子</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">邊緣的羽化</div>
+        <div class="kv-val">排除遮罩的邊緣會以與手動框相同的邊緣羽化設定來融合。大小（框擴展比例）沒有作用</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro</div>
+        <div class="kv-val">排除遮罩不會傳遞到 <a href="#premiere">Premiere Pro 整合</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">將既有的框改為排除遮罩</h3>
+    <p>偵測到的框與手動新增的框，之後也可以改為排除遮罩。改為排除遮罩的框內側，重疊的其他馬賽克也不會套用。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">逐一變更</div>
+        <div class="kv-val">在框上按右鍵，選擇「設為排除遮罩」。偵測到的框，該 ID（含合併的 ID）的所有影格都會成為排除遮罩。手動新增的框，則是該框改為排除遮罩。要改回時，在排除遮罩的框上按右鍵，選擇「改回馬賽克」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">依類別一次變更</div>
+        <div class="kv-val">在<a href="#edit-mosaic">馬賽克設定</a>（<kbd>G</kbd>）的「依類別」分頁選擇類別，按下「將此類別全部設為排除遮罩」。會出現顯示對象 ID 數量的確認。對象為當時存在的、該類別中偵測到的 ID（臉部包含男性臉部與女性臉部兩者。不包含手動新增的框，以及之後才增加的 ID）。按「將此類別全部改回馬賽克」即可一次改回馬賽克。兩者都可用 <kbd>Ctrl+Z</kbd> 按 1 次復原</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">顯示</div>
+        <div class="kv-val">改為排除遮罩的框，會與其他排除遮罩一樣以青綠色的「排除」顯示，並列在時間軸的「排除」列。改為排除遮罩的 ID 無法合併。合併後才將 ID 改為排除遮罩時，以「取消合併」分開的 ID 會回到馬賽克</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Premiere Pro 與舊版本</div>
+        <div class="kv-val">改為排除遮罩的變更不會傳遞到 <a href="#premiere">Premiere Pro 整合</a>。以早於 2.18 的 Deepmosaic 開啟並儲存專案時，改為排除遮罩的偵測框會回到馬賽克（會回到被遮住的狀態，因此不會出現未遮住的部分）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic-class-avoid.webp" alt="在馬賽克設定面板的依類別分頁按下「將此類別全部設為排除遮罩」後，顯示目標 ID 數量的確認" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">依類別分頁的「將此類別全部設為排除遮罩」與數量的確認</figcaption>
+    </figure>
+    <p>框的新增、移動與刪除都會自動儲存，並反映在<a href="#edit-encode">匯出</a>中。傳遞到 <a href="#premiere">Premiere Pro 整合</a>的只有偵測結果與邊緣羽化的值，在此畫面中對框的編輯（移動、變更形狀、刪除、排除遮罩等）不會傳遞。</p>
+  </div>
+</section><section id="edit-track" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="追蹤與關鍵影格" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>「追蹤」是讓手動放置的 ∞ 連續 BBox 隨著播放，自動跟上對象移動的功能。以控制列的按鈕切換開啟 / 關閉。「關鍵影格」是將手動修正的影格當作移動的基準，自動連接關鍵影格之間的機制。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">追蹤</h3>
+    <ol>
+      <li><b>放置框。</b>放置或繪製 ∞ 連續 BBox（<kbd>2</kbd>），並對齊對象（<a href="#edit-bbox">新增偵測框</a>）</li>
+      <li><b>開啟追蹤模式。</b>按下控制列的追蹤按鈕（{% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %}），或按 <kbd>X</kbd></li>
+      <li><b>前進。</b>以播放、<kbd>→</kbd> 或滾輪向上任一方式前進，框就會跟著對象移動</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">追蹤模式（<kbd>X</kbd>）</div>
+        <div class="kv-val">開啟期間，以前進的操作（播放 / <kbd>→</kbd> / 滾輪向上）進行追蹤。<kbd>←</kbd> 等後退的操作不會追蹤。再按一次即關閉</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">追蹤的框</div>
+        <div class="kv-val">會追蹤目前影格中可見的所有 ∞ 連續 BBox。不需要選取框。也能同時追蹤多個框，數量沒有上限。框越多，追蹤越慢，播放也會相應地等待追蹤。1f 的框與排除遮罩不會追蹤（「排除遮罩無法追蹤。」）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">播放速度</div>
+        <div class="kv-val">追蹤期間最快以原速播放。追蹤跟不上時，會暫停等待直到追上</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">停止的時機</div>
+        <div class="kv-val">跟丟對象、對象移出畫面、場景切換等情況下會停止追蹤，並顯示原因（例：「在此處跟丟目標，已停止追蹤。」）。此時 <b>∞ 框會在最後成功追蹤的影格結束</b>，不會延續到之後。追蹤到影片的結尾時，會顯示「已追蹤到影片的結尾。」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">復原（<kbd>Ctrl+Z</kbd>）</div>
+        <div class="kv-val">1 次追蹤的結果，即使同時追蹤了多個框，也能按 1 次 <kbd>Ctrl+Z</kbd> 一併回到開始追蹤之前的狀態（框的結尾也會復原）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">追蹤完畢的框</div>
+        <div class="kv-val">追蹤完畢的框，即使再次播放也不會重新追蹤。在追蹤模式開啟時手動修正框，會從修正的影格起（到下一個手動修正的影格之前）重新追蹤。要從頭重新追蹤時，請刪除框後重新放置</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">追蹤的種類</div>
+        <div class="kv-val">有 GPU 的電腦會自動選擇「高精度追蹤」，其他電腦則自動選擇「標準追蹤」。偵測執行期間會使用標準追蹤。開始追蹤後將滑鼠移到追蹤按鈕上，會以「使用中：高精度追蹤（GPU）」的形式顯示正在使用的追蹤</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">需要新的偵測引擎</div>
+        <div class="kv-val">顯示「追蹤需要較新的偵測引擎。」時，請套用<a href="#update">更新</a></div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">關鍵影格</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">修正 ∞ 連續 BBox 時</div>
+        <div class="kv-val">對於沒有追蹤的 ∞ 框，手動修正的影格會成為「關鍵影格」，與前一個關鍵影格之間會自動平順地連接。在追蹤模式關閉時修正已追蹤的 ∞ 框，只有修正的影格會改變</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">關鍵影格（<kbd>F</kbd>）</div>
+        <div class="kv-val">將選取中的框的目前位置，在不移動的情況下設為關鍵影格</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">修正 AI 的框時</div>
+        <div class="kv-val">只有修正的影格會改變</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">連接</h3>
+    <p>以不同影格中的框作為點，建立 1 條在各點之間依對象的移動而移動的 ∞ 連續 BBox。除了開始與結束之外，途中的點（中間點）可以放置任意多個。</p>
+    <ol>
+      <li><b>放置開始的點。</b>在起始的影格選取框，按 <kbd>Y</kbd>（或選擇框的右鍵選單中的「從這裡連接」）。播放器的左下會顯示「連接來源：#K7Q @ 3」之類的內容，以及下一步操作的說明</li>
+      <li><b>視需要放置中間點。</b>移到途中的影格，選取貼合對象的框後按 <kbd>Shift+Y</kbd>（或選擇右鍵選單中的「設為中間點」）。可放置任意多個。在同一影格再放置一次會取代原本的點（「已取代同一影格的點。」）</li>
+      <li><b>在結束的點連接。</b>在結束的影格選取框，按 <kbd>Y</kbd>（或選擇右鍵選單中的「連接到這裡」）。各點之間會立即以平滑內插連接，並顯示「已連接 BBox（#K7Q → #K7Q，31 個影格）」之類的訊息。放置了中間點時會一併顯示其數量</li>
+      <li><b>依序進行追蹤。</b>連接的區段會加入「追蹤佇列」，各點之間的框會依對象的移動重新修正（下方的「追蹤佇列」）。不必等待完成，即可繼續進行下一次連接或其他編輯</li>
+    </ol>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-bridge-guide.webp" alt="選取框並按下 Y 後，播放器左下角顯示下一步操作說明的狀態" width="1188" height="425" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">連接途中的說明。中間點按 Shift+Y，在最後的影格按 Y</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">可連接的框</div>
+        <div class="kv-val">作為點的框可以是 AI 的框，也可以是手動新增的框。可連接同一場景中、不同影格的框（中間點也相同）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">無法追蹤時</div>
+        <div class="kv-val">追蹤時跟丟對象時，會套用到能追蹤的部分為止，其餘維持平滑內插（追蹤佇列的列會顯示「在 f120 失去目標」之類的內容）。開始的點為排除遮罩時，或連接相鄰影格的框時，只會以內插連接，不會加入追蹤佇列。無法使用追蹤時也只會以內插連接，並顯示「無法追蹤對象，因此以平滑內插連接。」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">以連續 BBox 作為點時</div>
+        <div class="kv-val">開始的點或中間點的框為 ∞ 連續 BBox 時，在設為點的當下就會變成只在該影格的框（若是放置在該影格的框，該框會變成只有 1 個影格的框；若是從之前的影格延續過來的框，會在此影格之前結束，並在此影格建立 1 個影格的框）。結束的點的框為 ∞ 連續 BBox 時，該框會在點之前結束（若是放置在該影格的框則會消失），並由連接的框取代</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">原本的框</div>
+        <div class="kv-val">原本的 AI 的框不會消失，在中間的影格會與連接的框重疊。作為點的只有 1 個影格的框會消失。連接的框會在結束的點的影格結束</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">修正中間</div>
+        <div class="kv-val">以追蹤連接的框會被視為已追蹤的框。在追蹤模式（<kbd>X</kbd>）開啟的狀態下修正中間的影格，會從該處重新追蹤到下一個點之前。關閉時，只有修正的影格會改變。全部以平滑內插連接的框，在暫停時於中間的影格修正，該影格就會成為關鍵影格，前後會重新平順地連接（上方的「關鍵影格」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">復原（<kbd>Ctrl+Z</kbd>）</div>
+        <div class="kv-val">剛連接後，按 1 次 <kbd>Ctrl+Z</kbd> 即可回到連接之前（以連續 BBox 作為點時，會回到原本的連續 BBox。追蹤佇列的追蹤完成後，只要沒有進行其他編輯也相同）。修正中間之後，按 <kbd>Ctrl+Z</kbd> 也不會回到連接之前，要重新建立時，請以框的右鍵選單中的「刪除此 ID 的全部」刪除</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">停止（<kbd>Esc</kbd>）</div>
+        <div class="kv-val">放置點之後要停止時，按 <kbd>Esc</kbd>。若已將點的框變成只有 1 個影格的框，會維持原樣（在 <kbd>Esc</kbd> 之後立即按 <kbd>Ctrl+Z</kbd>，變更過的框會全部還原為原本的連續 BBox。中間做了其他編輯就無法還原）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">追蹤前修正了區段時</div>
+        <div class="kv-val">在追蹤佇列中等待或追蹤期間，手動修正該區段的框時，該次連接會從佇列移除，框維持內插的結果（「因手動修改了區段內的框，已取消追蹤。框保留為內插結果。」）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">無法連接時</div>
+        <div class="kv-val">以下情況不會連接，並會顯示原因：同一影格的框（「無法連接：這是同一個影格。」）、跨場景的框（「無法連接：跨場景的 BBox 無法連接。」）、中間有排除遮罩（「無法連接：中間有排除遮罩。」）、BBox 與排除遮罩的組合（「無法連接：BBox 與排除遮罩的類型不同。」）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">追蹤佇列</h3>
+    <p>連接的區段的追蹤會加入「追蹤佇列」，並依序一次處理 1 件。在有 GPU 的電腦上，追蹤之後還會接著進行輪廓精修（與<a href="#detect-options">馬賽克精修</a>相同，讓框貼合物體形狀的處理）。完成後，各點之間的內插框會替換為追蹤（與精修）的結果。手動放置的點所在影格的框不會改變。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-tracking-queue-panel.webp" alt="追蹤佇列的面板。列出執行中的 1 件（追蹤中、A 點與 B 點的影格、進度）、等待中的 1 件與已完成的 1 件，佇列中的區段以帶狀標示顯示在搜尋列上方" width="1188" height="528" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">追蹤佇列的面板（執行中、等待中、已完成）</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">面板與顯示</div>
+        <div class="kv-val">有連接的區段時，播放器上方會出現「追蹤 45% · 等待 2」之類的小型顯示（附進度列）。按下後會開啟「追蹤佇列」面板，按面板的「—」即可回到小型顯示。面板與小型顯示都可拖曳移動，位置與開關狀態在下次開啟編輯頁面時也會沿用。畫面下方的狀態列也會顯示「● 追蹤 45%（3 項）」之類的進度，按下即可開關面板（沒有項目時為「追蹤：無等待項目」，有跟丟目標的區段等情況時為「● 追蹤發生錯誤」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">面板的看法</div>
+        <div class="kv-val">由上而下依序為：執行中的 1 件（狀態「追蹤中」「精修輪廓中」「已暫停」、ID、A 點與 B 點的影格、進度 %、速度、剩餘時間的估計）、「等待中 · N」的清單、「已完成 · N」的清單。面板下方會顯示「全部剩餘約 2 分 10 秒」之類的整體剩餘時間估計，全部完成後會顯示「全部處理完成」</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">暫停 / 取消</div>
+        <div class="kv-val">按執行中列的「暫停」即可停止，按「繼續」會從停止處繼續。以 ✕（「取消」）停止該處理時，框會維持內插的結果</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">調整順序 / 移除</div>
+        <div class="kv-val">按等待中列的 ↑（「優先處理」）可與前一件交換順序。以 ✕（「從佇列移除」）移除時，該區段的框會維持內插的結果</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">查看 / 重試</div>
+        <div class="kv-val">按已完成列的「查看」，會移到該區段的開頭並選取結果的框。跟丟目標的列會以紅色顯示「在 f120 失去目標」之類的內容。跟丟之前能追蹤的部分會套用，其餘維持內插的結果。按「重試」可回到等待中。追蹤中途停止時會顯示「無法完成追蹤」。按「清除已完成」可從清單中一次清除已結束的列</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">與其他操作的關係</div>
+        <div class="kv-val">追蹤模式（<kbd>X</kbd>）以及手動修正框後的重新追蹤會優先進行。在這段期間佇列的處理會暫停，結束後會自動繼續。偵測執行中不會進行輪廓精修，只會套用追蹤的結果（「偵測執行中，已略過輪廓精修，只套用追蹤結果。」）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">不進行精修的電腦</div>
+        <div class="kv-val">沒有 GPU 的電腦、GPU 記憶體少於 4 GB 的電腦，或尚未取得馬賽克精修的 AI 模型時，不會進行輪廓精修，只以追蹤完成</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">離開編輯頁面時</div>
+        <div class="kv-val">追蹤佇列只在開啟編輯頁面期間運作。在仍有未完成的處理時離開編輯頁面、進行編碼或傳送到 Premiere Pro，會出現「追蹤尚未完成」的確認。直接繼續時，未完成的區段會維持內插的結果</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">進度列上的帶狀標示</div>
+        <div class="kv-val">佇列中的區段會以帶狀標示顯示在進度列上方（執行中顯示進度，完成後為綠色）。可在側邊欄「設定」中的「在進度列顯示追蹤區段」設為不顯示</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">一次修正一段區間</h3>
+    <p>手動修正 AI 的框時，只有該影格會改變。要一次修正數秒到數分鐘的區間時，請依情況使用以下操作。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">對象會移動</div>
+        <div class="kv-val">以開頭與結尾（及途中）影格的框作為點，以追蹤<b>連接</b>（<kbd>Y</kbd> / <kbd>Shift+Y</kbd>）（上方的「連接」）。要手動修正時，在暫停且追蹤模式關閉的狀態下，於區間的開頭放置 ∞ 連續 BBox（<kbd>2</kbd>）並對齊對象，再於中間與結尾的影格修正位置與大小。修正的影格之間會自動平順地連接（上方的「關鍵影格」）。移動複雜時，以<b>追蹤</b>（<kbd>X</kbd>）讓框跟隨對象，只修正偏移的影格（上方的「追蹤」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">對象幾乎不動</div>
+        <div class="kv-val">選取修正後的框，快速按 2 次 <kbd>Shift</kbd>，再以 <kbd>→</kbd> 前進，相同的位置、大小與形狀就會寫入之後的影格（<a href="#edit-player">固定沿用</a>）。按 <kbd>Esc</kbd> 解除</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">一律放大或縮小區間內的框</div>
+        <div class="kv-val">在<a href="#edit-mosaic">馬賽克設定</a>（<kbd>G</kbd>）的「依時間」分頁按「新增範圍」，將開始與結束對齊區間後，變更「大小（框擴展比例）」。對範圍內所有的框（包含手動新增的框）有效。要以場景為單位變更時，在「依場景」分頁的「目標場景：」選擇該場景（在區間的開頭與結尾按 <kbd>Ctrl+K</kbd> 即可分隔。<a href="#edit-scenes">場景</a>）。只要變更特定對象時，請使用「依 ID」分頁（對該 ID 的所有影格有效）</div>
+      </div>
+    </div>
+    <p>請注意以下幾點。</p>
+    <ul>
+      <li>手動新增的框會與 AI 的框重疊，AI 的框仍會保留。AI 的框過大或偏移的區間，可用橡皮擦（按住 <kbd>E</kbd>+右鍵拖曳並播放）連續擦除，或以框的右鍵選單中的「排除於馬賽克對象之外」將該 ID 整體排除於馬賽克對象之外（<a href="#edit-player">偵測框的操作</a>）</li>
+      <li>關鍵影格之間的內插，只有在暫停且追蹤模式關閉的狀態下修正時才會作用。追蹤模式開啟期間，以及播放中拖曳（記錄軌跡）時不會內插</li>
+      <li>∞ 連續 BBox 在刪除之前，會以相同位置持續出現在之後的影格（場景切換也不會停止）。在要結束的影格選取框後按 <kbd>Delete</kbd>，或選擇右鍵選單中的「刪除此 BBox」，就會刪除從該影格起的部分</li>
+      <li>連接只限同一場景中的框</li>
+      <li>手動新增的框（∞ 連續 BBox、連接的框）會將建立時的大小當作「依 ID」的設定儲存。之後在「全部」「依場景」「依時間」等設定的值，對手動新增的框也有效（以最後設定的為優先。<a href="#edit-mosaic">馬賽克設定面板</a>）</li>
+      <li>將預覽切換為馬賽克套用預覽（<kbd>M</kbd>），即可確認馬賽克的範圍</li>
+    </ul>
+  </div>
+</section>
+
+<section id="edit-scenes" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="場景（鏡頭）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>偵測時會自動判定影像的鏡頭切換（場面的轉換），並以場景列顯示在時間軸的上方。場景是「自動像素大小」開啟時保持馬賽克格大小一致的單位，也是依場景變更<a href="#edit-mosaic">馬賽克設定</a>的單位。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">移至場景</div>
+        <div class="kv-val">按一下場景列，就會跳至該場景的第一個影格。場景列會顯示編號（#1, #2 …），將滑鼠移到上面即可確認區段</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">分割（<kbd>Ctrl+K</kbd>）</div>
+        <div class="kv-val">使用時間軸工具列（放大、縮小按鈕右側）的 {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} 按鈕或 <kbd>Ctrl+K</kbd>，以目前影格為界將場景分成 2 個。適用於自動判定遺漏的鏡頭切換，或想在同一鏡頭內變更設定的地方</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">調整邊界</div>
+        <div class="kv-val">拖曳場景列的分界，前後場景的開始與結束會同時移動</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">刪除</div>
+        <div class="kv-val">將滑鼠移到場景列上時出現的 ✕（刪除此場景），會與相鄰的場景合併</div>
+      </div>
+    </div>
+    <p>場景的變更會儲存為編輯資料，偵測結果本身不會改變。使用「重設所有編輯」即可回到自動判定的狀態。分割場景不會切開匯出的影像。要切開影像本身時，請使用片段的分割（<kbd>Ctrl+Shift+K</kbd>，<a href="#timeline-edit">編輯片段</a>）。</p>
+  </div>
+</section>
+
+<section id="edit-toolbar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="編輯工具列" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>播放器下方的控制列由左至右依序為<b>播放控制</b>（移至開頭 / 後退 1 個影格 / 播放 / 前進 1 個影格 / 移至結尾 / 僅播放空白影格 / 缺漏影格跳轉 / 靜音）、<b>編輯工具列</b>與時間。編輯工具列分為以下幾組，以直線分隔：形狀選擇 / 新增 BBox / 新增排除遮罩 / 橡皮擦 / 重設目前影格 ｜ 切換疊加層顯示 / 切換預覽 / 追蹤 ｜ 馬賽克設定 ｜ 重設所有編輯 ｜ 標籤 ｜ 播放速度 ｜ 快捷鍵清單。追蹤的按鈕只有圖示。寬度不足時，工具列與時間會換到第 2 行。將滑鼠移到各按鈕上，會顯示快捷鍵。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">僅播放空白影格（<kbd>B</kbd>）</div>
+        <div class="kv-val">位於播放控制的「移至結尾」右側。自動略過含有偵測框的影格，只連續播放沒有 BBox 的影格。方便檢查是否有遺漏</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">缺漏影格跳轉</div>
+        <div class="kv-val">用「僅播放空白影格」右側的 2 個按鈕，向前或向後跳至沒有偵測的影格（快捷鍵：<kbd>[</kbd> / <kbd>]</kbd>）。目標類別是在工具列「標籤」選單下半部的「篩選」中所選的類別</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">切換預覽（<kbd>M</kbd>）</div>
+        <div class="kv-val">位於切換疊加層顯示的右側。切換 BBox 框顯示與馬賽克套用預覽。在馬賽克顯示中，可當場確認接近匯出結果的樣子</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">形狀選擇</div>
+        <div class="kv-val">位於工具列的開頭。選擇要新增 / 繪製的框的形狀（矩形 / 橢圓 / 多邊形）（按 <kbd>W</kbd> 為橢圓、按 <kbd>O</kbd> 為多邊形，再按一次為矩形）。可在選單的「繪製的 BBox」中選擇繪製的框是「此後的影格也套用」還是「僅此影格」，在「繪製的 BBox 類型」中選擇「馬賽克」或「排除遮罩」。在此切換的值只在這次編輯期間有效，啟動時的初始值請在側邊欄的「設定」中選擇（<a href="#edit-sidebar">側邊欄與抽屜面板</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">新增 BBox（1f / ∞）</div>
+        <div class="kv-val">在目前影格的中央，新增形狀選擇中所選形狀的框。「1f」（內有＋的方框，附有 1f）只用於此影格，「∞」（內有 ∞ 的方框）會在之後的所有影格連續顯示。畫面寬度較窄時只會顯示圖示。新增後請拖曳調整（<a href="#edit-bbox">新增偵測框</a>）。快捷鍵：<kbd>1</kbd> / <kbd>2</kbd></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">新增排除遮罩（1f / ∞）</div>
+        <div class="kv-val">新增 BBox 右側的虛線方框按鈕。在目前影格的中央，放置形狀選擇中所選形狀的排除遮罩（不套用馬賽克的範圍）。「1f」只用於此影格，「∞」（內有 ∞ 的虛線方框）會延續到之後的影格（<a href="#edit-bbox">排除遮罩</a>）。快捷鍵：<kbd>3</kbd> / <kbd>4</kbd></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">橡皮擦</div>
+        <div class="kv-val"><kbd>E</kbd>+右鍵拖曳的橡皮擦設定（擦除方式：刪除觸碰到的 BBox / 僅刪除觸碰到的部分，形狀：圓形 / 圓角矩形，大小：8～120px）。按下按鈕不會變成橡皮擦，擦除一律是用 <kbd>E</kbd>+右鍵拖曳</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">馬賽克設定（<kbd>G</kbd>）</div>
+        <div class="kv-val">開啟馬賽克設定面板（<a href="#edit-mosaic">下一章</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Crosshair" class="inline h-3.5 w-3.5 align-[-2px]" %} 追蹤（<kbd>X</kbd>）</div>
+        <div class="kv-val">位於切換預覽的右側。開啟 / 關閉追蹤模式。開啟期間，以播放 / <kbd>→</kbd> / 滾輪向上前進，∞ 連續 BBox 就會追蹤對象（<a href="#edit-track">追蹤與關鍵影格</a>）。開啟編輯頁面時為關閉（可在側邊欄的「設定」中預先設為開啟）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">重設目前影格</div>
+        <div class="kv-val">將目前影格的編輯（框的新增、移動、刪除）恢復為偵測結果。快捷鍵：<kbd>Ctrl+Z</kbd>（視上一個編輯而定，會先復原該編輯。請參閱<a href="#edit-bbox">復原</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">重設所有編輯</div>
+        <div class="kv-val">捨棄框的編輯、馬賽克設定、場景、人物的合併等所有編輯（會顯示確認對話方塊，無法復原）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">標籤（<kbd>C</kbd>）</div>
+        <div class="kv-val">按鈕上會顯示所選內容的摘要（例：「全部 2 個標籤」「臉部 · 男性臉部」）。選單上半部的「顯示（也會套用至匯出）」可勾選身體部位 / 臉部，取消勾選的標籤在預覽與匯出中都不會出現（例：只匯出身體部位）。下半部的「篩選（僅限顯示與缺漏影格跳轉）」可從所有類別 / 身體部位 / 男性臉部 / 女性臉部中選擇，篩選預覽與時間軸中顯示的框，以及缺漏影格跳轉的目標（不影響匯出）。若專案中有素材上原本就有的馬賽克的框，上半部與下半部都會顯示「馬賽克」。上半部的「馬賽克」在偵測後為開啟狀態，匯出時會在該範圍上重新覆蓋一層馬賽克。取消勾選後，在預覽與匯出中都不會出現，重新開啟專案後也會維持取消勾選</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">播放速度</div>
+        <div class="kv-val">從 0.25x / 0.5x / 1x / 1.5x / 2x / 4x 選擇</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} 快捷鍵清單</div>
+        <div class="kv-val">將滑鼠移到上面，會顯示<a href="#shortcuts">鍵盤快捷鍵的說明</a></div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-toolbar.webp" alt="編輯工具列" width="1172" height="48" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">編輯工具列</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-mosaic" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="馬賽克設定面板" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>可依 5 個套用範圍（分頁）設定馬賽克的外觀。同一個框在同一影格套用多個設定時，以<b>最後設定的</b>為優先（下方的「設定的優先」）。面板可拖曳頁首移動到任意位置，拖曳右下角即可變更大小（也可選取角後用方向鍵調整，按兩下則恢復預設大小）。開啟時也能繼續編輯。變更值後，會當場反映在馬賽克套用預覽（<kbd>M</kbd>）中。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">套用範圍分頁</div>
+        <div class="kv-val">全部（全域預設值）/ 依類別（身體部位、臉部等。在有<a href="#detect-mosaic">既有馬賽克</a>框的專案中也會出現「馬賽克」）/ 依 ID（被追蹤的各個對象）/ 依場景（以鏡頭為單位）/ 依時間（時間範圍。下方的「依時間」）。在依 ID、依場景與依時間中，以下拉式選單選擇對象。正在覆寫的範圍會顯示「已覆寫」，可用「清除」個別解除。「依類別」分頁中也有「將此類別全部設為排除遮罩」「將此類別全部改回馬賽克」（<a href="#edit-bbox">將既有的框改為排除遮罩</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">信賴度臨界值</div>
+        <div class="kv-val">只將信賴度在指定值以上的偵測結果顯示並列為馬賽克對象（0～100%，不受分頁影響的全域設定）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">類型</div>
+        <div class="kv-val">馬賽克（方塊狀）/ 模糊（高斯模糊）。預設：馬賽克</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">大小（框擴展比例）</div>
+        <div class="kv-val">從中心放大或縮小偵測框，以調整馬賽克範圍（0.50x～2.00x）。預設：1.05x。若不想讓範圍太貼近邊緣，請設大一些</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">不透明度</div><div class="kv-val">馬賽克 / 模糊合成的強度（0～100%）。預設的 100% 會完全覆蓋對象。值越低，遮蔽效果越弱，因此通常維持 100% 即可</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">邊緣羽化</div>
+        <div class="kv-val">羽化馬賽克區域的邊緣，使其與背景融合（0～64px）。預設：6px。與 Premiere Pro 遮色片的「遮色片羽化」意思相同，以輪廓為中心向內側與外側各羽化一半（值為內外合計的寬度）。在播放器中選取框後，羽化所及的外側範圍會以虛線顯示。排除遮罩的邊緣也會以相同的值融合</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">模糊強度</div>
+        <div class="kv-val">僅在類型為「模糊」時顯示。數值（2～64）越大，模糊越強。在拖曳之前會顯示「自動 (n)」，並依邊緣羽化的寬度決定（外觀與以往相同）。拖曳後，即使變更邊緣羽化，模糊強度也不會改變。按還原按鈕（「重設為自動」）即可回到「自動」。將類型改回「馬賽克」後，值仍會保留。不會傳送到 <a href="#premiere">Premiere Pro 整合</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">像素大小</div>
+        <div class="kv-val">以「設定像素大小」按鈕開啟設定畫面。按鈕下方會顯示目前的設定（例：固定：橫向 53 個馬賽克格、依大小範圍：橫向 42～96 個馬賽克格、依分割數等比 ÷16）。馬賽克格的大小以畫面寬度上排列的格數來代表（數量越多越細），即使影片的解析度不同，看起來也一樣。只有類型為「馬賽克」時才會顯示，在「依 ID」「依場景」「依時間」分頁中，選擇對象後即可按下。按下「套用」會反映到開啟中的分頁（全部 / 依類別 / 依 ID / 依場景 / 依時間），按下「取消」則不會有任何變更。新偵測的影片的初始值由<a href="#detect-options">偵測選項</a>決定（預設為固定）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">設定畫面說明</div>
+        <div class="kv-val">左側是預覽與圖表。預覽中的橢圓框可拖曳移動，並以右下的控點變更大小，框內會以實際的馬賽克格套用馬賽克。預覽圖片可從人物、測試圖樣中選擇，也能換成自己的圖片。圖表呈現對象大小（橫軸，相對於畫面寬度的比例）與格數（縱軸，越上面越細）的關係，可拖曳線或控點來變更。右上的結果會顯示目前的框對應的格數（例：橫向 53 個馬賽克格），以及決定因素（範圍、分割數、下限、上限等）。由於自主規範的最小馬賽克（長邊 400px 以上為長邊÷100，最小 4px）一律優先，無法選擇比它更細的格數</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">固定</div>
+        <div class="kv-val">「自動像素大小」關閉時的設定。讓所有影格、所有對象都使用相同大小的馬賽克格。以「橫向的馬賽克格數」指定（預設為寬度 53 格。越少越粗，越多越細）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">依大小範圍</div>
+        <div class="kv-val">開啟「自動像素大小」後選擇。依對象大小（每個鏡頭 × ID 的框的代表大小，以相對於畫面寬度的比例呈現）的範圍，分別決定寬度上排列的格數。範圍為 1～6 個，可新增、刪除或恢復為預設。在同一鏡頭、同一 ID 內，馬賽克格保持一致，不會在影格之間閃爍</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">依分割數等比</div>
+        <div class="kv-val">開啟「自動像素大小」後選擇。以對象大小除以「細緻度（目標物的分割數）」（8～64，預設 16）的值作為馬賽克格的邊長。畫面中越大的對象，馬賽克格也越大；值越大則越細。可用「最粗的馬賽克格」（寬度 N 格以上）限制最粗的程度（也可選擇無限制）。在同一鏡頭、同一 ID 內，馬賽克格保持一致</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">先前的專案</div>
+        <div class="kv-val">先前的設定會在開啟時轉換為新的設定。自動（以對象為基準）與固定（以解析度為基準）的外觀不會改變。手動（分割數）會轉換為「依分割數等比」，由於改以對象大小而非框的寬度為基準來分割，即使分割數相同，馬賽克格的大小也可能改變（縱向較長的對象會變粗，橫向較長的對象會變細）。轉換時，設定畫面會顯示「已轉換先前的手動設定（分割數 N）」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">銳利色彩</div>
+        <div class="kv-val">馬賽克格的顏色不取區域平均，而改用單點取樣（相當於 Premiere Pro 的 Sharp Colors，預設關閉）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">反轉（套用於外側）</div>
+        <div class="kv-val">只有在「依 ID」分頁中選擇偵測到的對象或新增的框時才會顯示（排除遮罩，以及「全部」「依類別」「依場景」「依時間」分頁中沒有此項目。預設關閉）。開啟後，該框的內側會保留原本的影像，並在框的外側（背景）套用馬賽克 / 模糊（使用該框的類型、馬賽克格與模糊設定）。同時作用於馬賽克套用預覽（<kbd>M</kbd>）與匯出。同一畫面中有多個反轉的框時，會保留位於任一框內側的部分。此設定不包含在「將此設定設為預設」中，新增框時的設定自動沿用也不會沿用（以橡皮擦分割出的區塊，會連同原本框的設定一起沿用）。與框的右鍵選單中的「反轉（外側套用馬賽克）」「反轉（外側套用模糊）」是相同的設定（<a href="#edit-player">偵測框的操作</a>）。有反轉框的專案無法傳送到 Premiere Pro（<a href="#premiere">Premiere Pro 整合</a>）</div>
+      </div>
+    </div>
+    <p>各項目可用右端的 {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} 按鈕恢復為預設值。按下「全部」分頁中的「將此設定設為預設」，其內容就會成為<b>下次偵測的影片</b>的初始設定（此影片的設定不會改變）。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">依時間</h3>
+    <p>在「依時間」分頁中，可依影片的時間範圍變更馬賽克的外觀。</p>
+    <ol>
+      <li>將播放磁頭對齊範圍的開頭，按下「新增範圍」。會從播放磁頭的位置建立 5 秒的範圍並選取（內容與「全部」的設定相同）</li>
+      <li>調整「開始」「結束」。在欄位中以「分：秒：影格」的格式（例 1:05:12）輸入，或移動播放磁頭後按「使用目前位置」</li>
+      <li>與其他分頁相同，變更類型、大小、不透明度等</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">範圍的選擇與刪除</div>
+        <div class="kv-val">在「目標範圍」中選擇範圍。按「刪除此範圍」即可刪除。開始晚於結束時，會顯示「開始必須早於結束」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">時間軸上的帶狀標示</div>
+        <div class="kv-val">依時間的範圍會以帶狀標示顯示在時間軸的場景帶下方。按一下帶狀標示，會在選取該範圍的狀態下開啟「依時間」分頁。沒有作用的範圍（之後變更了「全部」時等。下方的「設定的優先」）的帶狀標示會淡化顯示</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">與片段編輯的關係</div>
+        <div class="kv-val">範圍是依原始影片的時間記錄，因此即使分割、修剪或移動片段，也會套用到原始影片的同一場面（同一場面使用了 2 次的片段，會套用到 2 處）。無法對只有匯入的素材或空白的範圍設定（「此範圍不含原始影片的區間（僅含素材或空白的範圍無法設定）」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">套用的框</div>
+        <div class="kv-val">對範圍內偵測到的框與手動新增的框都有效（開啟「反轉（套用於外側）」的 ID 除外）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic-time.webp" alt="馬賽克設定面板的依時間分頁。已選取以「新增範圍」建立的範圍，並顯示開始、結束的欄位與「使用目前位置」" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">依時間分頁。選取範圍後調整開始與結束</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">設定的優先</h3>
+    <p>同一個框在同一影格中重疊套用「全部」「依類別」「依 ID」「依場景」「依時間」的設定時，以<b>最後設定的</b>為優先，並直接使用該設定的所有項目（不會依項目混合）。</p>
+    <ul>
+      <li>算作「設定」的，是在面板中實際變更了值時（包含以 {% include icon.html name="RotateCcw" class="inline h-3.5 w-3.5 align-[-2px]" %} 恢復為預設值），以及新增或變更依時間的範圍時。重新選擇相同的值，順序不會改變</li>
+      <li>之後變更「全部」時，在那之前設定的依類別、依 ID、依場景、依時間的設定就不再有作用，所有項目都會成為「全部」的值。即使把值改回原本的值，順序也不會恢復</li>
+      <li>在分頁中開啟沒有作用的設定時，會顯示「由於之後變更了「全部」，此設定目前沒有作用」之類的內容。按下「優先使用此設定」，即可在不變更值的情況下，讓該設定成為最後設定的設定，重新生效</li>
+      <li>變更設定後使其他設定失去作用時，會出現「此變更使其他 2 項設定不再有作用」之類的通知。按下通知中的「復原」，即可回到該變更之前的值與順序（只限最近 1 次。中間做了其他編輯時，會顯示「無法復原（之後已有其他編輯）」）</li>
+      <li>新增、貼上框或連接框時自動附加的依 ID 的設定（<a href="#edit-player">沿用馬賽克設定</a>），不算作「設定」。剛建立後的外觀與之前相同，之後設定的設定會優先</li>
+      <li>開啟「反轉（套用於外側）」的 ID，無論順序都會使用該 ID 的設定。<a href="#detect-mosaic">既有馬賽克</a>框的依 ID 設定（包含偵測時加入的馬賽克格設定），也無論順序都會使用。排除馬賽克、排除遮罩與信賴度閾值，也無論順序都會有作用</li>
+      <li>在 2.18 之前建立的專案，開啟時的外觀與之前相同（沒有記錄順序的設定，會照以往以依 ID、依類別、依場景、全部的順序優先）</li>
+      <li>以早於 2.18 的 Deepmosaic 開啟專案時，依時間的設定與順序會被忽略，並以以往的順序優先（在該版本中儲存後，依時間的設定與順序會遺失）</li>
+      <li>依時間的設定不會傳遞到 <a href="#premiere">Premiere Pro 整合</a></li>
+    </ul>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic-priority.webp" alt="馬賽克設定面板的依 ID 分頁。顯示「由於之後變更了「全部」，此設定目前沒有作用」與「優先使用此設定」" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">由於之後變更了「全部」而沒有作用的依 ID 設定，以及「優先使用此設定」</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic.webp" alt="馬賽克設定面板。指定要套用的馬賽克類型、馬賽克格大小與不透明度" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">馬賽克設定面板（全部）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic-track.webp" alt="馬賽克設定面板的依 ID 分頁。選擇了目標 ID，並顯示「已覆寫」" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">依 ID 分頁。只變更所選對象的設定時，會變成「已覆寫」</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-mosaic-scene.webp" alt="馬賽克設定面板的依場景分頁" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">依場景分頁。可以鏡頭為單位變更馬賽克的外觀</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-persons" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="人物圖庫" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>開啟頁首的「人物圖庫」（<kbd>P</kbd>）後，偵測到的臉部會依人物分組顯示（臉部相似度低的偵測結果不會歸入人物，而是移到「其他」）。可依人物開啟或關閉馬賽克、修正性別；同一人物被分開偵測時，也能合併為 1 個。面板可拖曳移動。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">人物卡片</div>
+        <div class="kv-val">代表圖片、性別徽章、追蹤軌跡數、出現時間、首次出現的時間點。按一下卡片即可跳至首次出現的影格</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">修正性別</div>
+        <div class="kv-val">按一下性別徽章，選擇「設為男性臉部」「設為女性臉部」「恢復為偵測結果」。依類別的馬賽克設定（男性臉部 / 女性臉部）的套用對象會隨之改變</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">馬賽克的 ON / OFF</div>
+        <div class="kv-val">按「關閉馬賽克」會將該人物的所有追蹤軌跡排除在馬賽克對象之外（例如：不對演出者以外的臉部加上馬賽克）。按「重新開啟馬賽克」即可恢復</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">合併人物</div>
+        <div class="kv-val">將卡片拖放到另一張卡片（包括「其他」的卡片）上，即可合併為同一人物。合併後的卡片會顯示「取消合併」。在時間軸或右鍵選單中合併的追蹤 ID，在人物圖庫中也會顯示為 1 個人</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">其他</div>
+        <div class="kv-val">無法歸類為人物的臉部追蹤軌跡，會摺疊在「其他 N 條追蹤軌跡（短暫出現 a、臉部過小 b、臉部相似度低 c、無法判定 d）」中。按下後會依原因排列，可按「顯示更多」每次再顯示 60 條。在這裡也能逐一切換馬賽克的 ON / OFF，並拖放到其他卡片上合併</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">重新歸類人物</div>
+        <div class="kv-val">在較長的影片等情況下，同一人物沒有歸在一起時，可按面板中的「重新歸類人物」，將影片中的臉部重新歸類。可能需要數分鐘，期間會顯示「正在重新歸類人物…」與進度（途中無法關閉）。第 2 次之後不會重新讀取影片，因此很快就會完成。未歸類為人物的臉部較多時，會顯示「在較長的影片中，部分臉部可能未歸類為人物。」的提示。此按鈕只會在支援的偵測引擎（2.7.2 以上）可處理的專案中顯示（網頁版沒有此按鈕）</div>
+      </div>
+    </div>
+    <p>以舊版本偵測的專案會顯示「此影片是以舊版本偵測的。若要使用人物清單，請重新偵測。」此時請重新載入影片並進行偵測。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-persons.webp" alt="人物圖庫的面板。偵測到的臉部以每個人物的卡片排列" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">人物圖庫</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="shortcuts" class="scroll-mt-24">
+  {% include docs-h2.html kicker="編輯" title="鍵盤快捷鍵" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>以下是編輯頁面可使用的快捷鍵清單。將滑鼠移到工具列右端的 {% include icon.html name="HelpCircle" class="inline h-3.5 w-3.5 align-[-2px]" %} 上，也會顯示相同的清單。輸入文字時無法使用。</p>
+    <ul>
+      <li>「時間軸」各列的快捷鍵在顯示時間軸時有效（摺疊時無效）。時間軸編輯的復原與偵測框的 <kbd>Ctrl+Z</kbd> 是分開的，使用 <kbd>Ctrl+Shift+Z</kbd> / <kbd>Ctrl+Shift+Y</kbd></li>
+      <li><kbd>Delete</kbd> 的對象會依最後操作的位置而改變。最後操作的是播放器（影像）時，會刪除選取的偵測框；最後操作的是時間軸時，會刪除選取的片段、文字或音訊軌道。<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>（複製 / 貼上）也一樣，在播放器中是偵測框，在時間軸中是片段、文字與音訊軌道（在側邊欄選取文字時，也視為操作了時間軸）</li>
+      <li>快速按 2 次 <kbd>Shift</kbd> 可固定形狀的沿用，再按 2 次或按 <kbd>Esc</kbd> 即可解除。在日文輸入法（IME）等會使用單按 <kbd>Shift</kbd> 的環境中，可能無效</li>
+    </ul>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-shortcuts.webp" alt="在編輯頁面中顯示的快捷鍵說明" width="1280" height="1100" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">快捷鍵說明</figcaption>
+    </figure>
+    <div class="overflow-x-auto">
+      <table>
+        <thead><tr><th class="w-[8.5em]">類別</th><th class="w-[11em]">按鍵</th><th>動作</th></tr></thead>
+        <tbody>
+          <tr data-shortcut="play_pause"><td rowspan="6">播放</td><td><kbd>Space</kbd></td><td>播放 / 暫停</td></tr>
+          <tr data-shortcut="jkl_transport"><td><kbd>J</kbd> / <kbd>K</kbd> / <kbd>L</kbd></td><td>停止 / 停止 / 播放（與 Premiere Pro 相容）</td></tr>
+          <tr data-shortcut="mute_toggle"><td><kbd>V</kbd></td><td>切換靜音</td></tr>
+          <tr data-shortcut="speed_down"><td><kbd>,</kbd></td><td>降低播放速度</td></tr>
+          <tr data-shortcut="speed_up"><td><kbd>.</kbd></td><td>提高播放速度</td></tr>
+          <tr data-shortcut="blank_only_toggle"><td><kbd>B</kbd></td><td>僅播放空白影格（略過有 BBox 的影格）</td></tr>
+          <tr data-shortcut="step_fwd"><td rowspan="9">影格移動</td><td><kbd>→</kbd></td><td>前進 1 個影格（選取 BBox 時按住 <kbd>Shift</kbd>，會沿用該框的形狀前進 1 個影格。固定沿用時，不按 <kbd>Shift</kbd> 也會沿用）</td></tr>
+          <tr data-shortcut="step_back"><td><kbd>←</kbd></td><td>後退 1 個影格</td></tr>
+          <tr data-shortcut="carry_lock"><td><kbd>Shift</kbd> ×2</td><td>固定 / 解除形狀的沿用（快速按 2 次 <kbd>Shift</kbd>。固定期間，不按 <kbd>Shift</kbd> 的 <kbd>→</kbd> 與滾輪也會沿用。按 <kbd>Esc</kbd> 也能解除）</td></tr>
+          <tr data-shortcut="step_fwd_10"><td><kbd>PageDown</kbd></td><td>前進 10 個影格</td></tr>
+          <tr data-shortcut="step_back_10"><td><kbd>PageUp</kbd></td><td>後退 10 個影格</td></tr>
+          <tr data-shortcut="go_start"><td><kbd>Home</kbd></td><td>移至開頭</td></tr>
+          <tr data-shortcut="go_end"><td><kbd>End</kbd></td><td>移至結尾</td></tr>
+          <tr data-shortcut="jump_prev_empty"><td><kbd>[</kbd></td><td>移至上一個缺漏影格</td></tr>
+          <tr data-shortcut="jump_next_empty"><td><kbd>]</kbd></td><td>移至下一個缺漏影格</td></tr>
+          <tr data-shortcut="frame_zoom_in"><td rowspan="6">縮放與顯示</td><td><kbd>+</kbd> / <kbd>=</kbd></td><td>放大影格</td></tr>
+          <tr data-shortcut="frame_zoom_out"><td><kbd>-</kbd></td><td>縮小影格</td></tr>
+          <tr data-shortcut="frame_zoom_reset"><td><kbd>0</kbd></td><td>重設縮放</td></tr>
+          <tr data-shortcut="hud_toggle"><td><kbd>H</kbd></td><td>顯示 / 隱藏偵測疊加層</td></tr>
+          <tr data-shortcut="preview_mode_toggle"><td><kbd>M</kbd></td><td>切換 BBox / 馬賽克預覽</td></tr>
+          <tr data-shortcut="class_menu_toggle"><td><kbd>C</kbd></td><td>開啟 / 關閉工具列的「標籤」選單（要顯示的標籤與篩選）</td></tr>
+          <tr data-shortcut="bbox_add_single"><td rowspan="17">BBox 編輯</td><td><kbd>1</kbd></td><td>僅在此影格新增 BBox</td></tr>
+          <tr data-shortcut="bbox_add_persistent"><td><kbd>2</kbd></td><td>在之後的影格新增連續 BBox</td></tr>
+          <tr data-shortcut="avoid_add_single"><td><kbd>3</kbd></td><td>僅在此影格新增排除遮罩</td></tr>
+          <tr data-shortcut="avoid_add_persistent"><td><kbd>4</kbd></td><td>在之後的影格連續新增排除遮罩</td></tr>
+          <tr data-shortcut="bbox_shape_ellipse"><td><kbd>W</kbd></td><td>將要新增 / 繪製的 BBox 形狀設為橢圓（再按一次即恢復為矩形）</td></tr>
+          <tr data-shortcut="bbox_shape_polygon"><td><kbd>O</kbd></td><td>將要新增 / 繪製的 BBox 形狀設為多邊形（再按一次即恢復為矩形）</td></tr>
+          <tr data-shortcut="delete_bbox"><td><kbd>Delete</kbd></td><td>刪除選取的 BBox（最後操作的是播放器時）</td></tr>
+          <tr data-shortcut="bbox_copy"><td><kbd>Ctrl+C</kbd></td><td>複製選取的 BBox（最後操作的是播放器時）</td></tr>
+          <tr data-shortcut="bbox_paste"><td><kbd>Ctrl+V</kbd></td><td>將複製的 BBox 貼到目前的影格（最後操作的是播放器時）</td></tr>
+          <tr data-shortcut="bbox_bridge"><td><kbd>Y</kbd></td><td>將選取的 BBox 設為連接來源 / 連接。在其他影格選取 BBox 後再按一次，就會建立依對象的移動連接各點之間的連續 BBox（最後操作的是播放器時。右鍵選單的「從這裡連接」「連接到這裡」也相同。按 1 次 <kbd>Ctrl+Z</kbd> 即可復原）</td></tr>
+          <tr data-shortcut="bbox_bridge_mid"><td><kbd>Shift+Y</kbd></td><td>將選取的 BBox 設為中間點（已設定連接來源時。最後操作的是播放器時。右鍵選單的「設為中間點」也相同）</td></tr>
+          <tr data-shortcut="bbox_bridge_cancel"><td><kbd>Esc</kbd></td><td>解除連接來源（放置點之後，不連接就停止）</td></tr>
+          <tr data-shortcut="undo_frame"><td><kbd>Ctrl+Z</kbd></td><td>解除連續 BBox 的凍結 → 重設目前影格</td></tr>
+          <tr data-shortcut="bbox_rotate_cw"><td><kbd>Q</kbd></td><td>將選取的 BBox 旋轉 15°</td></tr>
+          <tr data-shortcut="bbox_rotate_ccw"><td><kbd>Shift+Q</kbd></td><td>將選取的 BBox 旋轉 -15°（反方向）</td></tr>
+          <tr data-shortcut="motion_key_here"><td><kbd>F</kbd></td><td>將所選 BBox 目前的位置設為關鍵影格（<a href="#edit-track">追蹤與關鍵影格</a>）</td></tr>
+          <tr data-shortcut="tracking_mode_toggle"><td><kbd>X</kbd></td><td>追蹤模式的 ON / OFF（ON 期間，播放 / <kbd>→</kbd> / 滾輪向上時，∞ 連續 BBox 會追隨對象。<a href="#edit-track">追蹤</a>）</td></tr>
+          <tr data-shortcut="mosaic_panel_open"><td rowspan="2">工具</td><td><kbd>G</kbd></td><td>開啟馬賽克設定面板</td></tr>
+          <tr data-shortcut="scene_split"><td><kbd>Ctrl+K</kbd></td><td>在播放指標的位置分割（同時分割片段與場景。與工具列的剪刀相同，按 1 次 <kbd>Ctrl+Shift+Z</kbd> 即可同時復原兩者）</td></tr>
+          <tr data-shortcut="timeline_clip_split"><td rowspan="10">時間軸</td><td><kbd>Ctrl+Shift+K</kbd></td><td>在播放指標的位置分割（焦點在時間軸上時。與 <kbd>Ctrl+K</kbd> 相同）</td></tr>
+          <tr data-shortcut="timeline_clip_delete"><td><kbd>Backspace</kbd></td><td>刪除選取的片段 / 文字 / 音訊軌道</td></tr>
+          <tr data-shortcut="timeline_undo"><td><kbd>Ctrl+Shift+Z</kbd></td><td>復原時間軸編輯</td></tr>
+          <tr data-shortcut="timeline_redo"><td><kbd>Ctrl+Shift+Y</kbd></td><td>重做時間軸編輯</td></tr>
+          <tr data-shortcut="timeline_nudge_back"><td><kbd>Ctrl+←</kbd></td><td>將選取的元素往前移動 1 個影格</td></tr>
+          <tr data-shortcut="timeline_nudge_fwd"><td><kbd>Ctrl+→</kbd></td><td>將選取的元素往後移動 1 個影格</td></tr>
+          <tr data-shortcut="timeline_duplicate"><td><kbd>Ctrl+D</kbd></td><td>為選取的元素建立副本</td></tr>
+          <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>複製選取的元素（最後操作的是時間軸時）</td></tr>
+          <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>貼上複製的元素（文字與音訊貼在播放指標的位置，片段貼在選取片段的後面。最後操作的是時間軸時）</td></tr>
+          <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>刪除選取的元素（最後操作的是時間軸時）</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="8">頁面</td><td><kbd>P</kbd></td><td>開啟 / 關閉人物圖庫</td></tr>
+          <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>開啟 / 關閉媒體（側邊欄）</td></tr>
+          <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>開啟 / 關閉文字 / 浮水印 / 音訊 / 淡化 / 轉場的抽屜面板（上次開啟的項目）</td></tr>
+          <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>摺疊 / 展開時間軸</td></tr>
+          <tr data-shortcut="sidebar_collapse_toggle"><td><kbd>Ctrl+Shift+B</kbd></td><td>最小化 / 展開側邊欄</td></tr>
+          <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>開啟匯出對話方塊</td></tr>
+          <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>開啟專案資料夾</td></tr>
+          <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>匯入至 Premiere Pro</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">滑鼠</td><td>滾輪</td><td>前進 / 後退影格（按住 <kbd>Shift</kbd> 時為 10 個影格。選取框時，按住 <kbd>Shift</kbd> 向上滾動，會與 <kbd>Shift</kbd>+<kbd>→</kbd> 一樣沿用形狀前進 1 個影格，向下滾動則後退 1 個影格。固定沿用時，不按 <kbd>Shift</kbd> 向上滾動也會沿用）</td></tr>
+          <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+滾輪</td><td>以游標位置為中心放大或縮小影格</td></tr>
+          <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+左鍵拖曳</td><td>平移影格（僅在放大時可移動。也可用中鍵拖曳）</td></tr>
+          <tr data-shortcut="mouse_draw"><td>左鍵拖曳</td><td>在空白區域按住左鍵拖曳，以形狀選擇中目前選取的形狀（矩形 / 橢圓 / 多邊形）繪製 BBox。多邊形可按一下放置點，以起點 / <kbd>Enter</kbd> / 按兩下封閉。短按則取消選取</td></tr>
+          <tr data-shortcut="mouse_dblclick_delete"><td>按兩下</td><td>刪除 BBox</td></tr>
+          <tr data-shortcut="mouse_rotate_handle"><td>拖曳</td><td>拖曳所選 BBox 的旋轉控點以旋轉（按住 <kbd>Shift</kbd> 時以 15° 為單位）</td></tr>
+          <tr data-shortcut="mouse_vertex_drag"><td>拖曳</td><td>拖曳多邊形的頂點以變更形狀</td></tr>
+          <tr data-shortcut="mouse_vertex_add"><td>按兩下</td><td>在多邊形的邊上按兩下也能新增頂點（1 次新增 1 個點）</td></tr>
+          <tr data-shortcut="mouse_vertex_delete"><td>按一下+<kbd>Delete</kbd></td><td>按一下選取頂點，再按 <kbd>Delete</kbd> 刪除（無法少於 3 個點）</td></tr>
+          <tr data-shortcut="mouse_handle_drag"><td>拖曳</td><td>拖曳所選多邊形的控點以變更曲線（按住 <kbd>Alt</kbd> 時只變更單側）</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_drag"><td><kbd>Alt</kbd>+拖曳</td><td>在多邊形的頂點上 <kbd>Alt</kbd>+拖曳以拉出控點（將角變為曲線）</td></tr>
+          <tr data-shortcut="mouse_anchor_alt_click"><td><kbd>Alt</kbd>+按一下</td><td>在多邊形的頂點上 <kbd>Alt</kbd>+按一下以恢復為角</td></tr>
+          <tr data-shortcut="mouse_anchor_ctrl_click"><td><kbd>Ctrl</kbd>+按一下</td><td>在多邊形的頂點上 <kbd>Ctrl</kbd>+按一下以刪除（不會少於 3 個點）</td></tr>
+          <tr data-shortcut="mouse_edge_click_add"><td>按一下</td><td>按一下所選多邊形的邊以新增頂點</td></tr>
+          <tr data-shortcut="mouse_vertex_marquee"><td><kbd>Shift</kbd>+左鍵拖曳</td><td>框住所選多邊形的頂點以一併選取（會合併為相連的區段。只框到 1 個點時就選取該點，短按即可解除）</td></tr>
+          <tr data-shortcut="mouse_vertex_bend"><td>拖曳</td><td>拖曳一併選取的頂點內側，固定區段兩端並彎曲（越靠近中央移動越大）</td></tr>
+          <tr data-shortcut="mouse_context_menu"><td>按一下右鍵</td><td>偵測框的追蹤軌跡操作選單（切換性別 / 不套用馬賽克 / 反轉 / 排除遮罩（「設為排除遮罩」/「改回馬賽克」） / 合併 ID / 連接（「從這裡連接」/「設為中間點」/「連接到這裡」） / 變更形狀 / 刪除）。在時間軸的 ID 列上為合併 ID 的清單。在時間軸的長條上則為建立副本、複製、貼上、刪除的選單</td></tr>
+          <tr data-shortcut="mouse_eraser"><td><kbd>E</kbd>+右鍵拖曳</td><td>連續刪除（橡皮擦）。可在工具列的橡皮擦按鈕中選擇「刪除觸碰到的 BBox / 僅刪除觸碰到的部分」「圓形 / 圓角矩形」「大小」。按住的同時播放 / 逐格移動也會持續</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="edit-sidebar" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="側邊欄與抽屜面板" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>從編輯頁面邊緣縱向排列的側邊欄，開啟時間軸編輯的功能。按下項目後，旁邊會開啟抽屜面板（可拉出的設定面板），再按一次相同的項目即可關閉。抽屜面板開啟時，仍可照常操作播放器與時間軸。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Images" class="inline h-3.5 w-3.5 align-[-2px]" %} 媒體（<kbd>A</kbd>）</div>
+        <div class="kv-val">匯入影片、音訊、圖片素材，並新增到時間軸（<a href="#edit-media">媒體</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Type" class="inline h-3.5 w-3.5 align-[-2px]" %} 文字</div>
+        <div class="kv-val">將文字燒錄到影像上（<a href="#edit-text">文字</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Stamp" class="inline h-3.5 w-3.5 align-[-2px]" %} 浮水印</div>
+        <div class="kv-val">在整部影片上疊加標誌等圖片（<a href="#edit-watermark">浮水印</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Music" class="inline h-3.5 w-3.5 align-[-2px]" %} 音訊</div>
+        <div class="kv-val">調整原始影片的音量，以及背景音樂等音訊軌道（<a href="#edit-audio">音訊與背景音樂</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="Blend" class="inline h-3.5 w-3.5 align-[-2px]" %} 淡化</div>
+        <div class="kv-val">設定匯出影像整體的開頭與結尾，以及選取片段的開頭與結尾的淡化秒數（<a href="#edit-fade">淡化</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="ArrowLeftRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 轉場</div>
+        <div class="kv-val">設定加在片段接點上的切換效果的類型與長度。側邊欄上也顯示為「轉場」（<a href="#edit-transition">轉場</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><kbd>T</kbd> 鍵</div>
+        <div class="kv-val">開啟 / 關閉文字～轉場之中，上次開啟的項目的抽屜面板（第一次為「浮水印」）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} 設定</div>
+        <div class="kv-val">以側邊欄下方的齒輪，開啟用來選擇編輯初始值的「設定」。可設定繪製 BBox 的持續（此後的影格也套用 / 僅此影格）、形狀（矩形 / 橢圓 / 多邊形）、類型（馬賽克 / 排除遮罩）、HUD（框與標籤）的顯示、是否顯示框的標籤（「顯示 BBox 標籤（名稱、ID、機率）」。關閉時框仍會顯示）、橡皮擦的擦除方式、形狀與大小、開啟編輯頁面時是否開啟追蹤模式，以及是否在進度列上顯示追蹤佇列的區段（「在進度列顯示追蹤區段」）。「設定」開啟時不會讓畫面變暗，並可拖曳頁首移動，因此能一邊看預覽一邊變更（每次開啟時都會顯示在中央）。變更的值會立即儲存，並成為啟動應用程式時的初始值（編輯中在工具列切換的值不會儲存）。按「重設為預設」即可恢復為出廠時的值。側邊欄最小化時不會顯示</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 位置</div>
+        <div class="kv-val">以側邊欄最末端的按鈕，切換側邊欄與抽屜面板要放在畫面的左側或右側</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">抽屜面板的寬度</div>
+        <div class="kv-val">拖曳抽屜面板靠播放器一側的邊緣，即可在 240～520px 的範圍內變更寬度。選取邊緣後按 <kbd>←</kbd> / <kbd>→</kbd> 鍵，也能以 16px 為單位調整，按兩下即可恢復為預設的 300px</div>
+      </div>
+    </div>
+    <p>抽屜面板的寬度與左右位置，下次開啟編輯頁面時也會沿用。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-sidebar-media.webp" alt="按下側邊欄的「媒體」開啟抽屜面板的編輯頁面。匯入的素材以清單排列" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">側邊欄與抽屜面板（開啟媒體時）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="timeline-edit" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="編輯片段" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>時間軸的「片段通道」會以長條（片段）顯示匯出影像的排列。一開始只有原始影片（偵測來源）1 個片段，可透過修剪、分割、刪除截去不需要的部分，或在前後加上<a href="#edit-media">匯入的素材</a>。片段通道的上方有<a href="#edit-text">文字</a>通道、下方有<a href="#edit-audio">音訊</a>通道，所有通道都依匯出影像的時間排列。</p>
+    <p>編輯的內容會直接反映在預覽中，並透過<a href="#edit-encode">匯出</a>輸出。馬賽克會套用在原始影片的區段上。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">選取</div>
+        <div class="kv-val">按一下長條即可選取，長條右上角會出現刪除用的 ✕</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">修剪</div>
+        <div class="kv-val">拖曳長條的左右兩端，縮短片段的開始與結束（最短 1 個影格）。靠近場景邊界或播放指標時會自動吸附。匯入的影片最多可延長到素材的長度，圖片片段則可延長到任意長度</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">分割（<kbd>Ctrl+K</kbd> / <kbd>Ctrl+Shift+K</kbd>）</div>
+        <div class="kv-val">按時間軸縮放按鈕右側的 {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} 按鈕，或按 <kbd>Ctrl+K</kbd>（焦點在時間軸上時為 <kbd>Ctrl+Shift+K</kbd>），即可在播放指標的位置將片段分成 2 個，同時也分割場景。分割的瞬間，片段的長條會變成 2 個，接點上會出現剪輯標記（斜線與剪刀），場景列則會加上新的編號。由於會選取後半段，可接著進行修剪或刪除。按 1 次「復原」即可同時復原片段與場景</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">刪除</div>
+        <div class="kv-val">選取後按長條上的 ✕、按 <kbd>Backspace</kbd> / <kbd>Delete</kbd> 鍵，或選擇右鍵選單的「刪除」。後面的片段會往前補上（波紋式刪除）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">重新排序與移動</div>
+        <div class="kv-val">抓住長條左右拖曳，即可依放置的位置重新排序。會吸附到其他片段的邊緣、場景邊界與播放指標。也能拖到目前結尾的右側。按 <kbd>Ctrl+←</kbd> / <kbd>Ctrl+→</kbd> 可將選取的片段一次移動 1 個影格</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">空白</div>
+        <div class="kv-val">與前一個片段分開放置時，兩者之間會成為空白（黑畫面、無聲），斜線的長條上會顯示「空白 N 個影格」。匯出時也會保持黑畫面、無聲。要消除空白時，將片段拖曳到前一個片段的邊緣（會吸附到邊緣）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">接點</div>
+        <div class="kv-val">片段的接點上會出現 {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} 徽章（剪刀）。按下徽章會開啟選擇「淡化」「轉場」的小選單，選擇後，側邊欄對應的分頁（<a href="#edit-fade">淡化</a> / <a href="#edit-transition">轉場</a>）會開啟並聚焦在該接點。秒數與類型在該處設定</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">影片膠卷</div>
+        <div class="kv-val">影片片段的長條上會排列內容的縮圖（影片膠卷）。圖片片段會直接顯示圖片本身。縮圖載入完成前會以純色顯示</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-timeline-clips.webp" alt="時間軸的片段通道。分割原始影片並插入素材片段與空白，上方是文字通道、下方是音訊通道" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">片段通道（修剪、分割、空白）與文字、音訊通道</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">右鍵選單與剪貼簿</h3>
+    <p>在片段、文字、音訊軌道的長條上按一下右鍵，會出現「建立副本」「複製」「貼上」「刪除」的選單。在通道的空白處按一下右鍵時，只會出現「貼上」。選單與快捷鍵的動作相同。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">建立副本（<kbd>Ctrl+D</kbd>）</div>
+        <div class="kv-val">片段會在緊接其後的位置、文字會在長條的緊後方、音訊軌道會在相同位置建立副本</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">複製 / 貼上（<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>）</div>
+        <div class="kv-val">貼上複製的元素。文字與音訊軌道會放在播放指標的位置，片段會插入選取的片段（若未選取，則為播放指標所在的片段）的緊後方。剪貼簿中只會保留上一次複製的 1 個元素，且與電腦的剪貼簿分開（只能在編輯頁面中使用）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">刪除（<kbd>Delete</kbd>）</div>
+        <div class="kv-val">刪除選取的元素。最後操作的是播放器時，<kbd>Delete</kbd> 會刪除偵測框（<a href="#shortcuts">快捷鍵</a>）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-timeline-menu.webp" alt="在時間軸的片段上按一下右鍵開啟的選單（建立副本、複製、貼上、刪除）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">時間軸的右鍵選單</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">復原與記錄</h3>
+    <p>時間軸的編輯（片段、文字、音訊、浮水印、淡化、轉場、新增素材）會記錄在與偵測框編輯分開的記錄中。可用時間軸縮放按鈕右側的「復原」（<kbd>Ctrl+Shift+Z</kbd>）/「重做」（<kbd>Ctrl+Shift+Y</kbd>）逐步操作，或從 {% include icon.html name="History" class="inline h-3.5 w-3.5 align-[-2px]" %} 記錄按鈕的清單中選擇，一次復原到該操作為止。清單中會由新到舊列出「分割」「修剪」「移動」「新增文字」等操作名稱與時間，最多保留 100 筆。重新開啟影片時，記錄會清空。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">時間軸的高度與摺疊</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">變更高度</div>
+        <div class="kv-val">拖曳時間軸的上緣，即可在 220～720px 的範圍內變更高度（播放器始終保留 200px 以上）。選取上緣後按 <kbd>↑</kbd> / <kbd>↓</kbd> 鍵，也能以 16px 為單位調整，按兩下即可恢復為預設的 400px</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">摺疊（<kbd>Ctrl+Shift+T</kbd>）</div>
+        <div class="kv-val">按工具列右端的 {% include icon.html name="ChevronDown" class="inline h-3.5 w-3.5 align-[-2px]" %} 按鈕，可將時間軸摺疊成只剩 1 列工具列，讓播放器使用更大的空間。再按一次即可展開</div>
+      </div>
+    </div>
+    <p>高度與摺疊狀態，下次開啟編輯頁面時也會沿用。</p>
+  </div>
+</section>
+
+<section id="edit-media" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="媒體（匯入素材）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在側邊欄的「媒體」（<kbd>A</kbd>）開啟的媒體面板中，匯入要在時間軸上使用的影片、音訊、圖片素材。匯入的素材會複製到專案資料夾中，因此即使移動原始檔案也能繼續使用（也會包含在<a href="#project-io">專案匯出</a>的 zip 中）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">匯入</div>
+        <div class="kv-val">按「匯入媒體」選擇類型（影片 / 音訊 / 圖片）再選擇檔案，或從檔案總管將檔案拖放到編輯頁面</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">支援的格式與上限</div>
+        <div class="kv-val">影片：與<a href="#import">載入影片</a>相同的格式（每個檔案最多 2GB）/ 音訊：MP3、WAV、AAC、M4A、FLAC、OGG、Opus（最多 200MB）/ 圖片：PNG、JPEG、WebP、BMP（最多 50MB）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">新增到時間軸</div>
+        <div class="kv-val">按素材列上的「新增到時間軸」，影片會作為片段放在結尾，音訊會作為音訊軌道放在播放指標的位置。也可以將素材拖曳到通道上，放在任意位置（影片與圖片放在片段通道，音訊放在音訊通道）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">圖片</div>
+        <div class="kv-val">按「新增到時間軸」會放置為 5 秒的圖片片段，拖曳長條的邊緣即可伸縮為任意長度。選擇「設定為浮水印」，即可作為疊加在整部影片上的標誌使用（<a href="#edit-watermark">浮水印</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">影片的音訊</div>
+        <div class="kv-val">匯入的影片作為片段放置的區段，匯出時不會包含該影片的音訊，而是成為無聲（音訊軌道的背景音樂等仍會播放）。若要使用匯入影片的音訊，請將同一個素材也拖放到音訊通道</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">刪除素材</div>
+        <div class="kv-val">按該列的刪除按鈕，即可從專案中刪除素材。檔案本身也會被刪除，因此無法復原（時間軸的復原也無法還原）。時間軸中正在使用的素材無法刪除</div>
+      </div>
+    </div>
+    <p>匯入的素材不在 AI 偵測的範圍內。素材的區段不會加上馬賽克，也無法新增偵測框或使用橡皮擦。需要馬賽克的影像，請先作為影片載入，完成偵測與匯出後再匯入。</p>
+  </div>
+</section>
+
+<section id="edit-text" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="文字" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在側邊欄的「文字」中，將文字燒錄到影像上。文字可以新增任意數量，並可分別設定顯示的區段、位置與樣式。顯示的區段以匯出影像的影格編號指定。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">新增</div>
+        <div class="kv-val">按「新增文字」，會在下方中央新增在整部影片中顯示的「文字」。從清單中選取後進行編輯</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">顯示的區段</div>
+        <div class="kv-val">輸入開始與結束的影格編號。按「設為目前位置」會填入播放指標的位置。勾選「顯示到最後」，就會顯示到影像的最後</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">拖曳預覽上的文字，即可自由移動到任意位置。以數值指定時使用「位置 X / Y（%）」（從左上角起算的位置）。選擇「位置預設」（左上～右下的 9 個位置），會以距離邊緣 2% 的邊距靠齊</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">大小</div>
+        <div class="kv-val">以相對於影像高度的比例指定文字的高度（2～50%，預設 6%）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">字型與粗體</div>
+        <div class="kv-val">字型有 5 種：黑體（預設）/ Yu Gothic / 明體 / MS Gothic / BIZ UDGothic。也可設為「粗體」。電腦中未安裝的字型會改用相同系列的字型燒錄，若也沒有則以黑體燒錄。沒有粗體的字型（MS Gothic 等）會以一般粗細顯示</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">顏色、外框、不透明度</div>
+        <div class="kv-val">文字的顏色（預設：白色）、外框的粗細（文字高度的 0～25%，預設 8%）與顏色（預設：黑色）、不透明度（預設 100%）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">文字通道</h3>
+    <p>在時間軸的片段通道上方，每個文字各佔 1 列，排列著代表顯示區段的長條（文字通道）。拖曳長條會連同顯示區段一起移動，拖曳兩端則可變更開始與結束。選取長條時，文字面板中也會選取相同的文字。按一下右鍵可建立副本、複製、貼上、刪除。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-text.webp" alt="在文字面板中設定文字內容、字型與位置，預覽上疊加文字，文字通道上排列著長條" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">文字面板與文字通道</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-watermark" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="浮水印" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在側邊欄的「浮水印」中，將標誌等 1 張圖片疊加在匯出影像的整部影片上。請先在<a href="#edit-media">媒體面板</a>匯入圖片（也可從媒體面板中圖片的「設定為浮水印」設定）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">圖片</div>
+        <div class="kv-val">從匯入的圖片中選擇。選擇「無」即可移除浮水印</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">從左上～右下的 9 個位置中選擇（預設：右下）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">大小</div>
+        <div class="kv-val">以相對於影像寬度的比例指定圖片的寬度（1～100%，預設 15%）。會保持長寬比</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">不透明度</div>
+        <div class="kv-val">0～100%（預設 80%）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">水平邊距 / 垂直邊距</div>
+        <div class="kv-val">以相對於影像寬度、高度的比例，指定與影像邊緣的距離（0～50%，預設 2%）</div>
+      </div>
+    </div>
+    <p>若要加入文字的浮水印，請使用在整部影片中顯示的<a href="#edit-text">文字</a>。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-watermark.webp" alt="在浮水印面板中設定圖片、位置與大小後，預覽的角落疊加了標誌" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">浮水印面板</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-audio" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="音訊與背景音樂" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在側邊欄的「音訊」中，調整原始影片的音訊，以及背景音樂等音訊軌道。匯出時，原始影片的音訊與所有音訊軌道會疊加（混音）後輸出。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">偵測影片的音訊</div>
+        <div class="kv-val">原始影片的音量（-40～+12dB）與靜音</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">新增音訊軌道</div>
+        <div class="kv-val">在媒體面板的音訊素材上按「新增到時間軸」（會放在播放指標的位置），或將音訊素材拖曳到音訊通道。將影片素材放到音訊通道時，可只使用該影片的音訊</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">音量 / 靜音</div>
+        <div class="kv-val">每個軌道 -40～+12dB。靜音可暫時只讓該軌道不發出聲音</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">淡入 / 淡出</div>
+        <div class="kv-val">每個軌道可在 0～20 秒內讓聲音的開頭與結尾淡化</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">音訊通道與波形</h3>
+    <p>在時間軸的片段通道下方，每個音訊軌道各佔 1 列排列著長條（音訊通道）。長條上會繪製背景音樂的波形，可一邊查看樂曲的高潮與無聲的位置一邊對齊。拖曳長條可移動位置，拖曳兩端可縮短使用的範圍（樂曲的開頭與結尾）。背景音樂會跨越片段之間的空白持續播放。長度不明的音訊，會以「長度不明」取代長條顯示。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-audio.webp" alt="在音訊面板中設定背景音樂的音量與淡化後，音訊通道的長條上繪製出波形" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">音訊面板與音訊通道的波形</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-fade" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="淡化" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>讓匯出的影像從黑色淡入、淡出至黑色。淡化分為套用在整個影像開頭與結尾的「整體淡化」，以及套用在每個片段開頭與結尾的「片段淡化」。整體淡化在側邊欄的「淡化」中輸入秒數。片段淡化則在從接點的剪刀選擇「淡化」後開啟的「選取的接點」區塊，或選取片段時出現的「選取的片段」區塊中輸入。秒數只在側邊欄中輸入（不在時間軸上輸入秒數）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">從剪刀選擇</div>
+        <div class="kv-val">按下片段接點的 {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} 徽章（剪刀）後（也可選取後按 <kbd>Enter</kbd> / <kbd>Space</kbd>），會開啟「淡化」「轉場」2 個項目的選單。按 <kbd>↑</kbd> / <kbd>↓</kbd> 移動項目，按 <kbd>Esc</kbd> 或按一下選單外側即可關閉。選擇「淡化」後，側邊欄的「淡化」會開啟並聚焦在該接點（「轉場」請見<a href="#edit-transition">轉場</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">整體淡化</div>
+        <div class="kv-val">在側邊欄的「淡化」中，輸入整個影像的淡入與淡出秒數。輸入後，尺規的兩端會出現該長度的斜坡（三角形的標記）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">片段淡化</div>
+        <div class="kv-val">在「選取的接點」區塊中，輸入接點前一個片段的淡出與後一個片段的淡入。影像第一個片段的開頭或最後一個片段的結尾，請選取片段後在「選取的片段」區塊中輸入。輸入後，長條的下緣會出現斜坡。淡化的只有該片段的影像（原始影片的片段也包括音訊），浮水印與文字不會變暗</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">調整秒數</div>
+        <div class="kv-val">以秒指定（0～20 秒，0 秒為不淡化），秒數旁會顯示實際淡化的影格數。按一下斜坡（也可選取後按 <kbd>Enter</kbd>）也會開啟側邊欄的「淡化」；從片段的斜坡開啟時，會選取該片段。按「清除」會將選取的淡化兩側都移除</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">無法放置的位置</div>
+        <div class="kv-val">有轉場的接點那一側的邊緣無法加入片段淡化，側邊欄的輸入欄位會無法操作，並顯示原因。移除轉場後即可設定</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">移至開頭 / 移至結尾</div>
+        <div class="kv-val">以側邊欄「淡化」中的按鈕，將播放指標移至影像的開頭 / 結尾。整體淡化只套用在兩端，因此可在預覽中確認效果時使用</div>
+      </div>
+    </div>
+    <p>淡化會與匯出時一樣反映在預覽中。整體淡化與片段淡化重疊的影格，會同時套用兩者。每個音訊軌道的淡化請在<a href="#edit-audio">音訊與背景音樂</a>中設定，片段接點的切換請在<a href="#edit-transition">轉場</a>中設定。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-join-menu.webp" alt="按下時間軸第 1 個接點的剪刀徽章後，正下方開啟「淡化」「轉場」2 個項目的選單。接點上出現轉場的斜線長條" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">從接點的剪刀開啟的選單（淡化 / 轉場）</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-fade.webp" alt="按一下開頭片段的斜坡後，側邊欄開啟了「淡化」。已輸入整體淡入 1 秒、淡出 1.5 秒，以及選取片段的淡入 1 秒；由於下一個接點有轉場，片段淡出的欄位無法操作並顯示原因。尺規的兩端與開頭片段的左下方出現斜坡" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">側邊欄的淡化設定（整體與選取的片段）</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="edit-transition" class="scroll-mt-24">
+  {% include docs-h2.html kicker="時間軸編輯" title="轉場" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在相鄰片段的接點上加上切換效果（轉場）。按下接點的剪刀並選擇「轉場」，側邊欄的「轉場」（抽屜面板的標題也是「轉場」）會開啟並聚焦在該接點，接著選擇類型與長度。類型與長度只在側邊欄中輸入（不在時間軸上輸入）。只有 1 個片段時沒有接點，因此無法放置。有轉場的接點那一側的邊緣，無法放置片段的<a href="#edit-fade">淡化</a>。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">類型</div>
+        <div class="kv-val">淡化 / 溶解 / 擦除（向左、向右）/ 滑動（向左、向右）/ 淡化至黑 / 淡化至白，共 8 種</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">放置方式</div>
+        <div class="kv-val">按下時間軸接點的 {% include icon.html name="Scissors" class="inline h-3.5 w-3.5 align-[-2px]" %} 徽章（剪刀），從選單中選擇「轉場」。側邊欄的接點清單（「前一個片段 → 下一個片段」）中會選取該接點的列，接著選擇類型（選擇「無」即可移除），並以 0.1～5 秒指定長度。放置後，接點上會出現與前後片段重疊長度相同的斜線長條。由於前後片段會重疊該長度，整個影像會相應縮短</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">長條與徽章</div>
+        <div class="kv-val">按一下斜線長條（也可選取後按 <kbd>Enter</kbd>），不經過選單即可開啟側邊欄的「轉場」。將滑鼠移到徽章上，會顯示目前的類型與秒數</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">有空白的接點</div>
+        <div class="kv-val">夾著空白（黑畫面）的接點無法放置。側邊欄中該接點的列會顯示原因（不會自動消除空白）。設定後若在中間產生空白，轉場會失效；消除空白後即會恢復</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">片段淡化</div>
+        <div class="kv-val">已加入片段淡化的接點，該列會顯示「放置轉場後，此接點的淡化會在匯出時被忽略。」的附註。淡化不會自動刪除</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">預覽</div>
+        <div class="kv-val">在重疊期間，會以與匯出相同類型的切換合成前後片段並顯示。後一個片段那一側在預覽中不會顯示馬賽克（匯出時會套用）</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-transition.webp" alt="按一下接點的斜線長條後，側邊欄開啟了「轉場」。每個接點排列著選擇類型與秒數的欄位，第 1 個接點為溶解 0.5 秒，第 2 個為無。時間軸的接點上出現剪刀徽章與斜線長條" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">按一下接點的長條開啟的轉場設定</figcaption>
+    </figure>
+  </div>
+</section>

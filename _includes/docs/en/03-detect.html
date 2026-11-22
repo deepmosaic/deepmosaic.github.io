@@ -1,0 +1,347 @@
+{%- comment -%}
+source: _includes/docs/03-detect.html
+hash:
+  import: 2a8122318c96e079
+  detect-options: a03416edad21b53c
+  detect-mosaic: 3fd831c82bdc9d38
+  batch: aacda8c5fc093c4a
+  detect: 6d5b9f8d5343d1cc
+  queue: ffd9410f19c11593
+{%- endcomment -%}
+<section id="import" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="Loading videos" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>There are 3 ways to load videos. Whichever you use, the <a href="#detect-options">detection options</a> screen opens right after loading.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Select a video file</div>
+        <div class="kv-val">From the "File" menu. Select one video in the dialog</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Select a video folder</div>
+        <div class="kv-val">Loads the videos in a folder all at once. Only files <b>directly in the selected folder</b> are included (subfolders are not), up to 100 files in ascending order of file name. If there are more than 100, only the first 100 are loaded and you are notified</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Drag and drop</div>
+        <div class="kv-val">Drop video files directly onto the home screen. You can drop several at once, and files that aren't videos are ignored automatically</div>
+      </div>
+    </div>
+    <p>If you haven't loaded any videos other than the sample yet, an "Add a video to get started" box appears below the list. Drag and drop a video file, or choose one with "Select video" (the same as "Select a video file" in the menu).</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/import-menu.webp" alt="The home screen with the &quot;File&quot; menu open" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The "File" menu. You can also load videos by dragging and dropping them onto the screen. To change where processing results are saved, use "Select a project folder"</figcaption>
+    </figure>
+    <p><b>Supported formats</b>: mp4 / avi / mkv / mov / wmv / flv / webm / ts / m2ts / m4v / mpg / mpeg (file extensions aren't case-sensitive). When loading from a folder, files that can't be read as video are excluded even if their extension matches, and you are notified of how many were excluded.</p>
+    <p><b>When you load several videos at once</b>, the first one appears on the detection options screen. When you press "Start", <b>those settings are applied to all the rest</b>, and the videos are processed in order. However, the detection range applies only to the first video; from the second video on, the whole video is processed. If you load videos while detection is already running, they are also added to the waiting list and start automatically as soon as the current processing finishes (<a href="#queue">Queue</a>).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Project folder</h3>
+    <p>Each video you load is managed as a project, and its detection results, edit data, and thumbnails are saved in a project folder for that video. By default, project folders are placed in <code>C:\Users\&lt;user name&gt;\deepmosaic</code>. The folder is created automatically if it doesn't exist. You can change this to another location (such as an external drive) with "File ▸ Select a project folder" in the menu, and videos loaded after the change are saved in the new location.</p>
+    <p>"All videos" on the home screen lists <b>the projects in the current project folder that were created with the account you're signed in with</b>. If there are projects saved in another project folder, an <b>"Other folders"</b> row with a count appears in the left sidebar (it doesn't appear when the count is 0). Select it to see those projects in the same list.</p>
+    <p>Videos in "Other folders" belong to a different project folder, so folders and tags aren't available for them (you also can't drag them to folders in the sidebar). To organize them, select "Switch to this project folder" from the video card menu (it also opens with a right-click). The folder where that video is saved then becomes the current project folder.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home.webp" alt="The home screen (list of processed videos)" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The home screen (list of processed videos). This is the screen that accepts drag and drop</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Sample project</h3>
+    <p>On the Free plan (including when you're not signed in), if there are no videos on the home screen, a sample video is added automatically and appears as a card with a "Sample" badge ("Sample video added" appears). The sample contains face detection results only, so you can try editing and exporting it right away. The edit page shows "This sample uses face detection. Try body area detection with your own videos." Detecting the sample again doesn't use up your available detection time. Once you delete it, it isn't added again. It isn't added on paid plans.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">The "Getting started" card</h3>
+    <p>On the Free plan, a "Getting started (3 min)" card appears at the top of "All videos" (in the "Large icons" view, it takes the first cell of the list, and the sample and other videos follow to its right). Click it to play the video in the app (press <kbd>Esc</kbd> to close it). Select "Don't show" on the card to hide it. After that, you can play the video from "Help" ▸ "Tutorials" on the menu bar. The card doesn't appear on paid plans.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Display format</h3>
+    <p>Choose from 3 display formats at the top right of the list. The format you choose is kept for next time.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Large icons</div>
+        <div class="kv-val">The default view, with large thumbnails. Useful when you want to tell videos apart by their images</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Tiles</div>
+        <div class="kv-val">Shows each video as a wide row, with its status, resolution, file size, and date added</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Details</div>
+        <div class="kv-val">A table view. Name, status, date added, length, resolution, detection count, and tags appear as columns, and you can sort by clicking a column header (to get the project ID, use "Copy project ID" in the card menu). The resolution column shows the size of the original video (for projects registered in an earlier version, it changes to the size of the original video once you open the project on the edit page, if the original video is found)</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home-tile.webp" alt="The home screen in the &quot;Tiles&quot; view" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Tiles. Each video has its own row, so you can check its status and resolution</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home-detail.webp" alt="The home screen in the &quot;Details&quot; view" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Details. Click a column header to sort</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Video card actions</h3>
+    <p>Click a card to open the <a href="#edit-overview">edit page</a>. The {% include icon.html name="Menu" class="inline h-3.5 w-3.5 align-[-2px]" %} menu at the top right of the card has the following items.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Open in editor</div>
+        <div class="kv-val">Opens the <a href="#edit-overview">edit page</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Copy project ID</div>
+        <div class="kv-val">Copies the project ID to the clipboard (you use it when contacting us, for example)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Rename</div>
+        <div class="kv-val">Changes the name shown in the list and on the edit page (the file name of the original video doesn't change, and the file isn't moved)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Open project folder</div>
+        <div class="kv-val">Opens this video's project folder in File Explorer</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Import into Premiere Pro</div>
+        <div class="kv-val">Sends the detection results to Adobe Premiere Pro (<a href="#premiere">Premiere Pro integration</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Export project</div>
+        <div class="kv-val">Packs the project into a single zip file (<a href="#project-io">Exporting and importing projects</a>)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Copy project</div>
+        <div class="kv-val">Duplicates the project, including its detection results, edit data, and timeline media, and gives it a new project ID. If the original video is outside the project, the copy refers to the same file (the video isn't copied)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Delete</div>
+        <div class="kv-val">Deletes the project along with its project folder (you're asked to confirm, and this can't be undone). Deleting a project that is being exported also stops that export. If a folder can't be deleted because another app is using it, "N folders are in use and will be deleted the next time the app starts." appears, and the folder is deleted the next time the app starts</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Move to folder / Tags</div>
+        <div class="kv-val">Move the video to a folder in the sidebar, or add and remove tags (not available for videos in "Other folders")</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home-card-menu.webp" alt="The home screen with a video card menu open" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The video card menu</figcaption>
+    </figure>
+    <p><b>To delete several projects at once</b>, press "Select mode" at the top of the list, click cards to select them (you can also use "Select all"), and press "Delete selected". After a confirmation dialog, the selected projects are deleted along with their folders.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/home-select-mode.webp" alt="The home screen in select mode with one card selected" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Select mode. You can delete several projects at once</figcaption>
+    </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Notices on the home screen</h3>
+    <p>The following notices appear above the list on the home screen, only when needed.</p>
+    <ul>
+      <li>"Converting detection results to the new save format (n / N)": Projects detected with an earlier version are being converted to the new save format (<code>project.db</code>). If conversion fails, "N projects failed to convert" appears. Press "Retry"</li>
+      <li>"N unused project folders (X GB)": These are folders left behind when detection was stopped or failed (they aren't shown on the home screen). Press "View list" to open the list, with checkmarks already on only the folders that have no detection results (a folder with detection results may be a completed project whose registration was lost, so check only the ones you need to delete yourself). "Check all" selects every folder, including those with detection results, and "Uncheck all" clears all selections. The checked folders are deleted with "Delete" ("Cancel" deletes nothing). Press "Close" to hide the notice</li>
+      <li>"This project caused a problem the last time the app was launched": Projects where the app crashed during the last session, or whose data was corrupted, are set aside without being opened. "Check" puts the project back if no problems are found, and "Repair" tries to restore it from the last saved state</li>
+    </ul>
+  </div>
+</section>
+
+<section id="detect-options" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="Detection options" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>When you load a video, the detection options screen opens. Here you decide which part of the video to detect and what to detect, then press "Start".</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/detect-options.webp" alt="The detection options screen" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The detection options screen (preview, detection range, detection targets)</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Preview</div>
+        <div class="kv-val">A still image of the currently specified frame. When you move the slider or change a number input, the image at that position appears, so you can get a rough idea of the range</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Detection range</div>
+        <div class="kv-val">The default is the whole video. You can specify it frame by frame with either end of the slider or with the "Start" and "End" number inputs. The heading shows times and frame numbers, such as <span class="font-mono text-[12.5px]">00:00:00 (#0) ~ 00:00:10 (#300)</span></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Add range</div>
+        <div class="kv-val">Lets you specify several separate segments. Overlapping or adjacent ranges are merged into one automatically, and if the start and end are reversed, they are swapped. When there are 2 or more ranges, you can delete each one with {% include icon.html name="Trash2" class="inline h-3.5 w-3.5 align-[-2px]" %}. Deleting all of them returns to the whole video</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Estimated time</div>
+        <div class="kv-val">"Estimated time: about N min (high-accuracy model / measured on this PC: N fps)" appears below the detection range ("(Mosaic scan / about N fps)" when you detect with "Mosaic" only). It is calculated from the test run on this PC and from measurements of past detections. If there are no measurements yet, "The estimated time appears after a test run or the first detection finishes" appears, and if detection is likely to take a long time, "This may take a while — narrowing the detection range will shorten it" appears. On a PC without a GPU, processing runs on the CPU, so it can take 10 times real time or more. On plans with a limit on available detection time, "Time is deducted from your allowance based on the full length of the video (even if you specify a range)" is also shown</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Detection targets</div>
+        <div class="kv-val">Choose from "Body areas", "Male faces", "Female faces", and "Mosaic" (by default, the 3 other than "Mosaic" are ON and "Mosaic" is OFF). Your selection is saved and carried over the next time you load videos. In the Desktop app, turning on "Mosaic" disables the body area and face check boxes and the default mosaic settings, and "Only the boxes around mosaic areas are detected. Body area detection, face detection, and the default mosaic settings are not used." appears (in the Web app, you can use it together with body areas and faces. See <a href="/en/docs/web/#diff">Differences from the Desktop app</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Pixel size</div>
+        <div class="kv-val">Press the "Set pixel size" button to open the settings screen and choose the size of the mosaic blocks (for how to read the screen, see <a href="#edit-mosaic">Mosaic settings</a>). The current setting (for example, Fixed: 53 blocks across) appears below the button. Block size is expressed as the number of blocks across the width of the frame, so the mosaic looks the same even if the video resolution differs. The default is Fixed (53 blocks across), which applies blocks of the same size to every frame and every target. Settings you confirm with "Apply" are saved and become the default for future detections too. After detection, you can change them anytime in <a href="#edit-mosaic">Mosaic settings</a> on the edit page</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Processing after detection</div>
+        <div class="kv-val">Turn on "Export right after detection as a batch" to go straight through to export without confirmation after detection finishes (<a href="#batch">Batch run</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">GPU display (top right)</div>
+        <div class="kv-val">The name of the GPU used for detection. If a CUDA-capable GPU is recognized and you're signed in, the high-accuracy model is chosen; otherwise, the lightweight model is chosen. The choice is made <b>automatically</b> (there is no manual selection). Even on a PC with a GPU, "Preparing the high-accuracy model — the lightweight model will be used for detection this time." appears above "Start" while the high-accuracy model is being downloaded, and "Sign in to use the high-accuracy model — the lightweight model will be used for detection this time." (with a "Sign in" button) appears when you aren't signed in. In those cases, that detection runs with the lightweight model. On a PC whose GPU has less than 4 GB of memory, detection uses the lightweight model, and mosaic refinement (mosaic that follows the shape of the object) is not used ("This GPU does not have enough memory, so the lightweight model is used." appears)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Model check</div>
+        <div class="kv-val">When the screen opens, it checks whether the model files are present and automatically downloads any that are missing. You can't press "Start" until the check finishes. If it fails, press "Retry" to download them again</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Mosaic refinement</div>
+        <div class="kv-val">Inside each detected box, AI creates an outline that follows the shape of the object, and mosaic is applied in that shape instead of the rectangular box. <b>It is on by default in environments with a CUDA-capable NVIDIA GPU</b>, and no setting or notice for it appears on this screen. Separate parts get separate outlines, and you can work with them in that shape on the edit page (to go back to a rectangle, right-click on the edit page and select "Change shape"). Detection takes longer (as a guide, about +107 seconds per minute of video on a PC with a GPU). <b>It isn't available in environments without a CUDA-capable NVIDIA GPU,</b> and mosaic is applied with rectangular boxes instead</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Mosaic</div>
+        <div class="kv-val">When turned on, it finds the areas of block mosaic already in your footage and shows them on the edit page as polygon boxes (label "Mosaic", purple). On export, Deepmosaic applies its own mosaic over those areas again, with a block size estimated from the blocks of the mosaic it found. The estimated blocks go into that target's per-ID mosaic settings (the number of blocks across the width for the pixel size "Fixed"), so you can change them on the "By ID" tab in <a href="#edit-mosaic">Mosaic settings</a>. Settings you change yourself aren't overwritten even if you detect again. The minimum block size for the export resolution (self-regulation standard) takes priority, just as with regular mosaic. Detection takes longer, and the extra time is included in "Estimated time" below the detection range. If the detection engine doesn't support this, the detection log shows "This detection engine doesn't support detecting existing mosaic, so this option is skipped and detection continues", and only the remaining targets are detected. For details, see <a href="#detect-mosaic">Finding existing mosaic and reapplying it</a></div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <div class="grid gap-3 sm:grid-cols-2">
+        <img src="/assets/img/samples/shape-compare-2-rect.webp" alt="A frame with mosaic applied to the faces of 6 people using the rectangular boxes as is" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+        <img src="/assets/img/samples/shape-compare-2-shape.webp" alt="The same frame after refinement, with mosaic applied along the shape of each face" width="1280" height="720" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      </div>
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Left: rectangular boxes as is / Right: mosaic that follows the shape of the object. The same frame of the same video, exported with only the settings changed (footage: Pexels)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/detect-options-panel.webp" alt="Detection targets and default mosaic settings"
+           width="316" height="524" loading="lazy" decoding="async" style="max-width:316px;width:100%;height:auto;margin:0 auto"
+           class="block rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Detection targets and default mosaic settings</figcaption>
+    </figure>
+    <p>Detection time is roughly proportional to the number of frames processed. If you want to process only part of a long video, narrowing the detection range shortens the wait. Note that your available detection time (allowance) is counted based on the full length of the video even if you narrow the range. Detecting the same video again isn't counted twice.</p>
+    <p>Detection is also stopped before it starts <b>if your remaining available detection time is shorter than the full length of the video</b>. A message such as "Your remaining detection time (1 h 30 min) is not enough to detect a 120-minute video. Check your plan." appears above the "Start" button, and you can't press "Start". Because the full length of the video is counted even if you narrow the detection range, specifying a range doesn't let you start. You can check your remaining time in the footer (<a href="#usage">How usage time is measured</a>).</p>
+    <p>If your license has expired, you've exceeded the usage limit, or your free period has ended, a dialog prompting you to change your plan appears on this screen, and you can't start detection (see <a href="#plan">Changing your plan</a>).</p>
+    <p>When the detection options screen opens (and also when you choose a different save location on this screen), the app checks <b>whether it can write to the save location for detection results (the project folder)</b>. If it can't, you can't press "Start", and the reason appears: "Can't start because the save location (project folder) can't be written to". Use the buttons shown with it, "Choose the project folder again", "Use the default location" (shown when the current save location isn't the default location), and "Check again", to change the save location, or fix the cause and check again. Where the video itself is stored doesn't matter. If you change the save location with "Select a project folder" in the menu, the check runs the next time you open the detection options screen (<a href="#import">Project folder</a>).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Import without detection</h3>
+    <p>When you turn on "Import without detection" with the switch at the top of the right panel, detection isn't run and the video is imported into the edit page as it is. You add the boxes yourself on the edit page (<a href="#edit-bbox">Adding detection boxes</a>). The "Start" button changes to "Import", and "Importing" is shown while it runs and "Import complete" when it finishes. <b>It doesn't use detection time</b> (you can import videos longer than your remaining detection time). However, as with detection, you can't start it when your license has expired, you've exceeded the usage limit, or your free period has ended. While it's on, the detection targets, detection range, and batch run after detection can't be used, and automatic scene detection isn't done (the edit page starts with a single scene). The initial mosaic settings (pixel size) are used for the boxes you add. This switch isn't saved and goes back to off each time you open the screen.</p>
+  </div>
+</section><section id="detect-mosaic" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="Finding existing mosaic and reapplying it" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>This feature finds the position and extent of block mosaic already in your footage and, on export, applies Deepmosaic mosaic over it again. Use it when the mosaic in your footage varies in block size and coverage, and you want to redo it to your own standard. This feature doesn't take existing mosaic off. It can't restore the original footage.</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Steps</h3>
+    <ol>
+      <li>In <a href="#detect-options">detection options</a>, turn on "Mosaic" under "Detection targets". In the Desktop app, the body area and face check boxes and the default mosaic settings are disabled, and only mosaic boxes are detected (in the Web app, you can detect it together with body areas and faces)</li>
+      <li>Press "Start". A "Detect existing mosaic" stage is added to the <a href="#detect">AI detection</a> progress</li>
+      <li>When detection finishes, open the <a href="#edit-overview">edit page</a> and check the areas found, shown as purple polygon boxes (label "Mosaic")</li>
+      <li>Correct the boxes if needed. You can move the points of the polygons (<a href="#edit-player">Player and timeline</a>). To change the block size, select the target on the "By ID" tab in <a href="#edit-mosaic">Mosaic settings</a> and change it there</li>
+      <li>When you <a href="#edit-encode">export</a>, mosaic is applied over the box areas again, with a block size estimated from the blocks of the mosaic that was found</li>
+    </ol>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Reading the results</h3>
+    <ul>
+      <li>A "Mosaic" row appears on the timeline (after the face rows). Expand it to see the areas found, split into rows by ID</li>
+      <li>In the toolbar labels (C), "Mosaic" appears in both the upper and lower rows. If you clear "Mosaic" in the upper row, it no longer appears in either the preview or the export (<a href="#edit-toolbar">Edit toolbar</a>)</li>
+      <li>"Mosaic" also appears on the "By class" tab of the mosaic settings, so you can change the look of all the areas found at once. The estimated blocks go into the per-ID settings, and settings you change yourself aren't overwritten even if you detect again</li>
+      <li>Tracks excluded from mosaic get "[mosaic excluded]" in their box labels</li>
+      <li>If the same mosaic splits into a different ID partway through, merge them into one with "Merge IDs…" in the box's right-click menu. Fill in frames or areas that weren't found by drawing more boxes or by using <a href="#edit-track">tracking</a> (<a href="#edit-overview">Edit page</a>, <a href="#edit-toolbar">Edit toolbar</a>)</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Limitations</h3>
+    <ul>
+      <li>Mosaic with blocks that are too small isn't found. Especially in 4K footage, fine mosaic on targets that appear small is easy to miss</li>
+      <li>Blur, black-out, and solid fills aren't covered (only block mosaic is found)</li>
+      <li>Blocks the same color as the background and semi-transparent mosaic overlays are harder to find</li>
+      <li>Areas that appear for only 1 to 2 frames are dropped because they can't be confirmed. Mosaic that is cut off at the edge of the frame, or that is still entering the frame, is also harder to find</li>
+      <li>On a PC without a GPU, the downscaled video used for detection is made differently, so the results may differ slightly</li>
+    </ul>
+    <p>Automatic detection isn't 100% accurate. Before exporting, review the entire video on the edit page (<a href="#review">Checking for missed detections</a>).</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Estimated time</h3>
+    <ul>
+      <li>When detecting together with body areas and faces, detection takes about 1.1 to 1.2 times as long on a GPU and about 1.5 to 1.6 times as long on a CPU, compared with having "Mosaic" turned off</li>
+      <li>When detecting with "Mosaic" only, a 1-hour 1080p video takes about 9 minutes on a GPU and about 31 minutes on a CPU, as a guide</li>
+    </ul>
+    <p>Both vary with your PC's performance and the footage. The extra time is also included in "Estimated time" below the detection range.</p>
+  </div>
+</section>
+
+<section id="batch" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="Batch run from detection to export" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>If you turn on "Export right after detection as a batch" in detection options and press "Start", the app automatically continues after detection finishes and exports a video with the mosaic burned in, without opening the edit page. When you load several videos at once, this applies to all of them.</p>
+    <ol>
+      <li>When you press "Start", "Review before batch processing" appears. Confirm that automatic detection isn't 100% accurate (targets may not be detected when they are small, move fast, or are only partly visible, in dark scenes, with backlighting or heavy blur, or at angles unlike those in the training data), then press "I understand, run as a batch"</li>
+      <li><a href="#edit-encode">Export settings</a> opens next. When you choose the folder to save to, file names are assigned automatically from the original video names, and if a file with the same name already exists, _2, _3, and so on are added to the end. Press "Start" to begin detection</li>
+      <li>When detection finishes, the export goes straight into the <a href="#queue">queue</a>, and videos are exported in order. You can check progress from "Queue" in the menu bar</li>
+    </ol>
+    <p>A batch run skips the step of reviewing the results on the edit page, so <b>always review the entire output video yourself before publishing or distributing it</b>. For the default mosaic settings, the batch run uses what you applied with "Set pixel size" and what you saved with "Make these settings the default" in the mosaic settings panel.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/detect-options-batch.webp" alt="The detection options screen with &quot;Export right after detection as a batch&quot; turned on" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The detection options screen with batch run turned on</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/batch-warning.webp" alt="The &quot;Review before batch processing&quot; confirmation dialog" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The confirmation shown before a batch run</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="detect" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="AI detection" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>When you press "Start" in <a href="#detect-options">detection options</a>, AI automatically detects the target objects in the video. Processing goes through 5 stages, "Prepare", "Preprocess", "Detect", "Analyze", and "Refine mosaic", in that order (4 stages when mosaic refinement isn't used). When "Mosaic" is turned on in detection options, a "Detect existing mosaic" stage, which looks for mosaic already in the video, is added (<a href="#detect-mosaic">Finding existing mosaic and reapplying it</a>). Overall progress, processing speed (fps), and time remaining are shown. All the stages that will be used are shown from the moment detection starts. You can pause, resume, and cancel processing. When you load several videos, you can check the waiting list in "<a href="#queue">Queue</a>" in the menu bar.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/detect.webp" alt="The detection progress screen (5-stage stepper + time per step + progress bar)" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The detection progress screen (stepper + time per step + progress bar. 5 stages when mosaic refinement is used. Turning on "Mosaic" adds a "Detect existing mosaic" stage)</figcaption>
+    </figure>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Reading the progress</div>
+        <div class="kv-val">In the step display at the top, completed stages are fully colored, and the running stage is colored up to how far it has progressed. The progress bar shows the proportion of the whole detection. Below it are the current step name, the number of frames being processed, the speed (fps), "Elapsed" (time since detection started), "Remaining in X" (estimated time remaining for that step), and "Overall remaining". Some steps don't show a time remaining. The "Refine mosaic" stage counts only frames that have target boxes and shows "n / N target frames". Overall progress also assigns a large share to this stage, so it advances at a pace close to the actual time it takes</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Pause / Resume</div>
+        <div class="kv-val">Pauses processing. When you resume, processing continues from where it left off</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Cancel</div>
+        <div class="kv-val">Stops detection after the "Stop detection?" confirmation. The progress is lost, and the project folder created for that detection is also deleted (you can't resume it later. If you want to stop partway and continue later, use "Pause"). When videos are waiting, you can choose "Stop this video only" (moves on to the next video) or "Stop all"</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Run in background</div>
+        <div class="kv-val">Closes the screen and returns to the home screen. Detection keeps running, and you can check progress in "<a href="#queue">Queue</a>" in the menu bar. If you press "_" (Minimize) at the top right of the screen instead, a small progress display (mini player) stays at the bottom right of the screen. Click it to return to the detection screen. You can also pause and cancel from the mini player</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Completion</div>
+        <div class="kv-val">"Processing complete" appears, and a card is added to the home screen. "Back to home" returns you to the list. If you're signed in on the Free plan, "… remaining · View plans" also appears. For a <a href="#batch">batch run</a>, "Detection complete" appears, and the export is added to the queue (you can check it with "View export progress")</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Log</div>
+        <div class="kv-val">The detection log appears on the right side of the screen (collapsed by default). You can filter it by level and step (text search, "Copy visible lines", and "Open log folder" are for development and don't appear in the release version). If updates stop, "No response for N seconds" appears. After completion or when an error occurs, a "Time by step" table appears. When the app's display language is English or Traditional Chinese, log lines are also shown in that language (some lines may still be shown in Japanese). Logs sent with an inquiry stay in the original Japanese, regardless of the display language. When you contact us about a problem, attaching this log helps us investigate faster</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Resuming or discarding an interrupted detection</h3>
+    <p>If detection stops partway, for example because the app was closed or the PC shut down, the next time the app starts, it appears under "Interrupted detections" above "All videos" on the home screen, and an "Interrupted detections" row with a count also appears in the left sidebar. The card shows the stage where it stopped and how far it got, such as "Interrupted (DETECT 42%)". Press "Resume" to continue detection from near where it stopped, not from the beginning. Press "Discard" and confirm to delete the detection's intermediate progress and proxy video (the original video isn't deleted). If it can't be resumed, for example because the original video is missing or has changed, the project has been edited, or it was created by a newer version of the app, the card shows the reason and you can't press "Resume" (if "Update the engine to resume." appears, apply the <a href="#update">update</a>).</p>
+    <p>During processing, the progress and estimated time for each step are shown.</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/detect-cancel.webp" alt="The confirmation dialog shown when you press &quot;Cancel&quot; during detection" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">The cancel confirmation. "No" continues processing</figcaption>
+    </figure><p>For a target that is cut off at the edge of the frame, detection extends the detection box beyond the edge of the frame and records it. On export, mosaic is drawn only inside the frame, so the mosaic shape doesn't get squashed at the edge of the frame, even for targets moving out of frame (<a href="#edit-player">Player and timeline</a>).</p><p>In the Desktop app, detection automatically smooths the motion (trajectory) of the detected boxes. Small frame-to-frame jitter and boxes that jump for just 1 frame are suppressed, so the mosaic flickers less. No settings are needed. Box edges that touch the edge of the frame are kept as they are, so this doesn't affect the extension of boxes beyond the edge of the frame described above. This smoothing applies to videos detected with a version that supports it (videos detected before that don't change).</p>
+    <details class="my-4 rounded-[10px] border border-edge bg-panel-2">
+      <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">View supported detection targets</summary>
+      <div class="px-4 pb-4">
+        {% include detectable-objects.html id_prefix="docs-detectable" class="block h-auto w-[min(420px,100%)] rounded-[10px] border border-edge" %}
+        <p class="mt-2 text-[13px] leading-[1.9] text-ink-3">There are 3 detection targets, "Body areas", "Male faces", and "Female faces", plus "Mosaic" (<a href="#detect-mosaic">mosaic already in your footage</a>). You can turn each one ON / OFF in <a href="#detect-options">detection options</a>.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<section id="queue" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Loading and detection" title="Queue (waiting list for detection and export)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Detection and export are managed in a single waiting list (the queue), which you can view and operate from "Queue" in the menu bar. The badge on the button shows the total number of running and queued jobs. Detection processes one video at a time, as does export, and when a job finishes, the next one starts automatically. Jobs for <a href="#detect-options">Import without detection</a> have an "Import" badge.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Detection (running)</div>
+        <div class="kv-val">Shows the step, overall progress, speed, time remaining, and frame count. From here you can also go to the detection screen with "Open details", pause / resume, and cancel</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Detection (queued)</div>
+        <div class="kv-val">Change the order by dragging or with "Move up" and "Move down". Use "Remove from queue" to take a job off the list</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Export</div>
+        <div class="kv-val">The running row shows speed, time remaining, and frame count. You can reorder jobs, use "Open progress in a separate window", pause / resume, cancel, and remove completed jobs (<a href="#encode-progress">Progress window</a>)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Using the Web app at the same time</div>
+        <div class="kv-val">When the <a href="/en/docs/web/">Web app</a> is processing with the same account, "Processing is running in the web version, so new jobs will start after it finishes." appears, and jobs in the Desktop app wait</div>
+      </div>
+    </div>
+    <p>The queue remains even if you close the window. When you quit the app, running detection is interrupted, and you can resume it from "Interrupted detections" on the home screen the next time the app starts (<a href="#detect">AI detection</a>). Exports left in the queue can't be resumed the next time the app starts (start them again from the edit page).</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/queue.webp" alt="The queue modal. The row for the running detection shows the step and progress" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Queue (detection running)</figcaption>
+    </figure>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/en/queue-encode.webp" alt="The queue modal, listing export jobs" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Queue (export jobs)</figcaption>
+    </figure>
+  </div>
+</section>

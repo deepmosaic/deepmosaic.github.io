@@ -1,0 +1,48 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/docs/
+ja_url: /docs/
+source: docs/index.html
+source_hash: "e5ca30b3aae3e2f04e566a0d6c66ad7ca1c741578db7f1a76be083849dcaddc0"
+title: 說明文件
+seo_title: 使用指南｜為影片加上馬賽克的方法 - Deepmosaic
+description: Deepmosaic Desktop 的使用方式。從安裝與初始設定、帳號與方案、載入影片、AI 偵測與佇列、編輯偵測結果（偵測框、馬賽克設定、場景、人物圖庫、快捷鍵）、匯出已燒錄馬賽克的影片、專案的交接、Adobe Premiere Pro 整合，到更新與疑難排解，涵蓋所有功能的操作步驟。
+schemas:
+  - breadcrumb
+---
+{% include header.html %}
+
+<section>
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-12 pt-12 pb-24" data-island="scrollspy" data-offset="76">
+    {%- assign docs_toc = site.data.l10n[page.lang].docs_toc.desktop %}
+
+    <nav aria-label="目錄" class="docs-toc sticky top-[84px] hidden max-h-[calc(100vh-6rem)] w-[220px] shrink-0 self-start overflow-y-auto pr-2 md:block">
+      <div class="mb-3 text-xs font-bold tracking-[.1em] text-ink-4">目錄</div>
+      {% include docs-toc-list.html toc=docs_toc %}
+    </nav>
+
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold tracking-[-.01em] text-ink">說明文件</h1>
+      <p class="mt-1.5 text-[14.5px] text-ink-3">Deepmosaic Desktop（Windows 版）的使用指南。瀏覽器版請參閱<a href="/zh-tw/docs/web/" class="text-accent-soft hover:underline">網頁版使用說明</a></p>
+      <p class="mt-1 text-[13px] text-ink-3">螢幕截圖為繁體中文版應用程式的畫面（範例專案中輸入的文字維持日文）。教學影片僅有日文字幕。本說明中的按鈕與選單名稱，與繁體中文版的顯示相同。</p>
+
+      <details class="docs-toc mt-5 rounded-[10px] border border-edge bg-panel-2 md:hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">目錄</summary>
+        <div class="px-4 pb-4">
+          {% include docs-toc-list.html toc=docs_toc %}
+        </div>
+      </details>
+
+      {% include docs/zh-tw/01-intro.html %}
+      {% include docs/zh-tw/02-account.html %}
+      {% include docs/zh-tw/03-detect.html %}
+      {% include docs/zh-tw/04-edit.html %}
+      {% include docs/zh-tw/05-export.html %}
+      {% include docs/zh-tw/06-ops.html %}{% include docs/zh-tw/07-team.html %}
+
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

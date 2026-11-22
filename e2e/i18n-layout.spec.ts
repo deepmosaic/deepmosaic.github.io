@@ -5,7 +5,7 @@
 //
 // ## 何を見るのか
 //
-// 訳の台帳 `_data/i18n_pages.yml` の鍵 (ja のパス 9 本) の英中のページ (`/en` + ja のパス、`/zh-tw` + ja のパス) を、
+// 訳の台帳 `_data/i18n_pages.yml` の鍵 (ja のパス 11 本) の英中のページ (`/en` + ja のパス、`/zh-tw` + ja のパス) を、
 // 2 つの幅 (desktop = 1280×800、mobile = Pixel 7) で開いて、
 //   (1) 横スクロールが無い
 //   (2) ja の対応ページの採取と比べて、はみ出しのエラーが 0 (規則は `src/lib/i18n-overflow.js` の diffOverflow)
@@ -16,7 +16,7 @@
 // 「アプリで開く」(deepmosaic://…) とコピーのボタンは押さない (OS のプロトコルの処理でアプリが起動しうる)。
 //
 // - 対象の一覧は spec の読み込みのときに台帳 (ソース) から作る。Playwright は webServer (ビルド) の前に spec を読むので、
-//   `_site` を列挙すると古い / 無い `_site` から一覧を作ってしまう。404・法務・docs は台帳に無いので対象外。
+//   `_site` を列挙すると古い / 無い `_site` から一覧を作ってしまう。404・法務は台帳に無いので対象外。
 // - 結果は test ごとに `e2e/.artifacts/i18n/report/<lang>-<slug>-<desktop|mobile>.json` (fullyParallel で並ぶので 1 本にまとめない)。
 // - 許可の一覧 `e2e/i18n-allow.json` に足してよいのは検査の誤検出だけ (reason 必須)。
 // - 外部へのリクエスト (Google tag・Cloudflare Web Analytics など) は全部止める。本番の計測を汚さない。
@@ -137,7 +137,7 @@ interface Sample {
   overflow: OverflowItem[];
   leaks: LeakItem[];
   scroll: { scrollWidth: number; innerWidth: number };
-  /** ページの `<details>` の数 (採取の前に全部開く。閉じた中身は矩形が無く、FAQ の回答を見逃すため)。 */
+  /** ページの見えている `<details>` の数 (採取の前に全部開く。閉じた中身は矩形が無く、FAQ の回答を見逃すため。幅で隠す目次の `<details>` は数えない)。 */
   details: number;
 }
 
@@ -146,7 +146,7 @@ async function sample(page: Page): Promise<Sample> {
   const details = await page.evaluate(() => {
     const all = [...document.querySelectorAll('details')];
     for (const d of all) d.open = true;
-    return all.length;
+    return all.filter((d) => d.getClientRects().length > 0).length;
   });
   if (details) await settle(page);
   const overflow = (await page.evaluate(OVERFLOW_PROBE_SOURCE)) as OverflowItem[];

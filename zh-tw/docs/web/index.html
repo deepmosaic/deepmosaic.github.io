@@ -1,0 +1,44 @@
+---
+layout: default
+lang: zh-tw
+permalink: /zh-tw/docs/web/
+ja_url: /docs/web/
+source: docs/web/index.html
+source_hash: "8bbdac83c030f5e985a5ace7db47e9865e047993f04ffa71200ae7490c84a35b"
+title: 網頁版使用說明
+seo_title: 瀏覽器版使用說明｜Deepmosaic Web
+description: Deepmosaic 網頁版（瀏覽器版）的使用方式。支援的瀏覽器與需求、開始使用、與桌面版的差異、匯出與下載、瀏覽器內資料的儲存與自動刪除，以及疑難排解。
+schemas:
+  - breadcrumb
+---
+{% include header.html %}
+
+<section>
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-12 pt-12 pb-24" data-island="scrollspy" data-offset="76">
+    {%- assign docs_toc = site.data.l10n[page.lang].docs_toc.web %}
+
+    <nav aria-label="目錄" class="docs-toc sticky top-[84px] hidden max-h-[calc(100vh-6rem)] w-[220px] shrink-0 self-start overflow-y-auto pr-2 md:block">
+      <div class="mb-3 text-xs font-bold tracking-[.1em] text-ink-4">目錄</div>
+      {% include docs-toc-list.html toc=docs_toc %}
+      <div class="mt-5 border-t border-hair pt-4 text-[13px]"><a href="/zh-tw/docs/" class="text-ink-3 hover:text-accent-soft">← 桌面版使用說明</a></div>
+    </nav>
+
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold tracking-[-.01em] text-ink">網頁版使用說明</h1>
+      <p class="mt-1.5 text-[14.5px] text-ink-3">在瀏覽器中使用 Deepmosaic 的指南。各項操作的詳細說明與<a href="/zh-tw/docs/" class="text-accent-soft hover:underline">桌面版使用說明</a>相同</p>
+      <p class="mt-1 text-[13px] text-ink-3">本說明中的按鈕與選單名稱，與繁體中文版的顯示相同。</p>
+
+      <details class="docs-toc mt-5 rounded-[10px] border border-edge bg-panel-2 md:hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">目錄</summary>
+        <div class="px-4 pb-4">
+          {% include docs-toc-list.html toc=docs_toc %}
+        </div>
+      </details>
+
+      {% include docs/zh-tw/web.html %}
+
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

@@ -10,7 +10,7 @@
 // - (c) locale zh-CN で /price/ → 繁体字の帯 (lang="zh-Hant-TW") で /zh-tw/price/。
 // - (d) locale ja-JP では帯が無い。
 // - (e) en-US でも、言語の切り替え (フッター) で「日本語」を選ぶと以後 帯が無い。
-// - (f) docs (/docs/、訳の無いページ = alternate が無い) では帯が無い。
+// - (f) docs (/docs/・/docs/web/、訳のあるページ) にも帯が出て、リンクが同じ言語の docs (/en/docs/・/zh-tw/docs/web/) を指す。
 // - (g) 自動のリダイレクトはしない (en-US で / を開いても URL は / のまま)。
 //
 // 文の期待値は src/lib/lang-suggest.js の TEXT。保存のキーは dm-site-lang。
@@ -65,9 +65,11 @@ test.describe('locale en-US', () => {
     await expect(page.locator(BANNER)).toHaveCount(0);
   });
 
-  test('(f) docs には帯が無い', async ({ page }) => {
-    await page.goto('/docs/');
-    await expect(page.locator(BANNER)).toHaveCount(0);
+  test('(f) docs にも帯が出て、英語の docs を指す', async ({ page }) => {
+    await page.goto('/docs/#plan');
+    const banner = page.locator(BANNER);
+    await expect(banner).toHaveCount(1);
+    await expect(banner.getByRole('link', { name: 'View in English' })).toHaveAttribute('href', /^\/en\/docs\/(#plan)?$/);
   });
 });
 
@@ -81,6 +83,13 @@ test.describe('locale zh-CN', () => {
     await expect(banner).toContainText('本頁面也提供繁體中文版。');
     await expect(banner.getByRole('link', { name: '以繁體中文檢視' })).toHaveAttribute('href', '/zh-tw/price/');
     await expect(banner.getByRole('button', { name: '關閉' })).toBeVisible();
+  });
+
+  test('(f) /docs/web/ に繁体字の帯で /zh-tw/docs/web/', async ({ page }) => {
+    await page.goto('/docs/web/');
+    const banner = page.locator(BANNER);
+    await expect(banner).toHaveAttribute('lang', 'zh-Hant-TW');
+    await expect(banner.getByRole('link', { name: '以繁體中文檢視' })).toHaveAttribute('href', '/zh-tw/docs/web/');
   });
 });
 

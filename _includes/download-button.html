@@ -9,11 +9,13 @@ params:
   full     (任意) 真値で幅 100%
   variant  (任意) "secondary" で副ボタン配色
   note     (任意) ボタン下の補足文
+  paired   (任意) 真値で何も出さない (別の入手のボタンと並べて置く場所。英中の docs のインストールの節)
   dl       (任意) 計測用のボタン識別子。既定 "cta"。
            `data-dl` がダウンロードの計測の目印 (`src/main.js` の initDownloadTracking が `a[data-dl]` だけを見る)。
            GA4 の `link_id` になるので、置き場所ごとに違う値にする
 {%- endcomment -%}
 {%- assign db_P = site.data.l10n[page.lang].parts -%}
+{%- unless include.paired -%}
 <a class="{% if include.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}{% if include.full %} w-full{% endif %}" download
    data-dl="{{ include.dl | default: 'cta' }}"
    href="{{ site.data.lang[page.lang].app_download_link }}">
@@ -21,3 +23,4 @@ params:
   {% if include.label %}{{ include.label }}{% else %}{% if db_P %}{{ db_P.dl_label_default }}{% else %}無料でダウンロード{% endif %}{% endif %}
 </a>
 {% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}
+{% endunless -%}

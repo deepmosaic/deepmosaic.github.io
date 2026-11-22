@@ -1,0 +1,85 @@
+# `_data/docs_toc.yml` (docs の目次) の繁体字中国語の文だけ。ja と同じ入れ子・同じ id・同じ順で、群の名前 (title) と項目の名前 (label) を訳す。
+# id は ja と同じ値を写す (本文の `<section id>` とアプリ・他のページの深いリンクが使う)。
+# ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
+_source: "_data/docs_toc.yml"
+_source_hash: "5ef0c421981a51689f2853c9b55073d55356eca4c86987fa0bfa919a479dca07"
+desktop:
+  - title: "入門"
+    items:
+      - { id: about, label: "簡介" }
+      - { id: install, label: "安裝" }
+      - { id: setup, label: "初始設定" }
+      - { id: layout, label: "畫面配置" }
+      - { id: theme, label: "主題" }
+  - title: "帳號與方案"
+    items:
+      - { id: license, label: "登入與授權" }
+      - { id: plan, label: "變更方案" }
+      - { id: account, label: "刪除帳號" }
+      - { id: support, label: "聯絡我們" }
+  - title: "載入與偵測"
+    items:
+      - { id: import, label: "載入影片" }
+      - { id: detect-options, label: "偵測選項" }
+      - { id: detect-mosaic, label: "既有馬賽克" }
+      - { id: batch, label: "批次執行" }
+      - { id: detect, label: "AI 偵測" }
+      - { id: queue, label: "佇列" }
+  - title: "編輯"
+    items:
+      - { id: edit-overview, label: "編輯頁面" }
+      - { id: edit-player, label: "播放器與時間軸" }
+      - { id: edit-zoom, label: "縮放與平移" }
+      - { id: edit-bbox, label: "新增偵測框" }
+      - { id: edit-track, label: "追蹤與關鍵影格" }
+      - { id: edit-scenes, label: "場景（鏡頭）" }
+      - { id: edit-toolbar, label: "編輯工具列" }
+      - { id: edit-mosaic, label: "馬賽克設定面板" }
+      - { id: edit-persons, label: "人物圖庫" }
+      - { id: shortcuts, label: "鍵盤快捷鍵" }
+  - title: "時間軸編輯"
+    items:
+      - { id: edit-sidebar, label: "側邊欄與抽屜面板" }
+      - { id: timeline-edit, label: "編輯片段" }
+      - { id: edit-media, label: "媒體（匯入素材）" }
+      - { id: edit-text, label: "文字" }
+      - { id: edit-watermark, label: "浮水印" }
+      - { id: edit-audio, label: "音訊與背景音樂" }
+      - { id: edit-fade, label: "淡化" }
+      - { id: edit-transition, label: "轉場" }
+  - title: "匯出與整合"
+    items:
+      - { id: edit-encode, label: "匯出" }
+      - { id: timecode, label: "時間碼設定" }
+      - { id: encode-progress, label: "進度視窗" }
+      - { id: project-io, label: "專案的匯出與匯入" }
+      - { id: premiere, label: "Premiere Pro 整合" }
+      - { id: review, label: "檢查漏偵測" }
+  - title: "維護"
+    items:
+      - { id: update, label: "更新" }
+      - { id: data, label: "資料儲存位置" }
+      - { id: uninstall, label: "解除安裝" }
+      - { id: usage, label: "使用時間的計算方式" }
+      - { id: spec, label: "系統需求" }
+      - { id: trouble, label: "疑難排解" }
+      - { id: web, label: "關於網頁版" }
+      - { id: licenses, label: "隨附軟體的授權" }
+  - title: "組織"
+    items:
+      - { id: team, label: "組織管理（Enterprise）" }
+web:
+  - title: "網頁版"
+    items:
+      - { id: about, label: "簡介" }
+      - { id: requirements, label: "支援的瀏覽器與需求" }
+      - { id: start, label: "開始使用" }
+      - { id: diff, label: "與桌面版的差異" }
+      - { id: home, label: "首頁畫面的分類" }
+      - { id: timeline, label: "時間軸編輯" }
+      - { id: run, label: "執行視窗與佇列" }
+      - { id: export, label: "匯出與下載" }
+      - { id: storage, label: "資料的儲存與自動刪除" }
+      - { id: plan, label: "方案與使用時間" }
+      - { id: team, label: "組織管理（Enterprise）" }
+      - { id: trouble, label: "疑難排解" }

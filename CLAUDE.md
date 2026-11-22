@@ -64,7 +64,7 @@ npm run build && bundle exec jekyll build
 | `price/` | 価格ページ |
 | `index.html` / `404.html` | トップページ / 404 |
 | `mosaic-removal.html` | `/mosaic-removal/`。「モザイク除去」誤認の封じ込めページ |
-| `en/` / `zh-tw/` | 英語 / 繁体字中国語のページ (`/en/…`・`/zh-tw/…`。各 10 ファイル (404 を含む)、公開済み。front matter に `lang`・`source`・`source_hash` が必須) |
+| `en/` / `zh-tw/` | 英語 / 繁体字中国語のページ (`/en/…`・`/zh-tw/…`。各 12 ファイル (404 と docs の 2 本を含む)、公開済み。front matter に `lang`・`source`・`source_hash` が必須) |
 | `scripts/i18n/` | 多言語化の検査の道具 (ja-identity・check-site・parity・source_hash・用語集の写し)。公開しない |
 | `CNAME` | カスタムドメイン |
 | `BingSiteAuth.xml` / `sitemap.xml` / `robots.txt` | SEO |
@@ -74,8 +74,9 @@ npm run build && bundle exec jekyll build
 
 多言語化 (英中のページは公開済み。ヘッダーの言語の切り替えと ja のページの案内の帯から行ける)。**日本語が正本**で、英語と繁体字中国語 (台湾向け) の写しを置く。**ja のページの出力は 1 バイトも変えない** (ja-identity で検査。ja を意図して変える変更では基点を作り直す)。画面の文の規則の正はアプリのリポの文書。
 
-- **URL**: ja は今のまま (`/`・`/price/` …)。英語は `/en/…`、繁体字は `/zh-tw/…`。対象は `/`・`/price/`・`/spec/`・`/subscribe/`・`/mosaic-removal/`・`/contact/`・`/enterprise/inquiry/`・`/join/`・`/company/about`・`/404.html` (英中の 404 は `/en/404.html`・`/zh-tw/404.html`)。自動のリダイレクトはしない。
-- **対象外 (日本語のページだけ)**: docs (`/docs/`・`/docs/web/`・`_includes/docs`)、法務 (`/company/{terms,privacy,cookie,eula,asct}`、`_data/legal.yml`)、`llms.txt` / `llms-full.txt` / `robots.txt`、`feed.xml`。英中のページからこれらへのリンクは日本語のページへ向け、`{% include ja-link.html … %}` で「日本語のページ」の印を付ける。
+- **URL**: ja は今のまま (`/`・`/price/` …)。英語は `/en/…`、繁体字は `/zh-tw/…`。対象は `/`・`/price/`・`/spec/`・`/subscribe/`・`/mosaic-removal/`・`/contact/`・`/enterprise/inquiry/`・`/join/`・`/company/about`・`/docs/`・`/docs/web/`・`/404.html` (英中の 404 は `/en/404.html`・`/zh-tw/404.html`)。自動のリダイレクトはしない。
+- **英中の docs**: 本文は `_includes/docs/<en|zh-tw>/` (先頭の Liquid コメントは元の日本語のファイルと節ごとの hash。手で直さない)、目次は `_data/l10n/<lang>/docs_toc.yml`、画像は `assets/img/screenshots/<lang>/`。英中のページのヘッダー・フッターの docs へのリンクは日本語の docs (「日本語のページ」の印付き) を指す。
+- **対象外 (日本語のページだけ)**: 法務 (`/company/{terms,privacy,cookie,eula,asct}`、`_data/legal.yml`)、`llms.txt` / `llms-full.txt` / `robots.txt`、`feed.xml`。英中のページからこれらへのリンクは日本語のページへ向け、`{% include ja-link.html … %}` で「日本語のページ」の印を付ける。
 - **`page.lang`**: ja は `_config.yml` の defaults (`path: ""` の `values` の `lang: ja`) で決まる。**英中のページは front matter に `lang: en` / `lang: zh-tw` を必ず書く**。`scope: { path: "en" }` の defaults は置かない (Jekyll の前方一致で `enterprise/` にも当たる)。英中のページの front matter は `lang`・`permalink` (`/en/` / `/zh-tw/` で始まる)・`ja_url`・`source` (元の ja のファイル)・`source_hash`・`title`・`seo_title`・`description` ほか ja と同じ値。
 - **辞書**: `_data/lang/ja.json` は**変えない**。`_data/lang/{en,zh-tw}.json` は ja.json の全キーの訳 + 英中だけのキー (`url_prefix`・`json_ld_lang` など。ja では nil になるので `| default:` か ja の分岐で今の出力を保つ)。Liquid では `site.data.lang[page.lang]`・`site.data.l10n[page.lang].<name>` (ハイフンがあるので添字で引く)。
 - **部品・データの文**: `_data/l10n/<en|zh-tw>/<name>.yml` に置く。数値・URL・コード・並びの正は ja のデータだけ。データの写し (`plans` ほか) は先頭に `_source` / `_source_hash` を持つ。訳のあるページの台帳は `_data/i18n_pages.yml` (hreflang を出すページ)。
@@ -106,6 +107,7 @@ npm run build && bundle exec jekyll build
   - 検査を足すときは `scripts/i18n/checks/<名前>.mjs` (`export default function check(ctx)` がエラーの文字列の配列を返す) を足すだけ。node テストは `src/lib/i18n-site-<名前>.test.js` (`_site` を読まない)。
 - **用語集の写し**: `scripts/i18n/glossary.json`・`glossary-chars.json` はアプリのリポの用語集 (正本) の写しで、**サイトで直接直さない**。語を足す・直すときは正本を直してから、`glossary-chars.json` はそのまま、`glossary.json` は各語の `note` を外して写し、`scripts/i18n/glossary.source.json` の `desktop_ref` (写した枝の名前)・`sha256` (改行を LF にそろえた内容の値、2 つ)・`note` を直す。`npm test` の `src/lib/i18n-site-lang.test.js` が sha256 を照合する。
 - **Store のボタンの切り替え**: `_data/site.yml` の `distribution.store_enabled` (既定 `false`) 1 か所で、`true` のときだけ 3 言語で「Microsoft Store で入手」のボタンと Store 版だけの説明 (申し込みのページ・FAQ・法務文書の配信ストア版の記述) が出る。英中の訳や部品を直したら、`false` の出力は `node scripts/i18n/check-site.mjs _site` (`checks/store.mjs`)、`true` の出力は `node scripts/check-store-toggle.mjs` (`_data` の写しで切り替えて丸ごとビルドし、本物の `_data`・`_site` は触らない) で両方を確かめる。
+  - 英中の docs のインストールの節 (`#install`) は、`store_enabled` によらず Store のボタンだけを主ボタンで出す (`store-button.html` の `st_docs_intl`、`download-button.html` の `paired`、英中の `store-edition.html` の条件)。検査は `checks/store.mjs` の `DOCS_INTL_PLACEMENTS` と `checks/parts.mjs`。
 
 ## Conventions
 

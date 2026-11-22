@@ -1,0 +1,208 @@
+{%- comment -%}
+source: _includes/docs/05-export.html
+hash:
+  edit-encode: 9c59c9f24f80a6c7
+  timecode: f748d055179c7e6f
+  encode-progress: 191c6d9ebd950d22
+  project-io: bdb4091349742833
+  premiere: 534b4c27621fd5be
+  review: ec4663a63313a8de
+{%- endcomment -%}
+<section id="edit-encode" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="匯出" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>從編輯頁面頁首的「匯出」按鈕（<kbd>Ctrl+Enter</kbd>）進行匯出設定。按下「開始」後，工作會加入<a href="#queue">佇列</a>，並可在<a href="#encode-progress">專用視窗</a>中查看進度。開始匯出時，尚未儲存的編輯會自動儲存。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">格式</div>
+        <div class="kv-val">MP4 (H.264) / MP4 (H.265 / HEVC) / MOV (ProRes 422) / MOV (ProRes 422 HQ) / WebM (VP9) / WebM (AV1) / MKV (H.264) / MKV (H.265) / AVI (H.264，為了與編輯軟體相容，一律以 CPU 匯出不含 B 影格的 H.264) / MOV (DV) / MOV (DNxHR SQ) / MOV (DNxHR HQ) / MOV (DNxHR HQX 10bit) / MOV (CineForm)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">解析度</div>
+        <div class="kv-val">與原始影片相同 / 4K DCI (4096x2160) / 4K UHD (3840x2160) / QHD (2560x1440) / Full HD (1920x1080) / HD (1280x720) / SD (854x480) / SD NTSC (720x480) / SD PAL (720x576)（用於 DV）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">影格速率</div>
+        <div class="kv-val">與原始影片相同 / 23.976（電影）/ 24 / 25（PAL）/ 29.97（NTSC）/ 30 / 50 / 59.94 / 60 fps</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">位元速率</div>
+        <div class="kv-val">自動（依品質決定，CRF 18）/ 50 / 20 / 10 / 5 / 2 Mbps。DV / DNxHR / CineForm 的位元速率由格式決定，因此無法選擇</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">時間碼</div>
+        <div class="kv-val">使用「嵌入時間碼」可將時間碼燒錄到影像上。可在「設定」中變更文字大小、位置、顏色與顯示格式（<a href="#timecode">時間碼設定</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">NVENC GPU 編碼</div>
+        <div class="kv-val">使用 NVIDIA GPU 的硬體編碼。驅動程式版本低於 570 時會顯示警告，並以 CPU（libx264）輸出。ProRes / VP9 / AV1 等 GPU 不支援的格式不會使用此功能</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">儲存位置</div>
+        <div class="kv-val">預設會填入與原始影片相同的檔名（副檔名依所選的格式）。為避免意外覆寫，每次都會確認資料夾</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">上次的設定</div>
+        <div class="kv-val">格式、解析度、影格速率、位元速率、時間碼、GPU、儲存資料夾會以上次的內容作為下次的初始值</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">警告</div>
+        <div class="kv-val">沒有任何馬賽克對象時（沒有偵測結果、全部都已排除等），會顯示「不會套用任何馬賽克。」匯出前請先<a href="#review">檢查漏偵測</a></div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">記錄時間碼</div>
+        <div class="kv-val">從「不加入」（預設）/「沿用原始影片的時間碼」/「指定值」中選擇，將時間碼資訊記錄在匯出的檔案中（不會繪製在影像上）。這與燒錄到影像上的「嵌入時間碼」是不同的設定，可以同時使用。指定值以 <span class="font-mono text-[12.5px]">HH:MM:SS:FF</span> 的格式輸入；丟格以 <span class="font-mono text-[12.5px]">HH:MM:SS;FF</span> 的格式輸入，且只能在 29.97 / 59.94 fps 時使用。格式不符時，會在開始前提示。「沿用原始影片的時間碼」只能在影格速率為「與原始影片相同」時使用。原始影片沒有時間碼時，會從 <span class="font-mono text-[12.5px]">00:00:00:00</span> 開始；時間軸的開頭位於原始影片的中途時，會從該位置的時間碼開始。在 MKV 中，時間碼只會以標籤形式保留，且部分編輯軟體無法讀取，因此建議使用 MOV。此設定只適用於該次匯出，不會成為下次的初始值</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/edit-encode.webp" alt="匯出設定對話方塊" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">匯出設定對話方塊</figcaption>
+    </figure>
+    <p>馬賽克格的大小會依匯出的解析度自動調整，不會低於自主規範標準（長邊÷100，最小 4px）。將 4K 素材以 Full HD 匯出時，輸出後的影像同樣符合此標準。</p>
+    <p>放置<a href="#edit-bbox">排除遮罩</a>的範圍不會套用馬賽克，會以原始影像匯出，邊緣則以邊緣羽化自然融合。跨到畫面邊緣的偵測框，會依偵測時補全到畫面外的形狀，在畫面內的部分套用馬賽克（形狀不會在邊緣被壓扁）。</p>
+    <p>「MOV (ProRes 422)」會以 ProRes 422 匯出。畫質（位元速率）比「MOV (ProRes 422 HQ)」低，因此檔案較小（大約為 2/3）。在先前的版本中，即使選擇「MOV (ProRes 422)」，也會以 422 HQ 匯出。需要與以往相同的畫質時，請選擇「MOV (ProRes 422 HQ)」。</p>
+    <p>「MOV (DV)」只能匯出 720×480（29.97 fps）與 720×576（25 fps）。「MOV (DNxHR …)」與「MOV (CineForm)」只能匯出寬度與高度皆為偶數的影片，「MOV (CineForm)」還需要寬度為 16 的倍數、高度為 32 以上（不符合時，開始時會顯示原因）。這些格式的容器都是 MOV，檔案大小會是 H.264 的數十倍，請注意儲存位置的可用空間。</p>
+  </div>
+</section>
+
+<section id="timecode" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="時間碼設定" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>在匯出設定中開啟「嵌入時間碼」，再按下旁邊的「設定」即可顯示。適用於供確認的匯出（例如將檢查用的素材交給相關人員時），用來標示畫面位於影片中的哪個位置。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">文字大小（px）</div>
+        <div class="kv-val">任意數值。預設 64px（匯出解析度的實際像素）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">位置</div>
+        <div class="kv-val">左上 / 上方置中 / 右上 / 置中 / 左下 / 下方置中 / 右下。預設：右下</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">顏色</div>
+        <div class="kv-val">白色 / 黑色 / 黃色 / 綠色。預設：白色</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">繪製描邊</div>
+        <div class="kv-val">為文字加上描邊，讓文字在明亮的背景上也能看清楚（預設開啟）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">顯示格式</div>
+        <div class="kv-val">HH:MM:SS:影格（預設）/ HH:MM:SS / HH:MM:SS.毫秒 / 影格編號</div>
+      </div>
+    </div>
+    <p>啟用設定後，編輯頁面的預覽與<a href="#encode-progress">進度視窗</a>的預覽中也會以相同的外觀顯示。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/encode-timecode.webp" alt="在匯出設定上方開啟的時間碼設定對話方塊" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">時間碼設定</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="encode-progress" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="匯出進度視窗" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>開始匯出後，每個工作都會另外開啟一個進度視窗。關閉視窗後工作仍會繼續，隨時可從<a href="#queue">佇列</a>的「在另一個視窗開啟進度」重新開啟。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">預覽</div>
+        <div class="kv-val">會定期顯示匯出中的影格（設定為嵌入時間碼時會附上時間碼）。剛開始時會顯示「正在擷取第一個影格…」，排隊等待時會顯示「佇列等待中」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">進度</div>
+        <div class="kv-val">進度百分比與「影格 N / M」「速度（fps）」「剩餘時間」。完成時會顯示「完成 ✓」，停止時會顯示「已取消」，失敗時會顯示「失敗」與錯誤內容</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">輸出資訊</div>
+        <div class="kv-val">輸出位置的路徑、格式、解析度</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">暫停 / 繼續</div>
+        <div class="kv-val">暫停匯出。適合在進行其他作業、想降低電腦負載時使用</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">取消</div>
+        <div class="kv-val">停止匯出（無法繼續）。寫到一半的檔案會被刪除</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">關閉</div>
+        <div class="kv-val">只會關閉視窗，工作會繼續進行</div>
+      </div>
+    </div>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/encode-progress.webp" alt="匯出進度視窗。處理中影格的預覽與進度百分比、速度、剩餘時間" width="720" height="580" loading="lazy" decoding="async" style="max-width:720px;width:100%;height:auto;margin:0 auto" class="block rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">進度視窗</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="project-io" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="專案的匯出與匯入" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>可將專案（偵測結果與編輯資料）打包成 1 個 zip 檔案，交給其他電腦或其他負責人。可用於分工，例如在自己的電腦上進行偵測，再將確認與修正的作業委託給其他人。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">匯出</h3>
+    <p>從首頁畫面影片卡片的選單中選擇「匯出專案」，並指定儲存位置。zip 中包含原始影片（若仍保留在專案資料夾中）、偵測結果、編輯資料、場景、縮圖、臉部的代表圖片，以及在時間軸編輯中新增的素材（影片、音訊、圖片）。找不到原始影片時，會先顯示相關訊息，再匯出影片以外的內容。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">匯入</h3>
+    <p>在選單的「檔案 ▸ 匯入專案」中選擇 zip。匯入的專案會解壓縮到目前的專案資料夾，並新增到首頁畫面。</p>
+    <p>手邊已有相同的專案 ID 時，會顯示「找到相同的專案」，請從下列兩者中擇一。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">匯入編輯內容</div>
+        <div class="kv-val">手邊的專案保持不變，只以 zip 的內容取代編輯資料。zip 中的時間軸素材若手邊沒有，會在取代前補上（手邊的素材不會消失）。取代前的編輯資料會自動備份。用於反映委託對象送回的專案</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">新增為新專案</div>
+        <div class="kv-val">指派新的 ID，作為另一個專案新增。手邊的專案不會變更</div>
+      </div>
+    </div>
+    <p>匯入期間會顯示進度（解壓縮 → 登記）。在匯入專案的電腦上，也可以直接進行編輯、匯出，以及傳送至 Premiere Pro。</p>
+  </div>
+</section>
+
+<section id="premiere" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="Premiere Pro 整合" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>從影片卡片的選單，或編輯頁面頁首的按鈕（<kbd>Ctrl+Shift+P</kbd>），可將偵測到的馬賽克資訊自動匯入 Adobe Premiere Pro 的專案。傳送前會自動檢查 Premiere 主程式、增效模組與啟動狀態，尚未準備就緒時會引導完成設定步驟。此功能僅限 Windows 版。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">前提條件</h3>
+    <ul>
+      <li>已安裝 Adobe Premiere Pro 25.3 以上版本</li>
+      <li>已登入 Creative Cloud 桌面應用程式（自動安裝增效模組時需要）</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">首次設定</h3>
+    <ol>
+      <li>按下「匯入至 Premiere Pro」後，若尚未安裝增效模組，會顯示「下載並安裝」。按下後，會取得並安裝 Deepmosaic 專用的 Premiere Pro 增效模組（UXP）</li>
+      <li>畫面會顯示「已安裝增效模組。」若 Premiere Pro 原本正在執行，請重新啟動後再執行一次</li>
+      <li>Premiere Pro 未啟動時，會顯示「若要傳送偵測結果，需要啟動 Premiere Pro。」，請按下「啟動並傳送」</li>
+    </ol>
+    <p>找不到 Creative Cloud 的元件時，會顯示「找不到自動安裝所需的 Creative Cloud 元件」。請安裝或更新 Creative Cloud 桌面應用程式，或從「開啟增效模組資料夾」手動安裝。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">傳送與結果</h3>
+    <p>傳送後，畫面右下角會出現「Premiere Pro 整合」小工具，並依序顯示「正在 Premiere Pro 中處理…」→「已完成匯入至 Premiere Pro」。在 Premiere Pro 端，會對開啟中專案的序列進行下列處理。</p>
+    <ul>
+      <li>將原始片段複製到上方的視訊軌，並套用 Premiere Pro 內建的「馬賽克」效果，以及依偵測框設定關鍵影格的「裁切」效果（每個偵測對象各 1 個片段）</li>
+      <li>會反映偵測結果的框、像素大小（馬賽克格的大小），以及整體的邊緣羽化值。在編輯頁面中對框的新增、移動、刪除與形狀變更、排除馬賽克與排除遮罩（包含將既有的框改為排除遮罩者），以及馬賽克設定的「模糊強度」「依時間」，都不會傳送過去（但會反映在匯出中）</li>
+      <li>同時重疊的對象較多時，軌道會增加（最多 15 個軌道）</li>
+    </ul>
+    <p>若專案中有框在馬賽克設定中開啟了「反轉（套用於外側）」，就不會傳送（因為 Premiere Pro 無法重現反轉，外側會在沒有遮蔽的情況下輸出）。此時會顯示「因為有 N 項設定使用了「反轉（套用於外側）」，已中止傳送。Premiere Pro 無法重現反轉，外側會在未遮蔽的狀態下輸出。請取消反轉，或改用本應用程式匯出。」，請依訊息處理。</p>
+    <p>匯入後，可以像一般的 Premiere Pro 編輯一樣調整位置與馬賽克格的大小。傳送後一段時間沒有回應時，會顯示「逾時」，請在 Premiere Pro 中確認增效模組的面板已開啟後再試一次。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/premiere-setup.webp" alt="按下「匯入至 Premiere Pro」時顯示的說明對話方塊" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">Premiere Pro 整合的說明。會依準備狀況顯示下一個步驟</figcaption>
+    </figure>
+  </div>
+</section><section id="review" class="scroll-mt-24">
+  {% include docs-h2.html kicker="匯出與整合" title="檢查漏偵測" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>AI 的偵測並不完美。匯出前，請使用下列工具進行確認與修正。<strong>最終確認與表現內容的責任歸屬於製作者。</strong></p>
+    <ul>
+      <li><strong>跳至缺漏影格</strong>：以 <kbd>[</kbd> 與 <kbd>]</kbd> 在偵測中斷的影格間前後移動。用於追查前後都有偵測、中間卻缺漏的「中間缺漏」。可在工具列「標籤」選單的「篩選」中縮小類別範圍（例：僅身體部位）進行確認</li>
+      <li><strong>僅播放空白影格</strong>（<kbd>B</kbd>）：只連續播放沒有偵測結果的影格，找出有拍到卻沒有框的地方</li>
+      <li><strong>馬賽克套用預覽</strong>（<kbd>M</kbd>）：以接近匯出結果的外觀從頭到尾確認。也可以隱藏疊加層（<kbd>H</kbd>），只看原始影像</li>
+      <li><strong>在時間軸上總覽</strong>：偵測區段會依類別、依追蹤 ID 以色帶顯示。同一 ID 的色帶若中斷，該處就是追蹤的斷點</li>
+      <li><strong>人物圖庫</strong>（<kbd>P</kbd>）：依人物彙整並確認臉部的偵測，以人物為單位決定是否需要馬賽克</li>
+      <li><strong>信賴度臨界值</strong>：可以先隱藏低信賴度的偵測加以整理，再降低臨界值重新找回</li>
+      <li><strong>安全餘裕</strong>：可用「大小（框擴展比例）」將偵測框調整為 0.5～2 倍。可以選擇預留餘裕的做法，而不是抓得剛剛好</li>
+      <li><strong>手動新增與刪除</strong>：未被偵測到的地方，可用 <kbd>1</kbd>（1 個影格）/ <kbd>2</kbd>（之後一直持續）新增框。誤判可按右鍵，或用 <kbd>E</kbd>+右鍵拖曳的橡皮擦刪除。不想套用馬賽克的部分，可用 <kbd>3</kbd> / <kbd>4</kbd> 的<a href="#edit-bbox">排除遮罩</a>排除</li>
+    </ul>
+    <p>AI 不擅長的情況（極端逆光、劇烈晃動、部分遮蔽、訓練資料不足的構圖、動畫與 3DCG）已公開於<a href="/zh-tw/#privacy">首頁</a>。符合這些情況的素材，請更仔細地確認。</p>
+  </div>
+</section>

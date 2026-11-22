@@ -1,0 +1,164 @@
+{%- comment -%}
+source: _includes/docs/07-team.html
+hash:
+  _head: 4c6f3cd5b77d47d5
+  team: 0d1800558237c808
+{%- endcomment -%}
+{%- assign ent = site.data.plans.tiers | where: "code", "enterprise" | first -%}
+{%- assign ent_t = site.data.l10n[page.lang].plans.tiers.enterprise -%}
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="Organization" title="Organization management (Enterprise)" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>On the Enterprise plan, multiple accounts in your organization share one contract. Invite and remove members, check the organization code, and check usage for the whole organization from "Organization management" in the app. We send invoices by email (to change the number of accounts or cancel, contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a>).</p>
+    <p><strong>"Organization" in the profile menu appears only for accounts that have joined an Enterprise organization.</strong> In the profile menu (top right), "Organization" appears in the same place where "Plan subscription and management" appears on the Free plan and paid plans. For pricing and included hours, see the <a href="/en/price/">pricing page</a> (minimum number of accounts: {{ ent.min_seats }}).</p>
+    <p>Select "Organization" to open the "Organization management" dialog, with a list of items on the left. <strong>Admins see 4 items: Permissions / Billing / Invoices / Usage</strong>, and members see 2: Permissions / Usage. The content of the selected item appears on the right. The top left shows "Joined as Admin" or "Joined as Member". If "Organization management isn't available yet" appears, wait a while and open it again.</p><h3 class="mt-6 text-[16px] font-bold text-ink">Permissions (admins and members)</h3>
+    <p>Organization members have one of two permissions: "Admin" or "Member".</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Admin</div>
+        <div class="kv-val">Can invite members, resend invitation emails, and revoke invites; remove members and change their permissions; view the contract status; and check the organization code</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Member</div>
+        <div class="kv-val">Can view the member list and the organization's usage. Can't invite (including resending invitation emails) or perform any billing operations</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Billing account holder</div>
+        <div class="kv-val">The admin who applied for the contract. Shown as "Billing contact" in the list, and can't be removed or changed to a member. When there is only one admin, that admin can't be removed or changed either</div>
+      </div>
+    </div>
+    <p>The member list shows each member's name (or email address), permission, and <strong>last sign-in</strong> date (if the last sign-in can't be retrieved, the date they joined is shown instead). Above the list, "N / M seats in use" and the number of accounts still available are shown. Change permissions and remove members from each row of the list.</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Inviting members</h3>
+    <p><strong>Only admins can invite members and resend invitation emails.</strong> With the Member permission, "Permissions" doesn't show the invite section, and a message saying so appears instead. To invite someone new, ask your organization's admin.</p>
+    <ol>
+      <li>The admin enters the email address of the person to invite and selects the permission (Admin / Member) in "Permissions", then sends the invite</li>
+      <li>The person receives an invitation email. When they sign in <strong>with the email address that received the invitation email</strong> (first-time users can also start right away from "Sign in" on the sign-in screen), they are automatically joined to the organization and can start using the app. To use a different email address, use "Joining with an organization code" below</li>
+      <li>Invites that haven't been accepted yet remain in the "Pending invites" list with their expiration date ("Valid until X"). Select "Resend" to send the invitation email again, or "Revoke" to invalidate it</li>
+    </ol>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Each invite also uses one account</div>
+        <div class="kv-val">Accounts are counted as "joined members + pending invites". You can't invite anyone when no accounts are available, so revoke invites you don't need, or contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a> to add accounts</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Resend interval</div>
+        <div class="kv-val">You can't resend repeatedly at short intervals. Wait about 1 minute, then try again</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Invite expiration</div>
+        <div class="kv-val">Invites past their expiration date remain in the list as expired. Press "Resend" to extend the expiration and invite the same email address again</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">If the email doesn't arrive</div>
+        <div class="kv-val">Check your spam folder. If the address is correct, ask your admin to select "Resend". If it still doesn't arrive, you can use "Joining with an organization code" below</div>
+      </div>
+    </div><h3 class="mt-6 text-[16px] font-bold text-ink">Joining with an organization code</h3>
+    <p>Instead of an invitation email, you can also join with an "Organization code" shared across the organization. Use this when many people need to join, or when you want to distribute the code within your company and have each person register on their own. We send the organization code in the welcome email when your contract becomes active (see "How to sign up (quote and payment)" below).</p>
+    <ol>
+      <li>The admin checks the organization code in "<strong>Billing</strong>" (it's shown in groups of 4 characters, like <code>ABCD-1234-EFGH</code>, and can be copied with the button next to it). <strong>Only admins can see the organization code</strong></li>
+      <li>The person joining selects "Have an organization code? (business)" on the sign-in screen, enters the code in the "Organization code" field, and then selects "Sign in". After authentication in the browser finishes, they return to the app joined to the organization</li>
+    </ol>
+    <p><strong>The only way to join is the "Organization code" field on the sign-in screen.</strong> You can't join from the menu after signing in. If you're already signed in, sign out first, then enter the code in the "Organization code" field on the sign-in screen and sign in again.</p>
+    <p>Even if the organization code is wrong or there aren't enough accounts, the sign-in itself succeeds; you just aren't added to the organization. If "Organization" doesn't appear in the profile menu, check the code and the number of available accounts with your admin, then sign in again using the steps above. <strong>Anyone who knows the organization code can join. Don't share it with anyone who isn't involved.</strong> An account can belong to only one organization. If you already belong to another organization, "You already belong to another organization." appears and you can't join.</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Joining from the link in the welcome email</h3>
+    <p>Starting with 2.13, you can open the app from the link in the welcome email and join. You don't need to type the organization code.</p>
+    <ol>
+      <li>Open the link in the welcome email, and the "Open Deepmosaic" page appears in your browser. Select "Open in app" (if you haven't installed the app yet, get it from Microsoft Store first)</li>
+      <li>The app starts (or comes to the front if it's already running), and the sign-in screen opens as "Organization sign-in" with the organization code already entered</li>
+      <li>Select "Sign in" and sign in to join the organization</li>
+    </ol>
+    <p><strong>Admins don't enter an organization code.</strong> When you open the link for admins, no organization code is entered, so just sign in with the email address that received the welcome email. If the app doesn't open, copy the organization code from the page, select "Have an organization code? (business)" on the app's sign-in screen, and paste it into the "Organization code" field.</p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">What the Enterprise plan includes</h3>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Price</div>
+        <div class="kv-val"><strong>{{ ent_t.quote_label }}</strong> ({{ ent_t.quote_note }})</div>
+      </div>
+      {%- for s in ent_t.specs %}
+      {%- assign kv_odd = forloop.index | modulo: 2 %}
+      <div class="kv-row{% if kv_odd == 1 %} kv-alt{% endif %}">
+        <div class="kv-key">{{ s.label }}</div>
+        <div class="kv-val">{{ s.value }}</div>
+      </div>
+      {%- endfor %}
+      {%- assign kv_odd = ent.specs.size | modulo: 2 %}
+      <div class="kv-row{% if kv_odd == 0 %} kv-alt{% endif %}">
+        <div class="kv-key">{{ ent_t.note_title }}</div>
+        <div class="kv-val">{{ ent_t.note }}</div>
+      </div>
+    </div>
+    <p><a href="/en/enterprise/inquiry/">{{ ent_t.cta_label }}</a></p>
+
+    <h3 class="mt-6 text-[16px] font-bold text-ink">How to sign up (quote and payment)</h3>
+    <p>Enterprise is a <strong>contract based on a quote</strong> (minimum number of accounts: {{ ent.min_seats }}). You can't apply directly from within the app.</p>
+    <ol>
+      <li>Contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a>. We'll ask about the number of accounts you plan to use and your requirements</li>
+      <li>We send you a quote. It lists the <strong>company name, number of accounts, price per account, detection time per account (or unlimited), maintenance fee, what the monthly fee covers, contract type, and payment due date</strong>. Along with it, we send our terms and conditions of the transaction and a purchase order form</li>
+      <li>If the quote is acceptable, place your order with the purchase order form. After confirming your order, we send you an order acknowledgment</li>
+      <li>For each month of use, we send an invoice for that month (one month's worth, with no proration). Pay by <strong>bank transfer</strong> (you pay the transfer fees; the payment due date is stated in the quote and on the invoice)</li>
+      <li><strong>Your contract becomes active</strong> as soon as we confirm your payment. At the same time, we send <strong>the "<span lang="ja" data-ja-allowed>組織のご利用を開始できます</span>" (You can start using your organization) welcome email with your organization code</strong> to the email address you registered when requesting the quote</li>
+      <li>Install the app and <strong>sign in with the email address that received the welcome email</strong>, and you automatically join as the organization's admin (admins don't enter an organization code). Other members can join by selecting "Have an organization code? (business)" on the sign-in screen, entering the organization code from the welcome email in the "Organization code" field, and signing in (see "Joining with an organization code" and "Joining from the link in the welcome email" above)</li>
+      <li>Invite members from "Organization management" (see "Inviting members" above)</li>
+    </ol>
+    <p>You can check the contract status (status, payment method, next renewal), the number of accounts and the detection time per account, and the organization code in "Organization management" &gt; "Billing" in the app. <strong>Only admins can open "Billing" and "Invoices".</strong></p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Payment method</div>
+        <div class="kv-val"><strong>Bank transfer</strong> against an invoice issued by us (you pay the transfer fees). The bank account to transfer to is stated on the invoice</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Billing cycle</div>
+        <div class="kv-val">We issue <strong>one month's invoice for each month of use</strong> (no proration). Payment is due within the number of days stated in the quote (standard: 30 days from the date of issue). Your usage period is extended only for the months whose payment we have confirmed. There is no minimum term and no initial fee</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Changing the number of accounts</div>
+        <div class="kv-val">To increase or decrease the number of accounts, contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a>. We'll prepare a quote for the new number of accounts and apply it to invoices from the following month onward (see below for the lower limit when reducing)</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Lower limit when reducing</div>
+        <div class="kv-val"><strong>You can't go below the number in use or below 1 account</strong> ("in use" is the number of accounts members are using. To go below that, remove members first)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Cancellation</div>
+        <div class="kv-val">To discuss cancellation or payment methods, contact us through the <a href="/en/enterprise/inquiry/">Enterprise inquiry form</a> (or our contact form). There is no cancellation penalty</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">If payment can't be confirmed</div>
+        <div class="kv-val">If payment remains unconfirmed, <strong>Enterprise features stop for the whole organization</strong> (this applies to all members, not just admins). They resume as soon as we confirm your payment</div>
+      </div>
+    </div>
+    <p>Organizations that previously subscribed by credit card can change the number of accounts and use the payment portal (change the payment method, view receipts, cancel) from "Billing", and check past charges from "Invoices".</p><h3 class="mt-6 text-[16px] font-bold text-ink">Invoices (past charges)</h3>
+    <p><strong>For contracts paid by bank transfer, we send invoices as PDFs by email.</strong> They don't appear in "Invoices" in the app ("No invoices yet." appears there). The following applies to organizations that previously subscribed by credit card.</p>
+    <p>"Organization management" &gt; "Invoices" lists all past charges, newest first. <strong>Only admins can open "Invoices".</strong></p>
+    <p>After payment, it may take a little while for the status to change to "Paid". Select "Refresh" to get the latest status. Bank transfers are reflected after the payment is confirmed.</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">Columns</div>
+        <div class="kv-val">Billing date, invoice number, period (the period covered as stated on the invoice), amount, and status. If the amount paid differs from the amount billed, the amount paid is also shown</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">Status</div>
+        <div class="kv-val">Shown as one of "Draft", "Unpaid", "Paid", "Void", or "Uncollectible"</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Older invoices</div>
+        <div class="kv-val">Press "Load more" at the end of the list to load earlier invoices, 10 at a time</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">View / PDF</div>
+        <div class="kv-val">Select "View" on a row to open the invoice in your browser, or "PDF" to save it as a file</div>
+      </div>
+    </div><h3 class="mt-6 text-[16px] font-bold text-ink">Usage (pool and breakdown)</h3>
+    <p>Enterprise included hours are not allotted to each member individually; they are a <strong>pool shared by the whole organization</strong>.</p>
+    <ul>
+      <li><strong>Pool size</strong>: The number of accounts multiplied by the detection time per account. The detection time per account is set in the quote for each contract (standard: {{ ent.included_hours }} hours / month). <strong>Contracts with unlimited detection time</strong> are also available. Admins can check "Detection time per seat: N hours / month (shared across the organization)" or "Detection time: unlimited" in "Billing"</li>
+      <li><strong>Breakdown by member</strong>: A list shows how much each person has used. Because the pool is shared, when one person uses a lot, the time remaining for the other members goes down too</li>
+      <li><strong>Reset date</strong>: The start and end dates of the current period are shown. After the end date, the next period starts and usage returns to 0. <strong>Unused time does not carry over to the next period</strong></li>
+      <li><strong>How it's counted</strong>: The running time of each video whose detection has completed is added. For details, see <a href="#usage">How usage time is measured</a></li>
+      <li><strong>Display</strong>: "Usage" shows the usage time for the current period, the limit, and the time remaining (under 1 hour, down to minutes and seconds). On unlimited contracts, "N used (unlimited)" appears. Before the contract procedure is completed, "This period's allowance has not started yet (before contract)" appears</li>
+    </ul>
+    <p>Both admins and members can check usage.</p></div>
+</section>

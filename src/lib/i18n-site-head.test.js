@@ -2,7 +2,7 @@
 //
 //   node --test src/lib/i18n-site-head.test.js
 //
-//   - 訳の台帳 `_data/i18n_pages.yml`: 鍵は ja のパス 9 本、値は全部 [en, zh-tw]。隣にアプリのリポがあれば、その訳のあるページの一覧と照合
+//   - 訳の台帳 `_data/i18n_pages.yml`: 鍵は ja のパス 11 本、値は全部 [en, zh-tw]。隣にアプリのリポがあれば、その訳のあるページの一覧と照合
 //   - 台帳の鍵の ja のページがソースに実在する (front matter の permalink か置き場所から求めた URL)
 //   - layout / schema のソース: x-default の hreflang が en を向く、ja 固定 (`site.data.lang.ja.`) の参照が残っていない
 //   - 既存のテストがソースを照合している式 (faq の 2 行・gtag・no_tracking) を残している
@@ -24,7 +24,7 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 const ORIGIN = 'https://www.deepmosaic.co.jp'
 
-/** 台帳の鍵 (ja のパス 9 本 = アプリの訳のあるサイトのページ 8 本 + /company/about) */
+/** 台帳の鍵 (ja のパス 11 本 = アプリの訳のあるサイトのページ 8 本 + /company/about + docs の 2 本) */
 const LEDGER_KEYS = [
 	'/',
 	'/price/',
@@ -35,13 +35,15 @@ const LEDGER_KEYS = [
 	'/enterprise/inquiry/',
 	'/mosaic-removal/',
 	'/company/about',
+	'/docs/',
+	'/docs/web/',
 ]
 
 const ledger = parseLedger(read('_data/i18n_pages.yml'))
 
 // ---- 1. 台帳 ----
 
-test('台帳: 鍵が ja のパス 9 本と一致する', () => {
+test('台帳: 鍵が ja のパス 11 本と一致する', () => {
 	assert.deepEqual([...ledger.keys()].sort(), [...LEDGER_KEYS].sort())
 })
 
@@ -57,7 +59,7 @@ test('台帳: 先頭のコメントにアプリの訳のあるページの一覧
 
 const DESKTOP_SITE_URL = join(ROOT, '..', 'desktop', 'src', 'lib', 'i18n', 'site-url.ts')
 test(
-	'台帳: 隣のアプリのリポの訳のあるページの一覧 (8 本) が 台帳の鍵 − /company/about と一致する',
+	'台帳: 隣のアプリのリポの訳のあるページの一覧 (10 本) が 台帳の鍵 − /company/about と一致する',
 	{ skip: existsSync(DESKTOP_SITE_URL) ? false : '隣にアプリのリポが無い' },
 	() => {
 		const src = readFileSync(DESKTOP_SITE_URL, 'utf8')

@@ -1,0 +1,212 @@
+{%- comment -%}
+source: _includes/docs/06-ops.html
+hash:
+  update: 674b8a8acb575bcc
+  data: 7a765554184ed2fc
+  uninstall: ace89672cd475884
+  usage: fcaca34f38d68f04
+  spec: 4188ede813dd8d40
+  trouble: 4a8ff06983eb17f7
+  web: 70f28eb8f301c594
+  licenses: 80968f0a3bfde9cc
+{%- endcomment -%}
+<section id="update" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="更新" %}<div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Microsoft Store 版的新版本由 Microsoft Store 提供並自動更新。啟動時若有新的 AI 模型，會自動取得並替換。以下說明安裝程式版（至 2026 年 12 月 31 日為止，請參閱<a href="#install-migrate">移轉</a>）。</p>
+    <p>安裝程式版的應用程式會在啟動時自動檢查是否有新版本。有可用的更新時會顯示對話方塊，可選擇「立即更新」或「稍後」。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">自動檢查的時機</div>
+        <div class="kv-val">啟動後立即檢查，之後每 1 小時檢查一次，回到視窗時也會檢查。偵測或匯出執行期間，會等到完成後才顯示</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">立即更新</div>
+        <div class="kv-val">下載並套用新版本，應用程式會自動重新啟動。若有正在執行的處理，請在完成後再更新</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">稍後</div>
+        <div class="kv-val">在本次工作階段中不會再自動檢查。下次啟動時會再次檢查</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">偵測引擎</div>
+        <div class="kv-val">包含在應用程式中，會與應用程式一起更新</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">AI 模型</div>
+        <div class="kv-val">啟動時若有新的模型，會自動取得並替換（與初始設定相同的機制）</div>
+      </div>
+    </div>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">手動檢查</h3>
+    <p>在選單中選取「檔案 ▸ 檢查更新」，會顯示應用程式 / 引擎 / 模型與資源這 3 項的「目前」「最新」「狀態」。顯示「有可用的更新」時，可按「立即更新」（應用程式）或「更新模型與資源」套用。按「重新檢查」會重新查詢。無法連線到網路時，會顯示「請確認網路連線後再試一次。」。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/zh-tw/update-check.webp" alt="「檢查更新」對話方塊。應用程式、引擎、模型與資源的目前版本與最新版本" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">檢查更新</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="data" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="資料儲存位置" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>Deepmosaic 不會將影像或其偵測結果傳送到伺服器。所有資料都儲存在電腦上的下列位置。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">專案資料夾</div>
+        <div class="kv-val">預設為 <code>C:\Users\&lt;使用者名稱&gt;\deepmosaic</code>。每部影片的子資料夾中，會存放整合了偵測結果與編輯資料的資料庫（<code>project.db</code>）、縮圖、臉部的代表圖片等。載入的影片本身不會被複製，而是從原始位置參照。在時間軸編輯中加入的素材（影片、音訊、圖片）會複製到子資料夾的 <code>assets</code>，也會包含在<a href="#project-io">專案的匯出</a>中（<a href="#import">專案資料夾</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key"><code>%USERPROFILE%\.deepmosaic</code></div>
+        <div class="kv-val">設定（config.json）、首頁的清單、資料夾與標籤的登記資料（<code>catalog.db</code>）、加密的登入資訊、裝置 ID、記錄檔（<code>logs\app.log</code>，每次偵測的記錄檔位於 <code>logs\runs</code>）。聯絡我們時，我們可能會請求附上記錄檔</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key"><code>%LOCALAPPDATA%\deepmosaic</code></div>
+        <div class="kv-val">AI 模型、GPU 用執行階段（僅限搭載 NVIDIA GPU 的電腦）等（合計約 10GB）。由初始設定與啟動時的檢查自動管理。偵測引擎與影片處理工具已包含在應用程式中</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">匯出的影片</div>
+        <div class="kv-val">匯出時指定的儲存位置。應用程式不會管理</div>
+      </div>
+    </div>
+    <p>若將專案資料夾放在雲端同步資料夾（OneDrive 等）中，編輯期間的自動儲存可能會與同步發生衝突，導致「儲存失敗」。建議使用本機資料夾。</p>
+    <p><code>project.db</code> 與 <code>catalog.db</code> 是由應用程式管理的資料庫。應用程式執行期間，請勿以其他工具開啟，或改寫其中的內容（這會導致資料損毀）。請在結束應用程式後再進行備份或複製；若有名稱開頭與 <code>project.db</code> 相同的檔案（<code>-wal</code> / <code>-shm</code>），請一併複製。</p>
+  </div>
+</section>
+
+<section id="uninstall" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="解除安裝" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li>開啟 Windows 的「設定」→「應用程式」→「已安裝的應用程式」</li>
+      <li>在清單中找到「Deepmosaic」，然後選取「解除安裝」（不需要系統管理員權限）</li>
+    </ol><p>Microsoft Store 版也可以用相同的步驟解除安裝。確認畫面中沒有核取方塊，設定與登入資訊以及專案資料夾都會保留（<a href="#install-store">Microsoft Store 版與安裝程式版的差異</a>）。</p>
+    <p>解除安裝安裝程式版後，AI 模型等（<code>%LOCALAPPDATA%\deepmosaic</code>，約 10GB）會自動刪除（重新安裝時，會在初始設定中重新下載。在已安裝 Microsoft Store 版的電腦上，2.18 以後的安裝程式版不會刪除）。若在解除安裝的確認畫面中勾選「<span lang="ja" data-ja-allowed>アプリのデータとプロジェクトフォルダを削除する (中の書き出し動画も削除されます)</span>」（此項目以日文顯示，意為：刪除應用程式資料與專案資料夾，其中的匯出影片也會一併刪除）核取方塊，設定與登入資訊（<code>%USERPROFILE%\.deepmosaic</code>），以及 Deepmosaic 建立的專案資料夾（偵測結果、編輯資料，也包含儲存在資料夾中的匯出影片）也會一併刪除。若未勾選，這些資料會保留。位於專案資料夾以外的原始影片與匯出的影片不會被刪除。更新時不會刪除任何資料。</p>
+    <p>若要刪除帳號本身，請參閱<a href="#account">刪除帳號</a>。</p>
+  </div>
+</section><section id="usage" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="使用時間的計算方式" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+      <li><strong>計算單位</strong>：累計已完成偵測的影片播放長度。頁尾會顯示剩餘時間（免費方案為「剩餘可偵測時間」，付費方案為「本月剩餘」）</li>
+      <li><strong>計算時機</strong>：於偵測<strong>完成時</strong>計入。匯出不列入計算。即使縮小偵測範圍，也會以整部影片的長度計算</li>
+      <li><strong>上限的適用方式</strong>：不會產生超額費用。額度不足時，可追加訂閱同一方案（{% include contract-limits.html %}，<a href="/zh-tw/price/">價格頁面</a>）</li>
+      <li><strong>免費期間</strong>：免費方案自首次啟動新版本的當天起，可使用 {{ free_plan.free_window_days }} 天。於達到累計上限或天數屆滿時（以較早者為準）結束</li>
+      <li><strong>不計算的項目</strong>：範例專案的重新偵測不列入計算。同一部影片再次偵測，也不會重複計算</li>
+      <li><strong>剩餘時間不多時</strong>：免費額度使用達 80% 後，每次啟動時會顯示 1 次「您已使用 N% 的免費可偵測時間（剩餘 …）。」。用完後，開始偵測時會顯示對話方塊，提示變更方案（未登入時則提示登入）</li>
+      <li><strong>傳送的內容</strong>：為了計算使用時間而傳送的，僅有使用量（影片的秒數）、檔案的雜湊值，以及裝置識別碼的雜湊值（裝置識別碼用於管理免費額度，無法從識別碼辨識出裝置或個人。已登入時會與帳號連結）。此外，為了調查問題並進行改善，會傳送畫面切換與操作的記錄（以固定的名稱記錄，不包含輸入的文字）、處理時間與錯誤等應用程式的運作記錄，以及發生錯誤時的錯誤診斷報告（不會傳送檔案名稱與路徑）。<strong>不會傳送檔案名稱、影像與偵測結果的座標</strong>。詳細內容請參閱<a href="/zh-tw/#privacy">通訊內容揭露</a>與{% include ja-link.html href="/company/privacy" label="隱私權政策" %}（第 12、13 項）</li>
+    </ul>
+  </div>
+</section>
+
+<section id="spec" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="系統需求" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>OS：Microsoft Windows 10、11（64 位元）</li>
+      <li>記憶體：8GB 以上（建議 16GB）</li>
+      <li>GPU：NVIDIA GeForce RTX 3000 系列以上（支援 CUDA）+ 最新驅動程式。低於 RTX 3000 系列的 GPU 尚未確認能否運作。沒有 GPU 的電腦也能以 CPU 運作，但處理速度會大幅下降，且無法使用馬賽克精修（貼合物體形狀的馬賽克）。GPU 記憶體不足 4 GB 的機型會以輕量模型偵測，且無法使用馬賽克精修。NVENC 編碼需要 570 以上版本的驅動程式</li>
+      <li>儲存空間：初始設定時，AI 模型等約需 10GB</li>
+      <li>網路環境：初始設定時下載模型，以及授權驗證時需要</li>
+    </ul>
+    <p>各 GPU 處理速度的實測值、支援格式的清單，以及 macOS 版的狀況，都整理在<a href="/zh-tw/spec/">系統需求頁面</a>中。瀏覽器版的需求請參閱<a href="/zh-tw/docs/web/#requirements">網頁版支援的瀏覽器與需求</a>。</p>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="疑難排解" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <h3 class="mt-2 text-[16px] font-bold text-ink">設定</h3>
+    <ul>
+      <li>每次啟動都重複下載時：請確認網路連線後重新啟動應用程式。只有損毀的資料會自動重新取得。</li>
+      <li>反覆出現「完整性檢查失敗」時：請試試「重新下載」，若仍未改善，請<a href="#support">聯絡我們</a>。顯示「自我測試失敗」「缺少相依執行階段元件」時：請從「開啟支援表單」附上顯示的訊息與我們聯絡（<a href="#setup">初始設定</a>的錯誤清單）。</li>
+      <li>畫面右下的「GPU 加速」顯示「取得失敗。請按「重試」，或於下次啟動時再次取得」時：請確認網路連線後按「重試」，或重新啟動應用程式（下次啟動時會自動重新取得）。在取得完成前可用 CPU 偵測，但速度會變慢。</li>
+      <li>出現「Windows 安全性功能暫時封鎖了偵測引擎的啟動」時：Windows 的智慧型應用程式控制等功能，可能會在安全性確認完成前，將剛取得的偵測引擎暫停數分鐘。初始設定畫面每隔數分鐘會自動重試，請勿關閉畫面並稍候（也可以按「立即重試」再試一次）。若等待一段時間後仍持續發生，請在 Windows 安全性 應用程式 → 應用程式 &amp; 瀏覽器控制 → 智慧型應用程式控制設定 中確認狀態（Windows 安全性 應用程式可從開始功能表搜尋開啟），若仍未改善，請<a href="#support">聯絡我們</a>。透過更新換成新的偵測引擎時，在確認完成前會繼續以目前的偵測引擎運作，確認完成後會自動切換。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">登入與方案</h3>
+    <ul>
+      <li>已在瀏覽器中完成驗證，應用程式卻一直停在「正在前往登入頁面…」時：請按「取消」關閉一次，再按一次「登入」。</li>
+      <li>收不到驗證碼郵件時：請檢查垃圾郵件資料夾。郵件可能需要數分鐘才會送達，請稍候片刻後，在驗證畫面重新傳送驗證碼。</li>
+      <li>過去使用密碼登入的使用者：從「登入」使用相同的電子郵件地址並輸入驗證碼，即可以與以往相同的帳號登入（<a href="#license">登入與授權</a>）。</li>
+      <li>顯示「目前無法登入。請稍後再試一次。」時：目前暫時無法連線到驗證服務。請稍待一段時間後，再按一次「登入」。若持續發生，請透過<a href="/zh-tw/contact/">聯絡表單</a>與我們聯絡。</li>
+      <li>出現「您的帳號目前已在其他裝置登入」時：同時只能在 1 台裝置上使用。按「繼續」即可切換到這台裝置（<a href="#license">登入與授權</a>）。</li>
+      <li>畫面上方出現離線橫幅時：本機功能可照常使用。只有出現「請重新登入。」時，才需要從個人資料選單重新登入。</li>
+      <li>變更方案後，應用程式中未反映變更時：應用程式會在視窗切回前景時（距離上次確認已超過 1 分鐘時）、開啟偵測選項時，以及畫面顯示期間每 5 分鐘確認是否有變更，有變更時會在數秒內反映（偵測執行中時，會在偵測結束後反映）。若仍未變更，請重新啟動應用程式。</li>
+      <li>剩餘時間沒有減少 / 沒有增加時：使用時間會在偵測完成時計入。因登入而增加的免費額度，會在登入後啟動應用程式時開始反映。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">載入與偵測</h3>
+    <ul>
+      <li>找不到既有馬賽克時：請先確認偵測時是否已在偵測選項中開啟「馬賽克」，再依序確認下列事項：馬賽克格是否過小（尤其是 4K 素材）、是否為模糊或塗黑（僅以方塊狀的馬賽克為對象）、是否為半透明疊加的馬賽克或與背景同色的方塊、是否在沒有 GPU 的電腦上偵測（結果可能會略有不同）。未找到的範圍，請在編輯頁面中補畫框（<a href="#detect-mosaic">找出既有馬賽克並重新套用</a>）。</li>
+      <li>偵測極度緩慢時：請確認是否已辨識到 GPU（頁尾的 GPU 顯示），以及 NVIDIA 驅動程式是否為最新版本。沒有 GPU 時會以 CPU 模式運作，速度會下降。</li>
+      <li>偵測選項畫面沒有顯示預覽時：顯示「無法取得影片資訊」時，可能是檔案損毀或格式不受支援。顯示「找不到預覽所需的影片處理檔案」時，請重新啟動應用程式，完成必要檔案的下載。</li>
+      <li>出現「無法在偵測結果的儲存位置建立專案資料夾」時（在偵測選項畫面中也會顯示相同的訊息）：無法寫入的並非影片的位置，而是偵測結果的儲存位置（專案資料夾）。請重新選取儲存位置（選單的「檔案」→「選取專案資料夾」，或偵測選項畫面的「重新選取專案資料夾」），或按「改回預設位置」。若安全性軟體的資料夾保護阻止了寫入，請允許 Deepmosaic，並確認資料夾的存取權限。若將外接磁碟機或網路資料夾設為儲存位置，請確認連線（<a href="#import">專案資料夾</a>）。</li>
+      <li>選取資料夾後仍出現「找不到可處理的影片」時：子資料夾中的影片不在處理範圍內。請直接重新選取存放影片的資料夾。</li>
+      <li>無法按下「開始」時：正在確認模型檔案。請稍候，或在顯示錯誤時按「重試」。若已達上限，需要變更方案（未登入時需要登入）。剩餘可偵測時間少於影片全長時，「開始」上方也會顯示原因且無法按下（即使縮小範圍也會以全長計算。<a href="#detect-options">偵測選項</a>）。</li>
+      <li>已偵測卻沒有出現在首頁畫面時：「所有影片」只會顯示位於目前專案資料夾中、由目前登入的帳號建立的影片。儲存在其他專案資料夾中的影片，可從側邊欄的「其他資料夾」列查看（<a href="#import">專案資料夾</a>）。</li>
+      <li>出現「使用高精度模型需要先登入」時：登入後，在搭載 GPU 的電腦上，從下次偵測起即可使用高精度模型（在那之前會以輕量模型偵測）。出現「正在準備高精度模型」時，在取得完成前會以輕量模型偵測。</li>
+      <li>無法繼續已中斷的偵測時：請確認卡片上顯示的原因。若原始影片已移動或變更、已編輯等，將無法繼續，請按「捨棄」後重新載入（<a href="#detect">AI 偵測</a>）。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">編輯</h3>
+    <ul>
+      <li>出現「沒有詳細資料」時：專案資料夾已被移動或刪除。請將它移回原來的位置，或以「刪除專案」從清單中移除後重新載入。</li>
+      <li>出現「儲存失敗」時：無法寫入專案資料夾。請確認磁碟的可用空間、資料夾的權限，以及是否與雲端同步發生衝突（<a href="#data">資料儲存位置</a>）。</li>
+      <li>臉部的性別偵測結果相反時：可從框的右鍵選單，或在<a href="#edit-persons">人物圖庫</a>中修正。</li>
+      <li>手動放置的 ∞ 框中途消失時：∞ 框會在刪除的影格之前結束。請在想要延續的位置再按一次 <kbd>2</kbd> 新增。</li>
+      <li>首頁畫面出現「此專案在上次啟動時發生問題」時：按「檢查」，若沒有問題即可直接開啟。發現問題時，請按「修復」嘗試從上次儲存的內容復原。</li>
+      <li>出現「有 N 個專案轉換失敗」時：請按「重試」。若重複發生，請<a href="#support">聯絡我們</a>。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">匯出</h3>
+    <ul>
+      <li>出現「GPU 編碼需要 NVIDIA 驅動程式 570 以上版本」時：在更新驅動程式之前，會以 CPU 輸出（需要較長時間，但結果相同）。</li>
+      <li>匯出顯示「失敗」時：請確認儲存位置的可用空間與權限，以及輸出檔案是否在其他應用程式中開啟。進度視窗的「失敗」下方會顯示錯誤內容。</li>
+      <li>出現「不會套用任何馬賽克。」時：沒有偵測結果，或所有追蹤軌跡都已排除在馬賽克對象之外。請在編輯頁面中確認。</li>
+      <li>不小心關閉進度視窗時：可從選單列的「佇列」選取「在另一個視窗開啟進度」重新開啟。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Premiere Pro 整合</h3>
+    <ul>
+      <li>出現「在這台 PC 上找不到 Adobe Premiere Pro。」時：請安裝 Premiere Pro 25.3 以上版本。</li>
+      <li>出現「找不到自動安裝所需的 Creative Cloud 元件」時：請安裝 / 更新 Creative Cloud 桌面應用程式並登入，或從「開啟增效模組資料夾」手動安裝。</li>
+      <li>傳送顯示「逾時」時：請在 Premiere Pro 中開啟 Deepmosaic 面板後重試。剛安裝增效模組後，需要重新啟動 Premiere Pro。</li>
+    </ul>
+    <p>若仍無法解決，請透過應用程式內的<a href="#support">聯絡我們</a>，或<a href="/zh-tw/contact/">聯絡表單</a>與我們聯絡。附上頁尾的版本，以及 <code>%USERPROFILE%\.deepmosaic\logs\app.log</code>（偵測的問題，也請附上存放每次偵測記錄的 <code>%USERPROFILE%\.deepmosaic\logs\runs</code> 中，在該次偵測前後更新的檔案），可加快調查速度。</p>
+  </div>
+</section>
+
+<section id="web" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="關於網頁版（瀏覽器版）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>另有免安裝、可從 Chrome / Edge 等瀏覽器以相同帳號使用的網頁版。偵測、編輯與匯出全部在瀏覽器中處理，影像不會傳送到伺服器。偵測對象與編輯頁面的功能與桌面版相同，但有以下差異：匯出格式限於 MP4 (H.264) / WebM (VP9 / AV1)、可處理的影片最大約 1.9GB 且實際上僅支援 mp4 / mov、沒有 Premiere Pro 整合、專案的匯入、繼續已中斷的偵測，以及「重新歸類人物」等。</p>
+    <p>使用方式與支援的瀏覽器，以及與桌面版的差異清單，都整理在<a href="/zh-tw/docs/web/">網頁版使用說明</a>中。{% if site.data.site.web_app.enabled %}網頁版可從 <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> 開啟。{% endif %}</p>
+  </div>
+</section><section id="licenses" class="scroll-mt-24">
+  {% include docs-h2.html kicker="維護" title="隨附的第三方軟體與授權" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>桌面版應用程式隨附下列第三方軟體。在應用程式中，可從選單列的「說明 ▸ 授權」查看相同的清單與各授權的全文。清單中只會列出軟體名稱，按下該列即可展開版本、授權、提供者、原始碼取得位置等內容。</p>
+    <h3 class="mt-2 text-[16px] font-bold text-ink">FFmpeg 8.1.3（ffmpeg.exe / ffprobe.exe 與 7 個 DLL）</h3>
+    <ul>
+      <li>授權：GNU General Public License version 3（GPL v3）。全文請見 <a href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener noreferrer">https://www.gnu.org/licenses/gpl-3.0.html</a></li>
+      <li>版本與建置：n8.1.3-27-g8dca1586f4。建置來源為 BtbN/FFmpeg-Builds（發行版 autobuild-2026-10-31-12-59，win64-gpl-shared-8.1）。這是以 <code>--enable-gpl --enable-version3</code> 組態的 shared 版，由 ffmpeg.exe / ffprobe.exe，以及它們在執行時載入的 FFmpeg DLL（avcodec-62.dll、avdevice-62.dll、avfilter-11.dll、avformat-62.dll、avutil-60.dll、swresample-6.dll、swscale-9.dll）組成。以 libx264、libx265、libxvid（皆為 GPL v2 或更新版本）為首的程式庫，皆以靜態方式連結至這些 DLL。所連結的程式庫清單及各自的授權，可在應用程式內的「說明 ▸ 授權」（ffmpeg-NOTICE.txt）中查看。</li>
+      <li>原始碼的取得位置（GPL v3 第 6 條所稱的對應原始碼）：<a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README-win64-gpl-shared-8.1.txt" target="_blank" rel="noopener noreferrer">https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README-win64-gpl-shared-8.1.txt</a> — 免費提供 FFmpeg 本體及 DLL（av*.dll / sw*.dll）所靜態連結之全部程式庫的原始碼與建置步驟（在散布此 FFmpeg 的期間，以及最後一次散布後至少 3 年內）。若無法取得，請<a href="#support">聯絡我們</a>。</li>
+      <li>作為載入與匯出影片時使用的獨立程式隨附，並未連結至 Deepmosaic 的應用程式本體。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime 1.26</h3>
+    <ul>
+      <li>提供者：Microsoft Corporation。授權：MIT License。原始碼：<a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>用於偵測模型的推論。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Microsoft Visual C++ 可轉散發套件</h3>
+    <ul>
+      <li>提供者：Microsoft Corporation。作為 Microsoft Visual Studio 授權條款所定的可散發程式碼，隨附執行應用程式所需的執行階段 DLL（vcruntime140 / msvcp140 等）。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">首次取得的第三方軟體（僅限搭載 NVIDIA GPU 的電腦）</h3>
+    <p>下列元件不包含在應用程式中，只會在搭載 NVIDIA GPU 的電腦上，首次從本公司的發布來源自動取得（下載約 1.7 GB，解壓縮後約 2.4 GB）。沒有 NVIDIA GPU 的電腦不會取得。在取得完成前會以 CPU 運作，功能不變。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">NVIDIA CUDA / cuDNN 等（GPU 加速元件）</h3>
+    <ul>
+      <li>提供者：NVIDIA Corporation。在搭載 NVIDIA GPU 的電腦上，會依 NVIDIA Corporation 軟體（CUDA / cuDNN 等）的使用授權條件，從本公司的發布來源取得，並儲存在這台電腦上。取得的軟體僅用於 GPU 上的處理。</li>
+    </ul>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">ONNX Runtime 的 CUDA 執行提供者</h3>
+    <ul>
+      <li>提供者：Microsoft Corporation。授權：MIT License（與隨附的 ONNX Runtime 相同）。原始碼：<a href="https://github.com/microsoft/onnxruntime" target="_blank" rel="noopener noreferrer">https://github.com/microsoft/onnxruntime</a></li>
+      <li>為了以 NVIDIA GPU 進行偵測模型的推論，會與上述 NVIDIA 元件一起取得。</li>
+    </ul>
+  </div>
+</section>

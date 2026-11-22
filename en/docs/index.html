@@ -1,0 +1,48 @@
+---
+layout: default
+lang: en
+permalink: /en/docs/
+ja_url: /docs/
+source: docs/index.html
+source_hash: "e5ca30b3aae3e2f04e566a0d6c66ad7ca1c741578db7f1a76be083849dcaddc0"
+title: Documentation
+seo_title: "User guide: how to add mosaic to videos | Deepmosaic"
+description: "How to use Deepmosaic Desktop: installation and initial setup, account and plans, loading videos, AI detection and the queue, editing detection results (detection boxes, mosaic settings, scenes, person gallery, shortcuts), exporting videos with the mosaic burned in, handing over projects, Adobe Premiere Pro integration, updates, and troubleshooting. Step-by-step instructions for every feature."
+schemas:
+  - breadcrumb
+---
+{% include header.html %}
+
+<section>
+  <div class="mx-auto flex w-[92%] max-w-[1120px] flex-wrap items-start gap-12 pt-12 pb-24" data-island="scrollspy" data-offset="76">
+    {%- assign docs_toc = site.data.l10n[page.lang].docs_toc.desktop %}
+
+    <nav aria-label="Contents" class="docs-toc sticky top-[84px] hidden max-h-[calc(100vh-6rem)] w-[220px] shrink-0 self-start overflow-y-auto pr-2 md:block">
+      <div class="mb-3 text-xs font-bold tracking-[.1em] text-ink-4">Contents</div>
+      {% include docs-toc-list.html toc=docs_toc %}
+    </nav>
+
+    <div class="min-w-0 flex-1">
+      <h1 class="text-3xl font-bold tracking-[-.01em] text-ink">Documentation</h1>
+      <p class="mt-1.5 text-[14.5px] text-ink-3">A guide to Deepmosaic Desktop (Windows). For the browser version, see the <a href="/en/docs/web/" class="text-accent-soft hover:underline">Web app guide</a></p>
+      <p class="mt-1 text-[13px] text-ink-3">Screenshots show the English version of the app. Text typed into the sample project stays in Japanese. Tutorial videos have Japanese subtitles only. Button and menu names in this guide match the English version.</p>
+
+      <details class="docs-toc mt-5 rounded-[10px] border border-edge bg-panel-2 md:hidden">
+        <summary class="cursor-pointer list-none px-4 py-3 text-[14px] font-semibold text-ink">Contents</summary>
+        <div class="px-4 pb-4">
+          {% include docs-toc-list.html toc=docs_toc %}
+        </div>
+      </details>
+
+      {% include docs/en/01-intro.html %}
+      {% include docs/en/02-account.html %}
+      {% include docs/en/03-detect.html %}
+      {% include docs/en/04-edit.html %}
+      {% include docs/en/05-export.html %}
+      {% include docs/en/06-ops.html %}{% include docs/en/07-team.html %}
+
+    </div>
+  </div>
+</section>
+
+{% include footer.html %}

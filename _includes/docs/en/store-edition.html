@@ -1,0 +1,15 @@
+{%- comment -%}
+source: _includes/docs/store-edition.html
+hash:
+  _head: bc70f214912ee6e5
+{%- endcomment -%}
+{%- if site.data.site.distribution.store_enabled or page.lang != 'ja' -%}
+<h3 id="install-store" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">Differences between the Microsoft Store edition and the installer edition</h3>
+<p>The available features, accounts, and plans in the Microsoft Store edition are the same as in the installer edition (including subscribing to a plan, changing it, and canceling your subscription from the app). Only the following points are different.</p>
+<ul>
+  <li><strong>Updates</strong>: The in-app update dialog and "File ▸ Check for updates" aren't available in the Microsoft Store edition (<a href="#update">Updates</a>)</li>
+  <li><strong>Bundled third-party software</strong>: In the Microsoft Store edition, the package contents are read-only and signed, so you can't replace the bundled FFmpeg in place (you can still use FFmpeg that you obtained or modified separately under the terms of the GPL; see <a href="#licenses">Bundled third-party software and licenses</a>)</li>
+  <li><strong>Premiere Pro integration</strong>: To use Premiere Pro integration with the Microsoft Store edition, you need to update the plug-in to version 0.1.21 or later. Select "Import into Premiere Pro" and follow the on-screen instructions to update it (<a href="#premiere">Premiere Pro integration</a>)</li>
+  <li><strong>Uninstall</strong>: The confirmation screen has no check box. Your settings and sign-in information (<code>%USERPROFILE%\.deepmosaic</code>) and your project folders are left on your PC. After uninstalling, delete any folders you no longer need in File Explorer (note that deleting a project folder also deletes any exported videos saved in it)</li>
+</ul>
+{%- endif -%}

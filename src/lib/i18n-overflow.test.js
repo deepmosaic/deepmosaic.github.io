@@ -203,7 +203,7 @@ test('pageHasHorizontalScroll: 差 1px は許す、2px は横スクロール', (
 
 // ---- listI18nPages / pageSlug -------------------------------------------------
 
-test('listI18nPages: 今の _data/i18n_pages.yml は 9 本で、全部が [en, zh-tw]', () => {
+test('listI18nPages: 今の _data/i18n_pages.yml は 11 本で、全部が [en, zh-tw]', () => {
 	const pages = listI18nPages(read('_data/i18n_pages.yml'))
 	assert.deepEqual(pages.map((p) => p.jaPath), [
 		'/',
@@ -215,6 +215,8 @@ test('listI18nPages: 今の _data/i18n_pages.yml は 9 本で、全部が [en, z
 		'/enterprise/inquiry/',
 		'/mosaic-removal/',
 		'/company/about',
+		'/docs/',
+		'/docs/web/',
 	])
 	for (const p of pages) assert.deepEqual(p.langs, ['en', 'zh-tw'], p.jaPath)
 })

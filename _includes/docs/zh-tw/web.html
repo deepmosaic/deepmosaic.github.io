@@ -1,0 +1,304 @@
+{%- comment -%}
+source: _includes/docs/web.html
+hash:
+  _head: af4397bcf97f87a7
+  about: 3d02c0ed1646ea51
+  requirements: 6503c8a47ff19463
+  start: 1e62edd448db4b35
+  diff: 832687ab5f24bb89
+  home: dcaeeedb299ca5b8
+  timeline: 5a2ed6025ecd2703
+  run: 86b78ee3a74031e2
+  export: 45037ef3206dcffc
+  storage: 85ac216abaa7bd0e
+  plan: 8dabdd81bc8fb6a3
+  team: 21707a42cd89ab73
+  trouble: 01efa3c72779e074
+{%- endcomment -%}
+{%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
+<section id="about" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="簡介" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>網頁版是不需安裝、直接在瀏覽器中使用的 Deepmosaic。從載入影片、AI 偵測、編輯偵測結果，到匯出已燒錄馬賽克的影片，<b>全部在本機電腦的瀏覽器中</b>處理。影像、音訊、影格圖片與偵測結果都不會傳送至伺服器。只有登入與方案確認、取得 AI 模型、記錄使用狀況（畫面切換與操作的記錄，以及處理時間、影片格式與長度等數值），以及回報錯誤時才會進行通訊（{% include ja-link.html href="/company/privacy" label="隱私權政策" %}）。</p>
+    <p><b>網頁版僅供試用。</b>每部影片最長可處理 {{ site.data.site.web_app.trial_minutes }} 分鐘。更長的影片、大量的影片，以及超過 1.9GB 的影片，請使用桌面版（<a href="#requirements">影片長度</a>）。付費方案與組織（Enterprise）的帳號沒有此長度限制。</p>
+    <p>帳號、方案與免費額度的時數都與桌面版共用。偵測對象（身體部位 / 男性臉部 / 女性臉部）與編輯頁面的功能也相同，操作的詳細說明請參閱<a href="/zh-tw/docs/">桌面版使用說明</a>。本頁整理網頁版特有的需求與差異。</p>
+    {% if site.data.site.web_app.enabled %}<p>網頁版可從 <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" target="_blank" rel="noopener noreferrer">app.deepmosaic.co.jp</a> 開啟。</p>{% endif %}
+  </div>
+</section>
+
+<section id="requirements" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="支援的瀏覽器與需求" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>啟動時會檢查瀏覽器的功能，若有不足的功能會顯示說明。缺少必要的功能時無法使用。缺少建議的功能時，可以「低速模式」繼續使用。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">瀏覽器（必要）</div>
+        <div class="kv-val">支援 WebCodecs 的瀏覽器：Google Chrome / Microsoft Edge 119 以上版本、Safari 17 以上版本。<b>建議使用最新版的 Chrome 或 Edge</b>。Firefox 不在運作驗證的範圍內，長影片的偵測可能會中途失敗</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">瀏覽器內儲存空間（必要）</div>
+        <div class="kv-val">影片的副本與模型會儲存在瀏覽器內（OPFS）。無法在私密（無痕）視窗中使用（各瀏覽器的名稱不同）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">HTTPS（必要）</div>
+        <div class="kv-val">請從以 https:// 開頭的網址開啟（通常會自動符合）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">WebGPU（建議）</div>
+        <div class="kv-val">以 GPU 執行 AI 偵測。自 2.6.5 起，在支援 WebGPU 的環境中，偵測速度約為以往的 2.5 倍，馬賽克精修所需的時間也縮短約 2 成。沒有 WebGPU 時會以 CPU（WebAssembly）運作，但需要數倍至十數倍的時間。Chrome / Edge 通常已啟用</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">影片大小</div>
+        <div class="kv-val">每部影片最大約 1.9GB。超過時會顯示「此影片（N GB）超過瀏覽器版可處理的上限（約 1.9 GB）。請使用桌面版。」（N 為影片的大小）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">影片長度</div>
+        <div class="kv-val">免費方案每部影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘（以影片的總長度判斷）。超過的影片會在開始偵測前顯示桌面版的相關提示，且不會進行處理。付費方案與組織（Enterprise）的帳號沒有限制</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">影片格式</div>
+        <div class="kv-val">mp4 / mov / m4v（瀏覽器可播放的編解碼器，通常為 H.264）。MKV / WebM / AVI / WMV / FLV / TS / MPEG 會顯示含有格式名稱的訊息，例如「瀏覽器版不支援此格式（MKV）。請轉換為 mp4（H.264），或使用桌面版。」</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">記憶體</div>
+        <div class="kv-val">長片與高解析度的影片會使用大量記憶體。建議先關閉其他分頁與占用大量資源的應用程式再執行</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="start" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="開始使用" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ol>
+      <li><b>登入。</b>網頁版必須登入。從網站首頁的「在瀏覽器中試用」開啟後，會顯示登入畫面。按下「登入」，輸入寄到電子郵件的 6 位數驗證碼（不需要密碼。第一次使用時會自動建立免費帳號）。以往使用密碼登入的使用者，只要以同一個電子郵件地址輸入驗證碼，也能以原本的帳號登入。自 2.13 起，登入畫面的入口與桌面版相同，分為「登入」與「持有組織代碼者（企業）」2 個（<a href="/zh-tw/docs/#license">登入與授權</a>）</li>
+      <li><b>第一次使用時會取得模型。</b>AI 模型會下載到瀏覽器內（會顯示進度）。第 2 次起會直接使用瀏覽器內的模型</li>
+      <li><b>載入影片。</b>將影片拖放到畫面上，或從選單的「檔案」選取。影片會複製到瀏覽器內，並以專案的形式列在首頁畫面。第一次載入影片時，會出現確認是否同意使用者授權合約與服務條款的畫面（不同意則會中止載入）。同意狀態會依瀏覽器分別記錄，因此在其他瀏覽器中會再次確認</li>
+      <li><b>設定偵測選項並開始。</b>偵測範圍、偵測對象、像素大小設定與批次執行都與桌面版相同（<a href="/zh-tw/docs/#detect-options">偵測選項</a>）。偵測會在浮動視窗中進行，期間也可以進行其他操作</li>
+      <li><b>編輯並匯出。</b>編輯頁面的功能與快捷鍵都與桌面版相同（<a href="/zh-tw/docs/#edit-overview">編輯頁面</a>）。匯出請參閱<a href="#export">匯出與下載</a></li>
+    </ol>
+    <p>第一次使用<a href="/zh-tw/docs/#edit-persons">人物圖庫</a>時，會出現確認是否追加下載臉部辨識用模型（約 249MB）的畫面。畫面會顯示依連線速度估算的預估所需時間，中途停止也能從中斷處繼續下載。</p>
+  </div>
+</section>
+
+<section id="diff" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="與桌面版的差異" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">偵測</div>
+        <div class="kv-val">幾乎相同（3 種偵測對象與「馬賽克」（素材中既有的馬賽克）、偵測範圍、像素大小設定（固定 / 依大小範圍 / 依分割數等比）、批次執行、場景的自動判定）。網頁版可將「馬賽克」與身體部位、臉部同時使用（桌面版兩者互斥，開啟「馬賽克」時只會偵測馬賽克的框。<a href="/zh-tw/docs/#detect-mosaic">既有馬賽克</a>）。<b>自 2.6.1 起，網頁版也可使用馬賽克精修</b>（限支援 WebGPU shader-f16 的 GPU 與瀏覽器。會另外取得約 175 MB 的精修用模型作為相關檔案）。不支援的環境會以方形框加上馬賽克。處理速度約為桌面版的一半以下。<b>偵測框軌跡的自動修正（<a href="/zh-tw/docs/#detect">AI 偵測</a>）僅限桌面版</b>，網頁版的偵測不含此功能。也可以使用「不偵測直接匯入」（不偵測，直接將影片匯入編輯畫面。不會消耗偵測時間。免費方案每部影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘的限制，與偵測相同也會套用）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">編輯頁面</div>
+        <div class="kv-val">相同（框的編輯與繪製、1f / ∞ 的新增與排除遮罩、<kbd>E</kbd>+右鍵拖曳的橡皮擦擦除方式、形狀與大小、形狀沿用（<kbd>Shift</kbd>+<kbd>→</kbd> / <kbd>Shift</kbd>+滾輪向上、<kbd>Shift</kbd> ×2 固定）、∞ 連續 BBox 的關鍵影格（<kbd>F</kbd>）、放置點並以追蹤連接（<kbd>Y</kbd> / <kbd>Shift+Y</kbd>）與追蹤佇列、框的複製與貼上（<kbd>Ctrl+C</kbd> / <kbd>Ctrl+V</kbd>）、標籤的顯示與篩選、選取的框的羽化範圍虛線、以 <kbd>Shift</kbd>+左鍵拖曳範圍選取多邊形的頂點並彎曲、右鍵選單的「反轉（套用於外側）」、將既有的框改為排除遮罩（右鍵選單的「設為排除遮罩」與依類別分頁的一次變更）、ID 的合併（框的右鍵選單中的「合併 ID…」與時間軸 ID 列的右鍵選單、連續 BBox 的合併、取消合併）、預覽的邊距與框外的馬賽克、馬賽克設定的 5 個分頁（包含「依時間」）與設定的優先（以最後設定的為優先）與沿用、模糊強度、場景、人物圖庫、縮放、快捷鍵、側邊欄的「設定」（拖曳移動與標籤的顯示設定）、時間軸編輯）。<b>人物圖庫的「重新歸類人物」僅限桌面版</b>。也可以使用<a href="/zh-tw/docs/#edit-track">追蹤</a>（<kbd>X</kbd>），但網頁版的追蹤只有「標準追蹤」（使用 GPU 的「高精度追蹤」僅限桌面版）。<b>網頁版的追蹤佇列只進行追蹤，不進行輪廓精修</b>（桌面版在有 GPU 的電腦上，追蹤之後也會進行輪廓精修）。側邊欄的最小化（<kbd>Ctrl+Shift+B</kbd>）與瀏覽器切換書籤列顯示的快捷鍵重疊，沒有作用時，請使用側邊欄的最小化按鈕。時間軸編輯的差異請參閱<a href="#timeline">時間軸編輯</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">首頁畫面的分類</div>
+        <div class="kv-val">相同（資料夾與標籤、「其他資料夾」列）。分類會儲存在瀏覽器內（<a href="#home">首頁畫面的分類</a>）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">匯出格式</div>
+        <div class="kv-val">MP4 (H.264) / WebM (VP9) / WebM (AV1) 3 種。H.265、ProRes、DV、DNxHR、CineForm、MKV、AVI 僅限桌面版。選擇瀏覽器不支援的格式時，會切換為 MP4 (H.264)</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">解析度 / 影格速率 / 位元速率</div>
+        <div class="kv-val">解析度同樣有 7 種。影格速率只有「與原始影片相同」（無法轉換）。位元速率的「自動」會依解析度決定</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">時間碼</div>
+        <div class="kv-val">相同（嵌入，以及文字大小、位置、顏色、顯示格式的設定）。將時間碼記錄到檔案中僅限桌面版</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">GPU 編碼</div>
+        <div class="kv-val">瀏覽器支援時，可選擇「GPU 編碼」（沒有 NVIDIA 驅動程式的條件）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">儲存位置</div>
+        <div class="kv-val">在瀏覽器的儲存對話方塊中指定，或先儲存在瀏覽器內再下載（<a href="#export">匯出與下載</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">Premiere Pro 整合</div>
+        <div class="kv-val">無（僅限桌面版）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">專案的匯出與匯入</div>
+        <div class="kv-val">網頁版目前還無法使用 zip 的匯出與匯入（準備中）。可改用「下載偵測資料」儲存偵測結果與編輯資料（<a href="#export">匯出與下載</a>）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">繼續已中斷的偵測</div>
+        <div class="kv-val">無（僅限桌面版）。在網頁版中，中途停止的偵測會從頭重新執行。首頁畫面的「已中斷的偵測」與「未使用的專案資料夾」的提示也僅限桌面版</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">組織管理（Enterprise）</div>
+        <div class="kv-val">相同（邀請與權限、帳號數、請款單、用量）。加入的步驟請參閱<a href="#team">組織管理</a></div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">更新</div>
+        <div class="kv-val">沒有自動更新的通知。重新載入頁面後，一律會是最新版</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">同時執行</div>
+        <div class="kv-val">每個帳號最多偵測 1 項、匯出 1 項（偵測與匯出可同時進行）。與桌面版中正在執行的工作也會互斥</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">離線</div>
+        <div class="kv-val">確認登入需要網路通訊，因此離線時會顯示「無法連線到伺服器」，無法使用。桌面版在完成初始設定後，離線時也能偵測、編輯與匯出</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">影片長度</div>
+        <div class="kv-val">網頁版僅供試用，因此免費方案只能處理每部最長 {{ site.data.site.web_app.trial_minutes }} 分鐘的影片（付費方案與組織的帳號沒有限制）。桌面版的單部影片長度沒有限制（免費額度的時數為共用）。長影片或大量的影片請使用桌面版</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="home" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="首頁畫面的分類" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>可在首頁畫面的左側邊欄，以<b>資料夾</b>與<b>標籤</b>分類專案。操作與桌面版相同（<a href="/zh-tw/docs/#import">載入影片</a>）。</p>
+    <ul>
+      <li><b>資料夾</b>：以清單上方的「新增資料夾」建立資料夾，也可從資料夾的選單建立子資料夾。可從影片卡片選單（按右鍵也能開啟）的「移至資料夾」移動，或將卡片拖曳到側邊欄的資料夾。拖放到「所有影片」即可取消分類</li>
+      <li><b>標籤</b>：在影片卡片選單的標籤欄加上或移除標籤。在側邊欄的「依標籤篩選」選取標籤後，只會列出該標籤的影片</li>
+      <li><b>「其他資料夾」</b>：位於目前專案資料夾以外的專案，會集中在側邊欄的「其他資料夾」列（0 個時不顯示）。這些專案無法使用資料夾與標籤，若要分類，請選擇影片卡片選單中的「切換到此專案資料夾」</li>
+    </ul>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">分類的儲存位置</div>
+        <div class="kv-val">資料夾與標籤會儲存在瀏覽器內的專案資料夾。不會與桌面版共用（也不會與其他瀏覽器 / 電腦共用）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">多個分頁</div>
+        <div class="kv-val">在同一個瀏覽器的多個分頁中同時變更分類時，會保留最後儲存的分頁的內容。請只在 1 個分頁中變更分類</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">影片卡片的選單</div>
+        <div class="kv-val">沒有「開啟專案資料夾」「Premiere Pro」「複製專案」。網頁版改為提供「下載偵測資料」（<a href="#export">匯出與下載</a>）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="timeline" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="時間軸編輯" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>編輯頁面的時間軸編輯，可用與桌面版相同的方式操作。從左側的側邊欄（媒體 / 文字 / 浮水印 / 音訊 / 淡化 / 轉場）新增素材與效果，可編輯片段的修剪、分割、重新排序與刪除，以及片段之間的<b>空白</b>、<b>文字</b>與<b>音訊</b>（背景音樂）。編輯的內容會直接反映在匯出中（<a href="/zh-tw/docs/#edit-overview">編輯頁面</a>）。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">匯入素材</div>
+        <div class="kv-val">影片、音訊、圖片素材，可從媒體面板的「匯入媒體」選取，或將檔案拖放到編輯頁面來匯入。素材會儲存在瀏覽器內的專案中，預覽時會從瀏覽器內的暫時網址（<b>Blob URL</b>）讀取。剛開啟頁面時等情況下，在素材讀取完成前，預覽中的該區段可能會顯示為黑色</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">空白</div>
+        <div class="kv-val">放在片段之間的空白，會以黑畫面、無聲的形式匯出（與桌面版的結果相同）。背景音樂會跨越空白持續播放</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">文字、浮水印、淡化、轉場</div>
+        <div class="kv-val">相同。匯出時由瀏覽器燒錄到影像上。轉場越長，匯出時使用的記憶體越多</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">音訊</div>
+        <div class="kv-val">將原始影片的音訊與背景音樂等音訊軌道混音後匯出（MP4 為 AAC，WebM 為 Opus）。匯入的影片片段的音訊不會包含在匯出中（與桌面版相同）</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">圖片片段</div>
+        <div class="kv-val">相同。圖片素材可作為任意長度的片段放在時間軸上，匯出時也會維持該長度。透明 PNG 的透明部分，在網頁版的匯出中會變成黑色</div>
+      </div>
+    </div>
+    <p>馬賽克會套用在以 AI 偵測的原始影片區段。匯入的素材不列入偵測對象。</p>
+  </div>
+</section>
+
+<section id="run" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="執行視窗與佇列" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>偵測與匯出的進度及佇列，會以疊在畫面上方的<b>浮動視窗</b>顯示。拖曳標題列即可移動；最小化後會以小方塊留在畫面右下角，按一下即可還原。顯示期間仍可照常操作首頁畫面與編輯頁面。</p>
+    <p>可在選單列的「佇列」確認與操作偵測與匯出的等候清單（重新排序、暫停、取消與桌面版的<a href="/zh-tw/docs/#queue">佇列</a>相同）。同一個帳號在其他分頁或桌面版中有執行中的工作時，開始新工作時會顯示確認畫面，詢問是否要接手。</p>
+  </div>
+</section>
+
+<section id="export" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="匯出與下載" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">以儲存對話方塊儲存</div>
+        <div class="kv-val">在 Chrome / Edge 中，開始匯出時會以瀏覽器的儲存對話方塊指定要儲存的檔案，並直接匯出到該檔案</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">儲存在瀏覽器內後下載</div>
+        <div class="kv-val">在不支援儲存對話方塊的瀏覽器中，會先匯出到瀏覽器內的專案。完成後，在匯出進度視窗（或佇列的列）中按下「下載」，儲存為檔案</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">下載偵測資料</div>
+        <div class="kv-val">將專案的偵測結果與編輯資料儲存為 JSON 檔案（留存、備份用）。不包含在時間軸編輯中匯入的素材檔案</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="storage" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="資料的儲存與自動刪除" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>載入的影片副本、偵測結果、編輯資料、在時間軸編輯中匯入的素材、首頁畫面的分類（資料夾與標籤）、匯出到瀏覽器內的影片，以及 AI 模型，全部儲存在瀏覽器為此網站保留的儲存空間。不會儲存在伺服器上。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">AI 模型</div>
+        <div class="kv-val">7 天未使用的模型會自動刪除（下次偵測時會重新取得）</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">專案</div>
+        <div class="kv-val">不會自動刪除。不再需要時，請從首頁畫面刪除。瀏覽器的容量不足時，載入會失敗</div>
+      </div>
+      <div class="kv-row">
+        <div class="kv-key">刪除瀏覽器資料</div>
+        <div class="kv-val">在瀏覽器設定中刪除網站資料後，專案與模型會全部消失。想保留的成果請先下載</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">其他瀏覽器 / 電腦</div>
+        <div class="kv-val">儲存空間在各個瀏覽器之間是獨立的。若要在其他環境繼續作業，請下載匯出的影片或偵測資料後移過去</div>
+      </div>
+    </div>
+    <p>第一次載入時，瀏覽器可能會要求「永久儲存空間」的權限。允許後，瀏覽器在容量不足時較不容易自動刪除資料。</p>
+  </div>
+</section>
+
+<section id="plan" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="方案與使用時間" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>帳號、方案與使用時間都與桌面版共用。免費帳號自首次使用桌面版或網頁版的當日起 {{ free_plan.free_window_days }} 天內，可偵測累計 {{ free_plan.included_hours }} 小時的影片（與桌面版共用的免費期間），頁尾會顯示剩餘時間。使用時間會在偵測完成時計入，匯出不會計入。付費方案的內含時數與價格請參閱<a href="/zh-tw/price/">價格頁面</a>。</p>
+    <p>方案的申請、變更與取消訂閱，都從個人資料選單進行。付款畫面會在新分頁中開啟，完成手續並回到原本的分頁後，會自動反映。Enterprise 請從選擇方案畫面的「洽詢導入事宜」，在導入洽詢頁面（新分頁）中與我們洽詢。</p>
+  </div>
+</section>
+
+<section id="team" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="組織管理（Enterprise）" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <p>已加入 Enterprise 組織的帳號，可從個人資料選單的「組織」，在與桌面版相同的畫面中處理成員的邀請與權限、確認組織代碼與查看用量（變更帳號數與取消訂閱，請透過<a href="/zh-tw/enterprise/inquiry/">導入洽詢</a>與我們聯絡）。權限與導入流程請參閱桌面版使用說明中的<a href="/zh-tw/docs/#team">組織管理（Enterprise）</a>。</p>
+    <div class="kv my-3.5" style="--kv-label-w: 200px">
+      <div class="kv-row">
+        <div class="kv-key">以組織代碼加入</div>
+        <div class="kv-val">按下登入畫面的「持有組織代碼者（企業）」，在「組織代碼」欄輸入代碼後，按下「登入」。完成驗證並回到此頁面後，就會加入組織。登入後無法從選單加入，若已登入，請先登出再重新輸入。1 個帳號只能加入 1 個組織，已屬於其他組織時無法加入</div>
+      </div>
+      <div class="kv-row kv-alt">
+        <div class="kv-key">請款單的檢視 / PDF</div>
+        <div class="kv-val">「請款單」的「檢視」與「PDF」會在瀏覽器的新分頁中開啟。以銀行轉帳簽約的請款單會以電子郵件寄送（不會顯示在「請款單」中）</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trouble" class="scroll-mt-24">
+  {% include docs-h2.html kicker="網頁版" title="疑難排解" %}
+  <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
+    <ul>
+      <li>出現「請從以 https:// 開頭的網址開啟。」時：請將網址列的網址改為 https://app.deepmosaic.co.jp/。</li>
+      <li>顯示瀏覽器的功能不足時：請將 Chrome / Edge 更新為最新版。私密（無痕）視窗無法使用儲存空間，請在一般視窗中開啟。</li>
+      <li>出現「無法連線到伺服器」時：請確認網路連線，並按下「重試」。</li>
+      <li>偵測速度極慢時：WebGPU 可能已停用。請將瀏覽器更新為最新版，並更新顯示卡驅動程式。關閉其他分頁與占用大量資源的應用程式也有幫助。</li>
+      <li>無法載入影片時：超過約 1.9GB 的影片請使用桌面版。mp4 / mov / m4v 以外的格式，請轉換為 mp4 (H.264)，或使用桌面版。</li>
+      <li>沒有出現匯出的儲存對話方塊時：檔案會儲存在瀏覽器內。完成後，請在匯出進度視窗或佇列中按下「下載」。</li>
+      <li>仍無法解決時：請從個人資料選單的「聯絡我們」，附上瀏覽器的種類與版本，與我們聯絡。</li>
+    </ul>
+  </div>
+</section>
