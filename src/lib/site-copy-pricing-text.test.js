@@ -2,11 +2,11 @@
 //
 //   node --test src/lib/site-copy-pricing-text.test.js
 //
-//   - FAQ (3 言語) の「上限時間を超えたら」は Light の追加契約 + Enterprise (お見積り) の案内で、Pro の句が無い。
+//   - FAQ (3 言語) の「上限時間を超えたら」は次の更新日に利用枠が戻ること + Enterprise (お見積り) の案内で、追加の契約と Pro の句が無い。
 //   - meta の description 6 ページ (price / subscribe の 3 言語) に Pro と、カードに無い金額を書かない。
-//   - JSON-LD の AggregateOffer はお見積りのプランを含めない (highPrice = Light)。
+//   - JSON-LD の AggregateOffer はお見積りのプランを含めない (highPrice = Hobby)。
 //   - llms-full.txt の Enterprise は「お見積り」の見出しで単価を出さない。llms.txt とトップの見出しに数を書かない。
-//   - ROI 計算機は既定 5 本 × 2 時間 = 10 時間 (Light×2)、10 時間を超えたら Enterprise (お見積り) の案内になる。
+//   - ROI 計算機は既定 5 本 × 2 時間 = 10 時間。同じプランは 1 本までなので、Hobby の 5 時間を超えたら Enterprise (お見積り) の案内になる。
 //   - /docs/#team の「Enterprise プランの内容」は plans.yml の enterprise から差し込む。
 //
 // `_site` は読まない (ビルド出力の検査は e2e/pricing-quote.spec.ts)。
@@ -41,12 +41,15 @@ function assertNoProPlaceholder(text, where) {
   assert.ok(!text.includes('%%PRO_'), `${where} に %%PRO_ のプレースホルダが残っている`);
 }
 
-/** 10 件目の回答 (`%%LIGHT_MAX%%` を持つ `a:` の行。コメントの行は除く) */
-const faqQuotaLine = (rel) => {
+/** 上限時間を超えたときの回答の目印 (超過料金なしの句) */
+const OVERAGE_WORD = { ja: '超過料金は発生しません', en: 'no overage charges', 'zh-tw': '超額費用' };
+
+/** 10 件目の回答 (超過料金なしの句を持つ `a:` の行。コメントの行は除く) */
+const faqQuotaLine = (rel, lang = 'ja') => {
   const line = read(rel)
     .split('\n')
-    .find((l) => /^\s*a: /.test(l) && l.includes('%%LIGHT_MAX%%'));
-  assert.ok(line, `${rel} に Light の追加契約の回答が無い`);
+    .find((l) => /^\s*a: /.test(l) && l.includes(OVERAGE_WORD[lang]));
+  assert.ok(line, `${rel} に上限時間を超えたときの回答が無い`);
   return line;
 };
 
@@ -68,17 +71,26 @@ test('FAQ の検査関数は %%PRO_MAX%% を足した文を落とす (陰性対�
   assert.throws(() => assertNoProPlaceholder(bad, 'test'));
 });
 
-test('FAQ の 10 件目は Light の追加契約のプレースホルダを残し、Enterprise のお見積りを案内する', () => {
+/** 次の更新日に利用枠が戻る句 */
+const RENEWAL_WORD = { ja: '次の更新日に利用枠が戻ります', en: 'restored on the next renewal date', 'zh-tw': '下次續訂日恢復' };
+/** 同じプランの追加の契約を案内する句 (契約は 1 本までなので書かない) */
+const EXTRA_CONTRACT_WORD = { ja: /追加でご契約|複数契約/, en: /add more subscriptions|additional subscriptions/i, 'zh-tw': /追加訂閱|重複訂閱/ };
+
+test('FAQ の 10 件目は次の更新日に利用枠が戻ることと Enterprise のお見積りを案内し、追加の契約を案内しない', () => {
   for (const [lang, rel] of Object.entries(FAQ_FILES)) {
-    const line = faqQuotaLine(rel);
-    assert.ok(line.includes('%%LIGHT_TOTAL%%'), `${rel}: %%LIGHT_TOTAL%% が無い`);
+    const line = faqQuotaLine(rel, lang);
+    assert.ok(line.includes(RENEWAL_WORD[lang]), `${rel}: 更新日の案内が無い`);
     assert.match(line, /Enterprise/, `${rel}: Enterprise の案内が無い`);
     assert.match(line, QUOTE_WORD[lang], `${rel}: お見積りの語が無い`);
+    assert.doesNotMatch(line, EXTRA_CONTRACT_WORD[lang], `${rel}: 追加の契約を案内している`);
+    assert.ok(!line.includes('%%LIGHT_'), `${rel}: 契約の本数のプレースホルダが残っている`);
+    assert.ok(!line.includes('Light'), `${rel}: 古いプラン名が残っている`);
   }
-  // site-copy-usage-limits.test.js が固定している句 (超過料金なし・追加でご契約) は残す
-  const ja = faqQuotaLine(FAQ_FILES.ja);
-  assert.ok(ja.includes('超過料金は発生しません'));
-  assert.ok(ja.includes('追加でご契約'));
+});
+
+test('FAQ の 10 件目の検査は追加の契約の句を足した文を拾う (陰性対照)', () => {
+  const bad = faqQuotaLine(FAQ_FILES.ja) + '同じプランを追加でご契約いただけます。';
+  assert.match(bad, EXTRA_CONTRACT_WORD.ja);
 });
 
 test('faq-answer.html のコメントの外に Pro の置換が無い', () => {
@@ -110,41 +122,40 @@ const roiNoscript = (rel) => {
   return m[1];
 };
 
-test('ROI の既定は月 5 本 × 2 時間 = 10 時間で、Light を 2 契約 (5,960 円)', () => {
+test('ROI の既定は月 5 本 × 2 時間 = 10 時間で、Hobby の込み時間を超えるので Enterprise (お見積り)', () => {
   assert.equal(DEFAULT_VIDEOS, 5);
   assert.equal(DEFAULT_LENGTH, 2);
   assert.equal(DEFAULT_HOURS, 10);
   const fit = roiFit(paidPublic, DEFAULT_HOURS);
-  assert.equal(fit.tier.code, 'light');
-  assert.equal(contractsNeeded(fit.tier, DEFAULT_HOURS), 2);
-  assert.equal(fit.cost, 5960);
-  assert.equal(fit.quote, false);
+  assert.equal(fit.tier.code, 'enterprise');
+  assert.equal(fit.cost, null);
+  assert.equal(fit.quote, true);
+  assert.equal(contractsNeeded(byCode('light'), DEFAULT_HOURS), null);
 });
 
-test('既定値の年間削減額は site.yml と roiFit から 1,368,480 円', () => {
-  const currentYearly = DEFAULT_VIDEOS * roiNum('default_cost_per_video') * 12;
-  const dmYearly = roiFit(paidPublic, DEFAULT_HOURS).cost * 12;
-  assert.equal(currentYearly - dmYearly, 1368480);
-});
-
-test('トップの noscript (3 言語) は roiFit と同じ結論の確定値を書く', () => {
-  const fit = roiFit(paidPublic, DEFAULT_HOURS);
+test('トップの noscript (3 言語) は roiFit と同じ結論 (Hobby の込み時間を超えたらお見積り) の確定値を書く', () => {
+  const hobby = byCode('light');
+  assert.equal(roiFit(paidPublic, DEFAULT_HOURS).quote, true);
   const ja = roiNoscript(TOP_PAGES.ja);
-  for (const s of [formatYen(fit.cost), '2 契約', `月 ${DEFAULT_HOURS} 時間`, `月 ${DEFAULT_VIDEOS} 本 × ${DEFAULT_LENGTH} 時間`]) {
+  for (const s of [formatYen(hobby.price), `月 ${hobby.included_hours} 時間`, `月 ${DEFAULT_VIDEOS} 本 × ${DEFAULT_LENGTH} 時間`, 'Hobby', '法人向けプラン']) {
     assert.ok(ja.includes(s), `ja の noscript に「${s}」が無い`);
   }
   assert.match(ja, /Enterprise（お見積り）/);
+  assert.ok(!ja.includes('契約（'), 'ja の noscript に複数の契約の句が残っている');
   const en = roiNoscript(TOP_PAGES.en);
-  assert.ok(en.includes(formatYen(fit.cost)), 'en の noscript に ¥5,960 が無い');
-  assert.ok(en.includes('2 Light subscriptions'), 'en の noscript に 2 Light subscriptions が無い');
+  assert.ok(en.includes(formatYen(hobby.price)), 'en の noscript に ¥2,980 が無い');
+  assert.ok(en.includes('Hobby'), 'en の noscript に Hobby が無い');
+  assert.ok(!/subscriptions/.test(en), 'en の noscript に複数の契約の句が残っている');
   assert.match(en, /quote/i);
   const zh = roiNoscript(TOP_PAGES['zh-tw']);
-  assert.ok(zh.includes('5,960 日圓'), 'zh-tw の noscript に 5,960 日圓 が無い');
+  assert.ok(zh.includes('2,980 日圓'), 'zh-tw の noscript に 2,980 日圓 が無い');
+  assert.ok(zh.includes('Hobby'), 'zh-tw の noscript に Hobby が無い');
   assert.match(zh, /報價/);
   for (const [lang, rel] of Object.entries(TOP_PAGES)) {
     const n = roiNoscript(rel);
-    // 数は既定の本数・尺・合計時間・契約の本数と試算の金額だけ
-    const allowed = new Set([String(DEFAULT_VIDEOS), String(DEFAULT_LENGTH), String(DEFAULT_HOURS), String(contractsNeeded(fit.tier, DEFAULT_HOURS)), formatYen(fit.cost).slice(1)]);
+    assert.ok(!n.includes('Light'), `${lang}: 古いプラン名が残っている`);
+    // 数は既定の本数・尺と、Hobby の込み時間・月額だけ
+    const allowed = new Set([String(DEFAULT_VIDEOS), String(DEFAULT_LENGTH), String(hobby.included_hours), formatYen(hobby.price).slice(1)]);
     const odd = (n.replace(/\{\{[^}]*\}\}|\{%[^%]*%\}|<[^>]*>/g, '').match(/\d{1,3}(?:,\d{3})+|\d+/g) ?? []).filter((v) => !allowed.has(v));
     assert.deepEqual(odd, [], `${lang}: 試算と合わない数がある`);
   }
@@ -165,18 +176,16 @@ test('ROI の島 (3 言語) は既定の本数と尺を data 属性で渡し、�
 
 // ── 3. roiFit / selfServeMaxHours / isQuoteTier ─────────────────────
 
-test('selfServeMaxHours は公開の有料 tier で 10 (Light×2)、空なら 0', () => {
-  assert.equal(selfServeMaxHours(paidPublic), 10);
+test('selfServeMaxHours は公開の有料 tier で 5 (Hobby×1)、空なら 0', () => {
+  assert.equal(selfServeMaxHours(paidPublic), 5);
   assert.equal(selfServeMaxHours([]), 0);
   assert.equal(selfServeMaxHours([byCode('enterprise')]), 0);
 });
 
-test('roiFit の境界値: 10 時間までは Light、超えたらお見積り', () => {
+test('roiFit の境界値: 5 時間までは Hobby、超えたらお見積り', () => {
   const cases = [
     [0.5, 'light', 2980],
     [5, 'light', 2980],
-    [5.000001, 'light', 5960],
-    [10, 'light', 5960],
   ];
   for (const [h, code, cost] of cases) {
     const fit = roiFit(paidPublic, h);
@@ -184,7 +193,7 @@ test('roiFit の境界値: 10 時間までは Light、超えたらお見積り',
     assert.equal(fit.cost, cost, `${h} 時間`);
     assert.equal(fit.quote, false, `${h} 時間`);
   }
-  for (const h of [10.000001, 10.5, 100]) {
+  for (const h of [5.000001, 10, 10.5, 100]) {
     const fit = roiFit(paidPublic, h);
     assert.equal(fit.tier.code, 'enterprise', `${h} 時間`);
     assert.equal(fit.cost, null, `${h} 時間`);
@@ -194,7 +203,7 @@ test('roiFit の境界値: 10 時間までは Light、超えたらお見積り',
 
 test('roiFit の失敗系: 空なら null、お見積りの tier が無く賄えなければ null', () => {
   assert.equal(roiFit([], 1), null);
-  assert.equal(roiFit([byCode('light')], 11), null);
+  assert.equal(roiFit([byCode('light')], 6), null);
 });
 
 test('isQuoteTier は空でない quote_label のときだけ true', () => {
@@ -242,11 +251,13 @@ test('price / subscribe の 3 言語の description に Pro が無く、金額�
   assert.ok(seen > 0, '陽性対照: description の金額が読めていない');
 });
 
-test('price の 3 言語の description に Light の金額とお見積りがある', () => {
+test('price の 3 言語の description に Hobby の金額とお見積りがあり、契約の本数を書かない', () => {
   for (const [lang, rel] of Object.entries(DESC_PAGES.price)) {
     const d = description(rel);
-    assert.ok(d.includes(byCode('light').price_display), `${rel}: Light の金額が無い`);
+    assert.ok(d.includes(byCode('light').price_display), `${rel}: Hobby の金額が無い`);
+    assert.ok(d.includes('Hobby') && !d.includes('Light'), `${rel}: プラン名が Hobby でない`);
     assert.match(d, QUOTE_WORD[lang], `${rel}: お見積りの語が無い`);
+    assert.doesNotMatch(d, /契約まで|subscriptions per account|份訂閱/, `${rel}: 契約の本数が残っている`);
   }
 });
 
@@ -259,7 +270,7 @@ test('subscribe の 3 言語にプロフィールメニューの句が残る', (
 
 // ── 5. JSON-LD ──────────────────────────────────────────────────────
 
-test('SoftwareApplication の offers はお見積りの tier を外し、最高額は Light', () => {
+test('SoftwareApplication の offers はお見積りの tier を外し、最高額は Hobby', () => {
   const src = read('_includes/schema/software-application.html');
   const line = src.split('\n').find((l) => l.includes('assign public_plans'));
   assert.ok(line, 'public_plans の assign が無い');

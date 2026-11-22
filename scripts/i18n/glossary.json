@@ -224,7 +224,7 @@
 	],
 	"same_as_ja": ["設定", "不透明度", "分割", "人物", "秒", "更新", "範囲"],
 	"counters": ["件", "本", "個", "人", "枚", "台", "席", "回", "箇所", "区間", "色", "フレーム", "秒", "分", "時間", "日"],
-	"dnt": ["Deepmosaic", "Adobe", "Premiere Pro", "Premiere", "Microsoft Store", "Microsoft", "Windows", "NVIDIA", "GeForce", "CUDA", "GPU", "CPU", "BBox", "ZIP", "MP4", "Free", "Light", "Pro", "Premium", "Enterprise"],
+	"dnt": ["Deepmosaic", "Adobe", "Premiere Pro", "Premiere", "Microsoft Store", "Microsoft", "Windows", "NVIDIA", "GeForce", "CUDA", "GPU", "CPU", "BBox", "ZIP", "MP4", "Free", "Hobby", "Pro", "Premium", "Enterprise"],
 	"forbidden": {
 		"en": ["private", "privates", "genital", "genitals", "intimate", "nude", "nudity", "NSFW", "sensitive area", "sensitive areas", "explicit", "censor", "censored", "censorship", "decensor", "uncensor", "unblur", "pixelate", "pixelated", "remove mosaic", "removes mosaic", "mosaic removal tool", "log in", "login", "verification code", "cancelled", "cancelling"],
 		"en_allow_namespaces": ["mosaic_removal"],

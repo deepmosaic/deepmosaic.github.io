@@ -2,7 +2,7 @@
 # tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ。
 # 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/plans.yml"
-_source_hash: "8e26be84d866977137e04be6cd216635db5d719217aa25f57b7d1ea2e350be9c"
+_source_hash: "7630ba007a4130185f7ee5791c098c93e2330bfcd490593261015bcd6a4fb99a"
 tax_note: "未稅"
 rollout_note: ""
 currency_prefix: ""

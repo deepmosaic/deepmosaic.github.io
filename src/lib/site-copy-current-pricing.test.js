@@ -172,8 +172,9 @@ test('findPlanTextWords: 今の料金と合わない語を拾う (陰性対照)'
 
 test('allowedPlanNumbers: 公開しているプランの契約の本数と込み時間 × 本数 (プランの数は許さない)', () => {
   const a = allowedPlanNumbers();
-  assert.deepEqual([...a.contracts].sort(), ['2']);
-  assert.deepEqual([...a.hours].sort((x, y) => x - y), ['2', '5', '10', '20']);
+  // 公開しているプランはどれも 1 本までなので、契約の本数は 1 つも許さない
+  assert.deepEqual([...a.contracts].sort(), []);
+  assert.deepEqual([...a.hours].sort((x, y) => x - y), ['2', '5', '20']);
   assert.equal(a.plans.size, 0);
 });
 
@@ -182,9 +183,8 @@ test('findPlanTextWords: 今の文は拾わない (陽性対照)', () => {
     'Adobe Premiere Pro 25.3 以降',
     'Premiere Pro 連携',
     'H.265・ProRes・DNxHR',
-    'Light は最大 2 契約',
-    'Light: up to 2 subscriptions',
-    '月 10 時間まで',
+    'Hobby は月 5 時間',
+    'Hobby: 5 hours / month',
     '2 hours in total',
     'アカウント数 × 20 時間をプール共有',
     '表示形式は 3 種類から選択',
@@ -197,11 +197,13 @@ test('findPlanTextWords: 今の文は拾わない (陽性対照)', () => {
 
 test('findUnlistedAmounts: 許した金額は通し、それ以外の通貨の付いた金額を拾う (陽性対照・陰性対照)', () => {
   const allowed = allowedAmounts();
-  assert.ok(allowed.has('2,980') && allowed.has('3,278') && allowed.has('5,960') && allowed.has(CAPITAL), [...allowed].join(' '));
-  for (const s of ['月額2,980円', '¥5,960 / month', '2,980 日圓', '¥ 3,278', '資本金 ¥1,000,000', '79,139,232 枚', '100,000 images']) {
+  assert.ok(allowed.has('2,980') && allowed.has('3,278') && allowed.has(CAPITAL), [...allowed].join(' '));
+  // 同じプランは 1 本までなので、2 本ぶんの合計は許さない
+  assert.ok(!allowed.has('5,960'), [...allowed].join(' '));
+  for (const s of ['月額2,980円', '¥2,980 / month', '2,980 日圓', '¥ 3,278', '資本金 ¥1,000,000', '79,139,232 枚', '100,000 images']) {
     assert.deepEqual(findUnlistedAmounts(s, allowed), [], `誤検出: ${s}`);
   }
-  for (const s of ['月額1,234円', '¥1,234', '¥ 12,345 / アカウント', '1,234 日圓', '1,234 円']) {
+  for (const s of ['月額1,234円', '¥1,234', '¥ 12,345 / アカウント', '1,234 日圓', '1,234 円', '¥5,960 / month']) {
     assert.equal(findUnlistedAmounts(s, allowed).length, 1, `拾わない: ${s}`);
   }
 });
@@ -266,20 +268,24 @@ test('docs: 「維持管理費用」は見積書の記載事項の <li> の中�
   }
 });
 
-test('docs #license: 個人向けプラン（Light）はクレジットカード、Enterprise は請求書による銀行振込', () => {
+test('docs #license: 個人向けプラン（Hobby）はクレジットカード、Enterprise は請求書による銀行振込', () => {
   const lic = visible(sectionOf(read('_includes/docs/02-account.html'), 'license'));
   const text = textOf(lic);
-  assert.ok(text.includes('個人向けプラン（Light）のお支払いはクレジットカードです'), text);
+  assert.ok(text.includes('個人向けプラン（Hobby）のお支払いはクレジットカードです'), text);
+  assert.ok(text.includes('次の更新日に利用枠が戻ります'), '利用枠を使い切ったときの案内が無い');
+  assert.ok(!text.includes('追加でご契約'), '追加の契約の案内が残っている');
   assert.ok(text.includes('請求書による銀行振込'));
   assert.match(lic, /href="#team"/);
   assert.doesNotMatch(text, PRO_WORD);
 });
 
-test('docs #plan: カードの月額は Light の説明で、Enterprise は金額がお見積り', () => {
+test('docs #plan: カードの月額は Hobby の説明で、Enterprise は金額がお見積り', () => {
   const text = textOf(visible(sectionOf(read('_includes/docs/02-account.html'), 'plan')));
   assert.ok(!text.includes('各プランのカードに月額'), '各プランのカードに月額 が残っている');
+  assert.ok(text.includes('Hobby のカードには月額'));
   assert.ok(text.includes('お見積り'));
-  assert.ok(text.includes('「契約アカウント数」を選べます'));
+  assert.ok(text.includes('同じプランの契約は 1 アカウントにつき 1 つまでです'));
+  assert.ok(!text.includes('「契約アカウント数」を選べます'));
   assert.ok(text.includes(PRO_NOTICE));
 });
 

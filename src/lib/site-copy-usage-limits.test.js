@@ -47,11 +47,13 @@ test('「上限時間の適用は順次開始」と適用前提の文が公開�
 	}
 })
 
-test('超過料金なしと追加契約の説明は残っている (開示を消していない)', () => {
+test('超過料金なしと、利用枠を使い切ったときの案内 (次の更新日・法人向けプランの相談) は残っている (開示を消していない)', () => {
 	for (const rel of ROLLOUT_PAGES) {
 		const text = stripComments(read(rel))
 		assert.match(text, /超過料金は発生しません/, `${rel} から「超過料金は発生しません」が消えた`)
-		assert.match(text, /追加でご契約/, `${rel} から追加契約の説明が消えた`)
+		assert.match(text, /次の更新日に利用枠が戻ります/, `${rel} から更新日の案内が消えた`)
+		assert.match(text, /法人向けプランの Enterprise/, `${rel} から法人向けプランの案内が消えた`)
+		assert.doesNotMatch(text, /追加でご契約/, `${rel} に追加の契約の案内が残っている`)
 	}
 })
 

@@ -64,16 +64,16 @@ test('roiTiers: 公開のプランのうち、有料のものとお見積りの�
 	assert.deepEqual(roiTiers([]), [])
 })
 
-test('roiFit: 試算の結果は 10 時間まで Light、超えたら Enterprise (お見積り・金額なし)', () => {
+test('roiFit: 試算の結果は 5 時間まで Hobby、超えたら Enterprise (お見積り・金額なし)', () => {
 	const tiers = roiTiers(publicTiers)
 	const light = byCode('light')
-	for (const h of [0.5, 1, 5, 5.5, 10]) {
+	for (const h of [0.5, 1, 5]) {
 		const fit = roiFit(tiers, h)
 		assert.equal(fit.tier.code, 'light', `${h} 時間`)
-		assert.equal(fit.cost, light.price * Math.max(1, Math.ceil(h / light.included_hours)), `${h} 時間`)
+		assert.equal(fit.cost, light.price, `${h} 時間`)
 		assert.equal(fit.quote, false, `${h} 時間`)
 	}
-	for (const h of [10.5, 20, 41, 90]) {
+	for (const h of [5.5, 10, 10.5, 20, 41, 90]) {
 		const fit = roiFit(tiers, h)
 		assert.equal(fit.tier.code, 'enterprise', `${h} 時間`)
 		assert.equal(fit.cost, null, `${h} 時間`)

@@ -52,7 +52,7 @@ tiers:
       kind: "download"
 
   - code: light
-    name: "Light"
+    name: "Hobby"
     display: card
     price: 2980
     price_display: "2,980"
@@ -60,7 +60,7 @@ tiers:
     price_unit: "/ 月"
     included_hours: 5
     included_basis: "monthly"
-    max_contracts: 2
+    max_contracts: 1
     overage_per_hour: null
     carryover_hours: null
     trial_days: 0

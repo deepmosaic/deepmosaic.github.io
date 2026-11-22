@@ -133,10 +133,8 @@ test('込み時間の内側では基本料だけ', () => {
 test('込み時間を超えたら契約を積む。上限本数でも足りなければ候補外', () => {
   // 込み時間を超えた分は金銭ではなく「同じプランをもう 1 本」で賄う。
   // 本数を増やしても単価は変わらない (割引なし) ので費用は本数に比例する。
-  assert.equal(monthlyCost(byCode('light'), 5), 2980); // 1 本
-  assert.equal(monthlyCost(byCode('light'), 6), 5960); // 2 本
-  assert.equal(monthlyCost(byCode('light'), 10), 5960); // 2 本 (上限)
-  assert.equal(monthlyCost(byCode('light'), 11), Number.POSITIVE_INFINITY); // 上限超え
+  assert.equal(monthlyCost(byCode('light'), 5), 2980); // 1 本 (上限)
+  assert.equal(monthlyCost(byCode('light'), 6), Number.POSITIVE_INFINITY); // 上限超え (同じプランは 1 本まで)
   assert.equal(monthlyCost(PRO, 20), TEST_PRICE.pro); // 1 本
   assert.equal(monthlyCost(PRO, 21), TEST_PRICE.pro * 2); // 2 本 (上限)
   assert.equal(monthlyCost(PRO, 41), Number.POSITIVE_INFINITY); // 上限超え
@@ -144,7 +142,7 @@ test('込み時間を超えたら契約を積む。上限本数でも足りな�
 
 test('契約本数の上限はデータから読む (コードに数値を持たない)', () => {
   // _data/plans.yml は料金のカタログの写しで、ずれは scripts/check-plan-catalog.mjs が検知する。
-  assert.equal(contractLimit(byCode('light')), 2);
+  assert.equal(contractLimit(byCode('light')), 1);
   assert.equal(contractLimit(byCode('pro')), 2);
   // 欠落・0・負値は 1 に丸める (0 に倒れると「1 本も契約できない」になる)
   assert.equal(contractLimit({}), 1);
@@ -155,9 +153,7 @@ test('契約本数の上限はデータから読む (コードに数値を持た
 test('必要契約本数は切り上げ、上限を超えたら null', () => {
   assert.equal(contractsNeeded(byCode('light'), 0), 1);
   assert.equal(contractsNeeded(byCode('light'), 5), 1);
-  assert.equal(contractsNeeded(byCode('light'), 5.1), 2);
-  assert.equal(contractsNeeded(byCode('light'), 10), 2);
-  assert.equal(contractsNeeded(byCode('light'), 10.1), null);
+  assert.equal(contractsNeeded(byCode('light'), 5.1), null);
   assert.equal(contractsNeeded(byCode('pro'), 40), 2);
   assert.equal(contractsNeeded(byCode('pro'), 40.1), null);
 });
@@ -252,30 +248,27 @@ const roiDefault = (key) => Number(SITE_YML.match(new RegExp(`^\\s+${key}:\\s*([
 const ROI_HOURS = roiDefault('default_videos_per_month') * roiDefault('default_length_hours');
 const paidPublic = roiTiers(TIERS);
 
-test('既定値 (月 10 時間) の適合プランは Light×2 (月額 5,960 円)', () => {
+test('既定値 (月 10 時間) は Hobby の込み時間を超えるので Enterprise (お見積り・金額なし)', () => {
   assert.equal(ROI_HOURS, 10);
   const fit = roiFit(paidPublic, ROI_HOURS);
+  assert.equal(fit.tier.code, 'enterprise');
+  assert.equal(fit.cost, null);
+  assert.equal(fit.quote, true);
+});
+
+test('既定値より少ない月 5 時間では Hobby (月額 2,980 円) が適合する', () => {
+  const fit = roiFit(paidPublic, 5);
   assert.equal(fit.tier.code, 'light');
-  assert.equal(fit.cost, 5960);
+  assert.equal(fit.cost, 2980);
   assert.equal(fit.quote, false);
 });
 
-test('既定値の年間削減額が 1,368,480 円になる', () => {
-  // 月 5 本 × 1 本 24,000 円の現状コストとの差額。
-  const currentYearly = roiDefault('default_videos_per_month') * roiDefault('default_cost_per_video') * 12;
-  const dmYearly = roiFit(paidPublic, ROI_HOURS).cost * 12;
-  assert.equal(currentYearly - dmYearly, 1368480);
-});
-
-test('作業量が増えると Light → Pro → Enterprise に切り替わる (仮の単価)', () => {
+test('作業量が増えると Hobby → Pro → Enterprise に切り替わる (仮の単価)', () => {
   // 切替点は「込み時間 × 契約本数」で決まる (超過単価は無い)
-  //   5h: Light×1                                   → Light
+  //   5h: Hobby×1                                   → Hobby
   assert.equal(cheapestPlan(paidPriced, 5).tier.code, 'light');
-  //  10h: Light×2 < Pro                             → まだ Light
-  assert.ok(byCode('light').price * 2 < TEST_PRICE.pro, '前提: Light×2 が Pro より安い');
-  assert.equal(cheapestPlan(paidPriced, 10).tier.code, 'light');
-  //  11h: Light は 2 本でも 10h までで候補外         → Pro
-  assert.equal(cheapestPlan(paidPriced, 11).tier.code, 'pro');
+  //   6h: Hobby は 1 本 (5h) までで候補外           → Pro
+  assert.equal(cheapestPlan(paidPriced, 6).tier.code, 'pro');
   //  40h: Pro×2 で賄える (Enterprise は月次プランで賄えないときだけ) → まだ Pro
   assert.equal(cheapestPlan(paidPriced, 40).tier.code, 'pro');
   //  41h: Pro は 2 本でも 40h までで候補外           → Enterprise
@@ -284,15 +277,16 @@ test('作業量が増えると Light → Pro → Enterprise に切り替わる (
 
 test('込み時間ちょうどでは本数を増やさない (境界の丸め事故を防ぐ)', () => {
   assert.equal(monthlyCost(byCode('light'), 5), 2980);
-  assert.equal(monthlyCost(byCode('light'), 5.000001), 5960);
+  assert.equal(monthlyCost(byCode('light'), 5.000001), Number.POSITIVE_INFINITY);
   assert.equal(monthlyCost(PRO, 20), TEST_PRICE.pro);
   assert.equal(monthlyCost(PRO, 20.000001), TEST_PRICE.pro * 2);
 });
 
 test('内訳文がプランごとの条件をデータから組み立てる', () => {
   assert.equal(planBreakdown(byCode('pro'), 12), '月 20 時間込み');
-  // 複数契約が必要な時間数では本数と合計時間を出す
-  assert.equal(planBreakdown(byCode('light'), 8), '2 契約（月 10 時間込み）');
+  // 1 本で賄える時間数では本数を出さない
+  assert.equal(planBreakdown(byCode('light'), 4), '月 5 時間込み');
+  // 複数契約が必要な時間数では本数と合計時間を出す (上限 2 本のプラン)
   assert.equal(planBreakdown(byCode('pro'), 21), '2 契約（月 40 時間込み）');
   // Pro の上限 (2 本 = 40 時間) を超える時間数では **そもそも Pro が候補に出ない**。
   // ここで planBreakdown(pro, 41) を assert すると「賄えないプランの内訳文」を

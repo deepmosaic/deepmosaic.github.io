@@ -76,16 +76,16 @@ test('契約本数の上限が今のカタログの値と一致する', () => {
   // ライブ検査と CI (scripts/check-plan-catalog.mjs) が見る。この test は
   // 「気付かないうちに写しだけ書き換わった」のを止めるための固定。
   assert.equal(byCode('free').max_contracts, 1);
-  // Light は 2 本まで
-  assert.equal(byCode('light').max_contracts, 2);
+  // Hobby (code は light) は 1 本まで
+  assert.equal(byCode('light').max_contracts, 1);
   assert.equal(byCode('pro').max_contracts, 2);
   // シート単価で自己申込を塞いでいるため複数契約の対象外
   assert.equal(byCode('enterprise').max_contracts, 1);
 });
 
 test('サイトが出す合計時間は included_hours × max_contracts で導出できる', () => {
-  // 「最大 2 契約（月 10 時間まで）」の 10 はどこにも手書きしない、という設計の固定。
-  assert.equal(byCode('light').included_hours * byCode('light').max_contracts, 10);
+  // 合計時間はどこにも手書きしない、という設計の固定。Hobby は 1 本なので込み時間と同じ 5 時間
+  assert.equal(byCode('light').included_hours * byCode('light').max_contracts, 5);
   // Pro は月 20 時間 × 2 契約 = 40 時間
   assert.equal(byCode('pro').included_hours * byCode('pro').max_contracts, 40);
 });

@@ -89,7 +89,7 @@ hash:
       {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
       <li><strong>計算單位</strong>：累計已完成偵測的影片播放長度。頁尾會顯示剩餘時間（免費方案為「剩餘可偵測時間」，付費方案為「本月剩餘」）</li>
       <li><strong>計算時機</strong>：於偵測<strong>完成時</strong>計入。匯出不列入計算。即使縮小偵測範圍，也會以整部影片的長度計算</li>
-      <li><strong>上限的適用方式</strong>：不會產生超額費用。額度不足時，可追加訂閱同一方案（{% include contract-limits.html %}，<a href="/zh-tw/price/">價格頁面</a>）</li>
+      <li><strong>上限的適用方式</strong>：不會產生超額費用。用完付費方案的內含時數時，額度會在下次續訂日恢復。若需要更多用量，請洽詢企業方案 Enterprise（個別報價，<a href="/zh-tw/price/">價格頁面</a>）</li>
       <li><strong>免費期間</strong>：免費方案自首次啟動新版本的當天起，可使用 {{ free_plan.free_window_days }} 天。於達到累計上限或天數屆滿時（以較早者為準）結束</li>
       <li><strong>不計算的項目</strong>：範例專案的重新偵測不列入計算。同一部影片再次偵測，也不會重複計算</li>
       <li><strong>剩餘時間不多時</strong>：免費額度使用達 80% 後，每次啟動時會顯示 1 次「您已使用 N% 的免費可偵測時間（剩餘 …）。」。用完後，開始偵測時會顯示對話方塊，提示變更方案（未登入時則提示登入）</li>

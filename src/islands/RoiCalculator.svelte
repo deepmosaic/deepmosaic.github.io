@@ -33,7 +33,7 @@
       hoursValue: (h) => h + ' 時間',
       planLabel: '適合プラン',
       perMonth: ' / 月',
-      enterpriseHint: (h) => `月 ${h} 時間を超える運用は複数人での利用が想定されるため、Enterprise もご検討ください。`,
+      enterpriseHint: (h) => `月 ${h} 時間を超える運用は Hobby の込み時間に収まらないため、法人向けプランの Enterprise をご相談ください。`,
       currentLabel: '現状の年間コスト',
       dmLabel: 'Deepmosaic の年間費用',
       savingLabel: '年間の差額',
@@ -54,7 +54,7 @@
       hoursValue: (h) => `${h} ${Number(h) === 1 ? 'hour' : 'hours'}`,
       planLabel: 'Best-fit plan',
       perMonth: ' / month',
-      enterpriseHint: (h) => `Usage over ${h} hours a month is likely to involve several people, so consider Enterprise as well.`,
+      enterpriseHint: (h) => `Usage over ${h} hours a month does not fit in the hours included in Hobby, so please ask us about Enterprise, our plan for businesses.`,
       currentLabel: 'Current annual cost',
       dmLabel: 'Annual cost of Deepmosaic',
       savingLabel: 'Annual difference',
@@ -75,7 +75,7 @@
       hoursValue: (h) => `${h} 小時`,
       planLabel: '適合的方案',
       perMonth: ' / 月',
-      enterpriseHint: (h) => `每月超過 ${h} 小時的使用量通常會由多人共同使用，建議您也考慮 Enterprise。`,
+      enterpriseHint: (h) => `每月超過 ${h} 小時的使用量超出 Hobby 的內含時數，請洽詢企業方案 Enterprise。`,
       currentLabel: '目前的年度成本',
       dmLabel: 'Deepmosaic 的年度費用',
       savingLabel: '年度差額',
@@ -101,7 +101,7 @@
   const tiers = roiTiers(JSON.parse(plans));
   const MANUAL_X = Number(manualMultiplier) || 4;
 
-  /** 自己申込のプランで賄える最大 (Light×上限本数)。これを超えたら Enterprise (お見積り) を案内する。 */
+  /** 自己申込のプランで賄える最大 (込み時間 × 上限本数の最大)。これを超えたら Enterprise (お見積り) を案内する。 */
   const SUGGEST_ENTERPRISE_OVER = selfServeMaxHours(tiers);
 
   // 既定の本数と尺は _data/site.yml の roi から data-default-videos / data-default-length で受ける。

@@ -2,7 +2,7 @@
 	"desktop_ref": "main",
 	"note": "アプリの用語集 (glossary.json と glossary-chars.json) の写し。glossary.json は各語の note を外した形で写す。sha256 は改行を LF にそろえた内容の値。",
 	"sha256": {
-		"glossary.json": "5ec06083e45a0f47ddd4b69266aa6a7adb7afac59368fa1e7ebecf07005a3553",
+		"glossary.json": "f7515b1ac1b9fbc60915cfadd5bfa32af89c9cc1f17883f23df531f9e616e446",
 		"glossary-chars.json": "72f3938ebf32bfe18b9240403203d9d1cbf2f1eca2cf4c3c3b4d7d21cb813775"
 	}
 }

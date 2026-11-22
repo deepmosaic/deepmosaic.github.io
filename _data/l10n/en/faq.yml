@@ -2,7 +2,7 @@
 # ja はトップレベルが配列だが、_source を持たせるため items: の下に置く (部品が site.data.l10n[page.lang].faq.items で引く)。
 # 除去の禁止の連語 (remove mosaic・decensor など) を使わない (FAQ の描画には data-i18n-allow を付けられない)。
 _source: "_data/faq.yml"
-_source_hash: "a489b8e2fa8a486b54cd4d40616b349776be7e6e1a1d0cb13de5b4eb5f6c3d99"
+_source_hash: "4ce753f4c00928304a78ef12f3787deb6297d6235d09a5f3a593001fcff65555"
 items:
   - q: "What kind of software is Deepmosaic?"
     a: "It is a Windows desktop app that uses AI to automatically detect and track targets in a video and apply mosaic to those areas. You can review and correct the detection results in the editing screen, and it supports exporting videos with the mosaic burned in and importing the mosaic information into Adobe Premiere Pro. It is intended to streamline pre-submission work in video production where mosaic must be applied."
@@ -23,7 +23,7 @@ items:
   - q: "Can I use it for free?"
     a: "Yes. For 7 days from the day you first launch the app, you can import up to 2 hours of video in total for free. Right after downloading, you can use up to 30 minutes in total, and creating a free account raises that to 2 hours. The free period ends after 7 days or when you reach the total limit, whichever comes first. Even if you sign up again with a different account, the same PC is limited to 2 hours in total. No credit card is required. After the free period ends, you can keep editing and exporting existing projects."
   - q: "Will processing stop if I go over the hour limit?"
-    a: "Processing in progress does not stop, and there are no overage charges. If your allowance is not enough, you can add more subscriptions to the same plan (Light: up to %%LIGHT_MAX%% subscriptions for %%LIGHT_TOTAL%% hours a month). If you need more than that, please ask us about Enterprise (custom quote). The included hours for each plan are listed on the pricing page."
+    a: "Processing in progress does not stop, and there are no overage charges. If you use up the included hours of a paid plan, your allowance is restored on the next renewal date. If you need more than that, please ask us about Enterprise, our plan for businesses (custom quote). The included hours for each plan are listed on the pricing page."
   - q: "Is a GPU required? Do you support Mac?"
     a: "AI detection also works with a CPU alone, but processing becomes much slower (about 2 fps in our measurements). For comfortable use, we recommend an NVIDIA GeForce RTX 3000 series GPU or higher. GPUs below that level have not been tested. A macOS version is in development, and its release date has not been decided. At this time, only Windows 10 / 11 (64-bit) is supported."
   - q: "Which Adobe products does it work with?"

@@ -240,15 +240,16 @@ test('pricing.js: formatYenFor は ja / en が ¥1,000、zh-tw が 1,000 日圓 
 })
 
 test('pricing.js: planBreakdown の言語の引数を省くと今の ja の文字列のまま', () => {
-	for (const [code, h] of [['pro', 12], ['light', 8], ['pro', 21], ['enterprise', 12], ['enterprise', 73], ['free', 1]]) {
+	for (const [code, h] of [['pro', 12], ['light', 4], ['pro', 21], ['enterprise', 12], ['enterprise', 73], ['free', 1]]) {
 		assert.equal(planBreakdown(byCode(code), h), planBreakdown(byCode(code), h, 'ja'), `${code} ${h}`)
 	}
-	assert.equal(planBreakdown(byCode('light'), 8), '2 契約（月 10 時間込み）')
+	assert.equal(planBreakdown(byCode('light'), 4), '月 5 時間込み')
+	assert.equal(planBreakdown(byCode('pro'), 21), '2 契約（月 40 時間込み）')
 	assert.equal(planBreakdown(byCode('enterprise'), 12), '1 アカウント（20 時間をプール共有）')
 })
 
 test('pricing.js: planBreakdown の英中は数値が同じで仮名が無く、lintValue を通る', () => {
-	const cases = [['pro', 12], ['light', 8], ['pro', 21], ['enterprise', 12], ['enterprise', 73], ['free', 1]]
+	const cases = [['pro', 12], ['light', 4], ['pro', 21], ['enterprise', 12], ['enterprise', 73], ['free', 1]]
 	const digits = (s) => (s.match(/\d+/g) ?? []).sort()
 	for (const lang of ['en', 'zh-tw']) {
 		for (const [code, h] of cases) {
@@ -259,11 +260,13 @@ test('pricing.js: planBreakdown の英中は数値が同じで仮名が無く、
 			assert.deepEqual(lintValue(lang, s), [], `${lang} ${code} ${h}: ${s}`)
 		}
 	}
-	assert.equal(planBreakdown(byCode('light'), 8, 'en'), '2 subscriptions (10 hours / month included)')
+	assert.equal(planBreakdown(byCode('light'), 4, 'en'), '5 hours / month included')
+	assert.equal(planBreakdown(byCode('pro'), 21, 'en'), '2 subscriptions (40 hours / month included)')
 	assert.equal(planBreakdown(byCode('pro'), 12, 'en'), '20 hours / month included')
 	assert.equal(planBreakdown(byCode('enterprise'), 12, 'en'), '1 account (20 hours shared as a pool)')
 	assert.equal(planBreakdown(byCode('enterprise'), 73, 'en'), '4 accounts (80 hours shared as a pool)')
-	assert.equal(planBreakdown(byCode('light'), 8, 'zh-tw'), '2 份訂閱（每月含 10 小時）')
+	assert.equal(planBreakdown(byCode('light'), 4, 'zh-tw'), '每月含 5 小時')
+	assert.equal(planBreakdown(byCode('pro'), 21, 'zh-tw'), '2 份訂閱（每月含 40 小時）')
 	assert.equal(planBreakdown(byCode('enterprise'), 12, 'zh-tw'), '1 個帳號（20 小時以額度池共用）')
 })
 
@@ -334,7 +337,7 @@ test('RoiCalculator: ja の文は今の文字列のまま表の ja にある', (
 		'月間の消費時間',
 		'適合プラン',
 		' / 月',
-		'時間を超える運用は複数人での利用が想定されるため、Enterprise もご検討ください。',
+		'時間を超える運用は Hobby の込み時間に収まらないため、法人向けプランの Enterprise をご相談ください。',
 		'現状の年間コスト',
 		'Deepmosaic の年間費用',
 		'年間の差額',

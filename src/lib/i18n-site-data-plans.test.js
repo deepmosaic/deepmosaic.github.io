@@ -234,10 +234,11 @@ for (const lang of LANGS) {
 		})
 	})
 
-	test(`faq (${lang}): ja のプレースホルダ 2 種が 10 件目の回答にそのまま残り、Pro のものは無い (陽性対照)`, () => {
+	test(`faq (${lang}): 10 件目の回答に契約の本数のプレースホルダと古いプラン名が無く、Pro のものも無い`, () => {
 		const a = l10n[lang].faq.items[9].a
-		for (const p of ['%%LIGHT_MAX%%', '%%LIGHT_TOTAL%%']) {
-			assert.ok(a.includes(p), `${p} が無い`)
+		assert.ok(a.includes('Enterprise'), '陽性対照: 10 件目の回答が読めていない')
+		for (const p of ['%%LIGHT_MAX%%', '%%LIGHT_TOTAL%%', 'Light']) {
+			assert.ok(!a.includes(p), `${p} が残っている`)
 		}
 		assert.ok(!a.includes('%%PRO_'), '%%PRO_ のプレースホルダが残っている')
 	})

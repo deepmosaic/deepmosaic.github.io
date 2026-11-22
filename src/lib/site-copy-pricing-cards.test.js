@@ -91,9 +91,10 @@ test('陰性対照: pro の public を true にした plans.yml は落ちる', (
 	assertPublicTiers(tiersFromText(PLANS_TEXT))
 })
 
-test('featured は Light だけで、Light の max_contracts は 2', () => {
+test('featured は Hobby (code は light) だけで、名前は Hobby、max_contracts は 1', () => {
 	assert.equal(byCode('light').featured, true)
-	assert.equal(byCode('light').max_contracts, 2)
+	assert.equal(byCode('light').name, 'Hobby')
+	assert.equal(byCode('light').max_contracts, 1)
 	for (const t of TIERS.filter((x) => x.code !== 'light')) assert.equal(t.featured, false, `${t.code} が featured`)
 })
 
@@ -161,9 +162,9 @@ test('jekyll.yml: お見積りと quote_note の grep と相談導線の grep �
 	assert.ok(ci.includes(`grep -q 'href="/enterprise/inquiry/"' _site/price/index.html`), '相談導線の grep が消えた')
 })
 
-test('境界値: 追加契約の合計時間は included_hours × max_contracts = 10 で、手書きの契約の本数と込み時間に無い時間が無い', () => {
+test('境界値: Hobby の合計時間は included_hours × max_contracts = 5 で、手書きの契約の本数と込み時間に無い時間が無い', () => {
 	const light = byCode('light')
-	assert.equal(light.included_hours * light.max_contracts, 10)
+	assert.equal(light.included_hours * light.max_contracts, 5)
 	const hours = new Set(['light', 'free', 'enterprise', 'pro'].map((c) => String(byCode(c).included_hours)))
 	for (const rel of ['_data/plans.yml', '_includes/pricing-cards.html']) {
 		const src = read(rel)

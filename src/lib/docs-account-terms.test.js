@@ -43,9 +43,11 @@ test('docs の見える部分に「契約本数」が残っていない', () => 
 	assert.deepEqual(offenders, [])
 })
 
-test('「プランを選ぶ」の説明が「契約アカウント数」を選べると書く', () => {
+test('「プランを選ぶ」の説明が同じプランの契約は 1 つまでと書き、本数を選べるとは書かない', () => {
 	const html = visibleSource(readFileSync(ACCOUNT_DOC, 'utf8'))
-	assert.match(html, /「契約アカウント数」を選べます/)
+	assert.match(html, /同じプランの契約は 1 アカウントにつき 1 つまでです/)
+	assert.doesNotMatch(html, /を選べます（/)
+	assert.doesNotMatch(html, /追加でご契約/)
 })
 
 test('プラン選択のスクリーンショットの alt が「契約アカウント数」を表示すると書く', () => {

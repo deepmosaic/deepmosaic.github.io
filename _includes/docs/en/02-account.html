@@ -11,13 +11,13 @@ hash:
 <section id="license" class="scroll-mt-24">
   {% include docs-h2.html kicker="Account" title="Sign-in and license" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>You can use the app for free <strong>for {{ free_plan.free_window_days }} days from the day you first launch it</strong>. Right after downloading, you can try it for up to 30 minutes in total without signing in. Creating a free account raises this to up to {{ free_plan.included_hours }} hours in total. On a single PC, the free allowance is capped at 2 hours in total, even if you sign up again with a different account. The free period ends after {{ free_plan.free_window_days }} days or when you reach the total limit, whichever comes first. No credit card is required. The individual plan (Light) is paid by credit card (Enterprise is paid by bank transfer against an invoice; see <a href="#team">Organization management</a>).</p>
+    <p>You can use the app for free <strong>for {{ free_plan.free_window_days }} days from the day you first launch it</strong>. Right after downloading, you can try it for up to 30 minutes in total without signing in. Creating a free account raises this to up to {{ free_plan.included_hours }} hours in total. On a single PC, the free allowance is capped at 2 hours in total, even if you sign up again with a different account. The free period ends after {{ free_plan.free_window_days }} days or when you reach the total limit, whichever comes first. No credit card is required. The individual plan (Hobby) is paid by credit card (Enterprise is paid by bank transfer against an invoice; see <a href="#team">Organization management</a>).</p>
     <p>Signing in increases your available detection time even on the Free plan, and on PCs with an NVIDIA GPU, it lets you detect with the high-accuracy model (when you're not signed in, detection uses the lightweight model).</p>
     <ul>
       <li>Free: Import up to {{ free_plan.included_hours }} hours of video in total for {{ free_plan.free_window_days }} days from the day you first launch it (30 minutes without signing up; no credit card required)</li>
       <li>Paid plans: See the <a href="/en/price/">pricing page</a> for the included hours of each plan</li>
     </ul>
-    <p>There are no overage charges. If your allowance isn't enough, you can purchase additional subscriptions to the same plan ({% include contract-limits.html %}).</p><h3 class="mt-6 text-[16px] font-bold text-ink">Signing in</h3>
+    <p>There are no overage charges. If you use up the included hours, your allowance is restored on the next renewal date. If you need more than that, please ask us about Enterprise, our plan for businesses (custom quote).</p><h3 class="mt-6 text-[16px] font-bold text-ink">Signing in</h3>
     <ol>
       <li>Press "Sign in" in the profile menu (top right), or "Sign in to get {{ free_plan.included_hours }} h" in the footer.</li>
       <li>Press "Sign in" on the sign-in screen. The authentication screen opens in your browser.</li>
@@ -57,7 +57,7 @@ hash:
     <p>You can cancel your subscription at any time, with no cancellation fee or other penalty. After you cancel, you can keep using the app within the free allowance.</p>
     <p>Pro is no longer accepting new subscriptions. If you're currently subscribed, you can keep using it. To change your plan or cancel your subscription, follow the paid plan steps above.</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">Choose a plan</h3>
-    <p>The Light card shows the monthly price (excluding and including tax), the included hours, and the one-device-at-a-time limit. For plans you can subscribe to more than once, you can choose "Subscribed seats" ({% include contract-limits.html %}). Press "Choose this plan" to open the payment screen in your browser; when payment is complete, "Payment complete" appears in the app. For Enterprise, contact us from "Ask about deployment" (pricing is by quote).</p>
+    <p>The Hobby card shows the monthly price (excluding and including tax), the included hours, and the one-device-at-a-time limit. Each account can have only one subscription to the same plan. Press "Choose this plan" to open the payment screen in your browser; when payment is complete, "Payment complete" appears in the app. For Enterprise, contact us from "Ask about deployment" (pricing is by quote).</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/en/plan-select.webp" alt="The &quot;Choose a plan&quot; dialog, showing the monthly price, included hours, and subscribed seats for each plan" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">The plan selection screen. Prices and included hours are the same as on the <a href="/en/price/">pricing page</a></figcaption>

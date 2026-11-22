@@ -6,7 +6,7 @@
 //   (`_data/plans.yml` の `quote_label` / `quote_note` / `note_title` / `note`)。金額 (桁区切りの数・通貨の記号)・
 //   アカウント単位の価格 (`/ アカウント`)・維持管理費用の字が出ないこと。導入相談の CTA が 1 本あること
 //   (`.github/workflows/jekyll.yml` の grep と同じ固定を、カード単位・3 言語で見る)。
-// - Pro は public: false: 料金カードに PRO の見出しが無く、LIGHT が featured のカード。`/subscribe/` に Pro が無い。
+// - Pro は public: false: 料金カードに PRO の見出しが無く、HOBBY が featured のカード。`/subscribe/` に Pro が無い。
 // - トップの「組織で使う（Enterprise）」カードにも導入の相談の 1 文があること (API 等は書かない)。
 // - 導入相談ページのリード文に「御社のシステム・サービスへの導入のご相談」があること (「自社」ではない)。
 //
@@ -79,9 +79,9 @@ async function expectEnterpriseQuoteCard(page: Page, t: CardText): Promise<void>
   await expect(cta).toHaveText(t.cta);
 }
 
-async function expectProHiddenAndLightFeatured(page: Page): Promise<void> {
+async function expectProHiddenAndHobbyFeatured(page: Page): Promise<void> {
   await expect(pricingCard(page, /^PRO$/)).toHaveCount(0);
-  await expect(page.locator('.plan-card-featured').filter({ has: page.locator('h3', { hasText: /^LIGHT$/ }) })).toHaveCount(1);
+  await expect(page.locator('.plan-card-featured').filter({ has: page.locator('h3', { hasText: /^HOBBY$/ }) })).toHaveCount(1);
 }
 
 const PRICING_PAGES: Array<[string, CardText]> = [
@@ -97,14 +97,14 @@ for (const [path, t] of PRICING_PAGES) {
     await expectEnterpriseQuoteCard(page, t);
   });
 
-  test(`${path} の料金カードに PRO が無く、LIGHT が featured`, async ({ page }) => {
+  test(`${path} の料金カードに PRO が無く、HOBBY が featured`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
-    await expectProHiddenAndLightFeatured(page);
+    await expectProHiddenAndHobbyFeatured(page);
   });
 }
 
 for (const path of ['/subscribe/', '/en/subscribe/', '/zh-tw/subscribe/']) {
-  test(`${path} に Pro の申し込みが無く、Light のボタンは主ボタン`, async ({ page }) => {
+  test(`${path} に Pro の申し込みが無く、Hobby のボタンは主ボタン`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#plan-pro')).toHaveCount(0);
     await expect(page.locator('a[href*="checkout=pro"]')).toHaveCount(0);

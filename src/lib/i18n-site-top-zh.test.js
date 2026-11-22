@@ -196,8 +196,8 @@ test('本文: 金額は「日圓」で、¥ を使わない', () => {
 	assert.ok(zhExists)
 	const body = stripComments(splitFrontMatter(ZH).body)
 	assert.ok(!body.includes('¥') && !body.includes('&yen;'), '¥ を使っている')
-	// 既定の月 10 時間 = Light×2 (5,960)
-	assert.ok(body.includes('5,960 日圓'), 'noscript の金額が「5,960 日圓」の形でない')
+	// noscript は Hobby の月額 (2,980) を書く
+	assert.ok(body.includes('2,980 日圓'), 'noscript の金額が「2,980 日圓」の形でない')
 })
 
 test('リンク: サイト内は /zh-tw/ の接頭辞、docs は ja-link.html、DL の href は言語のデータ', () => {
