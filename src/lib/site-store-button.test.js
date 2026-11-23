@@ -199,7 +199,7 @@ test('store-button.html: href はバッジの行き先、ファイル DL の属�
 	assert.match(src, /<\/a>/)
 	const inner = src.slice(src.indexOf(tag) + tag.length, src.indexOf('</a>'))
 	assert.equal(inner, '{% include store-badge-img.html class=st_img lazy=include.lazy %}', '中身はバッジの画像だけ')
-	assert.match(src, /include\.size == 'large'[\s\S]*h-\[50px\] w-auto[\s\S]*h-\[38px\] w-auto/, 'large は大きいボタン (btn-lg) と同じ高さ')
+	assert.match(src, /include\.size == 'hero'[\s\S]*'h-\[60px\] w-auto sm:h-\[72px\]'[\s\S]*include\.size == 'large'[\s\S]*h-\[50px\] w-auto[\s\S]*h-\[38px\] w-auto/, 'hero はトップの冒頭の大きさ、large は大きいボタン (btn-lg) と同じ高さ')
 	assert.match(src, /\{% if include\.note %\}<p class="mt-2 text-sm text-ink-4">\{\{ include\.note \}\}<\/p>\{% endif %\}/)
 })
 

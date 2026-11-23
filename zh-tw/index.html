@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/
 ja_url: /
 source: index.html
-source_hash: "ff1e2750bea744ca4b89af941ce24e5f1080ae0c5f038ad79f81b31ff9bdbcbe"
+source_hash: "def71a832419a5c44a1129c7c815309df7a7acf33ebb9ec549a3698805c1e45b"
 title: 讓馬賽克作業只剩最終確認
 seo_title: AI 偵測臉部與身體部位，自動為影片加上馬賽克｜Deepmosaic
 description: Deepmosaic 是由 AI 偵測影片中的男性與女性身體部位、男性臉部、女性臉部，並加上馬賽克的 Windows 應用程式。也能找出既有馬賽克，並在其上重新套用馬賽克。無法去掉馬賽克。所有處理都在您的電腦上完成。
@@ -32,12 +32,11 @@ schemas:
       <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">可協助偵測的物體：男性身體部位、女性身體部位、男性臉部、女性臉部。可在<a href="/zh-tw/docs/#detect-options" class="text-accent-soft hover:underline">偵測選項</a>中個別開啟或關閉。也能找出影片中既有馬賽克的位置（<a href="#existing-mosaic" class="text-accent-soft hover:underline">詳細說明</a>）</figcaption>
     </figure>
 
-    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      {%- include store-button.html dl="hero-store" size="large" %}
+    <div class="mb-5 mt-[34px] flex flex-col items-center gap-4">
+      {%- include store-button.html dl="hero-store" size="hero" %}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>在瀏覽器中試用<span class="hidden sm:inline">（影片最長 {{ site.data.site.web_app.trial_minutes }} 分鐘，免安裝）</span></span></a>
+      <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="text-[15px] text-accent-soft hover:underline">在瀏覽器中試用 <span aria-hidden="true">→</span></a>
       {%- endif %}
-      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}查看說明文件{% endcapture %}<a href="/zh-tw/docs/" class="btn-secondary btn-lg">{{ docs_label }}</a>
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11（64 位元）</span>

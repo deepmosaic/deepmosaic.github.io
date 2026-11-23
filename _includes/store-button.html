@@ -6,7 +6,7 @@ params:
   dl      (必須) 置き場所ごとの識別子 (hero-store / cta-store / docs-install-store / join-store / 料金のカードはプランの code)。
           `data-dl` (計測の目印) と `data-store-button` (出し分けの検査の目印) に入る。
           計測しないページ (`page.no_tracking`) では data-dl を出さない。
-  size    (任意) "large" で大きいボタン (btn-lg) と同じ高さ
+  size    (任意) "large" で大きいボタン (btn-lg) と同じ高さ。"hero" でトップの冒頭の大きさ (狭い幅 60px、sm 以上 72px)
   note    (任意) バッジの下の補足文
   wrap    (任意) 包む <div> の class。省くと包みを出さない。
   lazy    (任意) 真値で画像を遅延読み込み (ファーストビューの外の所)
@@ -16,6 +16,6 @@ href は Microsoft Store のインストーラを直接ダウンロードする 
 画像と alt は `store-badge-img.html`。<a> の class の `store-badge-link` はバッジの外側の明るい縁 (`src/app.css`。暗い地でバッジの形を見せる)。ヘッダーの <a> も同じ class。検査は scripts/i18n/checks/store.mjs。
 {%- endcomment -%}
 {%- if site.data.site.distribution.store_enabled -%}
-{%- if include.size == 'large' -%}{%- assign st_img = 'h-[50px] w-auto' -%}{%- else -%}{%- assign st_img = 'h-[38px] w-auto' -%}{%- endif -%}
+{%- if include.size == 'hero' -%}{%- assign st_img = 'h-[60px] w-auto sm:h-[72px]' -%}{%- elsif include.size == 'large' -%}{%- assign st_img = 'h-[50px] w-auto' -%}{%- else -%}{%- assign st_img = 'h-[38px] w-auto' -%}{%- endif -%}
 {% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="store-badge-link inline-flex shrink-0 rounded-[5px]" href="{% include store-install-url.html %}" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include store-badge-img.html class=st_img lazy=include.lazy %}</a>{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}{% if include.wrap %}</div>{% endif %}
 {%- endif -%}

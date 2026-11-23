@@ -172,10 +172,10 @@ test('リンク: サイト内は /en/ の接頭辞、docs は同じ言語の doc
 	}
 	const jaLinks = [...body.matchAll(/\{%-?\s*include ja-link\.html href="([^"]*)"/g)].map((m) => m[1])
 	assert.deepEqual(jaLinks.filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
-	for (const want of ['/docs/', '/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team']) {
+	for (const want of ['/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team']) {
 		assert.ok(hrefs.includes(`/en${want}`), `/en${want} へのリンクが無い`)
 	}
-	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="large" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
+	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="hero" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
 	assert.doesNotMatch(body, /download-button|app_download_link/, 'インストーラの DL の部品が残っている')
 	assert.match(body, /secondary_href="\/en\/price\/"/)
 })

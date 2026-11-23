@@ -8,7 +8,7 @@
 // ビルド出力 (`_site/`) を実際に描いて、見えているバッジ全部について次を確かめる。
 //
 // - 幅 ÷ 高さが元の画像の 161 / 44 (±0.01)
-// - 高さが 38px (普通のボタン) か 50px (大きいボタン)
+// - 高さが 38px (普通のボタン) か 50px (大きいボタン)。トップの冒頭 (hero-store) だけは幅 1280 で 72px、幅 390 で 60px
 // - 枠の線が 0、角丸が 0 (画像の角はそのまま)
 // - 包むリンクの高さがバッジと同じ (押せる範囲・フォーカスの枠が下の空白へ広がらない)
 // - 包むリンクの外側に明るい 1px の縁 (box-shadow) がある (配布元の dark 版の地と縁は暗い地に溶けるため。`src/app.css` の .store-badge-link)
@@ -18,8 +18,8 @@ import { test, expect, type Page } from '@playwright/test';
 
 const PAGES = ['/', '/price/', '/docs/', '/en/', '/en/price/', '/en/docs/', '/zh-tw/', '/zh-tw/price/', '/zh-tw/docs/'];
 const VIEWPORTS = [
-  { name: '1280', width: 1280, height: 800 },
-  { name: '390', width: 390, height: 844 },
+  { name: '1280', width: 1280, height: 800, hero: 72 },
+  { name: '390', width: 390, height: 844, hero: 60 },
 ];
 const RATIO = 161 / 44;
 const HEIGHTS = [38, 50];
@@ -67,7 +67,7 @@ for (const vp of VIEWPORTS) {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
     for (const path of PAGES) {
-      test(`${path}: 見えているバッジは元の縦横比・高さ 38/50・枠なし・リンクの高さが同じ・外側の明るい縁`, async ({ page }) => {
+      test(`${path}: 見えているバッジは元の縦横比・決まった高さ・枠なし・リンクの高さが同じ・外側の明るい縁`, async ({ page }) => {
         await page.goto(path, { waitUntil: 'load' });
         const badges = await measureBadges(page);
         if (path.endsWith('/docs/')) {
@@ -77,7 +77,8 @@ for (const vp of VIEWPORTS) {
         for (const b of badges) {
           const label = `${path} ${b.where} (${b.w.toFixed(1)}×${b.h.toFixed(1)})`;
           expect(Math.abs(b.w / b.h - RATIO), `${label}: 縦横比`).toBeLessThanOrEqual(0.01);
-          expect(HEIGHTS.some((h) => Math.abs(b.h - h) < 0.5), `${label}: 高さ`).toBe(true);
+          const heights = b.where === 'hero-store' ? [vp.hero] : HEIGHTS;
+          expect(heights.some((h) => Math.abs(b.h - h) < 0.5), `${label}: 高さ`).toBe(true);
           expect(b.border, `${label}: 枠の線`).toBe(0);
           expect(b.radius, `${label}: 角丸`).toBe('0px');
           expect(Math.abs(b.linkH - b.h), `${label}: リンクの高さ ${b.linkH.toFixed(1)}`).toBeLessThan(1);

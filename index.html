@@ -26,12 +26,11 @@ schemas:
       <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">検出支援できる物体: 男性器・女性器・男性の顔・女性の顔（<a href="/docs/#detect-options" class="text-accent-soft hover:underline">検出オプション</a>で個別に ON / OFF）。すでにかかっているモザイクの位置も見つけられます（<a href="#existing-mosaic" class="text-accent-soft hover:underline">詳しく</a>）</figcaption>
     </figure>
 
-    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      {%- include store-button.html dl="hero-store" size="large" %}
+    <div class="mb-5 mt-[34px] flex flex-col items-center gap-4">
+      {%- include store-button.html dl="hero-store" size="hero" %}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>ブラウザでお試し<span class="hidden sm:inline">（{{ site.data.site.web_app.trial_minutes }} 分までの動画・インストール不要）</span></span></a>
+      <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="text-[15px] text-accent-soft hover:underline">ブラウザでお試し <span aria-hidden="true">→</span></a>
       {%- endif %}
-      <a href="/docs/" class="btn-secondary btn-lg">{% include icon.html name="BookOpen" class="h-5 w-5" %}ドキュメントを見る</a>
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64bit)</span>

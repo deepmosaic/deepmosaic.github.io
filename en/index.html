@@ -4,7 +4,7 @@ lang: en
 permalink: /en/
 ja_url: /
 source: index.html
-source_hash: "ff1e2750bea744ca4b89af941ce24e5f1080ae0c5f038ad79f81b31ff9bdbcbe"
+source_hash: "def71a832419a5c44a1129c7c815309df7a7acf33ebb9ec549a3698805c1e45b"
 title: Mosaic work, down to a final check
 seo_title: AI that adds mosaic to faces and body areas in videos | Deepmosaic
 description: "Deepmosaic for Windows: AI automatically detects male and female body areas, male faces, and female faces in videos and adds mosaic, all on your PC. It also finds existing mosaic and applies mosaic over it again. It cannot take mosaic off."
@@ -31,12 +31,11 @@ schemas:
       <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">Objects it can help detect: male body areas, female body areas, male faces, and female faces. Turn each on or off in <a href="/en/docs/#detect-options" class="text-accent-soft hover:underline">detection options</a>. It can also find the positions of mosaic already in the video (<a href="#existing-mosaic" class="text-accent-soft hover:underline">learn more</a>).</figcaption>
     </figure>
 
-    <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      {%- include store-button.html dl="hero-store" size="large" %}
+    <div class="mb-5 mt-[34px] flex flex-col items-center gap-4">
+      {%- include store-button.html dl="hero-store" size="hero" %}
       {%- if site.data.site.web_app.enabled %}
-      <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>Try it in your browser<span class="hidden sm:inline"> (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</span></span></a>
+      <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="text-[15px] text-accent-soft hover:underline">Try it in your browser <span aria-hidden="true">→</span></a>
       {%- endif %}
-      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}<a href="/en/docs/" class="btn-secondary btn-lg">{{ docs_label }}</a>
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64-bit)</span>

@@ -4,7 +4,7 @@
 //
 //   - 分数は `_data/site.yml` の `web_app.trial_minutes` が唯一の出所。テンプレートに数字を直書きしない
 //     (Web 版のお試しの上限と同じ値)。
-//   - トップ hero の Web 版ボタンは「ブラウザでお試し（N 分までの動画・インストール不要）」。
+//   - トップ hero の Web 版への文字のリンクは「ブラウザでお試し →」(分数は DL CTA の説明行で案内する)。
 //   - DL CTA の説明行に「お試し用（1 本 N 分まで）」。
 //   - GA4: `data-dl` が `-webapp` で終わるリンクは `web_app_open`、それ以外は `file_download`
 //     (純関数 `ga4EventNameFor` は attribution.test.js が固定。ここでは main.js の配線を見る)。
@@ -92,16 +92,15 @@ test('site.yml: web_app.trial_minutes は 10', () => {
 
 // --- 2. トップ hero と DL CTA ---
 
-test('hero: 「ブラウザでお試し（N 分までの動画・インストール不要）」で、N は site.yml から読む', () => {
+test('hero: 「ブラウザでお試し →」で、分数を直書きしない', () => {
 	// Act
 	const link = linkOf(index, 'hero-webapp')
 
 	// Assert
 	assert.ok(link, 'hero-webapp のリンクが無い')
-	assert.match(link, TRIAL_VAR)
 	assert.doesNotMatch(link, HARDCODED_MINUTES)
 	const text = textOf(link)
-	assert.match(text, /ブラウザでお試し（\{\{[^}]+\}\} 分までの動画・インストール不要）/)
+	assert.equal(text, 'ブラウザでお試し →')
 	assert.ok(!text.includes('ブラウザで試す'), '旧文言が残っている')
 })
 
