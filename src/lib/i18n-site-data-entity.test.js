@@ -212,7 +212,6 @@ const perfPair = (lang, val) => {
 
 test('読み取り: ja の 4 ファイルの件数と値 (陽性対照)', () => {
 	assert.equal(ja.spec.windows.length, 7)
-	assert.equal(ja.spec.macos.planned.length, 3)
 	assert.equal(ja.spec.performance.length, 28)
 	assert.equal(ja.spec.performance[0].key, 'NVIDIA GeForce RTX 5090')
 	assert.equal(ja.spec.network.length, 3)
@@ -270,13 +269,12 @@ for (const lang of LANGS) {
 		})
 	}
 
-	test(`spec (${lang}): windows・macos.planned・performance・network・formats の件数が ja と同じ`, () => {
+	test(`spec (${lang}): windows・performance・network・formats の件数が ja と同じ`, () => {
 		const s = l10n[lang].spec
 		for (const k of ['windows', 'performance', 'network', 'formats']) {
 			assert.ok(Array.isArray(s[k]), `${k} は配列`)
 			assert.equal(s[k].length, ja.spec[k].length, `${k} の件数`)
 		}
-		assert.equal(s.macos.planned.length, ja.spec.macos.planned.length)
 	})
 
 	test(`spec (${lang}): performance の key の機種名は ja と同じ文字列、日本語を含む key だけ訳す`, () => {

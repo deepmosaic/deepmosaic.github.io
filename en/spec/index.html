@@ -4,7 +4,7 @@ lang: en
 permalink: /en/spec/
 ja_url: /spec/
 source: spec/index.html
-source_hash: "c76980788b37104b68f68f4a48856cf1e0538bbe93ef3e38cc4b58e2d6b5beab"
+source_hash: "7d62ee660333963a39d49568b222d955f012efdc4b2123cbf37f023ee92845b6"
 title: System requirements
 seo_title: "System requirements | Deepmosaic - AI that adds mosaic"
 description: "Deepmosaic system requirements: supported OS, memory, and GPU, processing speed by GPU based on production measurements, and supported load and export formats."
@@ -69,19 +69,6 @@ schemas:
         {% include icon.html name="FileOutput" class="h-5 w-5 shrink-0 text-accent" %}Supported formats
       </h2>
       {% include kv-table.html rows=SPEC.formats label_width="140px" %}
-    </div>
-
-    <div>
-      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
-        {% include icon.html name="Laptop" class="h-5 w-5 shrink-0 text-ink-3" %}macOS
-        <span class="badge-done">{{ SPEC.macos.status }}</span>
-      </h2>
-      <div class="card p-6">
-        <p class="text-[14px] leading-[2] text-ink-2">{{ SPEC.macos.note }}</p>
-        <div class="mt-5">
-          {% include kv-table.html rows=SPEC.macos.planned label_width="200px" %}
-        </div>
-      </div>
     </div>
 
     <div class="card-hi p-7 text-center">

@@ -2,7 +2,7 @@
 # ja はトップレベルが配列だが、_source を持たせるため items: の下に置く (部品が site.data.l10n[page.lang].faq.items で引く)。
 # 除去の禁止の連語 (remove mosaic・decensor など) を使わない (FAQ の描画には data-i18n-allow を付けられない)。
 _source: "_data/faq.yml"
-_source_hash: "7e39ccf0a17ef87743d537a8ba960271d6c993d8c1e70813412971a380ebcfbd"
+_source_hash: "01a0b8c2af89594b89d9b233e07ec599ee100458b534b9b4c63cf2a9fb394232"
 items:
   - q: "What kind of software is Deepmosaic?"
     a: "It is a Windows desktop app that uses AI to automatically detect and track targets in a video and apply mosaic to those areas. You can review and correct the detection results in the editing screen, and it supports exporting videos with the mosaic burned in and importing the mosaic information into Adobe Premiere Pro. It is intended to streamline pre-submission work in video production where mosaic must be applied."
@@ -25,7 +25,7 @@ items:
   - q: "Will processing stop if I go over the hour limit?"
     a: "Processing in progress does not stop, and there are no overage charges. If you use up the included hours of a paid plan, your allowance is restored on the next renewal date. If you need more than that, please ask us about Enterprise, our plan for businesses (custom quote). The included hours for each plan are listed on the pricing page."
   - q: "Is a GPU required? Do you support Mac?"
-    a: "AI detection also works with a CPU alone, but processing becomes much slower (about 2 fps in our measurements). For comfortable use, we recommend an NVIDIA GeForce RTX 3000 series GPU or higher. GPUs below that level have not been tested. A macOS version is in development, and its release date has not been decided. At this time, only Windows 10 / 11 (64-bit) is supported."
+    a: "AI detection also works with a CPU alone, but processing becomes much slower (about 2 fps in our measurements). For comfortable use, we recommend an NVIDIA GeForce RTX 3000 series GPU or higher. GPUs below that level have not been tested. Mac is not supported, and there are no plans to offer a macOS version. Deepmosaic is available only for Windows 10 / 11 (64-bit)."
   - q: "Which Adobe products does it work with?"
     a: "It supports Adobe Premiere Pro. You can import AI-detected mosaic information into a Premiere Pro project with one click. The app also guides you through setting up the plug-in automatically. Exporting videos with the mosaic burned in can also be done entirely within the app."
   - q: "How do I update the app?"

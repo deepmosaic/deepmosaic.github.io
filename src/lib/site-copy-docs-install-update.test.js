@@ -64,7 +64,7 @@ test('#install: Microsoft Store から入手する手順と kv、インストー
 	assert.match(text, /Microsoft Store から入手してください。下の「Microsoft Store からダウンロード」を押すと、小さなインストーラがダウンロードされます。開くと Microsoft Store を通してインストールが始まり、終わると Deepmosaic が起動します。/)
 	assert.match(install, /<a href="\{\{ site\.data\.lang\.ja\.app_store_protocol_link \}\}">こちら<\/a>/, 'Microsoft Store アプリで直接開くリンク')
 	assert.match(text, /管理者権限は不要です/)
-	assert.match(text, /対応 OS Windows 10（バージョン 2004 以降）\/ 11（64 ビット）。macOS 版は開発中です/)
+	assert.match(text, /対応 OS Windows 10（バージョン 2004 以降）\/ 11（64 ビット）。Windows 版のみのご提供で、macOS 版を提供する予定はありません/)
 	assert.match(text, /画面の言語 アプリの画面は日本語・英語・繁体字中国語に対応しています/)
 	assert.match(text, /インストール先 Windows が管理するアプリのフォルダ（変更できません）。スタートメニューに「Deepmosaic」が登録されます/)
 	assert.match(text, /アップデート 新しいバージョンは Microsoft Store が配信し、自動で更新されます（アップデート）/)

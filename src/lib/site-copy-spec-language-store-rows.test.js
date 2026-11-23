@@ -60,7 +60,7 @@ const jaWindows = loadWindows(read('_data/spec.yml'))
 
 test('ヘルパー: 陽性対照と陰性対照', () => {
 	assert.deepEqual(loadWindows('other:\n  - key: "x"\n'), [])
-	assert.deepEqual(loadWindows('windows:\n  - key: "a"\n    val: "b"\n    store_only: true\nmacos:\n'), [{ key: 'a', val: 'b', store_only: true }])
+	assert.deepEqual(loadWindows('windows:\n  - key: "a"\n    val: "b"\n    store_only: true\nperformance:\n'),[{ key: 'a', val: 'b', store_only: true }])
 	assert.equal(windowsShapeMismatch([{ store_only: false }], [{ store_only: false }]), null)
 	assert.notEqual(windowsShapeMismatch([{ store_only: false }], [{ store_only: true }]), null)
 	assert.equal(stripComments('{% comment %}x{% endcomment %}<!-- z -->y'), 'y')

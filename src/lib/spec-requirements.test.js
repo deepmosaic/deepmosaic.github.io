@@ -208,3 +208,20 @@ test('FAQ の「GPU は必須ですか？」も RTX 3000 シリーズ以上を�
   assert.ok(answer.includes(`${GPU_TIER}を推奨します`), `GPU の推奨が揃っていない: ${answer}`);
   assert.match(answer, UNVERIFIED);
 });
+
+test('macOS 版は提供しない: 動作環境に macOS の節が無く、FAQ は Mac に対応していないと答える', () => {
+  // Arrange
+  const spec = readFileSync(SPEC_YML, 'utf8');
+  const faq = readFileSync(FAQ_YML, 'utf8');
+  const [, answer] = faq.match(/- q: "GPU は必須ですか？ Mac には対応していますか？"\r?\n\s+a: "(.*)"/) ?? [];
+  assert.ok(answer, 'FAQ に「Mac には対応していますか？」の回答が無い');
+
+  // Act / Assert
+  assert.ok(!/^macos:/m.test(spec), 'spec.yml に macos の節が残っている');
+  for (const page of ['spec/index.html', 'en/spec/index.html', 'zh-tw/spec/index.html']) {
+    const src = readFileSync(join(HERE, '..', '..', page), 'utf8');
+    assert.ok(!src.includes('SPEC.macos'), `${page} が macOS の節を出している`);
+  }
+  assert.match(answer, /Mac には対応していません。macOS 版を提供する予定はありません。/);
+  assert.ok(!/開発中|提供時期/.test(answer), `FAQ に提供の予定と読める文が残っている: ${answer}`);
+});

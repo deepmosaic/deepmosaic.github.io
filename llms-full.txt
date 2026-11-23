@@ -71,8 +71,6 @@ Windows:
 - {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
 {%- endfor %}
 
-macOS: {{ SP.macos.status }} — {{ SP.macos.note }}
-
 処理速度の実測値 / Measured throughput: {{ SP.performance_note }}
 {% for r in SP.performance %}
 - {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}

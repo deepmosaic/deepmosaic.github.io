@@ -21,18 +21,6 @@ windows:
     val: "Windows 10 バージョン 2004 以降。Microsoft Store から入手し、更新も Microsoft Store が配信します"
     store_only: true
 
-macos:
-  status: "開発中"
-  # macOS 版のダウンロードボタンは置かない。
-  note: "macOS 版は開発中です。提供時期は未定で、先行案内も現時点ではお受けしていません。Windows 版のみのご提供となります。"
-  planned:
-    - key: "対応予定 OS"
-      val: "macOS 13 (Ventura) 以降"
-    - key: "対応予定 CPU"
-      val: "Apple Silicon (M1 以降)。Intel Mac は対象外の見込み"
-    - key: "Premiere Pro 連携"
-      val: "初回リリースでは Windows 版のみの機能になる見込みです"
-
 # ── GPU と処理速度の目安 ─────────────
 # 値は「動画長の何倍の時間がかかるか」(検出の開始から完了まで。書き出しは含まない)。
 # 実測 = 実測値。

@@ -4,7 +4,7 @@
 # 「・推定」「・実測」の中黒 (U+30FB) は仮名の範囲で lang-text に当たるので「，」で区切る。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/spec.yml"
-_source_hash: "5a3fc1b62fcade49263899a2147bde520686b32462651c2f61bd47309e4bf877"
+_source_hash: "e7bd324156aaf46405d09fb230ab4587601d62ea342a5ad393d3f1d5351266a7"
 windows:
   - key: "OS"
     val: "Microsoft Windows 10 / 11（64 位元）"
@@ -21,16 +21,6 @@ windows:
   - key: "Microsoft Store 版本"
     val: "Windows 10 版本 2004 以上。從 Microsoft Store 取得，更新也由 Microsoft Store 提供。"
     store_only: true
-macos:
-  status: "開發中"
-  note: "macOS 版正在開發中。推出時間未定，目前也不受理搶先通知的登記。目前僅提供 Windows 版。"
-  planned:
-    - key: "預計支援的作業系統"
-      val: "macOS 13（Ventura）以上版本"
-    - key: "預計支援的 CPU"
-      val: "Apple Silicon（M1 以上）。Intel Mac 預計不在支援範圍內"
-    - key: "Premiere Pro 整合"
-      val: "首次發行時，預計僅為 Windows 版的功能。"
 performance_note: "以下為偵測 1080p、30 fps 的影片時，「所需時間約為影片長度幾倍」的參考值（從偵測開始到完成，包含沿著物體形狀的馬賽克精細化，不含匯出）。「實測」為正式環境 2026 年 10～11 月的中位數，「推估」為依據配合實測值所訂的計算公式與各 GPU 的標稱效能求得的值，約有 ±30% 的誤差。60 fps 的影片最多約需 2 倍的時間，也會因臉部數量等素材內容而不同。此外，即使使用 GPU，影片的載入、前置處理與分析仍由 CPU 進行，因此處理時間也取決於 CPU 的效能（GPU 等級越高，CPU 的影響越大）。"
 performance:
   - key: "NVIDIA GeForce RTX 5090"

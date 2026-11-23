@@ -115,7 +115,7 @@ confusion_reasons:
   - "日本語の「モザイク処理」が、モザイクを「かける」と「外す」の両方向を指す語であること"
 
 # ── 分類 (JSON-LD 用) ─────────────────────────────────────────────────
-# operatingSystem は macOS 版リリース時に更新する。
+# operatingSystem は提供している OS (Windows のみ)。
 # software_requirements は _data/spec.yml の windows と食い違わせないこと。
 os: "Windows 10, Windows 11"
 category: "MultimediaApplication"

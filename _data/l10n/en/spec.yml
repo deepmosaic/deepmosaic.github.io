@@ -3,7 +3,7 @@
 # 日本語を含む key (GTX 10 / 16 シリーズ・GPU なし) だけを訳す。val の中の <br> はそのまま残す。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/spec.yml"
-_source_hash: "5a3fc1b62fcade49263899a2147bde520686b32462651c2f61bd47309e4bf877"
+_source_hash: "e7bd324156aaf46405d09fb230ab4587601d62ea342a5ad393d3f1d5351266a7"
 windows:
   - key: "OS"
     val: "Microsoft Windows 10 / 11 (64-bit)"
@@ -21,16 +21,6 @@ windows:
   - key: "Microsoft Store edition"
     val: "Windows 10 version 2004 or later. Get it from Microsoft Store, which also delivers the updates."
     store_only: true
-macos:
-  status: "In development"
-  note: "The macOS version is in development. Its release date has not been decided, and we are not accepting requests for advance notice at this time. Only the Windows version is available."
-  planned:
-    - key: "Planned OS"
-      val: "macOS 13 (Ventura) or later"
-    - key: "Planned CPU"
-      val: "Apple Silicon (M1 or later). Intel Macs are not expected to be supported"
-    - key: "Premiere Pro integration"
-      val: "In the first release, this is expected to be a Windows-only feature."
 performance_note: "The figures below are a guide to how many times the video length it takes to detect a 1080p, 30 fps video (from the start to the end of detection, including mosaic refinement that follows the shape of objects, excluding export). \"Measured\" values are medians from the production environment for 2026-10 to 2026-11, and \"estimated\" values are calculated from a formula fitted to the measured values and the rated performance of each GPU, with a margin of about ±30%. A 60 fps video can take up to about 2 times as long, and the time also varies with the content of the media, such as the number of faces. Even when a GPU is used, video loading, preprocessing, and analysis run on the CPU, so processing time also depends on CPU performance (the higher-end the GPU, the greater the effect of the CPU)."
 performance:
   - key: "NVIDIA GeForce RTX 5090"

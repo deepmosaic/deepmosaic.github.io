@@ -229,7 +229,7 @@ for (const page of PAGES) {
 				assert.ok(has(rel))
 				const rows = (s) => [...stripComments(s).matchAll(/include kv-table\.html rows=SPEC\.([\w.]+)/g)].map((m) => m[1])
 				assert.deepEqual(rows(src()), rows(read(page.ja)))
-				for (const ref of ['SPEC.performance_note', 'SPEC.performance_footnote', 'SPEC.macos.note', 'SPEC.macos.status']) {
+				for (const ref of ['SPEC.performance_note', 'SPEC.performance_footnote']) {
 					assert.ok(body().includes(ref), `${ref} が無い`)
 				}
 				const m = body().match(/\{%\s*include cta-download\.html([^%]*)%\}/)

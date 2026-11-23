@@ -60,17 +60,6 @@ schemas:
         {% include icon.html name="FileOutput" class="h-5 w-5 shrink-0 text-accent" %}対応フォーマット
       </h2>
       {% include kv-table.html rows=SPEC.formats label_width="140px" %}
-    </div><div>
-      <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
-        {% include icon.html name="Laptop" class="h-5 w-5 shrink-0 text-ink-3" %}macOS
-        <span class="badge-done">{{ SPEC.macos.status }}</span>
-      </h2>
-      <div class="card p-6">
-        <p class="text-[14px] leading-[2] text-ink-2">{{ SPEC.macos.note }}</p>
-        <div class="mt-5">
-          {% include kv-table.html rows=SPEC.macos.planned label_width="200px" %}
-        </div>
-      </div>
     </div>
 
     <div class="card-hi p-7 text-center">
