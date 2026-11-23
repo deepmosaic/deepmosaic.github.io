@@ -2,8 +2,9 @@
 //
 //   node --test src/lib/site-copy-docs-help-menu.test.js
 //
-//   - メニューバーの「ヘルプ」(ライセンス / ドキュメント)。プロフィールメニューにはこの 2 項目が無い。
-//     「ライセンス」への案内はメニューバーの「ヘルプ」から。初回セットアップ中も「ヘルプ」は使える。
+//   - メニューバーの「ヘルプ」(ライセンス / ドキュメント / チュートリアル)。プロフィールメニューには前の 2 項目が無い。
+//     「ライセンス」への案内はメニューバーの「ヘルプ」から。初回セットアップ中も「ライセンス」「ドキュメント」は使え、
+//     「チュートリアル」は使えない。右下のチュートリアルのアイコンの記述が 3 言語の docs と llms に無い。
 //     (項目の表示名は旧「このアプリについて」→「ライセンス」。旧名の不在は site-copy-sign-in-docs.test.js)
 //     ファイルメニューの「アップデートを確認」はサイト配布版の文 (Store 版に無いことは docs/store-edition.html)。
 //   - GPU 高速化のスイッチは無く、NVIDIA 製 GPU 搭載機では初回に自動取得 (GPU の無い PC は取得しない)。
@@ -64,12 +65,15 @@ test('ヘルパー: 陽性対照と陰性対照', () => {
 	assert.equal(textOf('{% comment %}x{% endcomment %}<p>y</p>'), 'y')
 })
 
-test('メニューバー「ヘルプ」に「ライセンス」と「ドキュメント」', () => {
+test('メニューバー「ヘルプ」に「ライセンス」「ドキュメント」「チュートリアル」(この順)', () => {
 	const help = afterHeading(layout, 'メニューバー「ヘルプ」')
 	assert.ok(help, '#layout に「メニューバー「ヘルプ」」の見出しが無い')
-	assert.match(help, /ライセンス/)
-	assert.match(help, /ドキュメント/)
-	assert.match(help, /初回セットアップ中も使えます/)
+	const items = ['ライセンス', 'ドキュメント', 'チュートリアル'].map((w) => help.indexOf(w))
+	assert.ok(items.every((i) => i >= 0), `項目が欠けている: ${items}`)
+	assert.deepEqual([...items].sort((a, b) => a - b), items, '項目の並びがアプリのメニューと違う')
+	assert.match(help, /一覧へ戻る/)
+	assert.match(help, /「ライセンス」と「ドキュメント」は初回セットアップ中も使えます/)
+	assert.match(help, /チュートリアル動画の一覧を開きます。[^「]*「一覧へ戻る」[\s\S]*?初回セットアップ中は使えません/)
 	// 並び: ファイル → キュー → ヘルプ → プロフィールメニュー
 	const order = ['メニューバー「ファイル」', 'メニューバー「キュー」', 'メニューバー「ヘルプ」', 'プロフィールメニュー（右上）'].map((t) =>
 		layout.indexOf(`>${t}</h3>`),
@@ -96,8 +100,34 @@ test('「ライセンス」への案内はメニューバーの「ヘルプ」�
 	assert.match(licensesText, /メニューバーの「ヘルプ ▸ ライセンス」から/)
 })
 
-test('初回セットアップ中は「ファイル ▸ 終了」と「ヘルプ」だけ使える', () => {
-	assert.match(setupText, /「ファイル ▸ 終了」と「ヘルプ」以外が無効/)
+test('初回セットアップ中は「ファイル ▸ 終了」と「ヘルプ」(チュートリアルを除く) だけ使える', () => {
+	assert.match(setupText, /「ファイル ▸ 終了」と「ヘルプ」（「チュートリアル」を除く）以外が無効/)
+})
+
+const HELP_LANGS = [
+	{ dir: '', tutorial: '「ヘルプ」▸「チュートリアル」', icon: [/右下（バージョン表示の左）/, /画面右下のアイコン/, /光って/], footerKey: '基本の使い方' },
+	{ dir: 'en/', tutorial: '"Help" ▸ "Tutorials"', icon: [/bottom right of the home screen/, /icon at the bottom right/i, /lights up/], footerKey: 'Getting started' },
+	{ dir: 'zh-tw/', tutorial: '「說明」▸「教學影片」', icon: [/首頁畫面右下/, /右下角的圖示/, /圖示會立即亮起/], footerKey: '基本使用方式' },
+]
+
+for (const { dir, tutorial, icon, footerKey } of HELP_LANGS) {
+	test(`${dir || 'ja/'}: 右下のチュートリアルのアイコンの記述が無く、カードを非表示にした後の入口はヘルプ ▸ チュートリアル`, () => {
+		const introSrc = read(`_includes/docs/${dir}01-intro.html`)
+		const detect = textOf(read(`_includes/docs/${dir}03-detect.html`))
+		const layoutSrc = sectionOf(introSrc, 'layout') ?? ''
+		assert.ok(layoutSrc.length > 0, '陽性対照: #layout が無い')
+		assert.ok(!layoutSrc.includes(`<div class="kv-key">${footerKey}</div>`), `フッターの表に「${footerKey}」の行が残っている`)
+		for (const file of [textOf(introSrc), detect]) for (const re of icon) assert.doesNotMatch(file, re)
+		assert.ok(detect.includes(tutorial), `03-detect のカードの説明に ${tutorial} が無い`)
+	})
+}
+
+test('llms.txt / llms-full.txt に右下のチュートリアルのアイコンの記述が無い', () => {
+	for (const file of ['llms.txt', 'llms-full.txt']) {
+		const text = read(file)
+		assert.ok(text.length > 0)
+		assert.doesNotMatch(text, /右下（バージョン表示の左）|画面右下のアイコン/)
+	}
 })
 
 // ファイルメニューの説明はサイト配布版の文。Store 版に「アップデートを確認」が無いことは docs/store-edition.html (切り替えが true のときだけ) に書く。

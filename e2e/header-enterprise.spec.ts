@@ -2,23 +2,28 @@
 //
 // ## 何を守るのか
 //
-// - PC 幅 (lg = 1024px 以上): ヘッダーの右の並びが 言語のボタン → 「法人様はこちら」→ 「無料でダウンロード」で、
-//   主ボタンのダウンロードが一番右にあること。法人向けの行き先が Enterprise の導入相談 `/enterprise/inquiry/` であること。
+// - PC 幅 (lg = 1024px 以上): ヘッダーの右の並びが 言語のボタン → 「法人様はこちら」→ Microsoft Store のバッジで、
+//   バッジが一番右にあること。法人向けの行き先が Enterprise の導入相談 `/enterprise/inquiry/` であること。
 // - md 幅 (768〜1023px): ドロワーが出ない幅なので、ヘッダーのボタンとして短い表示「法人様」で見えていること。
-//   ダウンロードも「ダウンロード」と短くする。読み上げ (aria-label) と textContent は「法人様はこちら」
-//   「無料でダウンロード」のまま (textContent は GA4 の link_text に入る、`src/main.js`)。
+//   読み上げ (aria-label) と textContent は「法人様はこちら」のまま (textContent は GA4 の link_text に入る、`src/main.js`)。
+//   バッジはどの幅でも同じ画像で、読み上げの名前は画像の alt (バッジに書かれた文)。
 // - 767px 以下: ヘッダーのボタンは隠れ、ドロワー (`src/islands/MobileNav.svelte`) に同じ項目があり、
 //   タップで遷移すること。ドロワーの全リンクの「保存されずに遷移する」は `mobile-nav.spec.ts` が別途まとめて見る。
-// - 各幅: ロゴ・ナビ・ダウンロード・法人向けのボタンが横にはみ出さず、折り返し・重なりも起きないこと。
+// - 各幅: ロゴ・ナビ・バッジ・法人向けのボタンが横にはみ出さず、折り返し・重なりも起きないこと。バッジは縦横比のまま。
 import { test, expect, devices, type Page } from '@playwright/test';
 
 const ENTERPRISE_LABEL = '法人様はこちら';
 const ENTERPRISE_SHORT_LABEL = '法人様';
 const ENTERPRISE_HREF = '/enterprise/inquiry/';
-const DOWNLOAD_LABEL = '無料でダウンロード';
-const DOWNLOAD_SHORT_LABEL = 'ダウンロード';
+/** バッジの alt (バッジに書かれた文) と画像 */
+const BADGE_ALT = 'Microsoft Store からダウンロード';
+const BADGE_SRC = '/assets/img/store-badge/ja.svg';
+/** バッジの高さ (px。普通のボタンとそろえる) と元の縦横比 (161 × 44) */
+const BADGE_HEIGHT = 38;
+const BADGE_RATIO = 161 / 44;
 const HEADER_ROW = 'header > div';
 const DOWNLOAD_CTA = 'header a[data-dl="header"]';
+const STORE_URL = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP';
 const ENTERPRISE_CTA = `${HEADER_ROW} > a[href="${ENTERPRISE_HREF}"]`;
 
 /** ボタン 1 行分の高さの上限 (px)。これを超えたら文字が折り返している。 */
@@ -28,7 +33,7 @@ const OVERLAP_TOLERANCE = 0.5;
 const HEADER_WIDTHS = [320, 767, 768, 800, 900, 1023, 1024, 1280] as const;
 /** Tailwind の md。ヘッダーのボタン (ダウンロード・法人向け) を出す最小幅 (px)。これ未満はドロワー。 */
 const MD_MIN_WIDTH = 768;
-/** Tailwind の lg。ボタンを長い表示 (「無料でダウンロード」「法人様はこちら」) にする最小幅 (px)。 */
+/** Tailwind の lg。法人向けのボタンを長い表示 (「法人様はこちら」) にする最小幅 (px)。 */
 const LG_MIN_WIDTH = 1024;
 
 interface Box {
@@ -64,15 +69,25 @@ async function openAt(page: Page, width: number): Promise<void> {
 }
 
 /**
- * 法人向けのボタンが見えていて行き先が導入相談であり、ダウンロード (主ボタン) の左にあって、
- * ダウンロードがヘッダーの一番右にあることを確かめる。
+ * 法人向けのボタンが見えていて行き先が導入相談であり、Microsoft Store のバッジの左にあって、
+ * バッジがヘッダーの一番右にあることを確かめる。
  */
 async function expectDownloadIsRightmost(page: Page): Promise<void> {
   const row = page.locator(HEADER_ROW);
   const lastLink = row.locator(':scope > a').last();
   await expect(lastLink).toBeVisible();
   await expect(lastLink).toHaveAttribute('data-dl', 'header');
-  await expect(lastLink).toHaveAttribute('download');
+  // ダウンロードは公式のバッジと同じ行き先の Microsoft Store の掲載ページ (別タブ、ファイルの保存ではない)。中身は公式のバッジの画像
+  await expect(lastLink).toHaveAttribute('href', STORE_URL);
+  await expect(lastLink).toHaveAccessibleName(BADGE_ALT);
+  const badge = lastLink.locator('img');
+  await expect(badge).toHaveAttribute('src', BADGE_SRC);
+  const size = await badge.evaluate((img: HTMLImageElement) => ({ w: img.getBoundingClientRect().width, h: img.getBoundingClientRect().height, done: img.complete && img.naturalWidth > 0 }));
+  expect(size.done, 'バッジの画像が読み込まれていない').toBe(true);
+  expect(size.h).toBeCloseTo(BADGE_HEIGHT, 0);
+  expect(size.w / size.h, 'バッジの縦横比が元と違う').toBeCloseTo(BADGE_RATIO, 1);
+  await expect(lastLink).toHaveAttribute('target', '_blank');
+  await expect(lastLink).not.toHaveAttribute('download');
 
   const enterpriseLink = page.locator(ENTERPRISE_CTA);
   await expect(enterpriseLink).toBeVisible();
@@ -82,18 +97,18 @@ async function expectDownloadIsRightmost(page: Page): Promise<void> {
   const boxes = await readVisibleHeaderBoxes(page);
   const enterprise = await enterpriseLink.boundingBox();
   const download = await lastLink.boundingBox();
-  expect(download, 'ダウンロードボタンが見えていない').not.toBeNull();
+  expect(download, 'バッジが見えていない').not.toBeNull();
   expect(enterprise, '法人向けのボタンが見えていない').not.toBeNull();
   expect(download!.x + OVERLAP_TOLERANCE).toBeGreaterThanOrEqual(enterprise!.x + enterprise!.width);
-  expect(boxes.at(-1)?.right, 'ダウンロードボタンがヘッダーの一番右に無い').toBeCloseTo(download!.x + download!.width, 0);
+  expect(boxes.at(-1)?.right, 'バッジがヘッダーの一番右に無い').toBeCloseTo(download!.x + download!.width, 0);
 }
 
 test.describe('PC 幅 (lg 以上)', () => {
-  test('ヘッダーの最後の要素が「無料でダウンロード」で、「法人様はこちら」はその左にある', async ({ page }) => {
+  test('ヘッダーの最後の要素が Microsoft Store のバッジで、「法人様はこちら」はその左にある', async ({ page }) => {
     await openAt(page, 1280);
     await expectDownloadIsRightmost(page);
     await expect(page.locator(ENTERPRISE_CTA)).toHaveText(ENTERPRISE_LABEL, { useInnerText: true });
-    await expect(page.locator(DOWNLOAD_CTA)).toHaveText(DOWNLOAD_LABEL, { useInnerText: true });
+    await expect(page.locator(DOWNLOAD_CTA)).toHaveText('', { useInnerText: true });
   });
 
   test('「法人様はこちら」をクリックすると導入相談のページへ移る', async ({ page }) => {
@@ -105,15 +120,13 @@ test.describe('PC 幅 (lg 以上)', () => {
 
 test.describe('md 幅 (768〜1023px)', () => {
   for (const width of [768, 1023]) {
-    test(`幅 ${width}px で「法人様」と短く出て、導入相談へのリンクで、一番右のダウンロードの左にある`, async ({ page }) => {
+    test(`幅 ${width}px で「法人様」と短く出て、導入相談へのリンクで、一番右のバッジの左にある`, async ({ page }) => {
       await openAt(page, width);
       await expectDownloadIsRightmost(page);
       const enterprise = page.locator(ENTERPRISE_CTA);
       await expect(enterprise).toHaveText(ENTERPRISE_SHORT_LABEL, { useInnerText: true });
-      await expect(page.locator(DOWNLOAD_CTA)).toHaveText(DOWNLOAD_SHORT_LABEL, { useInnerText: true });
       // 計測 (GA4 の link_text = textContent) は幅によらず長い文言のまま
       expect((await enterprise.textContent())?.trim()).toBe(ENTERPRISE_LABEL);
-      expect((await page.locator(DOWNLOAD_CTA).textContent())?.trim()).toBe(DOWNLOAD_LABEL);
     });
   }
 

@@ -8,7 +8,7 @@
 //   - lang-switch.html の 3 つの variant の出力の一番外の要素が data-i18n-switch を持ち、リンクに lang / hreflang がある
 //     header は lucide の Languages + 今の言語名 (xl 以上) + ChevronDown のボタン + 閉じた一覧 (ul hidden) で、
 //     island lang-menu が開閉する (大きく分かりやすい形)
-//   - 英中の写しから対象外 (docs・法務 5 本) へのリンクが ja の URL で、印 (ja_only_badge) を持つ
+//   - 英中の写しから対象外 (法務 5 本) へのリンクが ja の URL で、印 (ja_only_badge) を持つ。docs は同じ言語の docs を指す (印なし)
 //   - nav.yml (en / zh-tw) のキーの集合が同じ、値が lintValue を通り、属性・JSON を壊す字を含まない
 //   - site-lang.js の pageLang / pick
 //   - MobileNav.svelte の ja の文を残したまま 3 言語の表を持つ
@@ -47,9 +47,16 @@ const dataDlOf = (src) => [...stripComments(src).matchAll(/\sdata-dl="([^"]*)"/g
 
 /** data-links の JSON を読む (Liquid の式は接頭辞を落としてから `x` に置き換える)。 */
 function dataLinksOf(src) {
-	const raw = stripComments(src).match(/data-links='([^']*)'/)?.[1]
+	const live = stripComments(src)
+	let raw = live.match(/data-links='([^']*)'/)?.[1]
 	assert.ok(raw, 'data-links が見つからない')
-	return JSON.parse(normalizeRefs(raw).replace(/\{\{[^}]*\}\}/g, 'x'))
+	// 先頭の DL の項目は capture (hd_mobile_dl) で組む (Store のバッジの行き先)
+	const captures = [...live.matchAll(/capture hd_mobile_dl -%\}([\s\S]*?)\{%- endcapture/g)].map((m) => m[1])
+	if (raw.includes('{{ hd_mobile_dl }}')) {
+		assert.equal(captures.length, 1, 'hd_mobile_dl の capture が 1 つでない')
+		raw = raw.replace('{{ hd_mobile_dl }}', captures[0])
+	}
+	return JSON.parse(normalizeRefs(raw.replace(/\{% include store-install-url\.html %\}/g, 'STORE')).replace(/\{\{[^}]*\}\}/g, 'x'))
 }
 
 const HEADER = read('_includes/header.html')
@@ -81,9 +88,8 @@ const NAV = {
 // ---- header ----
 
 test('header: 写しの data-dl の値が ja と同じ (header・mobile)', () => {
-	assert.deepEqual(dataDlOf(HEADER).sort(), ['header'])
-	assert.deepEqual(dataDlOf(HEADER_INTL).sort(), dataDlOf(HEADER).sort())
-	// data-links の dl も同じ
+	assert.deepEqual(dataDlOf(HEADER), ['header'])
+	assert.deepEqual(dataDlOf(HEADER_INTL), dataDlOf(HEADER))
 	assert.deepEqual(
 		dataLinksOf(HEADER_INTL).map((l) => l.dl ?? null),
 		dataLinksOf(HEADER).map((l) => l.dl ?? null),
@@ -95,41 +101,49 @@ test('header: ナビのリンクの行き先 (接頭辞を除いた形) の集�
 	const intl = new Set(hrefsOf(HEADER_INTL))
 	assert.ok(ja.has('/price/') && ja.has('/enterprise/inquiry/'), '陽性対照: ja のナビに料金と法人がある')
 	assert.deepEqual([...intl].sort(), [...ja].sort())
-	// 英中のサイト内のリンク (docs 以外) は接頭辞付き
+	// 英中のサイト内のリンクは接頭辞付き
 	const live = stripComments(HEADER_INTL)
-	for (const path of ['/price/', '/spec/', '/enterprise/inquiry/']) {
+	for (const path of ['/price/', '/docs/', '/spec/', '/enterprise/inquiry/']) {
 		assert.match(live, new RegExp(`href="\\{\\{ L\\.url_prefix \\}\\}${path.replace(/\//g, '\\/')}"`), `${path} に接頭辞が無い`)
 	}
-	assert.doesNotMatch(live, /href="\/(price|spec|enterprise)/, '英中のヘッダーに接頭辞の無い訳のあるページのリンクがある')
+	assert.doesNotMatch(live, /href="\/(price|docs|spec|enterprise)/, '英中のヘッダーに接頭辞の無い訳のあるページのリンクがある')
 })
 
 test('header: data-links の項目の数・行き先・dl が ja と同じ、ラベルは nav.yml から引く', () => {
 	const ja = dataLinksOf(HEADER)
-	const intl = dataLinksOf(HEADER_INTL)
-	assert.equal(intl.length, ja.length)
+	const intl0 = dataLinksOf(HEADER_INTL)
+	assert.equal(intl0.length, ja.length)
 	assert.deepEqual(
-		intl.map((l) => l.href),
+		intl0.map((l) => l.href),
 		ja.map((l) => l.href),
 	)
-	// DL 項目 (インストーラ) だけ download: true (ja と同じ)。真偽は download-attr.js が '' に写す
+	// DL 項目: Store のバッジの行き先を別タブで (download なし。ja と同じ)
 	assert.deepEqual(
-		intl.map((l) => l.download),
-		ja.map((l) => l.download),
+		intl0.map((l) => [l.download, l.target]),
+		ja.map((l) => [l.download, l.target]),
 	)
-	assert.equal(intl.find((l) => l.dl === 'mobile')?.download, true)
+	const dl = intl0.find((l) => l.dl === 'mobile')
+	assert.ok(dl?.href === 'STORE' && dl?.target === '_blank' && dl?.download === undefined)
+	const intl = dataLinksOf(HEADER_INTL)
 	const raw = stripComments(HEADER_INTL).match(/data-links='([^']*)'/)[1]
 	assert.doesNotMatch(raw, /[぀-ヿ]/, '英中の data-links に仮名を直書きしない')
-	// docs の項目は印を持つ
+	// docs の項目は同じ言語の docs を指し、日本語のページの印を持たない
 	const docs = intl.find((l) => l.href === '/docs/')
 	assert.ok(docs, 'data-links に /docs/ が無い')
-	assert.equal(docs.badge, 'x', 'docs の項目に印 (badge = L.ja_only_badge) が無い')
+	assert.equal(docs.badge, undefined, 'docs の項目に日本語のページの印がある')
+	assert.match(raw, /"href":"\{\{ L\.url_prefix \}\}\/docs\/"/)
 })
 
-test('header: 英中の DL の <a> は app_download_link・data-dl・download 属性 (値なし) を持つ', () => {
-	const tags = stripComments(HEADER_INTL).match(/<a\s[^>]*app_download_link[^>]*>/g) ?? []
-	assert.equal(tags.length, 1)
-	assert.match(tags[0], /data-dl="header"/)
-	assert.match(tags[0], /\sdownload\s/)
+test('header: DL の <a> は Store の掲載ページへ向くバッジで、インストーラの URL・download 属性を持たない (ja・英中)', () => {
+	for (const src of [HEADER, HEADER_INTL]) {
+		const live = stripComments(src)
+		assert.doesNotMatch(live, /app_download_link|installer_enabled/)
+		const tags = live.match(/<a\s[^>]*data-dl="header"[^>]*>[\s\S]*?<\/a>/g) ?? []
+		assert.equal(tags.length, 1)
+		assert.match(tags[0], /href="\{% include store-install-url\.html %\}"/)
+		assert.match(tags[0], /\{% include store-badge-img\.html %\}/)
+		assert.doesNotMatch(tags[0], /\sdownload[\s=>]/)
+	}
 })
 
 test('header: ja の分岐は既存の行を残し、英中のときだけ写しを include する', () => {
@@ -137,12 +151,13 @@ test('header: ja の分岐は既存の行を残し、英中のときだけ写し
 	assert.match(live, /\{%- if page\.lang == 'en' or page\.lang == 'zh-tw' -%\}\{% include header-intl\.html %\}\{%- else -%\}/)
 	assert.match(HEADER, /<\/header>\{% endif %\}\r?\n?$/)
 	// 既存の行 (data-links・noscript・DL の <a>) が残っている (陽性対照: 既存のテストが照合する形)
-	assert.match(live, /data-links='\[\{"label":"ダウンロード","href":"\{\{ site\.data\.lang\.ja\.app_download_link \}\}","download":true,"dl":"mobile"\}/)
+	assert.match(live, /capture hd_mobile_dl -%\}\{"label":"Microsoft Store からダウンロード","href":"\{% include store-install-url\.html %\}","target":"_blank","dl":"mobile"\}/)
+	assert.match(live, /data-links='\[\{\{ hd_mobile_dl \}\},/)
 	assert.match(live, /<noscript>/)
 	assert.match(live, /data-dl="header"/)
 })
 
-// ヘッダーの行の並び: 言語のボタン → 法人様はこちら (secondary) → 無料でダウンロード (primary、一番右)
+// ヘッダーの行の並び: 言語のボタン → 法人様はこちら (secondary) → Microsoft Store のバッジ (一番右)
 const HEADER_LANG_INCLUDE = /\{% include lang-switch\.html variant="header" %\}/
 const HEADER_ENTERPRISE_TAG = /<a href="[^"]*\/enterprise\/inquiry\/" aria-label="[^"]*"[^>]*>/
 const HEADER_DL_TAG = /<a\s[^>]*data-dl="header"[^>]*>/
@@ -166,10 +181,10 @@ for (const [name, src] of [
 		const dlTag = live.match(HEADER_DL_TAG)?.[0] ?? ''
 		const enterpriseTag = live.match(HEADER_ENTERPRISE_TAG)?.[0] ?? ''
 		assert.match(dlTag, /\smd:-ml-1\s/)
-		assert.match(dlTag, /\slg:-ml-4\s/)
+		assert.match(dlTag, /\slg:-ml-4[\s"]/)
 		assert.doesNotMatch(enterpriseTag, /-ml-/)
-		// ほかの class は変えない
-		assert.match(dlTag, /class="btn-primary hidden md:inline-flex /)
+		// ほかの class は変えない (DL はバッジ。md 以上だけに出す)
+		assert.match(dlTag, /class="hidden shrink-0 rounded-\[5px\] md:inline-flex /)
 		assert.match(enterpriseTag, /class="btn-secondary hidden md:inline-flex /)
 	})
 
@@ -201,18 +216,20 @@ test('footer: data-dl= の数と行き先の集合が ja と同じ', () => {
 	assert.deepEqual([...new Set(hrefsOf(FOOTER_INTL))].sort(), [...new Set(hrefsOf(FOOTER))].sort())
 })
 
-test('英中の写し: 対象外 (docs・法務 5 本) へのリンクは ja の URL で印を持つ', () => {
+test('英中の写し: 対象外 (法務 5 本) へのリンクは ja の URL で印を持ち、docs は同じ言語の docs を指す', () => {
 	const live = stripComments(FOOTER_INTL)
-	for (const path of ['/docs/', '/company/terms', '/company/privacy', '/company/cookie', '/company/eula', '/company/asct']) {
+	for (const path of ['/company/terms', '/company/privacy', '/company/cookie', '/company/eula', '/company/asct']) {
 		const re = new RegExp(`\\{% include ja-link\\.html href="${path.replace(/\//g, '\\/')}" `)
 		assert.match(live, re, `footer-intl: ${path} が ja-link.html を通っていない`)
 	}
-	// ヘッダーのナビの docs はラベル + 小さな印
-	const docsNav = stripComments(HEADER_INTL).match(/<a href="\/docs\/"[^>]*>[\s\S]*?<\/a>/)?.[0]
-	assert.ok(docsNav, 'header-intl のナビに /docs/ が無い')
-	assert.match(docsNav, /hreflang="ja"/)
-	assert.match(docsNav, /L\.ja_only_badge/)
-	assert.match(docsNav, /L\.ja_only_title/)
+	assert.match(live, /<a href="\{\{ L\.url_prefix \}\}\/docs\/"[^>]*>\{\{ L\.document \}\}<\/a>/, 'footer-intl: docs が同じ言語の docs を指していない')
+	assert.doesNotMatch(live, /ja-link\.html href="\/docs/, 'footer-intl: docs が日本語のページとして扱われている')
+	// ヘッダーのナビの docs は同じ言語の docs を指し、印を持たない
+	const header = stripComments(HEADER_INTL)
+	const docsNav = header.match(/<a href="\{\{ L\.url_prefix \}\}\/docs\/"[^>]*>[\s\S]*?<\/a>/g) ?? []
+	assert.equal(docsNav.length, 2, 'header-intl のナビ (広い幅と noscript) に docs が 2 本無い')
+	for (const a of docsNav) assert.doesNotMatch(a, /hreflang="ja"|ja_only_badge|ja_only_title/)
+	assert.doesNotMatch(header, /href="\/docs/)
 })
 
 test('ja-link.html: hreflang="ja" のリンクと、英中のときだけ出る印', () => {
@@ -435,12 +452,9 @@ test('nav.yml: en と zh-tw のキーの集合が同じ、値が空でない', (
 	assert.deepEqual(Object.keys(NAV['zh-tw']).sort(), Object.keys(NAV.en).sort())
 	assert.ok(Object.keys(NAV.en).length >= 10, '陽性対照: キーが少なすぎる')
 	for (const lang of ['en', 'zh-tw']) {
-		// 空を許すのは DL のボタンの組み立ての先頭と末尾 (dl_cta_lead / dl_cta_tail。en は「Download」+「 for free」で末尾が空、
-		// zh-tw は「免費」+「下載」で先頭が空) だけ
-		const mayBeEmpty = new Set(['dl_cta_lead', 'dl_cta_tail'])
-		for (const [k, v] of Object.entries(NAV[lang])) if (!mayBeEmpty.has(k)) assert.ok(v.length > 0, `${lang}.${k} が空`)
-		// md の短い形 (lead + tail) は空にしない
-		assert.ok((NAV[lang].dl_cta_lead + NAV[lang].dl_cta_tail).trim().length > 0, `${lang}: DL の短い形が空`)
+		for (const [k, v] of Object.entries(NAV[lang])) assert.ok(v.length > 0, `${lang}.${k} が空`)
+		// DL の文はバッジ (parts.yml の st_label) なので nav.yml に持たない
+		for (const k of Object.keys(NAV[lang])) assert.doesNotMatch(k, /^dl_|^download$/, `${lang}: DL の文のキーが残っている: ${k}`)
 	}
 })
 
@@ -456,18 +470,13 @@ test('nav.yml: 全部の値が lintValue を通り、属性・JSON を壊す字�
 test('nav.yml: 短い形と長い形の組み立てが全体の文と一致する (textContent は全幅で長い文のまま)', () => {
 	for (const lang of ['en', 'zh-tw']) {
 		const n = NAV[lang]
-		assert.equal(n.dl_cta_lead + n.dl_cta_lg + n.dl_cta_tail, n.dl_cta, `${lang}: dl_cta`)
 		assert.equal(n.enterprise_short + n.enterprise_lg, n.enterprise, `${lang}: enterprise`)
 	}
-	// 全体の文は ja の「無料でダウンロード」の訳 (用語集の download / free)
-	assert.equal(NAV.en.dl_cta, 'Download for free')
-	assert.equal(NAV['zh-tw'].dl_cta, '免費下載')
 	for (const lang of ['en', 'zh-tw']) {
 		for (const k of Object.keys(NAV[lang])) assert.doesNotMatch(k, /^store_|_store$/, `${lang}: Store のキーが残っている: ${k}`)
 	}
 	// 写しが同じ組み立てで描く
 	const live = stripComments(HEADER_INTL)
-	assert.match(live, /\{\{ N\.dl_cta_lead \}\}<span class="hidden lg:inline">\{\{ N\.dl_cta_lg \}\}<\/span>\{\{ N\.dl_cta_tail \}\}/)
 	assert.match(live, /\{\{ N\.enterprise_short \}\}<span class="hidden lg:inline">\{\{ N\.enterprise_lg \}\}<\/span>/)
 	assert.match(live, /aria-label="\{\{ N\.enterprise \}\}"/)
 })
@@ -599,9 +608,9 @@ function jaCssBody(css) {
 }
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 
-// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer を含む)。
+// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer と、本文の img の規則から Store のバッジを外すことを含む)。
 // ja の見た目を意図して変えるときは、この値を新しい app.css から取り直す。
-const BASE_JA_CSS_SHA256 = '5e390825da05a10e545176e78db19f88556d6bf46daa562622a5c5e3dd03d5e1'
+const BASE_JA_CSS_SHA256 = 'acb08d6e6e4164d0db8c151338f7336ff494248763eb56a251b7204817e274f7'
 
 test('app.css: 言語の規則を除いた本文は基点と同じ (ja の CSS を変えていない)', () => {
 	const css = read('src/app.css')
@@ -671,7 +680,7 @@ function runNav(pages) {
 
 const LEGAL_EN =
 	'<a href="/company/terms" class="x" hreflang="ja">Terms of Service</a><span class="b" title="This page is in Japanese.">(Japanese)</span>' +
-	'<a href="/docs/" class="x" hreflang="ja">Documentation</a><span class="b" title="This page is in Japanese.">(Japanese)</span>'
+	'<a href="/en/docs/" class="x">Documentation</a>'
 
 test('checks/nav.mjs: 正しい模型ではエラー 0 (台帳のページ・台帳に無いページ・英中のページ)', () => {
 	const errors = runNav({
@@ -754,4 +763,11 @@ test('checks/nav.mjs: 英中のヘッダー・フッターの仮名、印の無�
 		footerExtra: '<a href="/en/company/terms" hreflang="ja">Terms</a><span>(Japanese)</span>',
 	})
 	assert.ok(runNav({ 'en/price/index.html': prefixed }).some((e) => /ja の URL/.test(e)), '法務に接頭辞')
+	const jaDocs = pageHtml({
+		canonical: '/en/price/',
+		cur: 'en',
+		dests: ['/price/', '/en/price/', '/zh-tw/price/'],
+		footerExtra: '<a href="/docs/#plan" hreflang="ja">Docs</a><span>(Japanese)</span>',
+	})
+	assert.ok(runNav({ 'en/price/index.html': jaDocs }).some((e) => /日本語の docs/.test(e)), '英中のページから日本語の docs')
 })

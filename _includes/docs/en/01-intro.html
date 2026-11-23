@@ -3,9 +3,9 @@ source: _includes/docs/01-intro.html
 hash:
   _head: f97072e0e98f2a64
   about: bac4ce37afa0da1f
-  install: dbaef673d0c653e4
+  install: 11ab8a8d3149bffe
   setup: 3a8a5016951f0997
-  layout: ea774362376d4dbf
+  layout: 7568623de4f469c8
   theme: 1ad3ef16adc8f0cd
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
@@ -45,7 +45,7 @@ hash:
 </section><section id="install" class="scroll-mt-24">
   {% include docs-h2.html kicker="Getting started" title="Installation" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>Get it from Microsoft Store. The button below opens the Microsoft Store listing page; select "Get" (or "Install"). You can also find it by searching for "Deepmosaic" in the Microsoft Store app (to open it directly in the Microsoft Store app, <a href="{{ site.data.lang[page.lang].app_store_protocol_link }}">click here</a>). Administrator rights aren't required.</p>
+    <p>Get it from Microsoft Store. Select "Download from the Microsoft Store" below to open the Microsoft Store page. Select "Download" there to download a small installer. Run it to start the installation; Deepmosaic starts when the installation finishes. You can also find it by searching for "Deepmosaic" in the Microsoft Store app (to open it directly in the Microsoft Store app, <a href="{{ site.data.lang[page.lang].app_store_protocol_link }}">click here</a>). Administrator rights aren't required.</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">Supported OS</div>
@@ -68,7 +68,7 @@ hash:
         <div class="kv-val">You review and accept it in "Before you start" when you first launch the app (<a href="#setup">Initial setup</a>)</div>
       </div>
     </div>
-    <div class="my-5">{% include download-button.html dl="docs-install" paired=true %}{%- include store-button.html dl="docs-install-store" wrap="mt-3 first:mt-0" note="Windows 10 (version 2004 or later) / 11 (64-bit). Try it right after installing, with no sign-in required" %}</div>
+    <div class="my-5">{% include store-button.html dl="docs-install-store" lazy=true note="Windows 10 (version 2004 or later) / 11 (64-bit). Try it right after installing, with no sign-in required" %}</div>
     <h3 id="install-migrate" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">End of the installer edition and switching to the Microsoft Store edition</h3>
     <p>The installer edition downloaded from our website (shown as the "installer (exe) version" in the app) will stop working after December 31, 2026. You can keep using it until then. Please switch to the Microsoft Store edition soon. Pricing, terms of use, and features stay the same.</p>
     <ul>

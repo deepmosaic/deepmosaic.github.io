@@ -303,5 +303,5 @@ test('公開文面・データ・テストに旧い版の表記 (2.12 の 1) が
 	for (const file of files) {
 		assert.ok(!read(file).includes(stale), `${file} に ${stale} が残っている`)
 	}
-	assert.match(textOf(intro), /2\.13 より前の版では、この 2 つはプロフィールメニューにありました/)
+	assert.match(textOf(intro), /2\.13 より前の版と 2\.14 では、この 2 つはプロフィールメニューにもありました/)
 })

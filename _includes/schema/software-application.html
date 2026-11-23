@@ -7,6 +7,7 @@
 {%- assign L = site.data.lang[page.lang] -%}{%- assign T = site.data.l10n[page.lang].entity -%}
 {%- assign sw_requirements = E.software_requirements -%}{%- assign sw_features = E.can | map: "ja" -%}{%- assign sw_keywords = E.keywords -%}
 {%- if T -%}{%- assign sw_requirements = T.software_requirements -%}{%- assign disambig = T.disambiguation -%}{%- assign sw_features = T.can -%}{%- assign sw_keywords = T.keywords -%}{%- endif -%}
+{%- capture sw_download -%}https://apps.microsoft.com/detail/{{ L.app_store_product_id }}{%- endcapture -%}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -35,7 +36,7 @@
     "@type": "WebPage",
     "url": "https://www.deepmosaic.co.jp/docs/"
   },
-  "downloadUrl": {{ L.app_download_link | jsonify }},
+  "downloadUrl": {{ sw_download | jsonify }},
   "publisher": { "@id": "https://www.deepmosaic.co.jp/#organization" },
   "url": "https://www.deepmosaic.co.jp"
 }

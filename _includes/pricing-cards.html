@@ -94,7 +94,7 @@
       {%- if plan.subscribe %}
       <a {% if pc_PL %}href="{{ pc_L.url_prefix }}/subscribe/#plan-{{ plan.code }}"{% else %}href="/subscribe/#plan-{{ plan.code }}"{% endif %} class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full">{% if pc_PL %}{{ pc_T.subscribe_label | default: plan.subscribe.label }}{% else %}{{ plan.subscribe.label }}{% endif %}</a>
       {%- elsif plan.cta.kind == "download" %}
-      {% if pc_T.cta_label %}{% include download-button.html label=pc_T.cta_label full=true variant=plan.cta.variant dl=plan.code %}{% else %}{% include download-button.html label=plan.cta.label full=true variant=plan.cta.variant dl=plan.code %}{% endif %}
+      {% include store-button.html dl=plan.code wrap="flex justify-center" lazy=true %}
       {%- else %}
       <a {% if pc_href_prefix != "" %}href="{{ pc_href_prefix }}{{ plan.cta.href }}"{% else %}href="{{ plan.cta.href }}"{% endif %} class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
         {% if pc_PL %}{{ pc_T.cta_label | default: plan.cta.label }}{% else %}{{ plan.cta.label }}{% endif %}{% if plan.cta.external %}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}{% endif %}
@@ -123,7 +123,7 @@
     <h3 class="text-[14px] font-bold text-ink">{% if pc_PL %}{{ plan.name }}{{ pc_P.pc_strip_open }}{{ pc_PL.currency_prefix }}{{ plan.price_display }}{{ pc_PL.currency_suffix }}{{ pc_P.pc_strip_close }}{% else %}{{ plan.name }}（{{ site.data.plans.currency_symbol }}{{ plan.price_display }}）{% endif %}</h3>
     <p class="mt-1 text-[13.5px] leading-[1.9] text-ink-4">{% if pc_PL %}{{ pc_T.bullets | default: plan.bullets | join: pc_P.pc_bullet_sep }}{% else %}{{ plan.bullets | join: " ／ " }}{% endif %}</p>
   </div>
-  {% if pc_T.cta_label %}{% include download-button.html label=pc_T.cta_label variant="secondary" dl=plan.code %}{% else %}{% include download-button.html label=plan.cta.label variant="secondary" dl=plan.code %}{% endif %}
+  {% include store-button.html dl=plan.code lazy=true %}
 </div>
 {%- endfor %}
 

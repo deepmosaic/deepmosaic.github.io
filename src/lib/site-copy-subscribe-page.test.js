@@ -8,8 +8,8 @@
 //   - 料金カード (トップと /price/) の Light / Pro は「申し込む → /subscribe/」(Store に戻ってループしない)。
 //   - Enterprise は見積のまま (申し込みボタンを出さず、導入相談へ)。
 //   - 配布はサイト配布版と Microsoft Store 版の 2 通り。文は両方に合う形
-//     「アプリのプロフィールメニュー (Windows 版をダウンロードしてお使いの方)、またはこのページから Web 版のアカウントで申し込める。
-//     どちらでも同じアカウントで Desktop 版と Web 版の両方に効く」。Store 版についての文 (購入画面が無い) と FAQ は
+//     「Windows 版のアプリのプロフィールメニュー、またはこのページから Web 版のアカウントで申し込める。
+//     どちらでも同じアカウントで Desktop 版と Web 版の両方に効く」。Store 版についての文 (Store 版のアプリでも申し込める) と FAQ は
 //     `_data/site.yml` の `distribution.store_enabled` が true のときだけ出す (部品 `_includes/store-subscribe-note.html` と
 //     FAQ の `store_only: true` の項目。FAQ の部品と JSON-LD が同じ条件で外す)。
 //   - FAQ は Store の項目を除いて 2〜3 件で、表示と FAQPage JSON-LD が同じデータ (page.faq_data)。
@@ -18,7 +18,7 @@
 
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, join } from 'node:path'
 
@@ -100,23 +100,34 @@ test('/subscribe/: ボタンは Web 版の ?checkout=<code> を指し、web_app_
 
 test('/subscribe/: アプリのプロフィールメニューかこのページで申し込め、同じアカウントで Desktop 版と Web 版の両方に効くことを書く', () => {
 	const text = textOf(read(PAGE))
-	assert.match(text, /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはこのページから Web 版のアカウントでお申し込みいただけます/)
+	assert.match(text, /Windows 版のアプリのプロフィールメニュー、またはこのページから Web 版のアカウントでお申し込みいただけます/)
 	assert.match(text, /同じアカウントで Desktop 版と Web 版の両方でご利用いただけます/)
-	assert.match(frontMatter(read(PAGE), 'description') ?? '', /プロフィールメニュー/)
+	assert.match(frontMatter(read(PAGE), 'description') ?? '', /Windows 版のアプリのプロフィールメニューからも申し込め/)
 	// Store 版についての文は切り替えの部品の中だけ (ページの本文・description には書かない)
 	assert.doesNotMatch(text, /Microsoft Store|購入画面/, 'ページの本文に Store 版の文が残っている (部品に移す)')
 	assert.doesNotMatch(frontMatter(read(PAGE), 'description') ?? '', /Microsoft Store/)
 	assert.match(stripComments(read(PAGE)), /\{%-? include store-subscribe-note\.html -?%\}/)
 })
 
-test('store-subscribe-note.html: 全体が store_enabled の if の中で、購入画面が無いことを言語ごとのデータから出す', () => {
+test('store-subscribe-note.html: 全体が store_enabled の if の中で、Store 版のアプリでも申し込めることを言語ごとのデータから出す', () => {
 	const src = stripComments(read('_includes/store-subscribe-note.html'))
 	const m = src.match(/^\s*\{%-?\s*if site\.data\.site\.distribution\.store_enabled\s*-?%\}([\s\S]*)\{%-?\s*endif\s*-?%\}\s*$/)
 	assert.ok(m, '全体が store_enabled の if の中に無い (false のときに何かが出る)')
 	assert.match(m[1], /data-store-note="subscribe"/)
 	assert.match(m[1], /\.store_note\b/)
-	assert.match(read('_data/subscribe.yml'), /^store_note: ".*Microsoft Store 版のアプリには購入画面がありません。.*"\s*$/m)
-	for (const lang of ['en', 'zh-tw']) assert.match(read(`_data/l10n/${lang}/subscribe.yml`), /^store_note: ".*Microsoft Store.*"\s*$/m, lang)
+	const jaNote = read('_data/subscribe.yml').match(/^store_note: "(.*)"\s*$/m)
+	assert.ok(jaNote, 'ja の store_note が無い')
+	assert.match(jaNote[1], /^Microsoft Store 版のアプリでも、画面右上のプロフィールメニューから申し込めます/)
+	assert.doesNotMatch(jaNote[1], /インストーラ/, 'インストーラ版と比べない (入手先は Store だけ)')
+	// 切り替えの検査 (checks/store.mjs・i18n-site-data-plans.test.js) が頼る語 (Microsoft Store) は 3 言語とも残す
+	for (const [lang, re] of [
+		['en', /^In the Microsoft Store version of the app, you can also subscribe from the profile menu at the top right of the screen \(the payment screen opens in your browser\)/],
+		['zh-tw', /^Microsoft Store 版的應用程式也可從畫面右上角的個人資料選單訂閱/],
+	]) {
+		const note = read(`_data/l10n/${lang}/subscribe.yml`).match(/^store_note: "(.*)"\s*$/m)
+		assert.ok(note, `${lang} の store_note が無い`)
+		assert.match(note[1], re, lang)
+	}
 	// 英中のページも同じ位置に部品を置く
 	for (const rel of ['en/subscribe/index.html', 'zh-tw/subscribe/index.html']) {
 		const page = stripComments(read(rel))
@@ -150,7 +161,8 @@ test('/subscribe/: FAQ は Store の項目を除いて 2〜3 件で、表示と 
 	assert.ok(common.length >= 2 && common.length <= 3, `Store 以外の FAQ が ${common.length} 件`)
 	// 両方の配布に合う FAQ: アプリ (プロフィールメニュー) から申し込めるか
 	assert.ok(common.some((i) => i.q === 'アプリから申し込めますか？'), 'アプリから申し込めるかの FAQ が無い')
-	assert.match(cfg, /アプリの画面右上のプロフィールメニューから申し込めます/)
+	assert.match(cfg, /Windows 版のアプリでは、画面右上のプロフィールメニューから申し込めます（決済画面はブラウザで開きます）/)
+	assert.match(cfg, /Windows 版のアプリのプロフィールメニューの「プランの契約と管理」からも行えます/)
 	// Store 版の FAQ は 1 件で store_only。ほかの項目は Store に触れない
 	const store = items.filter((i) => i.storeOnly)
 	assert.deepEqual(store.map((i) => i.q), ['Microsoft Store 版のアプリで申し込めますか？'])
@@ -191,7 +203,7 @@ test('導線: フッター・料金ページ・トップの料金節・docs #pla
 	const plan = stripComments(planSec)
 	assert.match(plan, /href="\/subscribe\/"/)
 	// 両方の配布に合う文。Store 版の補足は docs/store-edition.html にあり、#plan には書かない
-	assert.match(textOf(planSec), /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、または有料プランのお申し込みのページから Web 版のアカウントで申し込めます/)
+	assert.match(textOf(planSec), /Windows 版のアプリのプロフィールメニュー、または有料プランのお申し込みのページから Web 版のアカウントで申し込めます/)
 	assert.match(textOf(planSec), /同じアカウントで Desktop 版と Web 版の両方/)
 	assert.match(textOf(planSec), /アプリにサインインし、画面右上のプロフィールアイコンをクリックします/)
 	assert.doesNotMatch(textOf(planSec), /Microsoft Store|購入画面|ログイン/)
@@ -202,20 +214,20 @@ test('導線: フッター・料金ページ・トップの料金節・docs #pla
 test('トップの料金節・料金ページ・llms.txt は両方の配布に合う文 (Store 版の文を書かない)', () => {
 	const sub = read('index.html').match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 	assert.ok(sub, 'トップの料金節の sub が無い')
-	assert.match(sub[1], /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
+	assert.match(sub[1], /^有料プランは、Windows 版のアプリのプロフィールメニュー、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
 	assert.match(sub[1], /Desktop 版と Web 版の両方/)
 	assert.doesNotMatch(sub[1], /Microsoft Store/)
 	const price = textOf(read('price/index.html'))
-	assert.match(price, /アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、またはお申し込みページから Web 版のアカウントでお申し込みいただけます/)
+	assert.match(price, /有料プランは、Windows 版のアプリのプロフィールメニュー、またはお申し込みページから Web 版のアカウントでお申し込みいただけます/)
 	assert.doesNotMatch(price, /Microsoft Store|購入画面/)
 	const llms = read('llms.txt').split(/\r?\n/).find((l) => l.includes('{{ U }}/subscribe/'))
-	assert.match(llms, /プロフィールメニュー（Windows 版をダウンロードしてお使いの方）/)
-	assert.match(llms, /profile menu in the app \(if you downloaded the Windows version\)/)
+	assert.match(llms, /\): Windows 版のアプリのプロフィールメニュー、またはこのページから Web 版のアカウントで申し込める/)
+	assert.match(llms, / \/ subscribe from the profile menu in the Windows app, or on this page with your Web edition account/)
 	assert.doesNotMatch(llms, /Microsoft Store/)
 	// 英中
 	for (const [rel, re] of [
-		['en/index.html', /profile menu in the app \(if you downloaded the Windows version\)/],
-		['zh-tw/index.html', /個人資料選單（下載使用 Windows 版的使用者）/],
+		['en/index.html', /^You can subscribe to a paid plan from the profile menu in the Windows app, or use/],
+		['zh-tw/index.html', /^付費方案可從 Windows 版應用程式的個人資料選單，或從各方案的「訂閱」以網頁版的帳號申請/],
 	]) {
 		const s = read(rel).match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 		assert.ok(s, `${rel}: 料金節の sub が無い`)
@@ -223,11 +235,106 @@ test('トップの料金節・料金ページ・llms.txt は両方の配布に�
 		assert.doesNotMatch(s[1], /Microsoft Store/, rel)
 	}
 	for (const [rel, re] of [
-		['en/price/index.html', /profile menu in the app/],
-		['zh-tw/price/index.html', /個人資料選單/],
+		['en/price/index.html', /You can subscribe to a paid plan from the profile menu in the Windows app or on the subscription page with your Web app account/],
+		['zh-tw/price/index.html', /付費方案可從 Windows 版應用程式的個人資料選單，或透過付費方案申請頁面以網頁版的帳號申請/],
+		['en/subscribe/index.html', /You can subscribe to a paid plan from the profile menu in the Windows app or from this page with your Web app account/],
+		['zh-tw/subscribe/index.html', /付費方案可從 Windows 版應用程式的個人資料選單，或從本頁面以網頁版的帳號申請/],
 	]) {
 		const t = textOf(read(rel))
 		assert.match(t, re, rel)
 		assert.doesNotMatch(t, /Microsoft Store|purchase screen|購買畫面/, rel)
 	}
+	assert.match(frontMatter(read('en/subscribe/index.html'), 'description') ?? '', /, or from the profile menu in the Windows app\./)
+	assert.match(frontMatter(read('zh-tw/subscribe/index.html'), 'description') ?? '', /也可從 Windows 版應用程式的個人資料選單申請/)
+	for (const [lang, first, last] of [
+		['en', /^ {4}a: "Yes\. In the Windows app, you can subscribe from the profile menu at the top right of the screen/m, /You can also use \\"Plan subscription and management\\" in the profile menu in the Windows app\./],
+		['zh-tw', /^ {4}a: "可以。在 Windows 版的應用程式中，可從畫面右上角的個人資料選單訂閱/m, /也可從 Windows 版應用程式的個人資料選單中的「方案訂閱與管理」進行。/],
+	]) {
+		const yml = read(`_data/l10n/${lang}/subscribe.yml`)
+		assert.match(yml, first, `${lang}: アプリから申し込めるかの FAQ`)
+		assert.match(yml, last, `${lang}: 変更・解約の場所の FAQ`)
+	}
+})
+
+test('Store の FAQ は 3 言語とも肯定で答え、Store 版のアプリのプロフィールメニューから申し込めると書く', () => {
+	for (const [rel, re] of [
+		['_data/subscribe.yml', /^はい。Microsoft Store 版のアプリでも、画面右上のプロフィールメニューから申し込めます。/],
+		['_data/l10n/en/subscribe.yml', /^Yes\. In the Microsoft Store version of the app, you can also subscribe from the profile menu at the top right of the screen\./],
+		['_data/l10n/zh-tw/subscribe.yml', /^可以。Microsoft Store 版的應用程式也可從畫面右上角的個人資料選單訂閱。/],
+	]) {
+		const m = read(rel).match(/^ {4}store_only: true\s*\r?\n {4}a: "(.*)"\s*$/m)
+		assert.ok(m, `${rel}: store_only の項目の答えが無い`)
+		assert.match(m[1], re, rel)
+	}
+})
+
+/** 公開面のファイル (`*.html`・`_data/**\/*.yml`・`_includes/**\/*.html`・`llms*.txt`) を返す。 */
+function publicFiles(dir = '') {
+	const SKIP = new Set(['node_modules', '_site', '.git', '.jekyll-cache', 'vendor', 'e2e', 'test-results', 'playwright-report'])
+	const out = []
+	for (const ent of readdirSync(join(ROOT, dir), { withFileTypes: true })) {
+		const rel = dir ? `${dir}/${ent.name}` : ent.name
+		if (ent.isDirectory()) {
+			if (!SKIP.has(ent.name)) out.push(...publicFiles(rel))
+			continue
+		}
+		if (rel.endsWith('.test.js')) continue
+		if (rel.endsWith('.html') || /^llms.*\.txt$/.test(rel) || (rel.startsWith('_data/') && rel.endsWith('.yml'))) out.push(rel)
+	}
+	return out
+}
+
+/** 申し込みの場所 (アプリのプロフィールメニュー・Store 版のアプリ) を書いた文の目印。同じ文の中に両方の語がある所を数える。 */
+const ROUTE_MENTIONS = [
+	[/プロフィールメニュー/, /申し込/],
+	[/profile menu/i, /subscri/i],
+	[/個人資料選單/, /訂閱|申請/],
+	[/Microsoft Store/, /購入|申し込|purchase|subscri|購買|訂閱|申請/i],
+]
+
+/** コメントとタグを落とした文を、文の区切りと改行で分けて、申し込みの場所を書いた文だけを返す。 */
+function routeSentences(source) {
+	const text = stripComments(source).replace(/^\s*#.*$/gm, '').replace(/<[^>]*>/g, '')
+	return text
+		.split(/[。！？\n]|\.\s/)
+		.map((s) => s.trim())
+		.filter((s) => ROUTE_MENTIONS.some(([a, b]) => a.test(s) && b.test(s)))
+}
+
+/**
+ * 申し込みの場所を書いてよいファイル (許可の一覧)。どれも上のテストが文を 1 つずつ固定している。
+ * 一覧に無いファイルに申し込みの場所を書いたら、文を決めてここと上のテストに足す。
+ */
+const ROUTE_FILES = [
+	'index.html',
+	'price/index.html',
+	'subscribe/index.html',
+	'llms.txt',
+	'_data/subscribe.yml',
+	'_includes/docs/02-account.html',
+	'_includes/docs/store-edition.html',
+	'_includes/docs/web.html',
+	'en/index.html',
+	'en/price/index.html',
+	'en/subscribe/index.html',
+	'_data/l10n/en/subscribe.yml',
+	'zh-tw/index.html',
+	'zh-tw/price/index.html',
+	'zh-tw/subscribe/index.html',
+	'_data/l10n/zh-tw/subscribe.yml',
+	// 英中の docs は日本語の同じファイルの訳 (節ごとの hash で日本語と結ぶ)。07-team はメニューの項目の名前
+	// (「プランの契約と管理」。英中の画面の文は subscription / 訂閱 を含む) を書いた文で、申し込みの場所の文ではない
+	...['en', 'zh-tw'].flatMap((lang) => ['02-account', '07-team', 'store-edition', 'web'].map((n) => `_includes/docs/${lang}/${n}.html`)),
+]
+
+test('申し込みの場所を書いた文は許可の一覧のファイルにだけあり、一覧のファイルにはどれもある', () => {
+	// 陽性対照と陰性対照: 同じ文に両方の語があるときだけ拾い、コメントの中は数えない
+	assert.equal(routeSentences('<p>画面右上のプロフィールメニューから申し込めます。</p>').length, 1)
+	assert.equal(routeSentences('<p>プロフィールメニューを開きます。申し込みはこちら。</p>').length, 0)
+	assert.equal(routeSentences('{% comment %}プロフィールメニューから申し込める{% endcomment %}<!-- profile menu to subscribe -->').length, 0)
+	assert.equal(routeSentences('store_note: "Microsoft Store 版のアプリには購入画面がありません"').length, 1)
+	const files = publicFiles()
+	assert.ok(files.includes('subscribe/index.html') && files.includes('_data/subscribe.yml') && files.includes('llms.txt'), '公開面の列挙が足りない')
+	const found = files.filter((rel) => routeSentences(read(rel)).length > 0).sort()
+	assert.deepEqual(found, [...ROUTE_FILES].sort())
 })

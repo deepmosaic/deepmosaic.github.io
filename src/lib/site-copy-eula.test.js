@@ -89,7 +89,7 @@ function zenkakuWidth(s) {
 const EULA = 'company/eula.html'
 // 版の値の固定は site-copy-terms-minors.test.js も持つ
 const LEGAL_VERSION = '2026-11-08'
-/** 変更前のフッターの data-dl の個数 (DL ボタンを増減しない)。 */
+/** フッターの data-dl の個数 (Microsoft Store へのリンク 1 つ。DL のリンクを増減しない)。 */
 const FOOTER_DATA_DL_COUNT = 1
 
 /** 前文 = h1 から第1条の h2 までの素の文字列。 */

@@ -375,7 +375,7 @@ test('compareStructure: data-dl が消えた / id が違う / include の並び�
 
 // ---------------------------------------------------------------- 5. 英中のファイルの規則
 
-test('英中のファイルの規則: リポの en/・zh-tw/ のページと _data/l10n の hash が全部一致する (今は 0 件で素通り)', () => {
+test('英中のファイルの規則: リポの en/・zh-tw/ のページと _data/l10n の hash が全部一致する', () => {
 	assert.deepEqual(checkTranslatedSources(ROOT), [])
 })
 
@@ -599,6 +599,7 @@ test('CLI はジャンクション / シンボリックリンク越しに起動�
 			['check-site.mjs', [missing]],
 			['ja-identity.mjs', []],
 			['accept-site.mjs', []],
+			['docs-diff.mjs', ['fr']],
 		]) {
 			const r = spawnSync(process.execPath, [join(link, name), ...args], { encoding: 'utf8' })
 			assert.equal(r.status, 2, `${name} はリンク越しでも main を呼び exit 2 になる: ${r.stdout}${r.stderr}`)

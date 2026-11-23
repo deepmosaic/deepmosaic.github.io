@@ -1,7 +1,7 @@
 # 共通 include の直書きの文の英語。
-#   - include (cta-download・download-button・pricing-cards・contract-quota・contract-limits・what-is・can-cannot・disclosure-table) が
+#   - include (cta-download・store-button・pricing-cards・contract-quota・contract-limits・what-is・can-cannot・disclosure-table) が
 #     `site.data.l10n[page.lang].parts` で引く。ja の文は include に直書きのまま (ja のページでは参照しない)。
-#   - 平らな `key: "value"` だけ (src/lib/i18n-site-parts.test.js が読む)。キーは include ごとの接頭辞 (cta_ / dl_ / pc_ / cq_ / cl_ / wi_ / cc_ / dt_)。
+#   - 平らな `key: "value"` だけ (src/lib/i18n-site-parts.test.js が読む)。キーは include ごとの接頭辞 (cta_ / st_ / pc_ / cq_ / cl_ / wi_ / cc_ / dt_)。
 #   - `%DAYS%` などの印は include が `replace` で数値に置き換える (印は zh-tw と同じ)。
 #   - データの文 (plans・entity・disclosure) はデータごとの l10n にある。ここは include の直書きの分だけ。
 # cta-download.html
@@ -12,10 +12,8 @@ cta_os_line: "Windows 10 / 11 (64-bit)"                        # Windows 10 / 11
 cta_webapp_before: "You can also use the "                     # インストール不要の (リンクの前)
 cta_webapp_link: "Web app"                                     # Web 版 (リンクの文)
 cta_webapp_after: ", which needs no installation (Chrome / Edge). It is for trials (up to %MINUTES% minutes per video). Videos are not sent to a server; they are processed in your browser."   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
-# download-button.html
-dl_label_default: "Download for free"                          # 無料でダウンロード
-# store-button.html (site.yml の distribution.store_enabled が true のときだけ出る)
-st_label: "Get it from Microsoft Store"                        # Microsoft Store で入手
+# store-button.html・store-badge-img.html (Microsoft Store のバッジの alt。バッジに書かれた文と同じ) とヘッダーのドロワー・フッターの Store へのリンクの文
+st_label: "Download from the Microsoft Store"                  # Microsoft Store からダウンロード
 # pricing-cards.html
 pc_tax_open: " ("                                              # 単位の後の （
 pc_tax_sep: ", "                                               # 税別・税込 の ・

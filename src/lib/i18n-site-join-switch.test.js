@@ -3,7 +3,7 @@
 //   node --test src/lib/i18n-site-join-switch.test.js
 //
 //   - /join/ の言語の切り替えで組織コード (フラグメント) を引き継ぐ純関数 `carryJoinHash` (src/lib/join-switch.js)
-//     と、main.js がそれを言語の切り替え・言語の案内の帯のリンクに使っていること
+//     と、main.js がそれを言語の切り替えのリンクに使っていること
 //   - en の FAQ の 2 つの言い回し (mosaic must be applied・"DeepMosaics", の引用符とカンマ)
 //   - Tailwind の自動検出を切って app.css に書いたファイルだけを走査し (テストと scripts/ は走査しない)、語 table・shrink を class として拾わない
 //     (`@source not inline(…)`。en の本文が .shrink を生む)
@@ -53,12 +53,13 @@ test('carryJoinHash: join 以外の行き先・サイトの外・形の違う値
 	assert.equal(carryJoinHash(42, hash), 42)
 })
 
-test('main.js: join のページだけ、言語の切り替えと言語の案内の帯のリンクに carryJoinHash を使う (innerHTML を使わない)', () => {
+test('main.js: join のページだけ、言語の切り替えのリンクに carryJoinHash を使う (innerHTML を使わない)', () => {
 	const src = read('src/main.js')
 	assert.match(src, /import \{[^}]*carryJoinHash[^}]*\} from '\.\/lib\/join-switch\.js'/)
-	// 切り替え (ヘッダー・フッター・ドロワー = [data-i18n-switch]) と帯 (.lang-suggest) の a[hreflang]
-	assert.ok(src.includes("'[data-i18n-switch] a[hreflang], .lang-suggest a[hreflang]'"), 'リンクの選び方')
-	// 読み込み時・hashchange・クリックの直前 (後から描かれるドロワーと帯) に付け直す
+	// 切り替え (ヘッダー・フッター・ドロワー = [data-i18n-switch]) の a[hreflang] だけ
+	assert.ok(src.includes("const LANG_LINKS = '[data-i18n-switch] a[hreflang]';"), 'リンクの選び方')
+	assert.ok(!src.includes('.lang-suggest'), '言語の案内の帯のリンクを選ばない')
+	// 読み込み時・hashchange・クリックの直前 (後から描かれるドロワー) に付け直す
 	const fn = src.slice(src.indexOf('function initJoinPage'), src.indexOf('// 英中の 404 への振り分け'))
 	assert.match(fn, /syncJoinSwitchLinks\(\)/)
 	assert.match(fn, /addEventListener\('click', [^)]*, true\)/)

@@ -5,6 +5,9 @@ sitemap: false
 {%- assign E = site.data.entity -%}
 {%- assign U = site.url -%}
 {%- assign SP = site.data.spec -%}
+{%- comment -%}Windows の Microsoft Store 版の行 (store_only: true) は distribution.store_enabled が true のときだけ (/spec/ と同じ){%- endcomment -%}
+{%- assign SP_WIN = SP.windows -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign SP_WIN = SP.windows | where_exp: "r", "r.store_only != true" -%}{%- endunless -%}
 {%- assign D = site.data.disclosure -%}
 {%- assign M = site.data.mosaic -%}
 # {{ E.name }} — 完全版 / Full reference
@@ -64,7 +67,7 @@ sitemap: false
 ## 3. 動作環境 / System requirements
 
 Windows:
-{% for r in SP.windows %}
+{% for r in SP_WIN %}
 - {{ r.key }}: {{ r.val | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | replace: '&lt;', '<' | replace: '&amp;', '&' | strip }}
 {%- endfor %}
 
@@ -157,6 +160,7 @@ A. {{ answer | replace: '<br>', ' / ' | strip_html | replace: '&gt;', '>' | repl
 ## 8. リンク / Links
 
 - Home: {{ U }}/
+- 入手 / Get it: Microsoft Store (https://apps.microsoft.com/detail/{{ site.data.lang.ja.app_store_product_id }})。公式サイトのインストーラ版は 2026 年 12 月 31 日をもってご利用いただけなくなります / Microsoft Store; the installer edition from our website stops working after December 31, 2026
 - About mosaic removal: {{ U }}/mosaic-removal/
 - Documentation: {{ U }}/docs/
 - Web edition guide: {{ U }}/docs/web/ (お試し用、無料プランは 1 本 {{ site.data.site.web_app.trial_minutes }} 分まで / trial use, Free plan: up to {{ site.data.site.web_app.trial_minutes }} minutes per video)

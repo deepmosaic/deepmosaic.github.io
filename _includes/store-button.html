@@ -1,21 +1,20 @@
 {%- comment -%}
-Microsoft Store のボタン。`_data/site.yml` の `distribution.store_enabled` が true のときだけ出す副ボタン (false のときは何も出さない)。
+Microsoft Store のバッジ (ダウンロードの導線)。`_data/site.yml` の `distribution.store_enabled` が true のときだけ出す (false のときは何も出さない)。
 切り替えを読むのは部品だけ。置き場所は条件を書かずにこの部品を置く。
-英中の docs (`/en/docs/`・`/zh-tw/docs/`) のインストールの節は Microsoft Store 版の入手の手順なので、store_enabled によらず主ボタン (btn-primary) で出す。
 
 params:
-  dl    (必須) 置き場所ごとの識別子 (hero-store / cta-store / docs-install-store / join-store)。
-        `data-dl` (計測の目印) と `data-store-button` (出し分けの検査の目印) に入る。
-        計測しないページ (`page.no_tracking`) では data-dl を出さない。
-  size  (任意) "large" で `btn-lg`
-  note  (任意) ボタンの下の補足文 (download-button.html の note と同じ見た目)
-  wrap  (任意) 包む <div> の class。false のときは包みも出さない。
+  dl      (必須) 置き場所ごとの識別子 (hero-store / cta-store / docs-install-store / join-store / 料金のカードはプランの code)。
+          `data-dl` (計測の目印) と `data-store-button` (出し分けの検査の目印) に入る。
+          計測しないページ (`page.no_tracking`) では data-dl を出さない。
+  size    (任意) "large" で大きいボタン (btn-lg) と同じ高さ
+  note    (任意) バッジの下の補足文
+  wrap    (任意) 包む <div> の class。省くと包みを出さない。
+  lazy    (任意) 真値で画像を遅延読み込み (ファーストビューの外の所)
 
-href は掲載ページ (`https://apps.microsoft.com/detail/<app_store_product_id>`)。ファイルのダウンロードではないので `download` 属性は付けない。
-文: ja は直書き、英中は `_data/l10n/<lang>/parts.yml` の st_label。検査は scripts/i18n/checks/store.mjs と scripts/check-store-toggle.mjs。
+href は公式のバッジと同じ形の Store の掲載ページ (`store-install-url.html` の出力)。別のオリジンのファイルで `download` 属性は効かないので付けない (保存は応答の指定による)。
+画像と alt は `store-badge-img.html`。検査は scripts/i18n/checks/store.mjs。
 {%- endcomment -%}
-{%- assign st_docs_intl = false -%}{%- if page.lang != 'ja' and page.url contains '/docs/' -%}{%- assign st_docs_intl = true -%}{%- endif -%}
-{%- if site.data.site.distribution.store_enabled or st_docs_intl -%}
-{%- assign st_L = site.data.lang[page.lang] -%}{%- assign st_P = site.data.l10n[page.lang].parts -%}
-{% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="{% if st_docs_intl %}btn-primary{% else %}btn-secondary{% endif %}{% if include.size == 'large' %} btn-lg{% endif %}" href="https://apps.microsoft.com/detail/{{ st_L.app_store_product_id }}" target="_blank" rel="noopener noreferrer" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include icon.html name="ExternalLink" class="h-5 w-5" %}{% if st_P %}{{ st_P.st_label }}{% else %}Microsoft Store で入手{% endif %}</a>{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}{% if include.wrap %}</div>{% endif %}
+{%- if site.data.site.distribution.store_enabled -%}
+{%- if include.size == 'large' -%}{%- assign st_img = 'h-[50px] w-auto' -%}{%- else -%}{%- assign st_img = 'h-[38px] w-auto' -%}{%- endif -%}
+{% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="inline-flex shrink-0 rounded-[5px]" href="{% include store-install-url.html %}" target="_blank" rel="noopener noreferrer" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include store-badge-img.html class=st_img lazy=include.lazy %}</a>{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}{% if include.wrap %}</div>{% endif %}
 {%- endif -%}

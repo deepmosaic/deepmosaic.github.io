@@ -4,11 +4,11 @@ lang: en
 permalink: /en/subscribe/
 ja_url: /subscribe/
 source: subscribe/index.html
-source_hash: "772de5e328259eb9aeedaeb89ed56d4ef29adc825b095477f5c468b632364fb1"
+source_hash: "d4ebd4d8a3d937c77641ad4afa1cbf7fa27a7c0357203f15f197b0866aa58e54"
 title: Subscribe to a paid plan
 seo_title: "Subscribe to a paid plan | Deepmosaic"
 # ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の subscribe/index.html と同じ)。料金を変えたらここも直すこと。
-description: "Subscribe to Deepmosaic Hobby (¥2,980 a month, excl. tax) with your Web app account, or from the app's profile menu if you downloaded the Windows version."
+description: "Subscribe to Deepmosaic Hobby (¥2,980 a month, excl. tax) with your Web app account, or from the profile menu in the Windows app."
 faq_data: subscribe
 schemas:
   - software-application
@@ -36,7 +36,7 @@ schemas:
     </nav>
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Subscribe to a paid plan</h1>
     <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
-      You can subscribe to a paid plan from the profile menu in the app (if you downloaded the Windows version) or from this page with your Web app account. Either way, you can use your plan with the same account in both the Desktop app and the Web app.
+      You can subscribe to a paid plan from the profile menu in the Windows app or from this page with your Web app account. Either way, you can use your plan with the same account in both the Desktop app and the Web app.
       On this page, use a button below to open the Web app, sign in with the same account as the app, and pay by credit card.
     </p>
     {%- include store-subscribe-note.html %}
@@ -93,7 +93,7 @@ schemas:
       {%- endfor %}
     </div>
     <p class="mt-5 text-[13px] leading-[1.9] text-ink-4">
-      For details on pricing and included hours, see the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a>. For how usage time is measured, see {% include ja-link.html href="/docs/#usage" label="Measuring usage time" class="text-accent-soft hover:underline" %} in the documentation.
+      For details on pricing and included hours, see the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a>. For how usage time is measured, see <a href="/en/docs/#usage" class="text-accent-soft hover:underline">How usage time is measured</a> in the documentation.
       {{ ent.name }} (for businesses, from {{ ent.min_seats }} {% if ent.min_seats == 1 %}account{% else %}accounts{% endif %}) is available by quote. Contact us through <a href="/en/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise inquiries</a>.
     </p>
   </div>

@@ -192,9 +192,9 @@ test('古いコメント「英語ページ (/en/) は作らない」が残って
 	for (const f of ['_data/entity.yml', '_includes/what-is.html']) assert.ok(!read(f).includes('/en/) は作らない'), f)
 })
 
-test('ja.json: キーの数は 36 のまま、meta_desc 以外の代表値は変わらない', () => {
+test('ja.json: キーの数は 35 (インストーラの URL のキーを消した後)、meta_desc 以外の代表値は変わらない', () => {
 	const ja = JSON.parse(read('_data/lang/ja.json'))
-	assert.equal(Object.keys(ja).length, 36)
+	assert.equal(Object.keys(ja).length, 35)
 	assert.ok(ja.find_desc.startsWith('男性と女性の局部を自動的に検出し'), ja.find_desc)
 	assert.ok(ja.deep_learning_desc.startsWith('局部の自動検出には'), ja.deep_learning_desc)
 })

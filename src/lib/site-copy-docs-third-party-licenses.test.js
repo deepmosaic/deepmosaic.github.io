@@ -5,7 +5,7 @@
 //   - Desktop 版のインストーラに ffmpeg (GPL ビルド) / ONNX Runtime / Visual C++ 再頒布可能パッケージを同梱するので、
 //     ドキュメントに一覧・ライセンス・ソースの入手先を書く (正本はアプリのライセンスの一覧)。
 //   - ffmpeg は GPL v3、libx264 / libx265 (GPL)、ビルドの提供元と版、ソースの URL を書く
-//     (BtbN 8.1.3 と当社の対応ソースの配布)。
+//     (BtbN の shared 版 8.1.3 = exe 2 本 + DLL 7 本と、当社の対応ソースの配布)。
 //   - 目次 (_data/docs_toc.yml の desktop「運用」) に licenses があり、本文の section id と揃う。
 //   - Premiere 連携には触れない (Store の開示事項と同じ方針)。
 //
@@ -52,7 +52,19 @@ test('ffmpeg: GPL v3・libx264 / libx265・提供元と版・ソースの入手�
 	assert.match(licenses, /8\.1\.3/)
 	assert.match(
 		licenses,
-		/https:\/\/deepmosaic-r2-proxy\.deepmosaic\.workers\.dev\/third-party\/ffmpeg\/autobuild-2026-10-31-12-59\/README\.txt/,
+		/https:\/\/deepmosaic-r2-proxy\.deepmosaic\.workers\.dev\/third-party\/ffmpeg\/autobuild-2026-10-31-12-59\/README-win64-gpl-shared-8\.1\.txt/,
+	)
+	// 同梱するのは shared 版 (exe 2 本 + DLL 7 本)。GPL のライブラリは DLL に静的にリンクされている
+	assert.match(licenses, /FFmpeg 8\.1\.3（ffmpeg\.exe \/ ffprobe\.exe と DLL 7 本）/)
+	for (const dll of ['avcodec-62.dll', 'avdevice-62.dll', 'avfilter-11.dll', 'avformat-62.dll', 'avutil-60.dll', 'swresample-6.dll', 'swscale-9.dll']) {
+		assert.ok(licenses.includes(dll), `DLL ${dll} が無い`)
+	}
+	assert.match(licenses, /これらの DLL に静的にリンクされています/)
+	// ビルドの名前と対応ソースの URL は許可の一覧のとおり (同梱するビルドのものだけ)
+	assert.deepEqual([...new Set(licenses.match(/win64-gpl(?:-shared)?-\d+\.\d+/g))], ['win64-gpl-shared-8.1'])
+	assert.deepEqual(
+		[...new Set(licenses.match(/https:\/\/[^\s"<]*\/third-party\/ffmpeg\/[^\s"<]*/g))],
+		['https://deepmosaic-r2-proxy.deepmosaic.workers.dev/third-party/ffmpeg/autobuild-2026-10-31-12-59/README-win64-gpl-shared-8.1.txt'],
 	)
 	assert.match(licenses, /第 6 条/)
 	assert.doesNotMatch(licenses, /gyan\.dev|8\.1\.1/, '同梱していないビルドの記述がある')

@@ -211,7 +211,7 @@ const perfPair = (lang, val) => {
 // ---- 読み取りと検査の部品の陽性対照 ----
 
 test('読み取り: ja の 4 ファイルの件数と値 (陽性対照)', () => {
-	assert.equal(ja.spec.windows.length, 5)
+	assert.equal(ja.spec.windows.length, 7)
 	assert.equal(ja.spec.macos.planned.length, 3)
 	assert.equal(ja.spec.performance.length, 28)
 	assert.equal(ja.spec.performance[0].key, 'NVIDIA GeForce RTX 5090')
@@ -220,7 +220,7 @@ test('読み取り: ja の 4 ファイルの件数と値 (陽性対照)', () => 
 	assert.equal(ja.disclosure.network.sent.length, 8)
 	assert.equal(ja.disclosure.network.not_sent.length, 5)
 	assert.equal(ja.disclosure.weaknesses.length, 5)
-	assert.equal(ja.mosaic.scopes.length, 4)
+	assert.equal(ja.mosaic.scopes.length, 5)
 	assert.equal(ja.mosaic.controls.length, 7)
 	assert.equal(jaEntity.can.length, 8)
 	assert.equal(jaEntity.cannot.length, 4)
@@ -324,7 +324,7 @@ for (const lang of LANGS) {
 		})
 	})
 
-	test(`disclosure / mosaic (${lang}): 配列の件数と note の有無が ja と同じ、priority_note の &gt; の数が同じ`, () => {
+	test(`disclosure / mosaic (${lang}): 配列の件数と note の有無が ja と同じ、priority_note の &gt; の数が同じ (0)`, () => {
 		const d = l10n[lang].disclosure
 		for (const k of ['sent', 'not_sent']) {
 			assert.equal(d.network[k].length, ja.disclosure.network[k].length, `network.${k} の件数`)
@@ -339,7 +339,7 @@ for (const lang of LANGS) {
 		assert.equal(m.controls.length, ja.mosaic.controls.length)
 		const gt = (s) => (s.match(/&gt;/g) ?? []).length
 		assert.equal(gt(m.priority_note), gt(ja.mosaic.priority_note))
-		assert.equal(gt(m.priority_note), 3)
+		assert.equal(gt(m.priority_note), 0, '優先は「最後に設定したもの」で、範囲の固定の順 (&gt;) は書かない')
 	})
 
 	// ---- entity ----

@@ -81,7 +81,8 @@ for (const hash of ['', '#', '#code=ABCD-EFGH', '#code=%3Cimg%20src%3Dx%20onerro
     await expect(page.locator('[data-join] a:visible:has-text("アプリで開く")')).toHaveCount(0);
     await expect(page.locator(OPEN_CODE)).not.toHaveAttribute('href', /.*/);
     await expect(page.locator('[data-join-code]').first()).toHaveText('');
-    await expect(page.locator('[data-join] img')).toHaveCount(0);
+    // 入力値から作られた画像が無い (原稿にある画像は Microsoft Store のバッジ 1 つだけ)
+    await expect(page.locator('[data-join] img:not([src="/assets/img/store-badge/ja.svg"])')).toHaveCount(0);
     expect(dialog, 'HTML を含む値が実行された').toBe(false);
   });
 }
@@ -143,26 +144,30 @@ test('noindex・referrer なし・サイトマップに載らない', async ({ p
   expect(await sitemap.text()).not.toContain('/join/');
 });
 
-// 「アプリをまだ入れていない方」は Windows 版のダウンロード (DL の単一管理点 app_download_link = インストーラ) へ。
-// 計測しないページなので data-dl を付けない。Store のボタンは切り替え (既定 false) が true のときだけ出る。
-const DOWNLOAD_URL = 'https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows';
-for (const [path, text] of [
-  ['/join/', 'Deepmosaic（Windows 版）をダウンロード'],
-  ['/en/join/', 'Download Deepmosaic for Windows'],
-  ['/zh-tw/join/', '下載 Deepmosaic（Windows 版）'],
+// 「アプリをまだ入れていない方」は Microsoft Store の文と Store のバッジ (その言語の公式の画像) だけ。インストーラのリンクは出さない。
+// 計測しないページなので data-dl を付けない。
+/** ページの言語の掲載ページ (公式のバッジと同じ形、hl はページの言語) */
+const STORE_URL = (hl: string) => `https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=${hl}`;
+for (const [path, text, label, lang, hl] of [
+  ['/join/', 'Microsoft Store から Deepmosaic（Windows 版）を入れてください。', 'Microsoft Store からダウンロード', 'ja', 'ja-JP'],
+  ['/en/join/', 'Get Deepmosaic for Windows from Microsoft Store.', 'Download from the Microsoft Store', 'en', 'en-US'],
+  ['/zh-tw/join/', '請從 Microsoft Store 取得並安裝 Deepmosaic（Windows 版）。', '從 Microsoft Store 下載', 'zh-tw', 'zh-TW'],
 ] as const) {
-  test(`${path}: アプリのダウンロードへのリンク (別タブ・noopener・計測なし・Store のボタンは既定で出ない)`, async ({ page }) => {
+  test(`${path}: Microsoft Store のバッジが 1 つ (別タブ・noopener・計測なし)、インストーラのリンクは無い`, async ({ page }) => {
     await page.goto(`${path}#code=ABCD-EFGH-2345`, { waitUntil: 'load' });
     const install = page.locator('[data-join-install]');
-    const dl = install.locator('[data-join-download]');
-    await expect(dl).toHaveText(text);
-    await expect(dl).toHaveAttribute('href', DOWNLOAD_URL);
-    await expect(dl).toHaveAttribute('download', '');
-    await expect(dl).toHaveAttribute('target', '_blank');
-    await expect(dl).toHaveAttribute('rel', 'noopener noreferrer');
-    await expect(dl).not.toHaveAttribute('data-dl', /.*/);
-    await expect(install).not.toContainText('Microsoft Store');
-    await expect(page.locator('[data-store-button], [data-join-store], a[href*="apps.microsoft.com"]')).toHaveCount(0);
+    await expect(install).toContainText(text);
+    const store = install.locator('a[data-store-button="join-store"]');
+    await expect(store).toHaveCount(1);
+    await expect(store).toHaveAccessibleName(label);
+    await expect(store.locator('img')).toHaveAttribute('src', `/assets/img/store-badge/${lang}.svg`);
+    await expect(store).toHaveAttribute('href', STORE_URL(hl));
+    await expect(store).toHaveAttribute('target', '_blank');
+    await expect(store).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(store).not.toHaveAttribute('download');
+    await expect(store).not.toHaveAttribute('data-dl', /.*/);
+    await expect(install.locator('[data-join-download]')).toHaveCount(0);
+    await expect(page.locator('a[href*="download/latest/windows"], a[download]')).toHaveCount(0);
   });
 }
 

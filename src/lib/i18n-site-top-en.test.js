@@ -5,7 +5,7 @@
 //   - ja の index.html と en/index.html の構造の一致 (scripts/i18n/parity.mjs の compareStructure が空)
 //   - front matter: lang / permalink / ja_url / source / source_hash / seo_title / description / schemas (ja と同じ)
 //   - ソースの文に仮名・漢字が無い (コメントを除く)。文のデータは l10n から引く (site.data.mosaic. などの直参照が無い)
-//   - サイト内リンクは /en/ の接頭辞、docs は ja-link.html、DL の href は言語のデータ
+//   - サイト内リンクは /en/ の接頭辞、docs は同じ言語の docs、DL の href は言語のデータ
 //   - check-site のモジュール scripts/i18n/checks/pages-top-en.mjs の単体 (作った _site の模型で、陽性対照と陰性対照)
 //   - `_site` は読まない (CI では npm test がビルドの前に走る)
 
@@ -157,7 +157,7 @@ test('本文: 製品の方向の語 (adds mosaic / apply mosaic) がある、成
 	}
 })
 
-test('リンク: サイト内は /en/ の接頭辞、docs は ja-link.html、DL の href は言語のデータ', () => {
+test('リンク: サイト内は /en/ の接頭辞、docs は同じ言語の docs、DL の href は言語のデータ', () => {
 	assert.ok(enExists)
 	const body = stripComments(splitFrontMatter(EN).body)
 	// Liquid のタグ ({% include ja-link.html href=… %}) の引数は除いて、HTML の href だけを見る
@@ -165,18 +165,22 @@ test('リンク: サイト内は /en/ の接頭辞、docs は ja-link.html、DL 
 	for (const h of hrefs) {
 		if (h.startsWith('#') || h.startsWith('{{')) continue
 		assert.ok(!/^\/(price|spec|enterprise|subscribe|contact|company\/about)/.test(h), `接頭辞の無いサイト内リンク: ${h}`)
-		assert.ok(!/^\/docs/.test(h), `docs への生のリンク (ja-link.html を使う): ${h}`)
+		assert.ok(!/^\/docs/.test(h), `日本語の docs へのリンク (同じ言語の docs にする): ${h}`)
 	}
 	for (const want of ['/en/spec/', '/en/price/', '/en/enterprise/inquiry/']) {
 		assert.ok(hrefs.includes(want), `${want} へのリンクが無い`)
 	}
 	const jaLinks = [...body.matchAll(/\{%-?\s*include ja-link\.html href="([^"]*)"/g)].map((m) => m[1])
-	assert.deepEqual(jaLinks.sort(), ['/docs/', '/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team'])
-	assert.match(body, /<a href="\{\{ site\.data\.lang\[page\.lang\]\.app_download_link \}\}" download data-dl="hero"/) // インストーラの DL (ja と同じ属性)
+	assert.deepEqual(jaLinks.filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
+	for (const want of ['/docs/', '/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team']) {
+		assert.ok(hrefs.includes(`/en${want}`), `/en${want} へのリンクが無い`)
+	}
+	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="large" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
+	assert.doesNotMatch(body, /download-button|app_download_link/, 'インストーラの DL の部品が残っている')
 	assert.match(body, /secondary_href="\/en\/price\/"/)
 })
 
-test('画像: アプリの画面・日本語の文字が写った画像の alt に (Japanese UI)', () => {
+test('画像: 日本語の画面・日本語の文字が写った画像の alt に (Japanese UI)、英語の画面の画像 (screenshots/en/) には無い', () => {
 	assert.ok(enExists)
 	const body = stripComments(splitFrontMatter(EN).body)
 	const imgs = [...body.matchAll(/<img\b[^>]*>/g)].map((m) => m[0])
@@ -185,7 +189,10 @@ test('画像: アプリの画面・日本語の文字が写った画像の alt �
 		const src = tag.match(/\ssrc="([^"]*)"/)[1]
 		const alt = tag.match(/\salt="([^"]*)"/)?.[1] ?? ''
 		assert.ok(alt.length > 0, `${src} の alt が空`)
-		const jaUi = /screenshots\/|samples\/mosaic-detect-|pr_image\.webp/.test(src)
+		// 言語別の画像はその言語の画面なので印を付けない。日本語の画面の画像には印を付ける
+		const localized = src.startsWith('/assets/img/screenshots/en/')
+		if (localized) assert.ok(existsSync(join(ROOT, src.slice(1))), `${src} が無い`)
+		const jaUi = !localized && /screenshots\/|samples\/mosaic-detect-|pr_image\.webp/.test(src)
 		if (jaUi) assert.ok(alt.endsWith(' (Japanese UI)'), `${src} の alt に (Japanese UI) が無い: ${alt}`)
 		else assert.ok(!alt.includes('(Japanese UI)'), `${src} は日本語の画面ではない: ${alt}`)
 	}
@@ -249,7 +256,7 @@ const GOOD_EN =
 	'<div class="kicker">AI software that adds mosaic to videos</div>\n' +
 	'<p data-i18n-allow="mosaic_removal">It has no feature for taking off mosaic.</p>\n' +
 	'<p class="cta" data-i18n-allow="mosaic_removal">This software is for applying mosaic. It has no feature for taking off mosaic.</p>\n' +
-	'<a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW" data-dl="hero">x</a><a href="https://app" data-dl="hero-webapp">y</a>\n' +
+	'<a href="https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=en-US" data-dl="hero">x</a><a href="https://app" data-dl="hero-webapp">y</a>\n' +
 	'<details>a</details><details>b</details>\n' +
 	'</body></html>\n'
 
@@ -297,7 +304,8 @@ const BAD_CASES = [
 	// ja からも消す: 値の集合の比較 (どちらも空で一致) では捕まらず、長さの検査だけで落ちる
 	['data-dl が無い (ja も無い)', (s) => s.replace(/ data-dl="[^"]*"/g, ''), '計測が止まる', (s) => s.replace(/ data-dl="[^"]*"/g, '')],
 	['data-dl の値が ja と違う', (s) => s.replace('data-dl="hero-webapp"', 'data-dl="hero-web"'), 'data-dl'],
-	['DL の href にクエリが焼き込まれている', (s) => s.replace('9PDKMKWHN9RW"', '9PDKMKWHN9RW?utm_source=x"'), 'クエリ'],
+	['DL の href にクエリが焼き込まれている', (s) => s.replace('hl=en-US"', 'hl=en-US&utm_source=x"'), 'クエリ'],
+	['Store のバッジの行き先に計測の印 (dm) が焼き込まれている', (s) => s.replace('hl=en-US"', 'hl=en-US&dm=1"'), 'クエリ'],
 	['hreflang が 3 本', (s) => s.replace(/<link rel="alternate" hreflang="x-default"[^\n]*\n/, ''), 'hreflang'],
 ]
 

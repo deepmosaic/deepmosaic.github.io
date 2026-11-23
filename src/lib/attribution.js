@@ -1,8 +1,8 @@
 // ダウンロードの流入経路の引き継ぎ。
 //
-// DL ボタンは配布の受け口 (`/download/latest/windows`) へ向いていて、受け口が
-// クエリの `utm_*` と `ref` をダウンロードの記録に残す。そこから先は
-// インストーラのファイル名に埋めたトークン経由でアプリのユーザーと紐づく。
+// 流入経路を受け取れる自前の受け口へ向く DL リンクに、クエリの `utm_*` と `ref` を載せ直す。
+// 今の DL ボタン (Microsoft Store のバッジ) は第三者の Microsoft Store へ向くので載せない (
+// `UNDECORATED_HOSTS`)。GA4 の `file_download` はどの DL リンクでも送る。
 //
 // ## なぜこの配管が要るのか (実測)
 //
@@ -321,8 +321,8 @@ export function parseFirstEnvelope(json, now) {
   return hasAny ? record : null;
 }
 
-/** 流入経路を載せない配布先のホスト (Microsoft Store の掲載ページ)。 */
-const UNDECORATED_HOSTS = new Set(['apps.microsoft.com']);
+/** 流入経路を載せない配布先のホスト (Microsoft Store の掲載ページと、Microsoft の配布のホスト)。比較は完全一致。 */
+const UNDECORATED_HOSTS = new Set(['apps.microsoft.com', 'get.microsoft.com']);
 
 /** @param {URL} url */
 function isDecoratableUrl(url) {

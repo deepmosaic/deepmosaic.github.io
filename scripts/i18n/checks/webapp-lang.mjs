@@ -29,7 +29,7 @@ const webAppHrefs = (html) =>
 const langOf = (rel) => TRANSLATED_DIRS.find((d) => rel.startsWith(`${d}/`)) ?? 'ja'
 
 /** 1 つの href の検査。エラーの文 (問題なしは null) */
-function checkHref(rel, href, lang) {
+export function checkHref(rel, href, lang) {
 	let url
 	try {
 		url = new URL(href)

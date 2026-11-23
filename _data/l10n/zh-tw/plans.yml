@@ -2,7 +2,7 @@
 # tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ。
 # 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/plans.yml"
-_source_hash: "7630ba007a4130185f7ee5791c098c93e2330bfcd490593261015bcd6a4fb99a"
+_source_hash: "a910704cbfea201d6a49be45db25941ea3e105f9481927e055932492c350ad8a"
 tax_note: "未稅"
 rollout_note: ""
 currency_prefix: ""
@@ -16,7 +16,6 @@ tiers:
       - "1 台 PC 最多合計 2 小時（重新建立帳號也相同）"
       - "不需登記信用卡"
       - "免費期間結束後，仍可繼續編輯與匯出既有專案"
-    cta_label: "免費下載"
   light:
     summary: "適合同人與個人拍攝的創作者。額度依每月 1 至 3 部影片的步調設計。"
     price_unit: "/ 月"

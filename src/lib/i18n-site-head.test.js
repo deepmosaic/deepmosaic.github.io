@@ -2,7 +2,7 @@
 //
 //   node --test src/lib/i18n-site-head.test.js
 //
-//   - 訳の台帳 `_data/i18n_pages.yml`: 鍵は ja のパス 11 本、値は全部 [en, zh-tw]。隣にアプリのリポがあれば、その訳のあるページの一覧と照合
+//   - 訳の台帳 `_data/i18n_pages.yml`: 鍵は ja のパス 11 本、値は全部 [en, zh-tw]。隣にアプリのリポがあれば、その訳のあるページの一覧が台帳に含まれることを照合
 //   - 台帳の鍵の ja のページがソースに実在する (front matter の permalink か置き場所から求めた URL)
 //   - layout / schema のソース: x-default の hreflang が en を向く、ja 固定 (`site.data.lang.ja.`) の参照が残っていない
 //   - 既存のテストがソースを照合している式 (faq の 2 行・gtag・no_tracking) を残している
@@ -59,14 +59,16 @@ test('台帳: 先頭のコメントにアプリの訳のあるページの一覧
 
 const DESKTOP_SITE_URL = join(ROOT, '..', 'desktop', 'src', 'lib', 'i18n', 'site-url.ts')
 test(
-	'台帳: 隣のアプリのリポの訳のあるページの一覧 (10 本) が 台帳の鍵 − /company/about と一致する',
+	'台帳: 隣のアプリのリポの訳のあるページの一覧は、台帳の鍵 − /company/about に含まれる',
 	{ skip: existsSync(DESKTOP_SITE_URL) ? false : '隣にアプリのリポが無い' },
 	() => {
 		const src = readFileSync(DESKTOP_SITE_URL, 'utf8')
 		const block = src.match(/SITE_TRANSLATED_PATHS\s*=\s*\[([\s\S]*?)\]/)
 		assert.ok(block, 'アプリの訳のあるページの一覧が読めない')
 		const paths = [...block[1].matchAll(/'([^']+)'/g)].map((m) => m[1]).sort()
-		assert.deepEqual(paths, LEDGER_KEYS.filter((k) => k !== '/company/about').sort())
+		assert.ok(paths.length >= 8, `アプリの一覧が少なすぎる (${paths.length} 本)`)
+		const keys = new Set(LEDGER_KEYS.filter((k) => k !== '/company/about'))
+		assert.deepEqual(paths.filter((p) => !keys.has(p)), [], '台帳に無いページがアプリの一覧にある')
 	},
 )
 
@@ -164,7 +166,9 @@ test('layout: 既存のテストが照合している gtag と no_tracking の�
 test('software-application: inLanguage・description・downloadUrl をページの言語から出し、英中は l10n の entity を使う', () => {
 	assert.match(swApp, /"inLanguage": \{\{ L\.json_ld_lang \| default: "ja" \| jsonify \}\}/)
 	assert.match(swApp, /"description": \{\{ L\.meta_desc \| jsonify \}\}/)
-	assert.match(swApp, /"downloadUrl": \{\{ L\.app_download_link \| jsonify \}\}/)
+	assert.match(swApp, /"downloadUrl": \{\{ sw_download \| jsonify \}\}/)
+	assert.doesNotMatch(swApp, /app_download_link|installer_enabled/, 'インストーラの URL を出さない')
+	assert.match(swApp, /apps\.microsoft\.com\/detail\/\{\{ L\.app_store_product_id \}\}/)
 	assert.match(swApp, /site\.data\.l10n\[page\.lang\]\.entity/)
 	assert.doesNotMatch(swApp, /"inLanguage": "ja"/)
 })

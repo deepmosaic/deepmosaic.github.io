@@ -216,7 +216,7 @@ test('HERO のボタン列より前に検出対象の図 (埋め込み SVG の�
 
 	// Act
 	const figAt = shown.indexOf('{% include detectable-objects.html')
-	const buttonsAt = shown.indexOf('data-dl="hero"')
+	const buttonsAt = shown.search(/include store-button\.html[^%]*dl="hero-store"/)
 
 	// Assert
 	assert.ok(figAt >= 0, 'HERO に検出対象の図 (detectable-objects.html) が無い')

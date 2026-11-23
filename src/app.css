@@ -403,7 +403,8 @@
   .rich-prose :where(strong, b) {
     color: var(--color-ink);
   }
-  .rich-prose :where(img) {
+  /* Microsoft Store のバッジ (.store-badge) は公式の画像なので枠・角丸・余白を当てない */
+  .rich-prose :where(img:not(.store-badge)) {
     border-radius: 8px;
     margin-bottom: 1.6rem;
     max-width: 100%;

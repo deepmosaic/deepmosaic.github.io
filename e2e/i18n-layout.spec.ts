@@ -94,14 +94,6 @@ test.beforeEach(async ({ page, baseURL }) => {
     (url) => url.origin !== origin && (url.protocol === 'http:' || url.protocol === 'https:'),
     (route) => route.abort(),
   );
-  // ja のページで英中への案内の帯 (.lang-suggest) を出さない (保存値が ja なら出ない)
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem('dm-site-lang', 'ja');
-    } catch {
-      /* 保存できない環境では帯の有無は ja のページの採取にしか効かない */
-    }
-  });
 });
 
 async function settle(page: Page): Promise<void> {

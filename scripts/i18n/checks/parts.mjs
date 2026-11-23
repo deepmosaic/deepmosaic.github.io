@@ -5,8 +5,6 @@
 //       価格 (text-[36px] の span) と税の注記 (text-[13px] の span) の数値 (桁区切りを除いた数の並び) が ja と同じ。
 //       Free の横帯 (card mt-5 の h3) も同じ数値。zh-tw は価格・税込・横帯に `¥` が無く `日圓` がある。
 //   - data-dl の値の多重集合が ja の同じページと同じ (GA4 の計測の目印を英中でも揃える)。
-//       英中の docs のインストールの節のボタン (docs-install・docs-install-store) は比べない
-//       (英中の docs は Store のボタンだけを出す。そのボタンは checks/store.mjs が見る)。
 //   - cta-download.html の not_removal_note の <p> は英中で data-i18n-allow="mosaic_removal" を持つ (ja のページに無い要素は求めない)。
 
 const PREFIXES = { en: 'en/', 'zh-tw': 'zh-tw/' }
@@ -28,9 +26,6 @@ function cardsOf(html) {
 }
 
 const dataDlOf = (html) => [...html.matchAll(/\sdata-dl="([^"]*)"/g)].map((m) => m[1]).sort()
-
-/** 英中の docs のページ (接頭辞を除いたパス) と、比べない data-dl (インストールの節のボタン) */
-const DOCS_INSTALL_DL = { 'docs/index.html': new Set(['docs-install', 'docs-install-store']) }
 
 function checkPage(lang, rel, html, jaHtml) {
 	const errors = []
@@ -70,9 +65,8 @@ function checkPage(lang, rel, html, jaHtml) {
 		})
 	}
 
-	const skip = DOCS_INSTALL_DL[rel.slice(PREFIXES[lang].length)] ?? new Set()
-	const dl = dataDlOf(html).filter((v) => !skip.has(v))
-	const jaDl = dataDlOf(jaHtml).filter((v) => !skip.has(v))
+	const dl = dataDlOf(html)
+	const jaDl = dataDlOf(jaHtml)
 	if (dl.join(',') !== jaDl.join(',')) {
 		errors.push(`${rel}: data-dl の値が ja と違う: [${dl.join(', ')}] / [${jaDl.join(', ')}]`)
 	}

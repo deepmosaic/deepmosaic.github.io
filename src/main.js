@@ -180,7 +180,8 @@ function initDownloadTracking() {
       ga4EventNameFor(a.dataset.dl),
       ga4FileDownloadParams({
         href: a.href,
-        text: a.textContent,
+        // 画像だけのリンク (Microsoft Store のバッジ) は文が無いので画像の alt を使う
+        text: a.textContent.trim() || (a.querySelector('img')?.alt ?? ''),
         id: a.dataset.dl ?? '',
         classes: a.className,
       })
@@ -209,8 +210,8 @@ import { pageLang, pick } from './lib/site-lang.js';
 // 言語を切り替えても組織コード (フラグメント) を引き継ぐ
 import { carryJoinHash } from './lib/join-switch.js';
 
-/** 言語の切り替え (ヘッダー・フッター・ドロワー) と言語の案内の帯のリンク */
-const LANG_LINKS = '[data-i18n-switch] a[hreflang], .lang-suggest a[hreflang]';
+/** 言語の切り替え (ヘッダー・フッター・ドロワー) のリンク */
+const LANG_LINKS = '[data-i18n-switch] a[hreflang]';
 
 const COPY_DONE = 'コピーしました。';
 const COPY_FAILED = 'コピーできませんでした。組織コードを選択してコピーしてください。';
@@ -264,15 +265,6 @@ function syncJoinSwitchLinks() {
   document.querySelectorAll(LANG_LINKS).forEach(carryHashTo);
 }
 
-/**
- * 言語の案内の帯は init() の initJoinPage() より後に描かれるので、join のページでは描いた後に帯のリンクにもコードを付け直す
- * (右クリックのコピー・ドラッグ・ステータスバーの表示も /en/join/#code=… になるように。押した瞬間の付け直しは onLangLink)。
- * @param {HTMLElement | null} banner mountLangSuggest() の戻り値 (帯を描かなかったときは null)
- */
-function syncJoinAfterBanner(banner) {
-  if (banner && document.querySelector('[data-join]')) syncJoinSwitchLinks();
-}
-
 function initJoinPage() {
   const root = document.querySelector('[data-join]');
   if (!root) return;
@@ -282,7 +274,7 @@ function initJoinPage() {
     current = renderJoin(root);
     syncJoinSwitchLinks();
   });
-  // ドロワー (MobileNav) と帯は後から描かれるので、押した瞬間 (遷移の前) にも付け直す。中クリックは auxclick
+  // ドロワー (MobileNav) は後から描かれるので、押した瞬間 (遷移の前) にも付け直す。中クリックは auxclick
   const onLangLink = (e) => {
     const a = e.target instanceof Element ? e.target.closest(LANG_LINKS) : null;
     if (a !== null) carryHashTo(a);
@@ -377,7 +369,3 @@ if (document.readyState === 'loading') {
 } else {
   init();
 }
-
-// ---- i18n の初期化 (言語の案内の import と呼び出し) ----
-import { mountLangSuggest } from './lib/lang-suggest-mount.js';
-if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => syncJoinAfterBanner(mountLangSuggest())); else syncJoinAfterBanner(mountLangSuggest());

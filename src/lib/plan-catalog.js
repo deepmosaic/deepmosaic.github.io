@@ -32,9 +32,31 @@
 
 import { showsPrice } from '../../scripts/i18n/checks/plan-visibility.mjs';
 
-/** 本番 (live) の料金のカタログ。`livemode` は**必ず明示する** (取得先の既定に依存しない)。 */
-export const CATALOG_URL =
-  'https://deepmosaic-supabase-proxy.deepmosaic.workers.dev/plan-catalog?livemode=true';
+/**
+ * 取得先と鍵を渡す環境変数の名前。値はリポジトリに置かず、CI では GitHub Actions の secret から渡す
+ * (公開リポのログに取得先が出ないよう、取得先も secret にする)。
+ */
+export const ENV_API_KEY = 'PRICE_CHECK_API_KEY';
+export const ENV_URL = 'PRICE_CHECK_URL';
+
+/**
+ * 取得先の URL に `livemode=true` を付けて返す。`livemode` は**必ず明示する** (取得先の既定に依存しない)。
+ * 既に別の値が付いていても true に上書きする。URL として読めなければ null。
+ *
+ * @param {string} base
+ * @returns {string|null}
+ */
+export function liveCatalogUrl(base) {
+  let u;
+  try {
+    u = new URL(base);
+  } catch {
+    return null;
+  }
+  if (u.protocol !== 'https:' && u.protocol !== 'http:') return null;
+  u.searchParams.set('livemode', 'true');
+  return u.toString();
+}
 
 /** 突き合わせに使う HTTP タイムアウト (ms)。CI を待たせないこと優先。 */
 export const DEFAULT_TIMEOUT_MS = 10_000;
@@ -193,16 +215,16 @@ export function diffPlanCatalog(tiers, plans) {
  *
  * @param {object} [opts]
  * @param {string} [opts.apiKey]
- * @param {string} [opts.url]
+ * @param {string} [opts.url] 取得先 (`livemode=true` は自動で付ける)。`message` に URL も含めない
  * @param {number} [opts.timeoutMs]
  * @param {typeof fetch} [opts.fetchImpl] テスト用の差し替え
  * @returns {Promise<{status:'ok', plans: Record<string, unknown>[]}
- *                 | {status:'no-key'|'auth'|'http'|'network'|'shape', message: string}>}
+ *                 | {status:'no-key'|'no-url'|'auth'|'http'|'network'|'shape', message: string}>}
  */
 export async function fetchPlanCatalog(opts = {}) {
   const {
     apiKey = '',
-    url = CATALOG_URL,
+    url: baseUrl = '',
     timeoutMs = DEFAULT_TIMEOUT_MS,
     fetchImpl = globalThis.fetch,
   } = opts;
@@ -211,8 +233,23 @@ export async function fetchPlanCatalog(opts = {}) {
     return {
       status: 'no-key',
       message:
-        'SUPABASE_PROXY_API_KEY が未設定のため料金のカタログとの突き合わせを飛ばした' +
+        `${ENV_API_KEY} が未設定のため料金のカタログとの突き合わせを飛ばした` +
         ' (GitHub Secrets に登録すると有効になる)',
+    };
+  }
+  if (!baseUrl) {
+    return {
+      status: 'no-url',
+      message:
+        `${ENV_URL} が未設定のため料金のカタログとの突き合わせを飛ばした` +
+        ' (GitHub Secrets に登録すると有効になる)',
+    };
+  }
+  const url = liveCatalogUrl(baseUrl);
+  if (!url) {
+    return {
+      status: 'no-url',
+      message: `${ENV_URL} が http(s) の URL として読めないため料金のカタログとの突き合わせを飛ばした`,
     };
   }
 
@@ -232,7 +269,7 @@ export async function fetchPlanCatalog(opts = {}) {
     return {
       status: 'auth',
       message:
-        `plan-catalog が HTTP ${res.status} を返した — SUPABASE_PROXY_API_KEY が無効か失効している。` +
+        `plan-catalog が HTTP ${res.status} を返した — ${ENV_API_KEY} が無効か失効している。` +
         ' 突き合わせは行われていない (乖離を検知できない状態)',
     };
   }

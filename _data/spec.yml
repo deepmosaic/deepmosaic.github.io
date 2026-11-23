@@ -12,6 +12,14 @@ windows:
   # WebView2 のランタイムはインストーラが自動で入れるので、この表には並べない (src/lib/spec-requirements.test.js)。
   - key: "ストレージ"
     val: "初回セットアップで AI モデル等に 10GB程度"
+  # アプリの表示言語。切り替えの場所 (どのボタンか) は書かない (版で変わるため。説明は docs 第 1 章)。
+  - key: "表示言語"
+    val: "日本語 / English / 繁體中文（初めて起動したときは Windows の表示言語に合わせて選ばれ、日本語・英語・中国語以外は英語になります。アプリ内でいつでも切り替えられます）"
+  # Store 版の行は `_data/site.yml` の distribution.store_enabled が true のときだけ出す (store_only。ページと llms-full.txt が除く)。
+  #    最小の OS は Store 版のパッケージが求める版 (10.0.19041.0 = Windows 10 バージョン 2004)。
+  - key: "Microsoft Store 版"
+    val: "Windows 10 バージョン 2004 以降。Microsoft Store から入手し、更新も Microsoft Store が配信します"
+    store_only: true
 
 macos:
   status: "開発中"

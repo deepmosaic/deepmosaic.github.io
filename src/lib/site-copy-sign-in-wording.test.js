@@ -159,10 +159,10 @@ test('パスワードに関する案内をサイトに書かない', () => {
 	assert.ok(targets[0][1].includes('パスワードは要りません'), '陽性対照: #license に「パスワードは要りません」が無い')
 })
 
-test('法務: privacy / cookie / asct は最終更新日 2026-11-16、legal.yml の版と terms / eula は据え置き', () => {
-	assert.ok(read('company/privacy.html').includes('最終更新日: 2026-11-16（制定: 2019-06-01）'))
-	assert.ok(read('company/cookie.html').includes('最終更新日: 2026-11-16'))
-	assert.ok(read('company/asct.html').includes('最終更新日: 2026-11-16'))
+test('法務: privacy / cookie / asct は最終更新日 2026-11-23、legal.yml の版と terms / eula は据え置き', () => {
+	assert.ok(read('company/privacy.html').includes('最終更新日: 2026-11-23（制定: 2019-06-01）'))
+	assert.ok(read('company/cookie.html').includes('最終更新日: 2026-11-23'))
+	assert.ok(read('company/asct.html').includes('最終更新日: 2026-11-23'))
 	assert.match(read('_data/legal.yml'), /version: "2026-11-08"/)
 	assert.ok(read('company/terms.html').includes('最終更新日: 2026-11-08'))
 	assert.ok(read('company/eula.html').includes('最終更新日: 2026-11-08'))

@@ -11,7 +11,7 @@
 // - (d) /en/enterprise/inquiry/: 電話番号が必須 (規則は ja と同じ。空のときは ja と同じく「最低 5 文字」の文になる = inquiry-validate.js)。
 // - (e) /en/join/#code=…: code の表示とコピーの英文、計測のリクエストが出ない。
 // - (g)(h) /join/ の言語の切り替えで #code= / #admin を引き継ぐ。
-// - (i) 言語の案内の帯のリンクも読み込み直後から #code= を持つ。
+// - (i) ヘッダーの言語の一覧のリンクも読み込み直後から #code= を持ち、押すとコードを持ったまま移る。
 // - (f) 存在しない /en/nope/ を開くと /en/404.html に移り英文が出る (e2e/lib/serve.mjs は 404 にルートの 404.html を返す =
 //       GitHub Pages と同じ。その中の印 data-lang-404 を src/main.js が見て移す)。
 //
@@ -211,15 +211,19 @@ test.describe('組織への参加: 言語の切り替えでフラグメントを
   });
 });
 
-// 言語の案内の帯は initJoinPage() より後に描かれるので、
-// 読み込み直後の帯のリンクの href 属性にもコードが付いていること (右クリックのコピー・ドラッグ・ステータスバーの表示のため)。
-test.describe('組織への参加: 言語の案内の帯のリンクもフラグメントを引き継ぐ', () => {
-  test.use({ locale: 'en-US' });
-  test('(i) en-US で /join/#code=… を開くと、帯のリンクの href が読み込み直後から /en/join/#code=…', async ({ page }) => {
+// ヘッダーの言語の一覧 (幅 lg 以上) のリンクも、読み込み直後の href 属性にコードが付いていること
+// (右クリックのコピー・ドラッグ・ステータスバーの表示のため)。押すとコードを持ったまま移る。
+test.describe('組織への参加: ヘッダーの言語の一覧のリンクもフラグメントを引き継ぐ', () => {
+  test.use({ viewport: { width: 1280, height: 800 } });
+  test('(i) /join/#code=… のヘッダーの一覧の English が読み込み直後から /en/join/#code=… で、押すとコードが残る', async ({ page }) => {
     await page.goto('/join/#code=ABCD-EFGH-JKLM', { waitUntil: 'load' });
-    const link = page.locator('.lang-suggest a[hreflang="en"]');
+    const link = page.locator('header > div > div[data-i18n-switch] a[hreflang="en"]');
     await expect(link).toHaveCount(1);
     await expect(link).toHaveAttribute('href', '/en/join/#code=ABCD-EFGH-JKLM');
+    await page.locator('header > div > div[data-i18n-switch] [data-lang-menu-trigger]').click();
+    await link.click();
+    await expect(page).toHaveURL(/\/en\/join\/#code=ABCD-EFGH-JKLM$/);
+    await expect(page.locator('[data-join-view="code"]')).toBeVisible();
   });
 });
 

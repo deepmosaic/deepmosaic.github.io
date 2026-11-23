@@ -1,8 +1,8 @@
-# `_data/faq.yml` の英語の訳。ja と同じ順・同じ件数 (15)・同じプレースホルダ (%%LIGHT_MAX%% など)。
+# `_data/faq.yml` の英語の訳。ja と同じ順・同じ件数 (16)・同じプレースホルダ (%%LIGHT_MAX%% など)。
 # ja はトップレベルが配列だが、_source を持たせるため items: の下に置く (部品が site.data.l10n[page.lang].faq.items で引く)。
 # 除去の禁止の連語 (remove mosaic・decensor など) を使わない (FAQ の描画には data-i18n-allow を付けられない)。
 _source: "_data/faq.yml"
-_source_hash: "4ce753f4c00928304a78ef12f3787deb6297d6235d09a5f3a593001fcff65555"
+_source_hash: "7e39ccf0a17ef87743d537a8ba960271d6c993d8c1e70813412971a380ebcfbd"
 items:
   - q: "What kind of software is Deepmosaic?"
     a: "It is a Windows desktop app that uses AI to automatically detect and track targets in a video and apply mosaic to those areas. You can review and correct the detection results in the editing screen, and it supports exporting videos with the mosaic burned in and importing the mosaic information into Adobe Premiere Pro. It is intended to streamline pre-submission work in video production where mosaic must be applied."
@@ -29,7 +29,9 @@ items:
   - q: "Which Adobe products does it work with?"
     a: "It supports Adobe Premiere Pro. You can import AI-detected mosaic information into a Premiere Pro project with one click. The app also guides you through setting up the plug-in automatically. Exporting videos with the mosaic burned in can also be done entirely within the app."
   - q: "How do I update the app?"
-    a: "The app automatically checks for a new version at launch and shows a dialog if an update is available. You can update with one click."
+    a: "In the Microsoft Store edition, Microsoft Store delivers new versions automatically. If you use the installer edition (until December 31, 2026), it checks for a new version at launch and shows a dialog if an update is available. You can update with one click."
+  - q: "Until when can I use the installer edition?"
+    a: "The installer edition downloaded from our website will stop working after December 31, 2026. Please switch to the Microsoft Store edition before then. Pricing, terms of use, and features stay the same, and your settings, sign-in information, and projects carry over as they are. See \"Installation\" in the user guide for the steps."
   - q: "Can I cancel anytime?"
     a: "Yes. You can cancel a paid plan at any time. There are no cancellation fees of any kind. You can cancel from the payment portal."
   - q: "Is it the same as the open-source DeepMosaics?"

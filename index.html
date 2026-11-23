@@ -27,7 +27,6 @@ schemas:
     </figure>
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}無料でダウンロード</a>
       {%- include store-button.html dl="hero-store" size="large" %}
       {%- if site.data.site.web_app.enabled %}
       <a href="{{ site.data.site.web_app.url }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>ブラウザでお試し<span class="hidden sm:inline">（{{ site.data.site.web_app.trial_minutes }} 分までの動画・インストール不要）</span></span></a>
@@ -58,7 +57,7 @@ schemas:
       <p class="text-[13.5px] leading-[1.95] text-ink-2">送信するもの／しないものを一覧で開示しています。ネットワークを切断した状態でも検出・編集・書き出しが動作します。</p>
     </div><div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Grid3x3" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">柔軟な編集機能</h2></div>
-      <p class="text-[13.5px] leading-[1.95] text-ink-2">モザイク／ぼかしの切替、粒度、検出枠の拡張率、ふちのなじませを調整できます。設定は全体・クラス別・追跡 ID 別・シーン別の 4 段階で上書きできます。</p>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">モザイク／ぼかしの切替、粒度、検出枠の拡張率、ふちのなじませを調整できます。設定は全体・クラス別・追跡 ID 別・シーン別・時間別の 5 つの範囲で上書きできます。</p>
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ListChecks" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">確認と修正の道具が揃っている</h2></div>
@@ -205,7 +204,7 @@ schemas:
         </div>
         <div class="card p-5">
           <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="LayoutGrid" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">適用範囲を選べる</h3></div>
-          <p class="text-[13px] leading-[1.9] text-ink-2">全体 / クラス別 / 追跡 ID 別 / シーン別の 4 段階で設定を上書きできます。狭い範囲の設定が優先されます。</p>
+          <p class="text-[13px] leading-[1.9] text-ink-2">全体 / クラス別 / 追跡 ID 別 / シーン別 / 時間別の 5 つの範囲で設定を上書きできます。重なるときは最後に設定したものが優先されます。</p>
         </div>
         <div class="card p-5">
           <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ClipboardCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">信頼度でフィルタ</h3></div>
@@ -412,7 +411,7 @@ schemas:
 {% comment %} PRICING {% endcomment %}
 <section class="py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="PRICING" title="作業量に合わせて選べる料金プラン" sub="有料プランは、アプリのプロフィールメニュー（Windows 版をダウンロードしてお使いの方）、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます。同じアカウントで Desktop 版と Web 版の両方でご利用いただけます。" %}
+    {% include section-title.html kicker="PRICING" title="作業量に合わせて選べる料金プラン" sub="有料プランは、Windows 版のアプリのプロフィールメニュー、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます。同じアカウントで Desktop 版と Web 版の両方でご利用いただけます。" %}
     {% include pricing-cards.html %}
     <p class="mt-6 text-center text-[13.5px] text-ink-2">
       詳細は<a href="/price/" class="text-accent-soft hover:underline">料金ページ</a>をご覧ください。

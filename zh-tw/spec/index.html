@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/spec/
 ja_url: /spec/
 source: spec/index.html
-source_hash: "918a2dae4ace03beeb7948075109b3d63a4a2502eea99069102642b7bf6d9517"
+source_hash: "ed11b4c8de992db57417a9144faeb817486c202e8c11b40ceb327e966e22b8b7"
 title: 系統需求
 seo_title: 系統需求｜Deepmosaic - 加上馬賽克的 AI 軟體
 description: Deepmosaic 的系統需求：支援的作業系統、記憶體與 GPU，依正式環境實測的處理速度參考值，以及支援的載入與匯出格式。
@@ -15,6 +15,9 @@ schemas:
 
 {%- assign ZH = site.data.l10n['zh-tw'] -%}
 {%- assign SPEC = ZH.spec -%}
+{%- comment -%}Windows の表の Microsoft Store 版の行 (store_only: true) は distribution.store_enabled が true のときだけ出す (_includes/faq.html と同じ扱い){%- endcomment -%}
+{%- assign SPEC_WIN = SPEC.windows -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign SPEC_WIN = SPEC.windows | where_exp: "r", "r.store_only != true" -%}{%- endunless -%}
 
 {% include header.html %}
 
@@ -37,7 +40,7 @@ schemas:
       <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
         {% include icon.html name="Monitor" class="h-5 w-5 shrink-0 text-accent" %}Windows
       </h2>
-      {% include kv-table.html rows=SPEC.windows label_width="180px" %}
+      {% include kv-table.html rows=SPEC_WIN label_width="180px" %}
     </div>
 
     <div>
@@ -79,12 +82,12 @@ schemas:
 
     <div class="card-hi p-7 text-center">
       <h2 class="text-[18px] font-bold text-hi-ink">可在應用程式的設定畫面確認 GPU 的辨識狀態</h2>
-      <p class="mx-auto mt-3 max-w-[560px] text-[14px] leading-[1.95] text-hi-ink-2">安裝後，偵測選項畫面會顯示使用中的 GPU 與推論模型。若無法辨識 GPU，請參閱{% include ja-link.html href="/docs/#trouble" label="疑難排解" class="text-accent-bright hover:underline" %}。</p>
+      <p class="mx-auto mt-3 max-w-[560px] text-[14px] leading-[1.95] text-hi-ink-2">安裝後，偵測選項畫面會顯示使用中的 GPU 與推論模型。若無法辨識 GPU，請參閱<a href="/zh-tw/docs/#trouble" class="text-accent-bright hover:underline">疑難排解</a>。</p>
     </div>
 
   </div>
 </section>
 
-{% include cta-download.html title="只要符合系統需求，就能立即開始使用" secondary_href="/docs/" secondary_hreflang="ja" secondary_label="查看說明文件（日文）" %}
+{% include cta-download.html title="只要符合系統需求，就能立即開始使用" secondary_href="/zh-tw/docs/" secondary_label="查看說明文件" %}
 
 {% include footer.html %}

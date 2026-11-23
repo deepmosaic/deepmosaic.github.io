@@ -1,4 +1,4 @@
-// docs (/docs/ と /docs/web/) の回帰ガードの純ロジック。
+// docs (/docs/ と /docs/web/、英中の /en/docs/・/zh-tw/docs/ ほか) の回帰ガードの純ロジック。
 //
 // DOM に触らず文字列だけを扱う。実行入口は scripts/check-docs.mjs (ファイル I/O 担当)。
 // `node --test src/lib/*.test.js` で検証する。
@@ -7,7 +7,7 @@
 //   1. 既存 20 個の節 ID (about … trouble) はアプリ内ヘルプ / /price/ / /spec/ / llms.txt が
 //      参照する。改名すると外部リンクが無言で壊れる
 //   2. 目次 (_data/docs_toc.yml) の ID は本文に存在する
-//   3. サイト内から /docs/#… へ張った深いリンクは解決する
+//   3. サイト内から /docs/#… (英中は /en/docs/#… など、その言語のページの id) へ張った深いリンクは解決する
 //   4. docs の <img> は src が実在し、width / height / alt を持ち、寸法が実ファイルと一致する
 //      (CLS 対策。スクショを撮り直して寸法が変わったのに属性だけ古い、を検出する)
 
@@ -35,6 +35,38 @@ export const LEGACY_DOCS_IDS = Object.freeze([
 	'trouble',
 ])
 
+/** docs の言語 (ja は接頭辞なし、英中は `/<lang>/`)。 */
+export const DOCS_LANGS = Object.freeze(['ja', 'en', 'zh-tw'])
+
+/** docs の種類 (Desktop 版・Web 版)。 */
+export const DOCS_KINDS = Object.freeze(['desktop', 'web'])
+
+/** 言語と種類から docs のページのパス ('/docs/'・'/en/docs/web/' など)。 */
+export function docsPagePath(lang, kind) {
+	return `${lang === 'ja' ? '' : `/${lang}`}/docs/${kind === 'web' ? 'web/' : ''}`
+}
+
+/**
+ * docs のページの一覧 (3 言語 × 2 種類)。file は `_site` から見たパス。
+ * 戻り値: [{ lang, kind, page, file }]
+ */
+export function docsPages() {
+	const out = []
+	for (const lang of DOCS_LANGS) {
+		for (const kind of DOCS_KINDS) {
+			const page = docsPagePath(lang, kind)
+			out.push({ lang, kind, page, file: `${page.slice(1)}index.html` })
+		}
+	}
+	return out
+}
+
+/** 英中の目次の id の並びが日本語と同じか。違えば問題の文字列を返す。 */
+export function compareTocIds(page, jaIds, xIds) {
+	if (JSON.stringify(jaIds) === JSON.stringify(xIds)) return []
+	return [`${page}: 目次の id の並びが日本語と違う (ja ${JSON.stringify(jaIds)} / 訳 ${JSON.stringify(xIds)})`]
+}
+
 /**
  * ビルド済みページから docs の本文 (目次 + 各章) だけを切り出す。
  * ヘッダー / フッター (ロゴ画像やナビ) は検査対象外。目印は docs の骨組みが持つ
@@ -61,16 +93,22 @@ export function extractLocalAnchors(html) {
 	return out
 }
 
+// 先頭はホストつきの絶対 URL か、パスの途中でないこと (直前が語・`.`・`/`・`-` でない)
+const DEEP_LINK_RE = new RegExp(
+	String.raw`(?:https?://[^\s"'/)]+|(?<![\w./-]))(?:/(${DOCS_LANGS.filter((l) => l !== 'ja').join('|')}))?/docs(/web)?/?#([A-Za-z0-9_-]+)`,
+	'g',
+)
+
 /**
  * テキスト (HTML / Markdown / llms.txt) から docs への深いリンクを集める。
- * `/docs/#x` `/docs#x` `/docs/web/#x` `/docs/web#x` と絶対 URL 形を受け付ける。
- * 戻り値: [{ page: '/docs/' | '/docs/web/', id }]
+ * `/docs/#x` `/docs#x` `/docs/web/#x` `/docs/web#x`、英中の `/en/docs/#x` `/zh-tw/docs/web/#x` と絶対 URL 形を受け付ける。
+ * パスの途中の `/docs/` (`/company/docs/#x`・`/fr/docs/#x`) は数えない。
+ * 戻り値: [{ page: '/docs/' | '/docs/web/' | '/en/docs/' | …, id }]
  */
 export function extractDocsDeepLinks(text) {
 	const out = []
-	const re = /(?:https?:\/\/[^\s"')]+)?\/docs(\/web)?\/?#([A-Za-z0-9_-]+)/g
-	for (const m of text.matchAll(re)) {
-		out.push({ page: m[1] ? '/docs/web/' : '/docs/', id: m[2] })
+	for (const m of text.matchAll(DEEP_LINK_RE)) {
+		out.push({ page: docsPagePath(m[1] ?? 'ja', m[2] ? 'web' : 'desktop'), id: m[3] })
 	}
 	return out
 }

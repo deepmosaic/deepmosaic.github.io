@@ -1,0 +1,13 @@
+{%- comment -%}
+Microsoft Store へ向くリンクの行き先 (単一管理点)。Microsoft の公式のバッジと同じ形で、Store の掲載ページを開く。
+Windows では掲載ページにダウンロードの確認が出て、「ダウンロード」を押すと小さなインストーラ (.exe) がダウンロードされる。
+  形: `https://apps.microsoft.com/detail/<app_store_product_id>?referrer=appbadge&mode=direct&hl=<ページの言語>`
+  ID は `_data/lang/ja.json` の `app_store_product_id` (3 言語で同じ値)。`hl` はページの言語 (ja-JP / en-US / zh-TW) で、
+  掲載ページの言語をそろえる。国 (`gl`) は付けない (訪問者の国を決めつけない)。
+属性の値やドロワーの JSON の中に置くので、空白と改行を出さない。
+使う部品: `store-button.html` (置き場所と料金のカード)・`header(-intl).html` (バッジとドロワーの先頭)・`footer(-intl).html`。
+JSON-LD の `downloadUrl` と `llms(-full).txt` は検索とクローラ向けに、クエリの無い掲載ページ (`apps.microsoft.com/detail/…`)。
+検査は scripts/i18n/checks/store.mjs (`storeBadgeUrl`)。
+{%- endcomment -%}
+{%- case page.lang -%}{%- when 'en' -%}{%- assign siu_hl = 'en-US' -%}{%- when 'zh-tw' -%}{%- assign siu_hl = 'zh-TW' -%}{%- else -%}{%- assign siu_hl = 'ja-JP' -%}{%- endcase -%}
+https://apps.microsoft.com/detail/{{ site.data.lang.ja.app_store_product_id }}?referrer=appbadge&mode=direct&hl={{ siu_hl -}}

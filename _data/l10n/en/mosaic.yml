@@ -3,7 +3,7 @@
 # アプリの画面の名前 (「ピクセルサイズを設定」・ピクセルサイズ自動・最も粗い粒) はアプリの辞書と同じ語にする。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/mosaic.yml"
-_source_hash: "102769e16c79eb665fe8eb7d27d9d775981a653be925a409195adecad2284bd3"
+_source_hash: "6ca252329d8c2650cd274d21bca2bc934fac7be5d8a61211e76ee8a969d96b94"
 scopes:
   - key: "All"
     val: "Defaults for the whole project"
@@ -13,7 +13,9 @@ scopes:
     val: "Per individual tracked target"
   - key: "By scene"
     val: "Per cut"
-priority_note: "The order of priority is By ID &gt; By class &gt; By scene &gt; All. Settings for a narrower scope take precedence. A scope with an override shows an indicator, and you can clear each one individually."
+  - key: "By time"
+    val: "Per time range of the video"
+priority_note: "When several settings apply to the same target, the one changed last takes priority. If you change \"All\" later, earlier individual settings no longer take effect; open such a setting and use \"Prioritize this setting\" to make it take effect again. A scope with an override shows an indicator, and you can clear each one individually."
 controls:
   - key: "Pixel size"
     val: "Set it on the \"Set pixel size\" screen while checking the preview and the graph. Block size is expressed as the <strong>number of blocks across the screen width</strong>, so it looks the same even if the video resolution differs. <strong>Fixed</strong> (default: 53 blocks across the width) uses the same blocks for every target. Turn on <strong>Automatic pixel size</strong> to change the blocks according to the size of the target."

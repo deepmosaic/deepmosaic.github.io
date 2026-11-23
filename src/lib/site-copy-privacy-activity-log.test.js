@@ -310,10 +310,10 @@ test('版: legal.yml の version は 2026-11-08', () => {
 	assert.match(read('_data/legal.yml'), /^version: "2026-11-08"$/m)
 })
 
-test('最終更新日: privacy / cookie / asct は 2026-11-16', () => {
-	assert.equal(lastUpdated(privacy()), '2026-11-16')
-	assert.equal(lastUpdated(read(COOKIE)), '2026-11-16')
-	assert.equal(lastUpdated(read('company/asct.html')), '2026-11-16')
+test('最終更新日: privacy / cookie / asct は 2026-11-23', () => {
+	assert.equal(lastUpdated(privacy()), '2026-11-23')
+	assert.equal(lastUpdated(read(COOKIE)), '2026-11-23')
+	assert.equal(lastUpdated(read('company/asct.html')), '2026-11-23')
 })
 
 // ── 参照の整合 ───────────────────────────────────────────────────────

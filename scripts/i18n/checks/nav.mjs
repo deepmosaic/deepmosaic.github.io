@@ -6,7 +6,8 @@
 //               無ければ各言語のトップ (`/`・`/en/`・`/zh-tw/`)。
 //       各リンクに lang と hreflang (ja / en / zh-Hant-TW)、今の言語にだけ aria-current="true" (JSON は current: true)。
 //   - 英中のページ: <header> / <footer> の見える文 (data-i18n-switch の中を除く) と data-links の JSON に仮名が無い。
-//       対象外 (docs・法務 5 本) へのリンクは ja の URL (接頭辞なし) で hreflang="ja"、リンクの中かすぐ後ろに印 (`ja_only_badge`) がある。
+//       対象外 (法務 5 本) へのリンクは ja の URL (接頭辞なし) で hreflang="ja"、リンクの中かすぐ後ろに印 (`ja_only_badge`) がある。
+//       docs は訳のあるページなので、英中のページからは同じ言語の docs (`/en/docs/`・`/zh-tw/docs/`) を指す (ja の `/docs` を指したらエラー)。
 //   - canonical の無いページは見ない (layout を通らない HTML。head.mjs と同じ扱い)。
 
 import { readFileSync } from 'node:fs'
@@ -20,9 +21,10 @@ const LANGS = {
 }
 const ORDER = ['ja', 'en', 'zh-tw']
 const KANA = /[぀-ヿㇰ-ㇿｦ-ﾟ]/u
-const JA_ONLY = /^\/(docs(?:[/#?].*)?|company\/(?:terms|privacy|cookie|eula|asct)(?:\.html)?)$/
+const JA_ONLY = /^\/company\/(?:terms|privacy|cookie|eula|asct)(?:\.html)?$/
+const JA_DOCS = /^\/docs(?:[/#?].*)?$/
 const LANG_404 = /\sdata-lang-404(?=[\s=>/])/
-const PREFIXED_JA_ONLY = /^\/(?:en|zh-tw)\/(?:docs|company\/(?:terms|privacy|cookie|eula|asct))\b/
+const PREFIXED_JA_ONLY = /^\/(?:en|zh-tw)\/company\/(?:terms|privacy|cookie|eula|asct)\b/
 
 function langOf(rel) {
 	if (rel.startsWith('en/')) return 'en'
@@ -168,6 +170,10 @@ export default function check(ctx) {
 			const anchors = [...text.matchAll(/<a\b[^>]*>/g)]
 			for (const m of anchors) {
 				const href = attr(m[0], 'href') ?? ''
+				if (JA_DOCS.test(href)) {
+					errors.push(`${rel}: ${name}の docs へのリンクが日本語の docs を指す (同じ言語の docs にする): ${href}`)
+					continue
+				}
 				if (PREFIXED_JA_ONLY.test(href)) {
 					errors.push(`${rel}: ${name}の対象外のページへのリンクが ja の URL でない: ${href}`)
 					continue

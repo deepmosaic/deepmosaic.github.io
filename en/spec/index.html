@@ -4,7 +4,7 @@ lang: en
 permalink: /en/spec/
 ja_url: /spec/
 source: spec/index.html
-source_hash: "918a2dae4ace03beeb7948075109b3d63a4a2502eea99069102642b7bf6d9517"
+source_hash: "ed11b4c8de992db57417a9144faeb817486c202e8c11b40ceb327e966e22b8b7"
 title: System requirements
 seo_title: "System requirements | Deepmosaic - AI that adds mosaic"
 description: "Deepmosaic system requirements: supported OS, memory, and GPU, processing speed by GPU based on production measurements, and supported load and export formats."
@@ -14,6 +14,9 @@ schemas:
 ---
 
 {%- assign SPEC = site.data.l10n.en.spec -%}
+{%- comment -%}Windows の表の Microsoft Store 版の行 (store_only: true) は distribution.store_enabled が true のときだけ出す (_includes/faq.html と同じ扱い){%- endcomment -%}
+{%- assign SPEC_WIN = SPEC.windows -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign SPEC_WIN = SPEC.windows | where_exp: "r", "r.store_only != true" -%}{%- endunless -%}
 
 {% include header.html %}
 
@@ -39,7 +42,7 @@ schemas:
       <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
         {% include icon.html name="Monitor" class="h-5 w-5 shrink-0 text-accent" %}Windows
       </h2>
-      {% include kv-table.html rows=SPEC.windows label_width="180px" %}
+      {% include kv-table.html rows=SPEC_WIN label_width="180px" %}
     </div>
 
     <div>
@@ -85,13 +88,13 @@ schemas:
       <h2 class="text-[18px] font-bold text-hi-ink">You can check whether your GPU is recognized in the app's settings</h2>
       <p class="mx-auto mt-3 max-w-[560px] text-[14px] leading-[1.95] text-hi-ink-2">
         After installation, the GPU in use and the inference model are shown on the detection options screen.
-        If your GPU is not recognized, see {% include ja-link.html href="/docs/#trouble" label="Troubleshooting" class="text-accent-bright hover:underline" %}.
+        If your GPU is not recognized, see <a href="/en/docs/#trouble" class="text-accent-bright hover:underline">Troubleshooting</a>.
       </p>
     </div>
 
   </div>
 </section>
 
-{% include cta-download.html title="If your PC meets the requirements, you can get started right away" secondary_href="/docs/" secondary_hreflang="ja" secondary_label="View the documentation (Japanese)" %}
+{% include cta-download.html title="If your PC meets the requirements, you can get started right away" secondary_href="/en/docs/" secondary_label="View the documentation" %}
 
 {% include footer.html %}

@@ -100,7 +100,7 @@ test('docs 02-account: 無料の節に日数 (plans.yml から差し込み) と�
 	const text = textOf(read('_includes/docs/02-account.html'))
 	assert.match(text, /無料でご利用いただけるのは、初めて起動した日から \{\{ free_plan\.free_window_days \}\} 日間です。/)
 	assert.match(text, /\{\{ free_plan\.free_window_days \}\} 日間か累計の上限のどちらか早い方で無料期間は終わります。/)
-	assert.match(text, /無料: 初回起動から \{\{ free_plan\.free_window_days \}\} 日間・累計\{\{ free_plan\.included_hours \}\}時間分までの動画インポート/)
+	assert.match(text, /無料: 初めて起動した日から \{\{ free_plan\.free_window_days \}\} 日間・累計\{\{ free_plan\.included_hours \}\}時間分までの動画インポート/)
 	assert.doesNotMatch(text, /無料トライアル期間は設けていません/)
 })
 
@@ -116,7 +116,7 @@ test('docs 01-intro / 03-detect / 06-ops / web: 無料期間に触れる', () =>
 	const ops = textOf(read('_includes/docs/06-ops.html'))
 	assert.match(ops, /無料期間: 無料プランは、新しい版を初めて起動した日から \{\{ free_plan\.free_window_days \}\} 日間ご利用いただけます。累計の上限と日数のどちらか早い方で終わります/)
 	assert.match(read('_includes/docs/06-ops.html'), /assign free_plan = site\.data\.plans\.tiers/)
-	assert.match(textOf(read('_includes/docs/web.html')), /無料アカウントでは、初回起動から \{\{ free_plan\.free_window_days \}\} 日間・累計 \{\{ free_plan\.included_hours \}\} 時間分の動画を検出でき（Desktop 版と共通の無料期間です）/)
+	assert.match(textOf(read('_includes/docs/web.html')), /無料アカウントでは、Desktop 版か Web 版を初めて使った日から \{\{ free_plan\.free_window_days \}\} 日間・累計 \{\{ free_plan\.included_hours \}\} 時間分の動画を検出でき（Desktop 版と共通の無料期間です）/)
 })
 
 test('トップ / CTA / llms.txt: 日数を plans.yml から差し込む', () => {

@@ -307,13 +307,17 @@ const expected = (lang) => {
 const HEAD = '<head><link rel="canonical" href="https://example.invalid/"></head>'
 const heroPage = (svg) => `<html>${HEAD}<body><figure id="hero-detectable" class="m">${svg}<figcaption>c</figcaption></figure></body></html>`
 
+const docsPage = (lang) => `<html>${HEAD}<body><details><summary>s</summary><div>${svgOf('docs-detectable', expected(lang).title, expected(lang).texts)}</div></details></body></html>`
+
 function goodPages() {
 	const page = (lang) => heroPage(svgOf('detectable', expected(lang).title, expected(lang).texts))
 	return {
 		'index.html': page('ja'),
 		'en/index.html': page('en'),
 		'zh-tw/index.html': page('zh-tw'),
-		'docs/index.html': `<html>${HEAD}<body><details><summary>s</summary><div>${svgOf('docs-detectable', JA_TITLE, JA_TEXTS)}</div></details></body></html>`,
+		'docs/index.html': docsPage('ja'),
+		'en/docs/index.html': docsPage('en'),
+		'zh-tw/docs/index.html': docsPage('zh-tw'),
 	}
 }
 
@@ -351,6 +355,7 @@ const NEGATIVES = [
 		(p) => ({ ...p, 'index.html': p['index.html'].replace('<figcaption>', '<img src="/assets/img/detectable-objects.webp" alt="x"><figcaption>') }),
 	],
 	['docs に svg が無い', (p) => ({ ...p, 'docs/index.html': `<html>${HEAD}<body><details><summary>s</summary></details></body></html>` })],
+	['en の docs の図が日本語の文のまま', (p) => ({ ...p, 'en/docs/index.html': `<html>${HEAD}<body><details><summary>s</summary><div>${svgOf('docs-detectable', JA_TITLE, JA_TEXTS)}</div></details></body></html>` })],
 	['hero に svg が 2 つ', (p) => ({ ...p, 'index.html': heroPage(svgOf('a', JA_TITLE, JA_TEXTS) + svgOf('b', JA_TITLE, JA_TEXTS)) })],
 	['<text> の文が期待値と違う', (p) => ({ ...p, 'index.html': heroPage(svgOf('detectable', JA_TITLE, ['人間の顔', ...JA_TEXTS.slice(1)])) })],
 ]

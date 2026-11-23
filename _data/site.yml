@@ -30,10 +30,11 @@ web_app:
     en: "en"
     zh-tw: "zh-TW"
 
-# store_enabled: true で「Microsoft Store で入手」の副ボタン (_includes/store-button.html) と Store 版だけの説明が 3 言語で出る。
-# 切り替えはここ 1 行だけ。検査は scripts/i18n/checks/store.mjs と scripts/check-store-toggle.mjs。
+# ダウンロードの導線は Microsoft Store だけ (公式のバッジ。行き先は公式のバッジと同じ形の Store の掲載ページ)。
+#   store_enabled は true のまま置く (Store のバッジと Store 版の説明を出す。false にするとダウンロードの導線が無くなるので検査がエラーにする)。
+#   公式サイトからインストーラを配る導線は持たない。読む所の一覧と検査は scripts/i18n/checks/store.mjs。
 distribution:
-  store_enabled: false
+  store_enabled: true
 
 # ROI 計算機の既定値。default_cost_per_video は 時給 ¥3,000 × 8 時間 の試算 (比較表の金額と同じ)。
 # manual_work_multiplier は手作業の想定工数 (完成尺の何倍か) の試算の仮定。画面にも仮置きの試算と出す。

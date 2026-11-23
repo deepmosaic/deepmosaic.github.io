@@ -8,7 +8,7 @@
 
 - 行き先: 訳の台帳 (_data/i18n_pages.yml) にあるページは対応する 3 版、無ければ各言語のトップ。
 - 表示名は自称で訳さない。各 <a> に lang と hreflang (ja / en / zh-Hant-TW)、今の言語に aria-current="true"。
-  言語の案内が `[data-i18n-switch] a[hreflang]` のクリックを拾うので、hreflang を外さない。
+  コードの引き継ぎ (src/main.js の carryJoinHash) が `[data-i18n-switch] a[hreflang]` のクリックを拾うので、hreflang を外さない。
 - 出力の一番外の要素に data-i18n-switch を付ける。
 include の前後に空白・改行を出さない。変数は ls_ で始める。
 {%- endcomment -%}

@@ -4,7 +4,7 @@ lang: en
 permalink: /en/price/
 ja_url: /price/
 source: price/index.html
-source_hash: "6af9a8a7b1e2aec9fc7a50a104f9a20d1eb1ae9e2d2aa31a42a0d2ec7646414b"
+source_hash: "ded6ca639d9333757b7e2cc9ae79d8bdc1034e7959485fda940d331b1af29f3e"
 title: Pricing
 seo_title: "Pricing | Deepmosaic - AI software that adds mosaic"
 # ⚠️ front matter は Liquid が効かないため、金額は `_data/plans.yml` と二重管理になる (ja の price/index.html と同じ)。料金を変えたらここも直すこと。
@@ -25,8 +25,8 @@ schemas:
     <h1 class="text-[clamp(30px,4vw,42px)] font-bold tracking-[-0.02em] text-ink">Pricing</h1>
     <p class="mt-4 text-[15.5px] leading-[1.95] text-ink-2">
       {{ site.data.l10n.en.entity.one_liner }}
-      You can subscribe to a paid plan from the profile menu in the app (if you downloaded the Windows version) or on the <a href="/en/subscribe/" class="text-accent-soft hover:underline">subscription page</a> with your Web app account. You can use your plan with the same account in both the Desktop app and the Web app.
-      For the steps, see {% include ja-link.html href="/docs/#plan" label="Changing your plan" class="text-accent-soft hover:underline" %} in the documentation.
+      You can subscribe to a paid plan from the profile menu in the Windows app or on the <a href="/en/subscribe/" class="text-accent-soft hover:underline">subscription page</a> with your Web app account. You can use your plan with the same account in both the Desktop app and the Web app.
+      For the steps, see <a href="/en/docs/#plan" class="text-accent-soft hover:underline">Changing your plan</a> in the documentation.
     </p>
   </div>
 </section>
@@ -43,16 +43,16 @@ schemas:
         <li class="flex gap-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>The only data sent to the license server are the usage (video length in seconds), the hash values of files, and the hash value of the device identifier. File names, footage, and the coordinates of detection results are not sent.</span></li>
       </ul>
       <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">
-        For details, see {% include ja-link.html href="/docs/#usage" label="Measuring usage time" class="text-accent-soft hover:underline" %} in the documentation.
+        For details, see <a href="/en/docs/#usage" class="text-accent-soft hover:underline">How usage time is measured</a> in the documentation.
       </p>
     </div>
 
     <p class="mt-7 text-center text-[13px] text-ink-4">
-      If you have any questions, see the {% include ja-link.html href="/docs/" label="documentation" class="text-accent-soft hover:underline" %} or contact us through the <a href="/en/contact/" class="text-accent-soft hover:underline">contact form</a>.
+      If you have any questions, see the <a href="/en/docs/" class="text-accent-soft hover:underline">documentation</a> or contact us through the <a href="/en/contact/" class="text-accent-soft hover:underline">contact form</a>.
     </p>
   </div>
 </section>
 
-{% include cta-download.html secondary_href="/docs/" secondary_hreflang="ja" secondary_label="View the documentation (Japanese)" %}
+{% include cta-download.html secondary_href="/en/docs/" secondary_label="View the documentation" %}
 
 {% include footer.html %}

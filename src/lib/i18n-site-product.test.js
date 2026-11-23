@@ -7,7 +7,7 @@
 //   - 料金・申し込みの英中の description / seo_title の金額の数字が ja の description と同じで、_data/plans.yml の price_display にある
 //   - ソースの文に仮名が無い (en は漢字・全角の記号も無い)。lintText (禁止語・簡体字・新字体・和製漢語) が 0 件
 //   - 文のデータは l10n から引く (site.data.entity. / site.data.spec / site.data.subscribe.faq の直参照が無い)
-//   - サイト内リンクは言語の接頭辞、docs は ja-link.html、申し込みのボタンは ja と同じ式に Web 版の表示言語のパラメータを足した形
+//   - サイト内リンクは言語の接頭辞、docs は同じ言語の docs、申し込みのボタンは ja と同じ式に Web 版の表示言語のパラメータを足した形
 //   - check-site のモジュール scripts/i18n/checks/pages-product.mjs の単体 (作った _site の模型で、陽性対照と陰性対照)
 //   - `_site` は読まない (CI では npm test がビルドの前に走る)
 
@@ -177,7 +177,7 @@ for (const page of PAGES) {
 			for (const ref of refs) assert.ok(b.includes(ref), `${ref} を引いていない`)
 		})
 
-		test(`${name}: サイト内リンクは /${lang}/ の接頭辞、docs は ja-link.html`, () => {
+		test(`${name}: サイト内リンクは /${lang}/ の接頭辞、docs は同じ言語の docs`, () => {
 			assert.ok(has(rel))
 			const b = body()
 			const hrefs = htmlHrefs(b)
@@ -192,20 +192,22 @@ for (const page of PAGES) {
 				'mosaic-removal': [`/${lang}/`, `/${lang}/spec/`, `/${lang}/price/`, `/${lang}/#faq`],
 			}[page.key]
 			for (const w of want) assert.ok(hrefs.includes(w), `${w} へのリンクが無い`)
-			const jaWant = {
+			const docsWant = {
 				price: ['/docs/', '/docs/#plan', '/docs/#usage'],
 				subscribe: ['/docs/#usage'],
 				spec: ['/docs/#trouble'],
 				'mosaic-removal': ['/docs/'],
 			}[page.key]
-			assert.deepEqual(jaLinkHrefs(b).sort(), jaWant)
-			// cta-download の副ボタンは docs (ja) のまま、ラベルに日本語のページの印を文で含める
+			for (const w of docsWant) assert.ok(hrefs.includes(`/${lang}${w}`), `/${lang}${w} へのリンクが無い`)
+			assert.deepEqual(jaLinkHrefs(b).filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
+			// cta-download の副ボタンは同じ言語の docs で、日本語のページの印を持たない
 			if (page.key === 'price' || page.key === 'spec') {
 				const m = b.match(/\{%\s*include cta-download\.html([^%]*)%\}/)
 				assert.ok(m, 'cta-download.html が無い')
-				assert.match(m[1], /secondary_href="\/docs\/"/)
+				assert.match(m[1], new RegExp(`secondary_href="/${lang}/docs/"`))
+				assert.doesNotMatch(m[1], /secondary_hreflang=/)
 				const label = m[1].match(/secondary_label="([^"]*)"/)?.[1] ?? ''
-				assert.ok(lang === 'en' ? label.endsWith('(Japanese)') : label.endsWith('（日文）'), `secondary_label に印が無い: ${label}`)
+				assert.ok(label && !/\(Japanese\)|（日文）/.test(label), `secondary_label に日本語のページの印がある: ${label}`)
 			}
 		})
 

@@ -115,6 +115,7 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['bbox_copy', 'BBox 編集', ['Ctrl', 'C']],
 	['bbox_paste', 'BBox 編集', ['Ctrl', 'V']],
 	['bbox_bridge', 'BBox 編集', ['Y']],
+	['bbox_bridge_mid', 'BBox 編集', ['Shift', 'Y']],
 	['bbox_bridge_cancel', 'BBox 編集', ['Esc']],
 	['undo_frame', 'BBox 編集', ['Ctrl', 'Z']],
 	['bbox_rotate_cw', 'BBox 編集', ['Q']],
@@ -164,9 +165,9 @@ const EDIT_SHORTCUTS_FIXTURE = [
 /**
  * 表の行数 (= 写しの数)。凡例専用の「マウス」の 18 個と carry_lock も数に含む (owner が無いだけで凡例にも表にも載る)。
  * BBox のコピー / 貼り付け (bbox_copy / bbox_paste、delete_bbox の直後) と BBox A→B をつなぐ
- * (bbox_bridge = Y、凡例専用の bbox_bridge_cancel = Esc、bbox_paste の直後) も含む。
+ * (bbox_bridge = Y、中間地点の bbox_bridge_mid = Shift+Y、凡例専用の bbox_bridge_cancel = Esc、bbox_paste の直後) も含む。
  */
-const SHORTCUT_ROW_COUNT = 75
+const SHORTCUT_ROW_COUNT = 76
 
 /** タイムライン編集の節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [
@@ -336,22 +337,30 @@ test('Ctrl+C / Ctrl+V の行は効き先 (プレイヤー / タイムライン) 
 	}
 })
 
-test('Y の行はつなぐ操作 (2 回押す・右クリック・Ctrl+Z) と効き先を書き、Esc の行は解除', () => {
+test('Y の行はつなぐ操作 (開始と終了・右クリック・Ctrl+Z) と効き先を書き、Shift+Y の行は中間地点、Esc の行はやめる', () => {
 	// Arrange
 	const section = sectionOf(edit, 'shortcuts') ?? ''
 	const rowText = (id) => {
 		const m = section.match(new RegExp(`<tr data-shortcut="${id}">([\\s\\S]*?)</tr>`))
 		return m ? textOf(m[1]) : ''
 	}
+	assert.equal(rowText('no_such_row'), '', '陰性対照: 無い行は空')
 
 	// Act
 	const bridge = rowText('bbox_bridge')
+	const mid = rowText('bbox_bridge_mid')
+	const cancel = rowText('bbox_bridge_cancel')
 
 	// Assert
-	for (const word of ['つなぐ元', 'もう一度押す', '滑らかにつなぐ', 'ここからつなぐ', 'ここへつなぐ', 'Ctrl+Z', '最後にプレイヤーを操作したとき']) {
+	for (const word of ['つなぐ元', 'つなぐ', 'ここからつなぐ', 'ここへつなぐ', 'Ctrl+Z', '最後にプレイヤーを操作したとき']) {
 		assert.ok(bridge.includes(word), `bbox_bridge の行に「${word}」が無い: ${bridge}`)
 	}
-	assert.match(rowText('bbox_bridge_cancel'), /つなぐ元を解除/)
+	for (const word of ['中間地点', '中間地点にする', 'つなぐ元']) {
+		assert.ok(mid.includes(word), `bbox_bridge_mid の行に「${word}」が無い: ${mid}`)
+	}
+	assert.match(cancel, /つなぐ元を解除/)
+	assert.match(cancel, /やめる/, 'Esc の行に地点を置いた後にやめることが無い')
+	assert.doesNotMatch(cancel, /つないでいる間/, 'つなぐ処理はキューで進むので、Esc で中止する「つないでいる間」は無い')
 })
 
 // ── タイムライン編集の各機能 ────────────────────────

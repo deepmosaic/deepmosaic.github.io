@@ -102,14 +102,13 @@ test('06-ops の更新ダイアログは「今すぐ更新」「あとで」の 
 	assert.ok(!/スキップ/.test(text), `#update にスキップの記述が残っている: ${text}`)
 })
 
-// 01-intro のアップグレードは、起動時の確認と「今すぐ更新」「あとで」を書く。
-// Store 版の更新は docs/store-edition.html (切り替えが true のときだけ)。
-test('01-intro のアップグレードは「今すぐ更新」「あとで」の 2 択で、スキップを書かない', () => {
+// 01-intro の #install のアップデートは Microsoft Store の自動更新。インストーラ版の「今すぐ更新」「あとで」は 06-ops の #update (上のテスト)。
+test('01-intro のアップデートは Microsoft Store の自動更新で、スキップを書かない', () => {
 	// Arrange
 	const text = textOf(read('_includes/docs/01-intro.html'))
 
 	// Assert
-	assert.match(text, /ダイアログで「今すぐ更新」「あとで」を選べます/)
+	assert.match(text, /新しいバージョンは Microsoft Store が配信し、自動で更新されます/)
 	assert.ok(!/スキップ/.test(text), '01-intro にスキップの記述が残っている')
 })
 

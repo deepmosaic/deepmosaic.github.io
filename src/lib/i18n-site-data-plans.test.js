@@ -2,7 +2,7 @@
 //
 //   node --test src/lib/i18n-site-data-plans.test.js
 //
-//   - `_data/l10n/{en,zh-tw}/faq.yml`: items が ja の `_data/faq.yml` と同じ件数 (15)・同じプレースホルダの多重集合・空でない
+//   - `_data/l10n/{en,zh-tw}/faq.yml`: items が ja の `_data/faq.yml` と同じ件数 (16)・同じプレースホルダの多重集合・空でない
 //   - `_data/l10n/{en,zh-tw}/subscribe.yml`: faq が ja の `_data/subscribe.yml` の faq と同じ件数 (3)
 //   - `_data/l10n/{en,zh-tw}/plans.yml`: tiers のキー = ja の tiers[].code、各 tier の文の欄が ja と対応する
 //     (ja にある欄が無い / ja に無い欄がある → 失敗)、bullets / specs の件数が同じ、通貨の前後の文字が決めた値
@@ -194,9 +194,9 @@ test('読み取り: ja の plans.yml の tiers の code と specs が plans-yml.
 	assert.equal(jaPlans.rollout_note, '')
 })
 
-test('読み取り: ja の faq は 15 件、subscribe の faq は 4 件で 2 件目だけ store_only (陽性対照)', () => {
+test('読み取り: ja の faq は 16 件、subscribe の faq は 4 件で 2 件目だけ store_only (陽性対照)', () => {
 	assert.ok(Array.isArray(jaFaq))
-	assert.equal(jaFaq.length, 15)
+	assert.equal(jaFaq.length, 16)
 	assert.equal(jaFaq[1].q, 'モザイクを除去することはできますか？')
 	// 両方の配布に合う FAQ 3 件 + Store 版の FAQ 1 件 (store_enabled が true のときだけ出る)
 	assert.equal(jaSubscribe.faq.length, 4)
@@ -218,11 +218,11 @@ test('読み取り: 非対応の記法 (ブロックスカラー・暗黙 null�
 // ---- faq ----
 
 for (const lang of LANGS) {
-	test(`faq (${lang}): items が ja と同じ件数 (15)・同じプレースホルダ・空でない`, () => {
+	test(`faq (${lang}): items が ja と同じ件数 (16)・同じプレースホルダ・空でない`, () => {
 		const { faq } = l10n[lang]
 		assert.ok(Array.isArray(faq.items), 'items: の下に配列')
 		assert.equal(faq.items.length, jaFaq.length)
-		assert.equal(faq.items.length, 15)
+		assert.equal(faq.items.length, 16)
 		faq.items.forEach((item, i) => {
 			assert.deepEqual(Object.keys(item).sort(), ['a', 'q'], `items[${i}] の欄`)
 			assert.equal(typeof item.q, 'string')
@@ -316,7 +316,7 @@ for (const lang of LANGS) {
 
 	test(`plans (${lang}): 文の欄の一覧が決めたとおり`, () => {
 		const tiers = l10n[lang].plans.tiers
-		assert.deepEqual(Object.keys(tiers.free).sort(), ['bullets', 'cta_label', 'summary'])
+		assert.deepEqual(Object.keys(tiers.free).sort(), ['bullets', 'summary'])
 		assert.deepEqual(Object.keys(tiers.light).sort(), ['cta_label', 'price_unit', 'specs', 'subscribe_label', 'summary'])
 		assert.deepEqual(Object.keys(tiers.pro).sort(), ['cta_label', 'specs', 'subscribe_label', 'summary'])
 		assert.deepEqual(Object.keys(tiers.enterprise).sort(), ['cta_label', 'note', 'note_title', 'quote_label', 'quote_note', 'specs', 'summary'])

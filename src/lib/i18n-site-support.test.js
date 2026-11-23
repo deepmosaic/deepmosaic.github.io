@@ -184,7 +184,7 @@ for (const page of PAGES) {
 				})
 		})
 
-		test(`${rel}: サイト内リンクは /${lang}/ の接頭辞、docs は ja-link.html`, () => {
+		test(`${rel}: サイト内リンクは /${lang}/ の接頭辞、docs は同じ言語の docs`, () => {
 			assert.ok(has(rel))
 			const b = body()
 			const hrefs = htmlHrefs(b)
@@ -200,8 +200,9 @@ for (const page of PAGES) {
 				404: [`/${lang}/`, `/${lang}/price/`],
 			}[page.key]
 			for (const w of want) assert.ok(hrefs.includes(w), `${w} へのリンクが無い`)
-			const jaWant = { contact: ['/docs/'], inquiry: [], join: [], about: [], 404: ['/docs/'] }[page.key]
-			assert.deepEqual(jaLinkHrefs(b).sort(), jaWant)
+			const docsWant = { contact: ['/docs/'], inquiry: [], join: [], about: [], 404: ['/docs/'] }[page.key]
+			for (const w of docsWant) assert.ok(hrefs.includes(`/${lang}${w}`), `/${lang}${w} へのリンクが無い`)
+			assert.deepEqual(jaLinkHrefs(b).filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
 			// 除去の語は /mosaic-removal/ だけ
 			assert.ok(!/remove[sd]?\s+(existing\s+)?mosaic|decensor|uncensor|mosaic removal/i.test(src()), '除去の語がある')
 			assert.ok(!/去馬賽克|去碼|移除馬賽克|去除馬賽克/.test(src()), '除去の語がある')
@@ -256,21 +257,13 @@ for (const page of PAGES) {
 				assert.equal([...admin.matchAll(/<li>/g)].length, 2)
 				assert.equal(/<a\b|<button\b/.test(viewBlock(b, 'invalid')), false)
 				assert.match(b, /<noscript>[\s\S]*?<\/noscript>/)
-				// ダウンロードの URL は ja と同じ式 (ja のデータの URL。言語で変えない)。入手先はインストーラ
-				assert.match(src(), /assign download_url = site\.data\.lang\.ja\.app_download_link/)
-				const dl = b.match(/<a\b[^>]*data-join-download[^>]*>([^<]*)<\/a>/)
-				assert.ok(dl, 'ダウンロードへのリンクが無い')
-				assert.match(dl[0], /href="\{\{ download_url \}\}"/)
-				assert.match(dl[0], /\sdownload[\s>]/)
-				assert.match(dl[0], /target="_blank"/)
-				assert.match(dl[0], /rel="noopener noreferrer"/)
+				// 入手先は Microsoft Store だけ (インストーラのリンク・切り替えを持たない)。Store のバッジは部品 1 つ
+				assert.equal(/app_download_link|installer_enabled|download_url|data-join-download/.test(src()), false, 'インストーラの導線が残っている')
 				assert.equal(/data-dl\b|data-join-store\b/.test(b), false)
 				const install = b.slice(b.indexOf('data-join-install'))
-				assert.equal(/Microsoft Store/.test(install.replace(/<[^>]*>/g, '')), false, '既定の文に Microsoft Store を出さない')
-				assert.match(
-					dl[1],
-					lang === 'en' ? /^Download Deepmosaic for Windows$/ : /^下載 Deepmosaic（Windows 版）$/,
-				)
+				assert.equal((install.match(/\{%-? include store-button\.html dl="join-store" wrap="mt-4" lazy=true %\}/g) ?? []).length, 1)
+				const p = install.match(/<p class="mt-3[^"]*">([^<]*)<\/p>/)?.[1] ?? ''
+				assert.match(p, /Microsoft Store/, 'Microsoft Store から入れる文が無い')
 			})
 
 			test(`${rel}: アプリの画面のボタン名を引用している (en は "…"、zh-tw は「…」)`, () => {
@@ -343,7 +336,7 @@ const JOIN_BODY =
 	'<div class="x" data-join><h1>t</h1><div data-join-view="code" hidden><strong data-join-code></strong><a data-join-open-code>o</a>' +
 	'<code data-join-code></code><button type="button" data-join-copy>c</button><span data-join-copy-status></span></div>' +
 	'<div data-join-view="admin" hidden><a href="deepmosaic://login" data-join-open-admin>o</a></div><div data-join-view="invalid" hidden><p>x</p></div>' +
-	'<noscript><p>x</p></noscript><div data-join-install><a href="https://deepmosaic-r2-proxy.deepmosaic.workers.dev/download/latest/windows" download data-join-download>s</a></div></div>'
+	'<noscript><p>x</p></noscript><div data-join-install><p>Microsoft Store</p></div></div>'
 const island = (kind, note) =>
 	`${note ? `<p>${note}</p>` : ''}<div data-island="inquiry-form"\n     data-kind="${kind}"\n     data-endpoint="https://e.example/inquiry">\n  <noscript><p>js</p></noscript>\n</div>`
 
@@ -407,7 +400,7 @@ const SUPPORT_BAD = [
 	['join に no-referrer が無い', edit('zh-tw/join/index.html', (s) => s.replace(REFERRER, '')), 'referrer'],
 	['join に計測がある', edit('en/join/index.html', (s) => s.replace('</head>', `${GTAG}</head>`)), 'googletagmanager'],
 	['join に cloudflareinsights がある', edit('en/join/index.html', (s) => s.replace('</head>', '<script src="https://static.cloudflareinsights.com/beacon.min.js"></script></head>')), 'cloudflareinsights'],
-	['join の data-join の構造が欠ける', edit('zh-tw/join/index.html', (s) => s.replace(' data-join-download', '')), 'data-join-download'],
+	['join の data-join の構造が欠ける', edit('zh-tw/join/index.html', (s) => s.replace(' data-join-install', '')), 'data-join-install'],
 	['英中の 404 に data-lang-404 がある', edit('en/404.html', (s) => s.replace('<h1>', `${LANG_404_LINE}<h1>`)), 'data-lang-404'],
 	['ルートの 404 に data-lang-404 が無い', edit('404.html', (s) => s.replace(LANG_404_LINE, '')), 'data-lang-404'],
 	['会社概要に Deepmosaic LLC が無い', edit('en/company/about.html', (s) => s.replace('Deepmosaic LLC', 'Deepmosaic')), 'Deepmosaic LLC'],

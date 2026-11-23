@@ -40,9 +40,11 @@ jobs:
       # 料金カードの表示と ROI 計算機が食い違ったまま公開されるのを止められる。
       - name: Test
         env:
-          # 料金のカタログとのライブの突き合わせ (`src/lib/plan-catalog.test.js`) に使う鍵。
+          # 料金のカタログとのライブの突き合わせ (`src/lib/plan-catalog.test.js`) に使う鍵と取得先。
           # **無ければテスト側は skip する**ので、未登録でも CI は緑のまま。
-          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
+          # 取得先も secret にする (変数だと公開のログに値が出る)
+          PRICE_CHECK_API_KEY: ${{ secrets.PRICE_CHECK_API_KEY }}
+          PRICE_CHECK_URL: ${{ secrets.PRICE_CHECK_URL }}
         run: npm test
 
       - name: Build front-end assets (Vite)
@@ -80,7 +82,8 @@ jobs:
       - name: Verify build output
         env:
           # 未登録なら空文字が渡り、スクリプト側が skip する (CI は緑のまま)
-          SUPABASE_PROXY_API_KEY: ${{ secrets.SUPABASE_PROXY_API_KEY }}
+          PRICE_CHECK_API_KEY: ${{ secrets.PRICE_CHECK_API_KEY }}
+          PRICE_CHECK_URL: ${{ secrets.PRICE_CHECK_URL }}
         run: |
           set -euo pipefail
           fail=0
@@ -143,8 +146,8 @@ jobs:
           grep -q 'data-dl' _site/assets/dist/app.js \
             || { echo "::error::バンドルから DL 計測の配線が消えている"; fail=1; }
           # utm を素の href に焼き込んでいないこと (全訪問者とクローラに同じ utm が配られる)
-          # DL 先は Microsoft Store の掲載ページと配布のダウンロードの 2 つを見る
-          grep -qE 'download/latest/windows\?|apps\.microsoft\.com/detail/9PDKMKWHN9RW\?' _site/index.html \
+          # DL 先は Microsoft Store の掲載ページ (公式のバッジと同じ形で referrer・mode・hl だけを持つ。utm などの装飾は焼き込まない)
+          grep -qE 'apps\.microsoft\.com/detail/9PDKMKWHN9RW\?[^"]*(utm_|[?&](ref|lp|dm)=)' _site/index.html \
             && { echo "::error::DL リンクの href に直接クエリが焼き込まれている — 装飾は実行時に行うこと"; fail=1; } || true
           # `download` は真偽属性ではない。Svelte 5 で `download={!!x}` と書くと
           # `download="false"` が出力され、同一オリジンのリンクが "false.html" という名前の
@@ -186,13 +189,10 @@ jobs:
           done
           # 多言語化のビルド出力の検査 (scripts/i18n/checks/*.mjs。ja のページの不変の検査は基点が要るので CI に載せない)
           node scripts/i18n/check-site.mjs _site || fail=1
-          # Microsoft Store のボタンの切り替え (_data/site.yml の distribution.store_enabled) を true にした写しの
-          # データで別にビルドし (出力は一時フォルダ、_site は触らない)、4 か所 × 言語にボタンが出ることを確かめる
-          node scripts/check-store-toggle.mjs || fail=1
           # _data/plans.yml と料金のカタログの突き合わせ (取得できなければ skip)
           node scripts/check-plan-catalog.mjs || fail=1
-          # docs の検査: 契約 ID 20 個 / 目次の ID / ページ内リンク /
-          # サイト内と llms.txt からの /docs/#… の深いリンク / <img> の実在・alt・width/height。
+          # docs の検査 (/docs/・/docs/web/ と、生成されていれば英中の版): 契約 ID 20 個 / 目次の ID / ページ内リンク /
+          # サイト内と llms.txt からの /docs/#… (英中は /en/docs/#… など) の深いリンク / <img> の実在・alt・width/height。
           # 節 ID はアプリ内ヘルプと /price/ /spec/ が参照するので改名しない。
           # 純ロジックは src/lib/docs-check.js (npm test で検証)
           node scripts/check-docs.mjs || fail=1

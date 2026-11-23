@@ -5,7 +5,7 @@
 // ## ネットワークが無くても必ず通る
 //
 // 突き合わせロジックの検証は **全てスタブ**で行う。実際に取得するのは
-// 末尾の 1 件だけで、`SUPABASE_PROXY_API_KEY` が無ければ skip、あっても取得に
+// 末尾の 1 件だけで、`PRICE_CHECK_API_KEY` か `PRICE_CHECK_URL` が無ければ skip、あっても取得に
 // 失敗したら skip する。`npm test` がネットワークや取得先の状態で
 // 落ちてはいけない (デプロイを外部サービスに人質に取らせない方針の一部)。
 
@@ -14,12 +14,17 @@ import assert from 'node:assert/strict';
 
 import { loadTiers } from './plans-yml.js';
 import {
-  CATALOG_URL,
+  ENV_API_KEY,
+  ENV_URL,
   catalogIncludedMinutes,
   diffPlanCatalog,
   fetchPlanCatalog,
+  liveCatalogUrl,
   siteIncludedMinutes,
 } from './plan-catalog.js';
+
+/** スタブの取得先 (実在しない。fetch はすべて差し替える) */
+const STUB_URL = 'https://catalog.example.invalid/plan-catalog';
 
 const TIERS = loadTiers();
 const byCode = (code) => {
@@ -301,16 +306,63 @@ test('公開プランがサイトに無いのは warning (載せない判断も�
 test('鍵が無ければネットワークに触れずスキップする', async () => {
   const res = await fetchPlanCatalog({
     apiKey: '',
+    url: STUB_URL,
     fetchImpl: () => assert.fail('鍵が無いのに fetch した'),
   });
   assert.equal(res.status, 'no-key');
-  assert.match(res.message, /SUPABASE_PROXY_API_KEY/);
+  assert.match(res.message, /PRICE_CHECK_API_KEY/);
+});
+
+test('取得先が無ければネットワークに触れずスキップする', async () => {
+  const res = await fetchPlanCatalog({
+    apiKey: 'dummy',
+    fetchImpl: () => assert.fail('取得先が無いのに fetch した'),
+  });
+  assert.equal(res.status, 'no-url');
+  assert.match(res.message, /PRICE_CHECK_URL/);
+  assert.ok(!res.message.includes('dummy'), 'メッセージに鍵が混ざっている');
+});
+
+test('取得先が http(s) の URL でなければネットワークに触れずスキップする', async () => {
+  for (const url of ['not a url', 'file:///etc/passwd', 'ftp://example.invalid/x']) {
+    const res = await fetchPlanCatalog({
+      apiKey: 'dummy',
+      url,
+      fetchImpl: () => assert.fail(`読めない取得先 ${url} で fetch した`),
+    });
+    assert.equal(res.status, 'no-url', url);
+    assert.ok(!res.message.includes(url), 'メッセージに取得先が混ざっている');
+  }
+});
+
+test('liveCatalogUrl は livemode=true を必ず付け、他のクエリは残す', () => {
+  assert.equal(liveCatalogUrl(STUB_URL), `${STUB_URL}?livemode=true`);
+  assert.equal(
+    liveCatalogUrl(`${STUB_URL}?livemode=false&x=1`),
+    `${STUB_URL}?livemode=true&x=1`,
+  );
+  assert.equal(liveCatalogUrl(''), null);
+  assert.equal(liveCatalogUrl('javascript:alert(1)'), null);
+});
+
+test('ネットワーク断のメッセージに取得先と鍵を含めない', async () => {
+  const res = await fetchPlanCatalog({
+    apiKey: 'dummy-secret',
+    url: STUB_URL,
+    fetchImpl: async () => {
+      throw new TypeError('fetch failed');
+    },
+  });
+  assert.equal(res.status, 'network');
+  assert.ok(!res.message.includes('example.invalid'), 'メッセージに取得先が混ざっている');
+  assert.ok(!res.message.includes('dummy-secret'), 'メッセージに鍵が混ざっている');
 });
 
 test('401 / 403 は鍵の問題として報告するが落とさない', async () => {
   for (const status of [401, 403]) {
     const res = await fetchPlanCatalog({
       apiKey: 'dummy',
+      url: STUB_URL,
       fetchImpl: async () => new Response('{}', { status }),
     });
     assert.equal(res.status, 'auth');
@@ -322,12 +374,14 @@ test('401 / 403 は鍵の問題として報告するが落とさない', async (
 test('5xx / ネットワーク断はスキップ扱い', async () => {
   const server5xx = await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async () => new Response('boom', { status: 503 }),
   });
   assert.equal(server5xx.status, 'http');
 
   const offline = await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async () => {
       throw new TypeError('fetch failed');
     },
@@ -339,6 +393,7 @@ test('5xx / ネットワーク断はスキップ扱い', async () => {
 test('sandbox が返ってきたら比較しない (値が別物になりうる)', async () => {
   const res = await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async () =>
       Response.json({ livemode: false, plans: [{ plan_code: 'light', max_contracts: 9 }] }),
   });
@@ -349,12 +404,14 @@ test('sandbox が返ってきたら比較しない (値が別物になりうる)
 test('空配列 / 形の違うレスポンスも比較しない', async () => {
   const empty = await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async () => Response.json({ livemode: true, plans: [] }),
   });
   assert.equal(empty.status, 'shape');
 
   const broken = await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async () => Response.json({ ok: true }),
   });
   assert.equal(broken.status, 'shape');
@@ -364,13 +421,13 @@ test('X-API-Key ヘッダを付けて live を要求する', async () => {
   let seen = null;
   await fetchPlanCatalog({
     apiKey: 'dummy',
+    url: STUB_URL,
     fetchImpl: async (url, init) => {
       seen = { url, init };
       return Response.json({ livemode: true, plans: [{ plan_code: 'x' }] });
     },
   });
-  assert.equal(seen.url, CATALOG_URL);
-  assert.match(seen.url, /livemode=true/, 'livemode を省くと取得先の既定に依存する');
+  assert.equal(seen.url, `${STUB_URL}?livemode=true`, 'livemode を省くと取得先の既定に依存する');
   assert.equal(seen.init.headers['X-API-Key'], 'dummy');
   assert.ok(seen.init.signal, 'タイムアウトが設定されていない');
 });
@@ -378,12 +435,13 @@ test('X-API-Key ヘッダを付けて live を要求する', async () => {
 // ── ライブ検査 (鍵があるときだけ) ───────────────────────────────────────────
 
 test('本番の料金のカタログと一致している', async (t) => {
-  const apiKey = process.env.SUPABASE_PROXY_API_KEY || '';
-  if (!apiKey) {
-    t.skip('SUPABASE_PROXY_API_KEY 未設定 — ライブ検査を飛ばす (CI は scripts/check-plan-catalog.mjs が行う)');
+  const apiKey = process.env[ENV_API_KEY] || '';
+  const url = process.env[ENV_URL] || '';
+  if (!apiKey || !url) {
+    t.skip(`${ENV_API_KEY} か ${ENV_URL} が未設定 — ライブ検査を飛ばす (CI は scripts/check-plan-catalog.mjs が行う)`);
     return;
   }
-  const res = await fetchPlanCatalog({ apiKey });
+  const res = await fetchPlanCatalog({ apiKey, url });
   if (res.status !== 'ok') {
     // ネットワーク不調で `npm test` を落とさない。落とすのは「取得できて食い違ったとき」だけ
     t.skip(`料金のカタログを取得できなかった: ${res.message}`);

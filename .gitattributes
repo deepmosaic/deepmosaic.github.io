@@ -1,2 +1,5 @@
 # シェルスクリプトは LF 固定 (autocrlf=true の checkout で CRLF になると bash が落ちる)
 *.sh text eol=lf
+
+# Microsoft Store のバッジは配布元のバイトのまま置く (改行を変換しない。README の「Microsoft Store のバッジ」)
+assets/img/store-badge/*.svg -text

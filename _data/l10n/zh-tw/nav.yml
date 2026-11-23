@@ -1,7 +1,7 @@
 # 英中のヘッダー・フッター・モバイルのドロワーの文 (zh-tw)。
 #   - 部品 (header-intl.html・footer-intl.html) が `site.data.l10n[page.lang].nav` で引く。ja の文は部品 (header.html・footer.html) に直書きのまま。
 #   - 平らな `key: "value"` だけ (src/lib/i18n-site-nav.test.js が読む)。値に " ' < > \ を書かない (属性と data-links の JSON を壊す)。
-#   - 長い形と短い形: dl_cta = dl_cta_lead + dl_cta_lg + dl_cta_tail、enterprise = enterprise_short + enterprise_lg
+#   - 長い形と短い形: enterprise = enterprise_short + enterprise_lg
 #     (lg 未満では *_lg を隠す。textContent は全幅で長い形のまま = GA4 の link_text)。
 #   - 料金・会社について・利用規約などのフッターのラベルは `_data/lang/zh-tw.json` の既存のキー (price・company・terms …) を使う。
 home: "首頁"                                   # ホーム
@@ -9,14 +9,9 @@ pricing: "價格"                                # 料金
 docs: "說明文件"                               # ドキュメント
 spec: "系統需求"                               # 動作環境 (ナビ)
 spec_full: "系統需求"                          # 動作環境 (フッター)
-dl_cta: "免費下載"                             # 無料でダウンロード (インストーラの DL)
-dl_cta_lead: ""
-dl_cta_lg: "免費"
-dl_cta_tail: "下載"                            # ダウンロード (md の短い形)
 enterprise: "企業方案"                         # 法人様はこちら
 enterprise_short: "企業"                       # 法人様 (md の短い形)
 enterprise_lg: "方案"
-download: "下載"                               # ダウンロード (ドロワー・フッター)
 contact: "聯絡我們"                            # 問い合わせ (ドロワー)
 footer_product: "產品"                         # 製品
 footer_company: "公司資訊"                     # 会社情報

@@ -6,7 +6,7 @@
 //   - JSON-LD の `disambiguatingDescription` がある (CI の ja の検査と同じ役割)。
 //   - `<details` の数と FAQPage の `"@type": "Question"` の数が一致し、ja の `_site/index.html` と同じ件数。
 //   - `%%…%%` のプレースホルダが残っていない。
-//   - `data-dl="` が 1 つ以上で、値の集合が ja の `_site/index.html` と同じ。DL の href に直接クエリが焼き込まれていない。
+//   - `data-dl="` が 1 つ以上で、値の集合が ja の `_site/index.html` と同じ。DL の href に計測のクエリ (utm_*・ref・lp・dm) が直接焼き込まれていない (Store のバッジの行き先の referrer・mode・hl は Microsoft の形)。
 //   - hreflang の `<link rel="alternate">` が 4 本 (checks/head.mjs と重なってよい)。
 //   - 見える文の言語の検査は checks/lang-text.mjs が受け持つ。
 //   - 対象はレイアウトを通ったページ (`<link rel="canonical"` を持つ) だけ。checks/head.mjs と同じ線引きで、
@@ -55,7 +55,7 @@ export default function check(ctx) {
 		const jaDl = dataDlSet(ja)
 		if (dl.join(',') !== jaDl.join(',')) errors.push(`${EN}: data-dl の値の集合が ja と違う: [${dl.join(', ')}] / [${jaDl.join(', ')}]`)
 	}
-	if (/download\/latest\/windows\?|apps\.microsoft\.com\/detail\/9PDKMKWHN9RW\?/.test(html)) {
+	if (/download\/latest\/windows\?|apps\.microsoft\.com\/detail\/9PDKMKWHN9RW\?[^"']*(?:utm_|[?&](?:ref|lp|dm)=)/.test(html)) {
 		errors.push(`${EN}: DL リンクの href に直接クエリが焼き込まれている`)
 	}
 

@@ -4,7 +4,7 @@ lang: en
 permalink: /en/
 ja_url: /
 source: index.html
-source_hash: "08b2166a13e0ec67b7f99e62c7555c1f538b7c8afcc0c5d38a8063bf58e4fd8f"
+source_hash: "08078d19ef81035434b7862caad079a525a032f1a88d7305f01ace347b539d7e"
 title: Mosaic work, down to a final check
 seo_title: AI that adds mosaic to faces and body areas in videos | Deepmosaic
 description: "Deepmosaic for Windows: AI automatically detects male and female body areas, male faces, and female faces in videos and adds mosaic, all on your PC. It also finds existing mosaic and applies mosaic over it again. It cannot take mosaic off."
@@ -28,16 +28,15 @@ schemas:
 
     <figure id="hero-detectable" class="mx-auto mt-8 max-w-[660px]">
       {% include detectable-objects.html %}
-      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">Objects it can help detect: male body areas, female body areas, male faces, and female faces. Turn each on or off in {% include ja-link.html href="/docs/#detect-options" label="detection options" class="text-accent-soft hover:underline" %}. It can also find the positions of mosaic already in the video (<a href="#existing-mosaic" class="text-accent-soft hover:underline">learn more</a>).</figcaption>
+      <figcaption class="mt-2 text-[13px] leading-[1.8] text-ink-3">Objects it can help detect: male body areas, female body areas, male faces, and female faces. Turn each on or off in <a href="/en/docs/#detect-options" class="text-accent-soft hover:underline">detection options</a>. It can also find the positions of mosaic already in the video (<a href="#existing-mosaic" class="text-accent-soft hover:underline">learn more</a>).</figcaption>
     </figure>
 
     <div class="mt-[34px] flex flex-wrap justify-center gap-3.5">
-      <a href="{{ site.data.lang[page.lang].app_download_link }}" download data-dl="hero" class="btn-primary btn-lg">{% include icon.html name="Download" class="h-5 w-5" %}Download for free</a>
       {%- include store-button.html dl="hero-store" size="large" %}
       {%- if site.data.site.web_app.enabled %}
       <a href="{{ site.data.site.web_app.url }}?{{ site.data.site.web_app.lang_query }}={{ site.data.site.web_app.lang_param[page.lang] }}" data-dl="hero-webapp" target="_blank" rel="noopener noreferrer" class="btn-secondary btn-lg">{% include icon.html name="Globe" class="h-5 w-5" %}<span>Try it in your browser<span class="hidden sm:inline"> (videos up to {{ site.data.site.web_app.trial_minutes }} minutes, no installation)</span></span></a>
       {%- endif %}
-      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}{% include ja-link.html href="/docs/" label=docs_label class="btn-secondary btn-lg" inside=true %}
+      {% capture docs_label %}{% include icon.html name="BookOpen" class="h-5 w-5" %}View the documentation{% endcapture %}<a href="/en/docs/" class="btn-secondary btn-lg">{{ docs_label }}</a>
     </div>
     <div class="mt-3.5 flex flex-wrap justify-center gap-[18px] text-[13px] text-ink-4">
       <span class="inline-flex items-center gap-1.5">{% include icon.html name="Check" class="h-3.5 w-3.5 text-success" %}Windows 10/11 (64-bit)</span>
@@ -49,7 +48,7 @@ schemas:
     <div class="mx-auto mt-16 max-w-[960px] overflow-hidden rounded-xl border border-edge" style="box-shadow:0 24px 64px rgba(0,0,0,.55),0 0 120px rgba(79,139,232,.12)">
       <video id="hero-video" autoplay muted loop playsinline preload="metadata" poster="/assets/img/hero/hero-shape-poster.webp" width="1280" height="720" aria-label="Video exported with Deepmosaic, showing the automatic detection results" class="block w-full">
         <source src="/assets/videos/hero-shape.webm" type="video/webm">
-        <img src="/assets/img/screenshots/edit-player-mosaic.webp" alt="The editing screen of the Deepmosaic Desktop app, previewing mosaic applied to faces detected by AI, with a timeline of detected segments along the bottom (Japanese UI)" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
+        <img src="/assets/img/screenshots/en/edit-player-mosaic.webp" alt="The editing screen of the Deepmosaic Desktop app, previewing mosaic applied to faces detected by AI, with a timeline of detected segments along the bottom" width="1188" height="987" fetchpriority="high" decoding="async" class="block w-full">
       </video>
     </div>
     <p class="mx-auto mt-3 max-w-[720px] text-[12.5px] leading-[1.8] text-ink-4">Automatic detection results (footage: Pexels).</p>
@@ -66,7 +65,7 @@ schemas:
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="Grid3x3" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">Flexible editing</h2></div>
-      <p class="text-[13.5px] leading-[1.95] text-ink-2">Adjust mosaic or blur, block size, the detection box expansion ratio, and edge feather. Settings can be overridden at 4 levels: the whole project, by class, by tracking ID, and by scene.</p>
+      <p class="text-[13.5px] leading-[1.95] text-ink-2">Adjust mosaic or blur, block size, the detection box expansion ratio, and edge feather. Settings can be overridden in 5 scopes: the whole project, by class, by tracking ID, by scene, and by time.</p>
     </div>
     <div class="border-t border-hair px-6 py-9 md:border-l md:border-t-0 md:px-8">
       <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="ListChecks" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h2 class="text-[15px] font-bold text-ink">A full set of tools for review and correction</h2></div>
@@ -201,7 +200,7 @@ schemas:
     {% include section-title.html kicker="RELIABILITY" title="You can correct every detection result yourself" sub="AI detection is not perfect. That is why we put the ability to correct at the center of the product. Add, delete, and move detection boxes, change the block size, and jump to frames where detection drops out, so you can fix only the spots you care about." %}
     <div class="grid gap-5 lg:grid-cols-[1.1fr_1fr]">
       <div class="overflow-hidden rounded-xl border border-edge" style="box-shadow:0 16px 48px rgba(0,0,0,.5)">
-        <img src="/assets/img/screenshots/edit-overview.webp" alt="The editing page. AI detection boxes overlay the player, and segments for each detection class are lined up on the timeline at the bottom. Mosaic is applied inside these boxes (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+        <img src="/assets/img/screenshots/en/edit-overview.webp" alt="The editing page. AI detection boxes overlay the player, and segments for each detection class are lined up on the timeline at the bottom. Mosaic is applied inside these boxes" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
       </div>
       <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
         <div class="card p-5">
@@ -214,7 +213,7 @@ schemas:
         </div>
         <div class="card p-5">
           <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="LayoutGrid" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Choose the scope</h3></div>
-          <p class="text-[13px] leading-[1.9] text-ink-2">Override settings at 4 levels: the whole project, by class, by tracking ID, and by scene. Settings for a narrower scope take precedence.</p>
+          <p class="text-[13px] leading-[1.9] text-ink-2">Override settings in 5 scopes: the whole project, by class, by tracking ID, by scene, and by time. When they overlap, the setting changed last takes priority.</p>
         </div>
         <div class="card p-5">
           <div class="mb-2.5 flex items-center gap-2">{% include icon.html name="ClipboardCheck" class="h-4 w-4 shrink-0 text-accent" %}<h3 class="text-[14px] font-bold text-ink">Filter by confidence</h3></div>
@@ -263,7 +262,7 @@ schemas:
         <p class="text-[13px] leading-[1.9] text-ink-2">The areas found are shown as polygon boxes, and you can correct them on the editing page just like other detection boxes.</p>
       </li>
     </ul>
-    <p class="mt-6 text-[13px] leading-[1.9] text-ink-3">Available in both the Desktop app and the Web app. The differences between the two (whether it can be used at the same time as detection of body areas and faces), mosaic that is hard to find, and estimated processing times are covered in the {% include ja-link.html href="/docs/#detect-mosaic" label="documentation" class="text-accent-soft hover:underline" %}.</p>
+    <p class="mt-6 text-[13px] leading-[1.9] text-ink-3">Available in both the Desktop app and the Web app. The differences between the two (whether it can be used at the same time as detection of body areas and faces), mosaic that is hard to find, and estimated processing times are covered in the <a href="/en/docs/#detect-mosaic" class="text-accent-soft hover:underline">documentation</a>.</p>
   </div>
 </section>
 
@@ -311,7 +310,7 @@ schemas:
       </div>
     </div>
     <div class="mt-8 overflow-hidden rounded-xl border border-edge">
-      <img src="/assets/img/screenshots/edit-mosaic.webp" alt="The mosaic settings panel, where you set the type of mosaic to apply (mosaic or blur), block size, opacity, and edge feather (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
+      <img src="/assets/img/screenshots/en/edit-mosaic.webp" alt="The mosaic settings panel, where you set the type of mosaic to apply (mosaic or blur), block size, opacity, and edge feather" width="1280" height="800" loading="lazy" decoding="async" class="block w-full">
     </div>
   </div>
 </section>
@@ -355,7 +354,7 @@ schemas:
     {% include section-title.html kicker="MANAGE" title="Organize your videos, and use it as an organization" sub="Even as the number of videos grows, folders and tags take you straight to the video you need. With Enterprise, members of an organization can share one subscription." %}
     <div class="grid gap-5 lg:grid-cols-2">
       <div class="card overflow-hidden">
-        <img src="/assets/img/screenshots/home.webp" alt="The home screen. The sidebar on the left filters the list, and cards for processed videos are lined up on the right (Japanese UI)" width="1280" height="800" loading="lazy" decoding="async" class="block w-full border-b border-hair">
+        <img src="/assets/img/screenshots/en/home.webp" alt="The home screen. The sidebar on the left filters the list, and cards for processed videos are lined up on the right" width="1280" height="800" loading="lazy" decoding="async" class="block w-full border-b border-hair">
         <div class="p-6">
           <div class="mb-3 flex items-center gap-2.5">{% include icon.html name="FolderInput" class="h-[18px] w-[18px] shrink-0 text-accent" %}<h3 class="text-[15px] font-bold text-ink">Folders and tags on the home screen</h3></div>
           <ul class="flex flex-col gap-2.5">
@@ -376,7 +375,7 @@ schemas:
           <li class="flex gap-2 text-[14px] leading-[1.9] text-ink-2">{% include icon.html name="Check" class="mt-1 h-4 w-4 shrink-0 text-success" %}<span>Talk to us about integrating it into your company&#39;s systems and services (quoted separately depending on the details)</span></li>
         </ul>
         <p class="mt-5 text-[13.5px] leading-[1.9] text-ink-2">
-          {% include ja-link.html href="/docs/#team" label="How to manage an organization" class="text-accent-soft hover:underline" %}
+          <a href="/en/docs/#team" class="text-accent-soft hover:underline">How to manage an organization</a>
           ·
           <a href="/en/enterprise/inquiry/" class="text-accent-soft hover:underline">Enterprise inquiries</a>
         </p>
@@ -430,7 +429,7 @@ schemas:
 {% comment %} PRICING {% endcomment %}
 <section class="py-24">
   <div class="mx-auto w-[92%] max-w-[1120px]">
-    {% include section-title.html kicker="PRICING" title="Plans to match your workload" sub="You can subscribe to a paid plan from the profile menu in the app (if you downloaded the Windows version), or use &quot;Subscribe&quot; on each plan and sign in with your Web app account. You can use your plan with the same account in both the Desktop app and the Web app." %}
+    {% include section-title.html kicker="PRICING" title="Plans to match your workload" sub="You can subscribe to a paid plan from the profile menu in the Windows app, or use &quot;Subscribe&quot; on each plan and sign in with your Web app account. You can use your plan with the same account in both the Desktop app and the Web app." %}
     {% include pricing-cards.html %}
     <p class="mt-6 text-center text-[13.5px] text-ink-2">
       See the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a> for details.

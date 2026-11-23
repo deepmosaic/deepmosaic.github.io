@@ -21,13 +21,12 @@
       {% include icon.html name="Building2" class="h-4 w-4" %}<span>法人様<span class="hidden lg:inline">はこちら</span></span>
     </a>
 
-    <a href="{{ site.data.lang.ja.app_download_link }}" download data-dl="header" class="btn-primary hidden md:inline-flex md:-ml-1 md:px-3 lg:-ml-4 lg:px-4">
-      {% include icon.html name="Download" class="h-4 w-4" %}<span><span class="hidden lg:inline">無料で</span>ダウンロード</span>
-    </a>
+    <a href="{% include store-install-url.html %}" target="_blank" rel="noopener noreferrer" data-store-button="header" data-dl="header" class="hidden shrink-0 rounded-[5px] md:inline-flex md:-ml-1 lg:-ml-4">{% include store-badge-img.html %}</a>
 
     <div class="md:hidden">
+      {%- capture hd_mobile_dl -%}{"label":"Microsoft Store からダウンロード","href":"{% include store-install-url.html %}","target":"_blank","dl":"mobile"}{%- endcapture %}
       <div data-island="mobile-nav" data-edge="right"
-           data-links='[{"label":"ダウンロード","href":"{{ site.data.lang.ja.app_download_link }}","download":true,"dl":"mobile"},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price/"},{"label":"ドキュメント","href":"/docs/"},{"label":"動作環境","href":"/spec/"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
+           data-links='[{{ hd_mobile_dl }},{"label":"ホーム","href":"/"},{"label":"料金","href":"/price/"},{"label":"ドキュメント","href":"/docs/"},{"label":"動作環境","href":"/spec/"},{"label":"問い合わせ","href":"{{ contact_url }}"},{"label":"法人様はこちら","href":"/enterprise/inquiry/"}]'></div>
       <noscript>
         <nav class="flex flex-col items-end gap-1 text-sm">
           <a href="/" class="px-2 py-1 text-ink-2 hover:text-ink">ホーム</a>

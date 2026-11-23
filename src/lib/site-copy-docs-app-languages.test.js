@@ -5,8 +5,8 @@
 //   - アプリの画面は日本語・英語・繁体字中国語の 3 言語。
 //   - docs の #install の「インストーラの言語」の行は 3 言語の事実を書く (「アプリも日本語 UI です」と書かない)。
 //     インストーラ (NSIS) は日本語。初回は Windows の表示言語で決まり (zh-* は繁体字、それ以外は英語)、
-//     画面右上のプロフィールメニューで切り替えられる (アプリの画面と同じ)。
-//   - 英中のページは変えない (docs は日本語だけ、`(Japanese UI)` はスクリーンショットの注記)。
+//     プロフィールメニュー (右上) の言語の行で切り替えられる (アプリの画面と同じ)。
+//   - このテストは日本語の docs だけを見る (英中の docs は訳の include の検査で見る)。
 //
 // 読み取りはこのファイル内で完結させる (site-copy-docs-install-update.test.js と同じ流儀)。
 
@@ -42,20 +42,21 @@ test('ヘルパー: 陽性対照と陰性対照', () => {
 	assert.equal(textOf('{% comment %}x{% endcomment %}<!-- y --><b>z</b>'), 'z')
 })
 
-test('#install: アプリの画面は 3 言語に対応し、プロフィールメニューで切り替えられる (アプリも日本語 UI です、と書かない)', () => {
+test('#install: アプリの画面は 3 言語に対応し、プロフィールメニューの言語の行で切り替えられる (アプリも日本語 UI です、と書かない)', () => {
 	const install = sectionOf(intro, 'install')
 	assert.ok(install, '01-intro に #install が無い')
 	const text = textOf(install)
 	assert.match(text, /アプリの画面は日本語・英語・繁体字中国語に対応しています/)
 	assert.match(text, /初めて起動したときは Windows の表示言語に合わせて選ばれ（日本語・英語・中国語以外は英語）/)
-	assert.match(text, /画面右上のプロフィールメニューで切り替えられます/)
+	assert.match(text, /プロフィールメニュー（右上）の言語の行で切り替えられます/)
 	assert.doesNotMatch(text, /アプリも日本語 UI です/, '「アプリも日本語 UI です」の文を載せない')
 	assert.doesNotMatch(text, /ログイン/, '語は「サインイン」')
 })
 
-test('#install: インストーラの言語は日本語のまま (言語の選択画面は出ない)', () => {
+test('#install: 「画面の言語」の行でアプリの画面の言語を書き、インストーラの言語の行は置かない (Microsoft Store から入れる)', () => {
 	const text = textOf(sectionOf(intro, 'install') ?? '')
-	assert.match(text, /インストーラの言語 日本語（言語の選択画面は出ません）。/)
+	assert.match(text, /画面の言語 アプリの画面は日本語・英語・繁体字中国語に対応しています。/)
+	assert.doesNotMatch(text, /インストーラの言語/)
 })
 
 test('docs の 01-intro のほかの所に「日本語 UI」の記述が無い', () => {

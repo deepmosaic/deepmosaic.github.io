@@ -1,12 +1,26 @@
 // ja のソースと英中のソースの構造の一致の検査 (純関数)。
 //
 //   structureOf(src)  → { ids, dataDl, islands, dataAttrs, imgSrcs, includes }
-//   compareStructure(jaSrc, xSrc, { allowExtraIncludes = ['ja-link.html'] }) → 違いの文字列の配列 (空なら一致)
+//   compareStructure(jaSrc, xSrc, { allowExtraIncludes = ['ja-link.html'], ignoreLangFolders = true }) → 違いの文字列の配列 (空なら一致)
+//   stripLangFolder(path) → パスの途中の `en/`・`zh-tw/` のフォルダを外したもの
 //
 //   - Liquid の `{% comment %}` と HTML のコメントを除いてから正規表現で抜く。
 //   - id・data-dl・data-island・img の src・include の名前は**並び**で比べる。data-* は**名前の集合**で比べる。
 //   - 多言語化の印 (data-i18n-allow・data-i18n-switch・data-ja-allowed・data-lang-404) は data-* に数えない。
+//   - img の src と include の名前は、既定で言語のフォルダ (`/en/`・`/zh-tw/`) を外して比べる。訳で言語別の画像
+//     (`assets/img/screenshots/<lang>/<同じ名前>`) や訳の include (`docs/<lang>/<同じ名前>`) に替えても、日本語のままでも一致する。
 //   - 各ページの node テストが使う (例: compareStructure(read('price/index.html'), read('en/price/index.html')))。
+//     include の組 (`_includes/docs/01-intro.html` と `_includes/docs/en/01-intro.html`) にも同じように使う。
+
+/** img の src と include の名前の比較で外す、言語のフォルダ。 */
+export const LANG_FOLDERS = ['en', 'zh-tw']
+
+const LANG_FOLDER_RE = new RegExp(`(^|/)(?:${LANG_FOLDERS.join('|')})/`, 'g')
+
+/** パスの途中の言語のフォルダ (`en/`・`zh-tw/`) を外す。 */
+export function stripLangFolder(path) {
+	return path.replace(LANG_FOLDER_RE, '$1')
+}
 
 /** data-* の比較で数えない、多言語化の印。 */
 export const I18N_MARKERS = ['data-i18n-allow', 'data-i18n-switch', 'data-ja-allowed', 'data-lang-404']
@@ -39,12 +53,18 @@ export function structureOf(src) {
 const fmt = (arr) => JSON.stringify(arr)
 
 /** ja と英中のソースの構造の違いを返す (空なら一致)。 */
-export function compareStructure(jaSrc, xSrc, { allowExtraIncludes = ['ja-link.html'] } = {}) {
+export function compareStructure(jaSrc, xSrc, { allowExtraIncludes = ['ja-link.html'], ignoreLangFolders = true } = {}) {
 	const a = structureOf(jaSrc)
 	const b = structureOf(xSrc)
 	const dropAllowed = (list) => list.filter((n) => !allowExtraIncludes.includes(n))
 	a.includes = dropAllowed(a.includes)
 	b.includes = dropAllowed(b.includes)
+	if (ignoreLangFolders) {
+		for (const s of [a, b]) {
+			s.imgSrcs = s.imgSrcs.map(stripLangFolder)
+			s.includes = s.includes.map(stripLangFolder)
+		}
+	}
 	const out = []
 	for (const key of ['ids', 'dataDl', 'islands', 'imgSrcs', 'includes', 'dataAttrs']) {
 		if (fmt(a[key]) !== fmt(b[key])) {

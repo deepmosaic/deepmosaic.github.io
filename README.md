@@ -54,13 +54,14 @@ npm ci
 
 | 変数 | 秘匿 | 必須 | 用途 | 入手先 |
 |---|---|---|---|---|
-| `SUPABASE_PROXY_API_KEY` | **秘匿** | 任意 | `npm test` 末尾の料金カタログのライブ照合テスト 1 件を有効化する（未設定なら設計どおり skip）。CI では `scripts/check-plan-catalog.mjs` も使用 | 料金カタログの読み取り用の鍵。GitHub Actions の secret と同じ値（管理者から受け取る） |
-| `PLAN_CATALOG_URL` | 非秘匿 | 任意（**ローカル検証専用**） | `scripts/check-plan-catalog.mjs` の取得先を上書きし、スタブサーバで「値をずらしたら落ちる」ことを確認するために使う。**CI では設定しない** | 自分で立てたスタブの URL |
+| `PRICE_CHECK_API_KEY` | **秘匿** | 任意 | `npm test` 末尾の料金カタログのライブ照合テスト 1 件と、CI の `scripts/check-plan-catalog.mjs` を有効化する（`PRICE_CHECK_URL` と両方そろわなければ設計どおり skip） | 料金カタログの読み取り用の鍵。GitHub Actions の secret と同じ値（管理者から受け取る） |
+| `PRICE_CHECK_URL` | **秘匿** | 任意 | 料金カタログの取得先（`livemode=true` は自動で付く）。ローカルでは自分で立てたスタブの URL を渡し、「値をずらしたら落ちる」ことを確認できる | 管理者から受け取る（GitHub Actions の secret と同じ値。公開のログに出さないため secret にしている） |
 
 設定例（PowerShell、現在のシェルのみ有効。実際の値は書き残さないこと）:
 
 ```powershell
-$env:SUPABASE_PROXY_API_KEY = "<your-api-key>"
+$env:PRICE_CHECK_API_KEY = "<your-api-key>"
+$env:PRICE_CHECK_URL = "<catalog-url>"
 ```
 
 ## 起動
@@ -106,7 +107,7 @@ npm run dev
 npm test
 ```
 
-期待結果: 失敗 0。skip のうち 1 件は `SUPABASE_PROXY_API_KEY` 未設定時に設計どおり飛ばされる料金カタログのライブ照合（→「環境変数」参照）。
+期待結果: 失敗 0。skip のうち 1 件は `PRICE_CHECK_API_KEY` / `PRICE_CHECK_URL` 未設定時に設計どおり飛ばされる料金カタログのライブ照合（→「環境変数」参照）。
 
 ## ブラウザ E2E（問い合わせフォーム）
 
@@ -182,10 +183,27 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 | `index.html` `docs/` `price/` `company/` `404.html` | 各ページ |
 | `docs/index.html` `docs/web/index.html` | ドキュメント (Desktop 版 / Web 版)。骨組みだけを持ち、本文は `_includes/docs/*.html`、目次は `_data/docs_toc.yml` |
 | `scripts/check-docs.mjs` | docs の回帰ガード (契約 ID / 目次 / リンク / 画像)。`npm run build && bundle exec jekyll build` の後に `node scripts/check-docs.mjs`。CI でも実行 |
+| `en/docs/` `zh-tw/docs/` | 英中のドキュメント (`/en/docs/`・`/en/docs/web/`・`/zh-tw/…`)。骨組みだけを持ち、本文は `_includes/docs/<en\|zh-tw>/*.html`、目次は `_data/l10n/<lang>/docs_toc.yml` |
+| `scripts/i18n/docs-diff.mjs` | docs の訳の include (`_includes/docs/<en\|zh-tw>/`) のうち、日本語の節が変わって訳の直しが要る節と日本語の今のソースを出す (`node scripts/i18n/docs-diff.mjs [en\|zh-tw]`)。直したら `node scripts/i18n/accept-site.mjs <訳の include> --section <節の id>` |
 | `scripts/optimize-images.mjs` | PNG → WebP 変換 (ffmpeg)。既定の対象は `assets/img/screenshots/` 直下だけ、`<dir>` で明示も可。引数なしは一覧表示のみ、`--apply` で変換して元 PNG を削除。原稿から参照中の PNG は `[KEEP]` で残す (判定は `src/lib/image-optimize.js`) |
 | `playwright.config.ts` `e2e/` | 問い合わせフォームのブラウザ E2E（`npm run e2e`）。配信サーバは `e2e/lib/serve.mjs`。公開物ではないので `_config.yml` の `exclude` に入れてある |
 | `assets/dist/` | Vite 出力（**gitignore** ・CI 再生成） |
 | `assets/` | 画像 / フォント / 動画 / `fonts.css`（自己ホスト Roboto） |
+
+## Microsoft Store のバッジ
+
+ダウンロードの導線は Microsoft Store の公式のバッジだけ。画像は Microsoft の配布元 (https://github.com/microsoft/app-store-badge の HTML 版のバッジと同じ置き場所) から取り、**形・色・文字・縦横比を変えずに**そのまま `assets/img/store-badge/` に置いている (サイトの地が暗いので明るい地の版 `light`)。外部のバッジのスクリプトは読み込まない。
+
+| ファイル | 取った元 (2026-11-23 に取得) | sha256 |
+|---|---|---|
+| `assets/img/store-badge/ja.svg` | https://get.microsoft.com/images/ja%20light.svg | `c8a91162e662ce184ecebe98f93a962d035937c889b4ca4bad89bf1848853651` |
+| `assets/img/store-badge/en.svg` | https://get.microsoft.com/images/en-us%20light.svg | `99a73f61a0dd72dbfffb1645abdbae142ebb8df4fc2aaf6901309944359cb8d2` |
+| `assets/img/store-badge/zh-tw.svg` | https://get.microsoft.com/images/zh-tw%20light.svg | `dcdb3daf81c792cd6eb650b4df310bea835b5c76954d8a74ab85bc4b81582d3e` |
+
+- 使い方: `<img>` の `width="161" height="44"` (元の寸法) を保ち、CSS では高さだけを決めて幅は `w-auto` にする (普通のボタンの所は 38px、大きいボタンの所は 50px)。周りの余白を詰めない。
+- alt はバッジに書かれた文 (ja「Microsoft Store からダウンロード」、en「Download from the Microsoft Store」、zh-tw「從 Microsoft Store 下載」)。
+- 行き先は公式のバッジと同じ形の掲載ページ `https://apps.microsoft.com/detail/<ID>?referrer=appbadge&mode=direct&hl=<ページの言語>` (`_includes/store-install-url.html` が組む。`hl` は ja-JP / en-US / zh-TW)。
+- 差し替えるときは同じ URL から取り直し、表の sha256 を書き直す (`src/lib/site-store-button.test.js` が照合する)。配布元のバイトのまま置くため、`.gitattributes` で改行を変換しない。
 
 ## トラブルシューティング
 
@@ -197,11 +215,11 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 - **ビルド中に Svelte の警告が出る** → `VideoLightbox.svelte` の a11y 警告と `RoiCalculator.svelte` の `state_referenced_locally` 警告はビルド時に毎回出るが、**既知かつ無害**（ビルドは成功する）。
 - **`bundle exec jekyll serve` で `webrick (LoadError)`** → `bundle add webrick`、改善しなければ `gem update` を試す。
 - **ページが `_site/` に出力されない** → ファイル先頭に front matter（`--- ... ---`。中身が空でも `---` 2 行）が必要。無いと Jekyll のビルド対象にならない。
-- **`npm test` で 1 件 skip される** → 正常（`SUPABASE_PROXY_API_KEY` 未設定時の設計どおりの挙動。「環境変数」参照）。
+- **`npm test` で 1 件 skip される** → 正常（`PRICE_CHECK_API_KEY` / `PRICE_CHECK_URL` 未設定時の設計どおりの挙動。「環境変数」参照）。
 
 ## 任意 / オプション（基本の起動には不要）
 
-- **`SUPABASE_PROXY_API_KEY` の設定** — `npm test` の料金カタログのライブ照合 1 件が有効になる。未設定でも開発・起動に支障なし。
-- **`node scripts/check-plan-catalog.mjs`** — `_data/plans.yml` と料金カタログの乖離検査（CI が実行。鍵が無ければスキップして exit 0）。
+- **`PRICE_CHECK_API_KEY` と `PRICE_CHECK_URL` の設定** — `npm test` の料金カタログのライブ照合 1 件が有効になる。未設定でも開発・起動に支障なし。
+- **`node scripts/check-plan-catalog.mjs`** — `_data/plans.yml` と料金カタログの乖離検査（CI が実行。鍵か取得先が無ければスキップして exit 0）。
 - **`bundle exec jekyll serve --livereload`** — Jekyll 側のみの編集時にブラウザ自動リロード。
 - **画像追加時の運用**（WebP 必須・`node scripts/optimize-images.mjs --apply` 等）は `CLAUDE.md` の Conventions を参照。既定の対象は `assets/img/screenshots/` だけで、`assets/img/` 直下のロゴ (JSON-LD が参照する `logo-font.png` など) は巻き込まない。

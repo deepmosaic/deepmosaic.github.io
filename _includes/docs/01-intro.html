@@ -35,30 +35,43 @@
 </section><section id="install" class="scroll-mt-24">
   {% include docs-h2.html kicker="導入" title="インストール" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
-    <p>ダウンロードしたインストーラ（Deepmosaic Setup）を実行してください。管理者権限は不要で、現在のユーザーにインストールされます。動作にはWebView2ランタイムが必要ですが、Windows 10/11には標準搭載されています（無い環境ではインストーラが自動で導入します）。</p>
+    <p>Microsoft Store から入手してください。下の「Microsoft Store からダウンロード」を押すと、Microsoft Store のページが開きます。表示される「ダウンロード」を押すと、小さなインストーラがダウンロードされます。実行するとインストールが始まり、終わると Deepmosaic が起動します。Microsoft Store アプリで「Deepmosaic」を検索しても見つかります（Microsoft Store アプリで直接開く場合は<a href="{{ site.data.lang.ja.app_store_protocol_link }}">こちら</a>）。管理者権限は不要です。</p>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">対応 OS</div>
-        <div class="kv-val">Windows 10 / 11（64 ビット）。macOS 版は開発中です（<a href="/spec/">動作環境</a>）</div>
+        <div class="kv-val">Windows 10（バージョン 2004 以降）/ 11（64 ビット）。macOS 版は開発中です（<a href="/spec/">動作環境</a>）</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">インストーラの言語</div>
-        <div class="kv-val">日本語（言語の選択画面は出ません）。アプリの画面は日本語・英語・繁体字中国語に対応しています。初めて起動したときは Windows の表示言語に合わせて選ばれ（日本語・英語・中国語以外は英語）、画面右上のプロフィールメニューで切り替えられます</div>
+        <div class="kv-key">画面の言語</div>
+        <div class="kv-val">アプリの画面は日本語・英語・繁体字中国語に対応しています。初めて起動したときは Windows の表示言語に合わせて選ばれ（日本語・英語・中国語以外は英語）、プロフィールメニュー（右上）の言語の行で切り替えられます（<a href="#layout">画面の構成</a>）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">インストール先</div>
-        <div class="kv-val">現在のユーザーのアプリフォルダ。スタートメニューに「Deepmosaic」が登録されます</div>
+        <div class="kv-val">Windows が管理するアプリのフォルダ（変更できません）。スタートメニューに「Deepmosaic」が登録されます</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">アップグレード</div>
-        <div class="kv-val">アプリは起動時に新しいバージョンを確認し、更新があるとダイアログで「今すぐ更新」「あとで」を選べます（<a href="#update">アップデート</a>）。新しいインストーラを上書き実行して更新することもできます。設定や検出結果は引き継がれます。2.8.0 より前のバージョンで検出したプロジェクトは、更新後の初回起動時に新しい保存形式（プロジェクトフォルダ内の <code>project.db</code>）へ自動で変換されます。変換中はホーム画面に「検出結果を新しい保存形式に変換しています (n / N)」と表示されます</div>
+        <div class="kv-key">アップデート</div>
+        <div class="kv-val">新しいバージョンは Microsoft Store が配信し、自動で更新されます（<a href="#update">アップデート</a>）。設定や検出結果は引き継がれます。2.8.0 より前のバージョンで検出したプロジェクトは、起動時に新しい保存形式（プロジェクトフォルダ内の <code>project.db</code>）へ自動で変換されます。変換中はホーム画面に「検出結果を新しい保存形式に変換しています (n / N)」と表示されます</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">使用許諾契約書</div>
-        <div class="kv-val">インストーラの途中で使用許諾契約書が表示されます。内容を確認し、同意を選ぶと次へ進めます</div>
+        <div class="kv-val">初めて起動したときの「ご利用の前に」で確認し、同意します（<a href="#setup">初回セットアップ</a>）</div>
       </div>
     </div>
-    <div class="my-5">{% include download-button.html dl="docs-install" note="Windows 10 / 11（64bit）。ダウンロードしてすぐ、サインインなしでお試しいただけます" %}{%- include store-button.html dl="docs-install-store" wrap="mt-3" %}</div>
+    <div class="my-5">{% include store-button.html dl="docs-install-store" lazy=true note="Windows 10（バージョン 2004 以降）/ 11（64bit）。入れてすぐ、サインインなしでお試しいただけます" %}</div>
+    <h3 id="install-migrate" class="mt-6 scroll-mt-24 text-[16px] font-bold text-ink">インストーラ版の提供終了と Microsoft Store 版への移行</h3>
+    <p>公式サイトからダウンロードしたインストーラ版（アプリの画面では「exe 版」）は、2026 年 12 月 31 日をもってご利用いただけなくなります。それまでは引き続きご利用いただけます。お早めに Microsoft Store 版へ移行してください。料金・ご利用条件・機能は変わりません。</p>
+    <ul>
+      <li>引き継がれるもの: プロジェクトフォルダ・設定とサインインの情報・AI モデル等は、Microsoft Store 版がそのまま使います。プランはアカウントに付いているので、そのままご利用いただけます</li>
+      <li>インストーラ版の 2.18 以降では、起動時に移行のお知らせが表示されます（「あとで」で閉じると、次に起動するまで表示されません）。2027 年 1 月 1 日以降に起動すると、提供終了の画面が表示され、操作できません</li>
+      <li>2026 年 12 月 31 日までは、インストーラ版にもアプリ内のアップデートが届きます</li>
+    </ul>
+    <ol>
+      <li>Microsoft Store 版をインストールします（上のボタン、またはアプリのお知らせの「Microsoft Store からダウンロード」）</li>
+      <li>インストーラ版を終了してから、Microsoft Store 版を起動し、設定とプロジェクトが引き継がれていることを確かめます</li>
+      <li>問題なく動くことを確かめたら、インストーラ版をアンインストールします（<a href="#uninstall">アンインストール</a>）。2.18 以降のインストーラ版は、Microsoft Store 版が入っている PC では、Microsoft Store 版と共有している設定・サインインの情報・AI モデル等を削除しません（確認画面のデータを削除するチェックも表示されません）</li>
+    </ol>
+    <p>2.18 より前のインストーラ版をアンインストールするときは、確認画面の「アプリのデータとプロジェクトフォルダを削除する」に<strong>チェックを入れないでください</strong>（Microsoft Store 版と共有している設定・検出結果・プロジェクトフォルダも削除されます）。AI モデル等は削除され、Microsoft Store 版が次回起動時に取得し直します。先にアプリ内のアップデートで 2.18 以降に更新しておくと、これらは削除されません。</p>
     {%- include docs/store-edition.html -%}
   </div>
 </section>
@@ -73,7 +86,7 @@
     <p>高精度モデルなど一部のデータは、ホーム画面に進んだ後にバックグラウンドで取得します。取得が終わるまでの検出は軽量モデルで行われ、検出オプション画面に「高精度モデルを準備中 (残り約 N MB) — 今回は軽量モデルで検出します」と表示されます。</p>
     <p>ダウンロードが終わると、検出とエンコードの動作確認（「動作確認中…」）が自動で実行されます。問題が見つかった場合は、該当するデータだけが自動で再ダウンロードされます。完了すると自動でホーム画面に移り、「インストールが完了しました」と表示されます（「続ける」を押す必要はありません）。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">セットアップ中にできないこと</h3>
-    <p>ダウンロードと動作確認が終わるまで、メニューは「ファイル ▸ 終了」と「ヘルプ」以外が無効になり、ウィンドウを閉じる操作や画面の再読み込みも抑止されます。途中で終了した場合は、次回起動時に不足分だけを取得して再開します。</p>
+    <p>ダウンロードと動作確認が終わるまで、メニューは「ファイル ▸ 終了」と「ヘルプ」（「チュートリアル」を除く）以外が無効になり、ウィンドウを閉じる操作や画面の再読み込みも抑止されます。途中で終了した場合は、次回起動時に不足分だけを取得して再開します。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">エラーが表示されたとき</h3>
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
@@ -123,7 +136,7 @@
       </div>
       <div class="kv-row">
         <div class="kv-key">アップデートを確認</div>
-        <div class="kv-val">本体 / エンジン / モデル・アセットの更新を確認します（<a href="#update">アップデート</a>）</div>
+        <div class="kv-val">本体 / エンジン / モデル・アセットの更新を確認します（<a href="#update">アップデート</a>）。インストーラ版だけの項目です</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">終了</div>
@@ -136,16 +149,26 @@
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">ライセンス</div>
-        <div class="kv-val">同梱する第三者ソフトと、初回に取得する第三者ソフトのライセンスを確認できます。一覧にはソフト名の行だけが並び、行を押すと中身が開きます（<a href="#licenses">同梱する第三者ソフトとライセンス</a>）</div>
+        <div class="kv-val">同梱する第三者ソフトと、初回に取得する第三者ソフトのライセンスを確認できます。一覧にはソフト名の行だけが並び、行を押すと中身が開きます（<a href="#licenses">同梱する第三者ソフトとライセンス</a>）。お使いの版と配布の種類も、ここで確かめられます</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">ドキュメント</div>
         <div class="kv-val">このページを既定のブラウザで開きます</div>
       </div>
+      <div class="kv-row">
+        <div class="kv-key">チュートリアル</div>
+        <div class="kv-val">チュートリアル動画の一覧を開きます。カードを押すとその動画をアプリ内で再生し、「一覧へ戻る」で一覧に戻ります。有料プランでも使えます（読み込めない動画は一覧に出ません）。初回セットアップ中は使えません</div>
+      </div>
     </div>
-    <p>「ヘルプ」は初回セットアップ中も使えます。2.13 より前の版では、この 2 つはプロフィールメニューにありました。</p>
+    <figure class="my-4">
+      <img src="/assets/img/screenshots/help-tutorial-list.webp" alt="メニューバーの「ヘルプ」▸「チュートリアル」で動画の一覧を開いた状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
+      <figcaption class="mt-2 text-[12.5px] text-ink-4">チュートリアル動画の一覧。カードを押すと再生します</figcaption>
+    </figure>
+    <p>「ヘルプ」の「ライセンス」と「ドキュメント」は初回セットアップ中も使えます。2.13 より前の版と 2.14 では、この 2 つはプロフィールメニューにもありました。</p>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">表示言語</h3>
+    <p>プロフィールメニュー（右上）の「テーマ」の行のすぐ下に、日本語・English・繁體中文 の 3 つのボタンが並びます。押すとすぐに画面の言語が切り替わり、次に起動したときも選んだ言語で表示されます。</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">プロフィールメニュー（右上）</h3>
-    <p>アバター（またはユーザー名）をクリックすると開きます。サインインの状態とプラン、サインイン、組織（法人プランの組織に所属しているとき）、プランを変更する（無料プランのとき）または プラン・本数の変更 / 解約（有料プランのとき）、お問い合わせ、サインアウト、テーマの切り替えが並びます。「ライセンス」と「ドキュメント」はメニューバーの「ヘルプ」にあります。</p>
+    <p>アバター（またはユーザー名）をクリックすると開きます。サインインの状態とプラン、サインイン、組織（法人プランの組織に所属しているとき）、プランの契約と管理（無料プランのときはプランを選ぶ画面、有料プランのときは決済ポータルが開きます）、お問い合わせ、サインアウト、テーマの切り替え、表示言語の切り替えが並びます。「ライセンス」と「ドキュメント」はメニューバーの「ヘルプ」にあります。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/profile-menu.webp" alt="ホーム画面で右上のプロフィールメニューを開いた状態" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">プロフィールメニュー。プランの変更・お問い合わせ・テーマの切り替えはここから</figcaption>
@@ -162,7 +185,7 @@
       </div>
       <div class="kv-row">
         <div class="kv-key">残り時間</div>
-        <div class="kv-val">「今月の残り」（有料プラン）または「残りの検出可能時間」（無料）と使用済み割合のバー。無料プランでは残り日数も併記されます（例:「残りの検出可能時間: 1時間30分 · 残り 5 日」）。無料プランのときはボタンになっており、サインイン済みのときはプランを選ぶ画面、サインインしていないときはサインイン画面が開きます。<a href="#usage">使用時間の計測</a>を参照</div>
+        <div class="kv-val">「今月の残り」（有料プラン）または「残りの検出可能時間」（無料）と使用済み割合のバー。無料枠が無制限のアカウントでは「残りの検出可能時間: 無制限」と表示されます。無料プランでは残り日数も併記されます（例:「残りの検出可能時間: 1時間30分 · 残り 5 日」）。無料プランのときはボタンになっており、サインイン済みのときはプランを選ぶ画面、サインインしていないときはサインイン画面が開きます。<a href="#usage">使用時間の計測</a>を参照</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">サインインで {{ free_plan.included_hours }}時間に増量</div>
@@ -173,14 +196,10 @@
         <div class="kv-val">現在の保存先のパス</div>
       </div>
       <div class="kv-row kv-alt">
-        <div class="kv-key">基本の使い方</div>
-        <div class="kv-val">ホーム画面の右下（バージョン表示の左）に出るアイコン。チュートリアル動画「基本の使い方 (3 分)」をアプリ内で再生します。ホームのカードを「表示しない」にした後や有料プランでも使えます（動画に接続できないときは表示されません）</div>
-      </div>
-      <div class="kv-row">
         <div class="kv-key">アカウントを削除</div>
         <div class="kv-val">サインイン済みのときにホーム画面で表示されるアイコン（<a href="#account">アカウントの削除</a>）</div>
       </div>
-      <div class="kv-row kv-alt">
+      <div class="kv-row">
         <div class="kv-key">バージョン</div>
         <div class="kv-val">お使いの Deepmosaic のバージョン（お問い合わせの際にお知らせください）</div>
       </div>

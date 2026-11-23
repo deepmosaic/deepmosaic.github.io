@@ -15,12 +15,13 @@
 //
 // ## 環境変数
 //
-//   SUPABASE_PROXY_API_KEY  取得の鍵。**未設定なら検査をスキップ**する。
-//                           値はログにも例外にも出さない
-//   PLAN_CATALOG_URL        取得先の上書き。**ローカル検証専用** — 「値をずらしたら
-//                           落ちる」ことをスタブサーバで確認するために使う。CI では設定しない
+//   PRICE_CHECK_API_KEY  取得の鍵。**未設定なら検査をスキップ**する。
+//                        値はログにも例外にも出さない
+//   PRICE_CHECK_URL      取得先 (`livemode=true` は自動で付ける)。**未設定なら検査をスキップ**する。
+//                        CI では secret から渡す。ローカルではスタブサーバの URL を渡して
+//                        「値をずらしたら落ちる」ことを確かめられる
 import { loadTiers } from '../src/lib/plans-yml.js'
-import { CATALOG_URL, diffPlanCatalog, fetchPlanCatalog } from '../src/lib/plan-catalog.js'
+import { ENV_API_KEY, ENV_URL, diffPlanCatalog, fetchPlanCatalog } from '../src/lib/plan-catalog.js'
 
 // GitHub Actions のアノテーション。ローカルで実行しても素の 1 行として読める
 const warn = (m) => console.log(`::warning::${m}`)
@@ -29,8 +30,8 @@ const fail = (m) => console.log(`::error::${m}`)
 const tiers = loadTiers()
 
 const result = await fetchPlanCatalog({
-	apiKey: process.env.SUPABASE_PROXY_API_KEY || '',
-	url: process.env.PLAN_CATALOG_URL || CATALOG_URL,
+	apiKey: process.env[ENV_API_KEY] || '',
+	url: process.env[ENV_URL] || '',
 })
 
 if (result.status !== 'ok') {

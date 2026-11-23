@@ -41,7 +41,6 @@ const INTL_ONLY_KEYS = [
 /** ja と同じ値でなければならない URL・ID のキー */
 const SAME_AS_JA_KEYS = [
 	'url',
-	'app_download_link',
 	'app_store_protocol_link',
 	'app_store_product_id',
 	'importer_download_link',
@@ -49,8 +48,8 @@ const SAME_AS_JA_KEYS = [
 /** 言語の値 (lintValue にかけない) */
 const LANG_VALUE_KEYS = ['my_lang', 'og_lang', 'json_ld_lang', 'url_prefix']
 
-/** 多言語化の前の ja.json のキーの数 (ja.json は変えない) */
-const JA_KEY_COUNT = 36
+/** ja.json のキーの数 (ja.json は変えない。インストーラの URL のキーを消した後の数) */
+const JA_KEY_COUNT = 35
 
 const sorted = (o) => Object.keys(o).sort()
 

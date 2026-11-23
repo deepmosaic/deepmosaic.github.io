@@ -239,6 +239,24 @@ test('decorateDownloadUrl は Microsoft Store の掲載ページには何も載�
   assert.equal(decorateDownloadUrl(upper, FULL_RECORD, FULL_FIRST), upper, 'ホスト名の大小は問わない');
 });
 
+// サイトの Store のボタンの行き先 (公式のバッジと同じ形の掲載ページ)。referrer・mode・hl は Microsoft の形のまま残す
+const STORE_BADGE = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP';
+
+test('decorateDownloadUrl は Store のバッジの行き先にも何も載せない (utm・ref・lp・dm を付けない)', () => {
+  assert.equal(decorateDownloadUrl(STORE_BADGE, FULL_RECORD, FULL_FIRST), STORE_BADGE);
+  assert.equal(decorateDownloadUrl(STORE_BADGE, null, null), STORE_BADGE, 'record が null でも dm=1 を付けない');
+});
+
+test('decorateDownloadUrl は Microsoft の配布のホスト (get.microsoft.com) にも載せず、似た別ホストは対象外にしない', () => {
+  const ms = 'https://get.microsoft.com/x?referrer=appbadge';
+  assert.equal(decorateDownloadUrl(ms, FULL_RECORD, FULL_FIRST), ms);
+  // get.microsoft.com を含むだけの別ホストは対象外にしない (完全一致)
+  const lookalike = 'https://get.microsoft.com.example.net/x';
+  assert.equal(new URL(decorateDownloadUrl(lookalike, null)).searchParams.get('dm'), '1');
+  const sub = 'https://x.get.microsoft.com/x';
+  assert.equal(new URL(decorateDownloadUrl(sub, null)).searchParams.get('dm'), '1', 'サブドメインも完全一致でないので対象外にしない');
+});
+
 test('decorateDownloadUrl は ms-windows-store: など http(s) 以外の URL を触らない', () => {
   const proto = 'ms-windows-store://pdp/?productid=9PDKMKWHN9RW';
   assert.equal(decorateDownloadUrl(proto, FULL_RECORD, FULL_FIRST), proto);

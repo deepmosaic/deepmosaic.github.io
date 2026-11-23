@@ -8,6 +8,9 @@ schemas:
 ---
 
 {%- assign SPEC = site.data.spec -%}
+{%- comment -%}Windows の表の Microsoft Store 版の行 (store_only: true) は distribution.store_enabled が true のときだけ出す (_includes/faq.html と同じ扱い){%- endcomment -%}
+{%- assign SPEC_WIN = SPEC.windows -%}
+{%- unless site.data.site.distribution.store_enabled -%}{%- assign SPEC_WIN = SPEC.windows | where_exp: "r", "r.store_only != true" -%}{%- endunless -%}
 
 {% include header.html %}
 
@@ -32,7 +35,7 @@ schemas:
       <h2 class="mb-4 flex items-center gap-2.5 text-[19px] font-bold text-ink">
         {% include icon.html name="Monitor" class="h-5 w-5 shrink-0 text-accent" %}Windows
       </h2>
-      {% include kv-table.html rows=SPEC.windows label_width="180px" %}
+      {% include kv-table.html rows=SPEC_WIN label_width="180px" %}
     </div><div>
       <h2 class="mb-2 flex items-center gap-2.5 text-[19px] font-bold text-ink">
         {% include icon.html name="Activity" class="h-5 w-5 shrink-0 text-accent" %}GPU と処理速度の目安

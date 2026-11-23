@@ -4,7 +4,7 @@
 //     aria-labelledby の id の <title> がある。<text> が 6 本。<text> と <title> の中身がその言語の期待値と同じ
 //     (ja はこのモジュールの表、英中は `_data/l10n/<lang>/parts.yml` の do_ キー)。英中の <text> と <title> に仮名が無い。
 //     ページに `detectable-objects.webp` の文字列が無い。
-//   - docs (`docs/index.html`): <details> の中に同じ svg (id は docs-detectable-title) がある。
+//   - docs (`docs/index.html`・`en/docs/index.html`・`zh-tw/docs/index.html`): <details> の中に同じ svg (id は docs-detectable-title) があり、文がその言語の期待値と同じ。
 //   - ページが無い・レイアウトを通っていない (`<link rel="canonical"` が無い) ページは見ない (checks/pages-top-en.mjs と同じ線引き)。
 
 import { readFileSync, existsSync } from 'node:fs'
@@ -17,7 +17,7 @@ export const JA_TEXTS = ['検出支援', 'できる物体', '男性器', '女性
 export const JA_TITLE = '検出支援できる物体: 男性器・女性器・男性の顔・女性の顔・モザイク'
 
 const TOP_PAGES = { 'index.html': 'ja', 'en/index.html': 'en', 'zh-tw/index.html': 'zh-tw' }
-const DOCS_PAGE = 'docs/index.html'
+const DOCS_PAGES = { 'docs/index.html': 'ja', 'en/docs/index.html': 'en', 'zh-tw/docs/index.html': 'zh-tw' }
 const PARTS_ORDER = ['do_head_1', 'do_head_2', 'do_item_male', 'do_item_female', 'do_item_faces', 'do_item_mosaic']
 const KANA = /[぀-ヿㇰ-ㇿｦ-ﾟ]/u
 const isBuilt = (html) => /<link rel="canonical"/.test(html)
@@ -82,14 +82,14 @@ function checkTop(ctx, rel, lang) {
 	return [...errors, ...checkSvg(`${rel} #hero-detectable`, figure, { lang, idPrefix: null, expected })]
 }
 
-function checkDocs(ctx) {
-	const html = ctx.read(DOCS_PAGE)
+function checkDocs(ctx, rel, lang) {
+	const html = ctx.read(rel)
 	if (!isBuilt(html)) return []
 	const errors = []
-	if (html.includes('detectable-objects.webp')) errors.push(`${DOCS_PAGE}: 古い detectable-objects.webp の参照が残っている`)
+	if (html.includes('detectable-objects.webp')) errors.push(`${rel}: 古い detectable-objects.webp の参照が残っている`)
 	const details = [...html.matchAll(/<details\b[\s\S]*?<\/details>/g)].map((m) => m[0]).filter((d) => d.includes('docs-detectable-title'))
-	if (details.length !== 1) return [...errors, `${DOCS_PAGE}: <details> の中に検出対象の図 (docs-detectable-title) が無い`]
-	return [...errors, ...checkSvg(`${DOCS_PAGE} <details>`, details[0], { lang: 'ja', idPrefix: 'docs-detectable', expected: expectedFor(ctx.root, 'ja') })]
+	if (details.length !== 1) return [...errors, `${rel}: <details> の中に検出対象の図 (docs-detectable-title) が無い`]
+	return [...errors, ...checkSvg(`${rel} <details>`, details[0], { lang, idPrefix: 'docs-detectable', expected: expectedFor(ctx.root, lang) })]
 }
 
 /** @param {{ root: string, exists(rel: string): boolean, read(rel: string): string }} ctx */
@@ -98,6 +98,8 @@ export default function check(ctx) {
 	for (const [rel, lang] of Object.entries(TOP_PAGES)) {
 		if (ctx.exists(rel)) errors.push(...checkTop(ctx, rel, lang))
 	}
-	if (ctx.exists(DOCS_PAGE)) errors.push(...checkDocs(ctx))
+	for (const [rel, lang] of Object.entries(DOCS_PAGES)) {
+		if (ctx.exists(rel)) errors.push(...checkDocs(ctx, rel, lang))
+	}
 	return errors
 }

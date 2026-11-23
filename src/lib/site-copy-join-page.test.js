@@ -112,26 +112,23 @@ test('不正なリンクの表示: 文言だけでボタンを出さない', () 
 	assert.equal(/<a\b|<button\b/.test(block), false)
 })
 
-// 既定の入手先はインストーラ (DL の単一管理点 app_download_link)。
-// Store のボタンは切り替え (store_enabled) が true のときだけ出る部品 (join-store) を、文の下に置く。
-test('アプリをまだ入れていない方: Windows 版のダウンロード (app_download_link) へ、別タブ・noopener・計測なし', () => {
-	const install = body.slice(body.indexOf('data-join-install'))
+// 入手先は Microsoft Store だけ: Microsoft Store の文と Store のバッジ (部品 join-store) が 1 つ。インストーラのリンクと切り替えは持たない。
+test('アプリをまだ入れていない方: Microsoft Store の文と Store のバッジ 1 つ、インストーラのリンクは無い (3 言語)', () => {
+	for (const [rel, text] of [
+		['join/index.html', 'Microsoft Store から Deepmosaic（Windows 版）を入れてください。入れた後に、もう一度このページの「アプリで開く」を押してください。'],
+		['en/join/index.html', 'Get Deepmosaic for Windows from Microsoft Store. After installing it, select "Open in app" on this page again.'],
+		['zh-tw/join/index.html', '請從 Microsoft Store 取得並安裝 Deepmosaic（Windows 版）。安裝後，請再次按下此頁面的「以應用程式開啟」。'],
+	]) {
+		const src = stripComments(read(rel))
+		const box = src.slice(src.indexOf('data-join-install'))
+		assert.equal(/installer_enabled|app_download_link|download_url|data-join-download/.test(src), false, `${rel}: インストーラの導線が残っている`)
+		const p = box.match(/<p class="mt-3[^"]*">([^<]*)<\/p>/)?.[1]
+		assert.equal(p, text, rel)
+		assert.equal((box.match(/include store-button\.html/g) ?? []).length, 1, rel)
+		assert.match(box, /\{%-? include store-button\.html dl="join-store" wrap="mt-4" lazy=true %\}/, rel)
+	}
 	assert.match(body, /アプリをまだ入れていない方/)
-	assert.match(textOf(install), /Deepmosaic（Windows 版）をダウンロードしてインストールしてください。/)
-	assert.match(body, /入れた後に、もう一度このページの「アプリで開く」を押してください。/)
-	assert.equal(/Microsoft Store/.test(textOf(install)), false, '既定の文に Microsoft Store を出さない')
-	const dl = body.match(/<a\b[^>]*data-join-download[^>]*>([^<]*)<\/a>/)
-	assert.ok(dl, 'ダウンロードへのリンクが無い')
-	assert.equal(dl[1], 'Deepmosaic（Windows 版）をダウンロード')
-	assert.match(dl[0], /href="\{\{ download_url \}\}"/)
-	assert.match(page, /assign download_url = site\.data\.lang\.ja\.app_download_link/)
-	assert.match(dl[0], /\sdownload[\s>]/, 'ファイル DL なので download 属性 (download-button.html と同じ)')
-	assert.match(dl[0], /target="_blank"/)
-	assert.match(dl[0], /rel="noopener noreferrer"/)
-	assert.equal(/data-dl\b/.test(dl[0]), false, '計測しないページなので data-dl を付けない')
 	assert.equal(/data-join-store\b/.test(body), false, '旧い目印 (Store へのリンク) を残さない')
-	// Store のボタンは文の後ろに部品で置く (切り替えは部品だけが読む)
-	assert.ok(install.indexOf('data-join-download') < install.indexOf('include store-button.html dl="join-store"'))
 })
 
 test('自動では開かない: ページに自前のスクリプトや meta refresh を置かない', () => {

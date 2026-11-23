@@ -42,14 +42,6 @@ test.beforeEach(async ({ page, baseURL }) => {
     (url) => url.origin !== origin && (url.protocol === 'http:' || url.protocol === 'https:'),
     (route) => route.abort(),
   );
-  // ja のページで英中への案内の帯を出さない
-  await page.addInitScript(() => {
-    try {
-      localStorage.setItem('dm-site-lang', 'ja');
-    } catch {
-      /* 保存できない環境でも図の検査には効かない */
-    }
-  });
 });
 
 async function openPage(page: Page, path: string): Promise<void> {

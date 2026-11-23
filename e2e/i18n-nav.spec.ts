@@ -17,6 +17,7 @@
 // - (g) ボタンの大きさと形: 押せる範囲 40×40px 以上、言語のアイコンの描画 22px 以上、
 //       xl (1280px) 以上で今の言語名が見え 1024px では見えない、開くと背景が変わる、一覧の項目は 14px 以上・高さ 40px 以上、
 //       3 言語 × 幅 768 / 1024 / 1280 / 1440px でヘッダーの行がはみ出さない。
+// - (i) ブラウザの言語が英語・繁体字中国語でも、ja のページ (/・/price/・/join/) に英中への案内の帯を出さず、選んだ言語を localStorage に保存しない。
 //
 // 英中のページ (/en/・/zh-tw/・/en/price/) が無い (404) ときは (b) と (d) の行き先の表示を飛ばす (飛ばした理由を出す)。
 import { test, expect, devices, type Locator, type Page } from '@playwright/test';
@@ -352,13 +353,14 @@ test.describe('(g) ボタンの大きさと形', () => {
   }
 });
 
-// 英中のページから日本語だけのページ (docs・法務) へ向くリンクは、本文・CTA の副ボタン・ドロワーの項目の
-// どれでも hreflang="ja" を持つ (CTA の副ボタンとドロワーの Docs を含む)。
-const JA_ONLY_HREF = /^\/(docs|company\/(terms|privacy|tokushoho))(\/|#|$)/;
+// 英中のページから日本語だけのページ (法務) へ向くリンクは、本文・フッターのどれでも hreflang="ja" を持つ。
+// docs は訳のあるページなので、本文・CTA の副ボタン・ドロワーの項目のどれでも同じ言語の docs を指し、hreflang="ja" を持たない。
+const JA_ONLY_HREF = /^\/company\/(terms|privacy|tokushoho)(\/|#|$)/;
+const JA_DOCS_HREF = /^\/docs(\/|#|$)/;
 
 test.describe('(e) 日本語だけのページへのリンクの hreflang', () => {
   for (const path of ['/en/price/', '/zh-tw/price/', '/en/spec/', '/zh-tw/spec/', '/en/', '/zh-tw/']) {
-    test(`${path} の docs・法務へのリンクは全部 hreflang="ja"`, async ({ page }) => {
+    test(`${path} の法務へのリンクは全部 hreflang="ja"、docs へのリンクは同じ言語の docs`, async ({ page }) => {
       await openAt(page, path, XL_MIN_WIDTH);
       const hrefs = await page.$$eval('a[href]', (as) =>
         as.map((a) => ({ href: a.getAttribute('href') ?? '', hreflang: a.getAttribute('hreflang') })),
@@ -366,6 +368,11 @@ test.describe('(e) 日本語だけのページへのリンクの hreflang', () =
       const jaOnly = hrefs.filter((l) => JA_ONLY_HREF.test(l.href));
       expect(jaOnly.length, '日本語だけのページへのリンクが 1 本も無い').toBeGreaterThan(0);
       expect(jaOnly.filter((l) => l.hreflang !== 'ja').map((l) => l.href)).toEqual([]);
+      expect(hrefs.filter((l) => JA_DOCS_HREF.test(l.href)).map((l) => l.href), '日本語の docs へのリンクがある').toEqual([]);
+      const prefix = path.startsWith('/en/') ? '/en' : '/zh-tw';
+      const docs = hrefs.filter((l) => l.href.startsWith(`${prefix}/docs/`));
+      expect(docs.length, '同じ言語の docs へのリンクが 1 本も無い').toBeGreaterThan(0);
+      expect(docs.filter((l) => l.hreflang !== null).map((l) => l.href)).toEqual([]);
     });
   }
 
@@ -373,14 +380,15 @@ test.describe('(e) 日本語だけのページへのリンクの hreflang', () =
     const { defaultBrowserType: _browser, ...PIXEL_7 } = devices['Pixel 7'];
     test.use(PIXEL_7);
 
-    test('/en/price/ のドロワーの Docs は hreflang="ja" と印を持つ', async ({ page }) => {
+    test('/en/price/ のドロワーの Docs は英語の docs を指し、日本語のページの印を持たない', async ({ page }) => {
       await page.goto('/en/price/', { waitUntil: 'domcontentloaded' });
       const button = page.locator('[data-island="mobile-nav"] button').first();
       await button.waitFor({ state: 'visible' });
       await button.tap();
-      const docs = page.locator('aside ul li a[href="/docs/"]');
-      await expect(docs).toHaveAttribute('hreflang', 'ja');
-      await expect(docs).toContainText('(Japanese)');
+      const docs = page.locator('aside ul li a[href="/en/docs/"]');
+      await expect(docs).toHaveCount(1);
+      await expect(docs).not.toHaveAttribute('hreflang', 'ja');
+      await expect(docs).not.toContainText('(Japanese)');
     });
   });
 });
@@ -401,5 +409,43 @@ test.describe('(h) カーソル', () => {
     const tabs = page.locator('button.tab');
     expect(await tabs.count()).toBeGreaterThan(0);
     expect(await cursorOf(tabs.first())).toBe('pointer');
+  });
+});
+
+// (i) ja のページはブラウザの言語が英中でも、英中への案内の帯を出さず、選んだ言語を覚えない (英中へは言語の切り替えで行く)。
+const NO_BANNER_PATHS = ['/', '/price/', '/join/'] as const;
+
+async function expectNoBanner(page: Page, path: string): Promise<void> {
+  await openAt(page, path, XL_MIN_WIDTH);
+  await expect(page.locator('html')).toHaveAttribute('lang', 'ja');
+  await expect(page.locator('.lang-suggest')).toHaveCount(0);
+  const first = await page.evaluate(() => document.body.firstElementChild?.className ?? '');
+  expect(first, `${path} の body の最初の子が帯`).not.toContain('lang-suggest');
+  expect(await page.evaluate(() => localStorage.getItem('dm-site-lang'))).toBeNull();
+}
+
+test.describe('(i) 言語の案内の帯を出さない', () => {
+  test.describe('ブラウザの言語が英語', () => {
+    test.use({ locale: 'en-US' });
+    for (const path of NO_BANNER_PATHS) {
+      test(`${path} に帯が無く、選んだ言語を保存しない`, async ({ page }) => {
+        await expectNoBanner(page, path);
+      });
+    }
+    test('フッターの切り替えで /en/price/ に移っても選んだ言語を保存しない', async ({ page }) => {
+      await openAt(page, '/price/', XL_MIN_WIDTH);
+      await page.locator(`${FOOTER_SWITCH} a[hreflang="en"]`).click();
+      await expect(page).toHaveURL(/\/en\/price\/$/);
+      expect(await page.evaluate(() => localStorage.getItem('dm-site-lang'))).toBeNull();
+    });
+  });
+
+  test.describe('ブラウザの言語が繁体字中国語', () => {
+    test.use({ locale: 'zh-TW' });
+    for (const path of NO_BANNER_PATHS) {
+      test(`${path} に帯が無い`, async ({ page }) => {
+        await expectNoBanner(page, path);
+      });
+    }
   });
 });

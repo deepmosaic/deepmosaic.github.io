@@ -4,16 +4,14 @@ lang: zh-tw
 permalink: /zh-tw/join/
 ja_url: /join/
 source: join/index.html
-source_hash: "a2cb3d93a193a878e7bb7bf24eb13b5ffd45691a2acac42e993bf1377288a510"
+source_hash: "e2db4ed1ca2c5fe1737c26fc36fcac4dbc4fd8d8a18400ecca96b080f3b493a2"
 title: 開啟 Deepmosaic
 seo_title: 開啟 Deepmosaic｜Deepmosaic
-description: 透過企業邀請電子郵件中的連結，開啟 Deepmosaic 應用程式的頁面。
+description: 透過企業開通通知郵件中的連結，開啟 Deepmosaic 應用程式的頁面。
 noindex: true
 sitemap: false
 no_tracking: true
 ---
-
-{%- assign download_url = site.data.lang.ja.app_download_link -%}
 
 {% include header.html %}
 
@@ -48,7 +46,7 @@ no_tracking: true
       </div>
       <ol class="mt-8 flex list-decimal flex-col gap-2 pl-6 text-[14px] leading-[1.9] text-ink-2">
         <li>按下「以應用程式開啟」。</li>
-        <li>以收到邀請電子郵件的電子郵件地址登入（不需輸入組織代碼）。</li>
+        <li>以收到開通通知郵件的電子郵件地址登入（不需輸入組織代碼）。</li>
       </ol>
     </div>
 
@@ -62,8 +60,8 @@ no_tracking: true
 
     <div class="mt-12 border-t border-hair pt-8" data-join-install>
       <h2 class="text-[17px] font-bold text-ink">尚未安裝應用程式的使用者</h2>
-      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">請<a href="{{ download_url }}" download target="_blank" rel="noopener noreferrer" class="text-accent-soft hover:underline" data-join-download>下載 Deepmosaic（Windows 版）</a>並安裝。安裝後，請再次按下此頁面的「以應用程式開啟」。</p>
-      {%- include store-button.html dl="join-store" wrap="mt-4" %}
+      <p class="mt-3 text-[14px] leading-[1.9] text-ink-2">請從 Microsoft Store 取得並安裝 Deepmosaic（Windows 版）。安裝後，請再次按下此頁面的「以應用程式開啟」。</p>
+      {%- include store-button.html dl="join-store" wrap="mt-4" lazy=true %}
     </div>
   </div>
 </section>

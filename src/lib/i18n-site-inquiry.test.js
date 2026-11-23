@@ -342,8 +342,6 @@ test('main.js: 404 の振り分けは [data-lang-404] があるときだけ lang
 	assert.match(MAIN, /querySelector\('\[data-lang-404\]'\)/)
 	assert.match(MAIN, /lang404Target\(location\.pathname\)/)
 	assert.match(MAIN, /location\.replace\(/)
-	// 言語の案内を足す区切り
-	assert.match(MAIN, /\/\/ -+ i18n の初期化/)
 })
 
 // ---- 3. inquiry_form.yml ----

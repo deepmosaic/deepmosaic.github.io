@@ -4,7 +4,7 @@
 # 「・推定」「・実測」の中黒 (U+30FB) は仮名の範囲で lang-text に当たるので「，」で区切る。
 # ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/spec.yml"
-_source_hash: "b58b5d42abdf3bbcaeef4d09665ba26ada0b933f7d8ed2393e16c82f9274692e"
+_source_hash: "5a3fc1b62fcade49263899a2147bde520686b32462651c2f61bd47309e4bf877"
 windows:
   - key: "OS"
     val: "Microsoft Windows 10 / 11（64 位元）"
@@ -16,6 +16,11 @@ windows:
     val: "使用 NVENC 硬體編碼時，需要 570 以上的版本"
   - key: "儲存空間"
     val: "初始設定時，AI 模型等資料約需 10 GB"
+  - key: "顯示語言"
+    val: "日本語 / English / 繁體中文（首次啟動時會依 Windows 的顯示語言選擇，日文、英文、中文以外的語言會使用英文。可隨時在應用程式中切換）"
+  - key: "Microsoft Store 版本"
+    val: "Windows 10 版本 2004 以上。從 Microsoft Store 取得，更新也由 Microsoft Store 提供。"
+    store_only: true
 macos:
   status: "開發中"
   note: "macOS 版正在開發中。推出時間未定，目前也不受理搶先通知的登記。目前僅提供 Windows 版。"
