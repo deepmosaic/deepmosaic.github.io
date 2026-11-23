@@ -86,14 +86,13 @@ test('陽性対照: 既存のテストが照合する ja の直書き・href・�
 	const cards = stripComments(SRC['pricing-cards'])
 	assert.match(cards, /税込/)
 	assert.match(cards, /plan\.price_incl_display/)
-	const iSub = cards.indexOf('{%- if plan.subscribe %}')
-	const iDl = cards.indexOf('{%- elsif plan.cta.kind == "download" %}')
-	assert.ok(iSub >= 0 && iDl > iSub, 'subscribe の分岐が DL ボタンより先に無い')
-	assert.match(cards.slice(iSub, iDl), /href="\/subscribe\/#plan-\{\{ plan\.code \}\}"/)
-	assert.match(cards.slice(iSub, iDl), /\{\{ plan\.subscribe\.label \}\}/)
+	const iDl = cards.indexOf('{%- if plan.cta.kind == "download" %}')
+	assert.ok(iDl >= 0, 'ダウンロードのカードの分岐が無い')
+	assert.match(cards.slice(iDl), /href="\{% include store-install-url\.html %\}"/)
+	assert.match(cards.slice(iDl), /\{\{ plan\.cta\.label \}\}/)
 	assert.match(SRC['pricing-cards'], /\{%-? if plan\.note %\}/)
 	assert.match(cards, /追加契約/)
-	// 料金のカードの DL は Microsoft Store のバッジの部品 (インストーラの URL を持たない)
+	// 料金のカードの Free の帯は Microsoft Store のバッジの部品 (インストーラの URL を持たない)
 	assert.match(cards, /\{% include store-button\.html dl=plan\.code /)
 	assert.doesNotMatch(cards, /app_download_link|download-button/)
 	// ja の直書きの文
@@ -142,7 +141,6 @@ test('include: 英中の文は parts.yml から引き、引くキーは en / zh-
 
 test('include: 英中の行き先に言語の接頭辞を付け、ja の href はソースに残す', () => {
 	const cards = stripComments(SRC['pricing-cards'])
-	assert.match(cards, /href="\{\{ pc_L\.url_prefix \}\}\/subscribe\/#plan-\{\{ plan\.code \}\}"/)
 	assert.match(cards, /href="\{\{ plan\.cta\.href \}\}"/)
 	assert.match(cards, /href="\{\{ pc_href_prefix \}\}\{\{ plan\.cta\.href \}\}"/)
 })

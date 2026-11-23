@@ -117,13 +117,13 @@ test('header: data-links の項目の数・行き先・dl が ja と同じ、ラ
 		intl0.map((l) => l.href),
 		ja.map((l) => l.href),
 	)
-	// DL 項目: Store のバッジの行き先を別タブで (download なし。ja と同じ)
+	// DL 項目: Store のバッジの行き先を同じタブで (インストーラのダウンロード。target・download なし。ja と同じ)
 	assert.deepEqual(
 		intl0.map((l) => [l.download, l.target]),
 		ja.map((l) => [l.download, l.target]),
 	)
 	const dl = intl0.find((l) => l.dl === 'mobile')
-	assert.ok(dl?.href === 'STORE' && dl?.target === '_blank' && dl?.download === undefined)
+	assert.ok(dl?.href === 'STORE' && dl?.target === undefined && dl?.download === undefined)
 	const intl = dataLinksOf(HEADER_INTL)
 	const raw = stripComments(HEADER_INTL).match(/data-links='([^']*)'/)[1]
 	assert.doesNotMatch(raw, /[぀-ヿ]/, '英中の data-links に仮名を直書きしない')
@@ -134,7 +134,7 @@ test('header: data-links の項目の数・行き先・dl が ja と同じ、ラ
 	assert.match(raw, /"href":"\{\{ L\.url_prefix \}\}\/docs\/"/)
 })
 
-test('header: DL の <a> は Store の掲載ページへ向くバッジで、インストーラの URL・download 属性を持たない (ja・英中)', () => {
+test('header: DL の <a> は Store のインストーラを直接ダウンロードするバッジで、サイト配布版の URL・download 属性・target を持たない (ja・英中)', () => {
 	for (const src of [HEADER, HEADER_INTL]) {
 		const live = stripComments(src)
 		assert.doesNotMatch(live, /app_download_link|installer_enabled/)
@@ -143,6 +143,7 @@ test('header: DL の <a> は Store の掲載ページへ向くバッジで、イ
 		assert.match(tags[0], /href="\{% include store-install-url\.html %\}"/)
 		assert.match(tags[0], /\{% include store-badge-img\.html %\}/)
 		assert.doesNotMatch(tags[0], /\sdownload[\s=>]/)
+		assert.doesNotMatch(tags[0], /\starget=/)
 	}
 })
 
@@ -151,7 +152,7 @@ test('header: ja の分岐は既存の行を残し、英中のときだけ写し
 	assert.match(live, /\{%- if page\.lang == 'en' or page\.lang == 'zh-tw' -%\}\{% include header-intl\.html %\}\{%- else -%\}/)
 	assert.match(HEADER, /<\/header>\{% endif %\}\r?\n?$/)
 	// 既存の行 (data-links・noscript・DL の <a>) が残っている (陽性対照: 既存のテストが照合する形)
-	assert.match(live, /capture hd_mobile_dl -%\}\{"label":"Microsoft Store からダウンロード","href":"\{% include store-install-url\.html %\}","target":"_blank","dl":"mobile"\}/)
+	assert.match(live, /capture hd_mobile_dl -%\}\{"label":"Microsoft Store からダウンロード","href":"\{% include store-install-url\.html %\}","dl":"mobile"\}/)
 	assert.match(live, /data-links='\[\{\{ hd_mobile_dl \}\},/)
 	assert.match(live, /<noscript>/)
 	assert.match(live, /data-dl="header"/)

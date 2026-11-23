@@ -1,7 +1,7 @@
 {%- comment -%}
 Microsoft Store の公式バッジの画像 (ページの言語の版)。Store へ向くリンク (`store-button.html`・ヘッダー・料金のカード) の中に置く。
   画像は `assets/img/store-badge/<ja|en|zh-tw>.svg` (Microsoft の配布元の画像をそのまま置いたもの。出所は README の「Microsoft Store のバッジ」)。
-  形・色・文字・縦横比を変えない (CSS では高さだけを決め、幅は `w-auto` で縦横比のまま)。サイトの地が暗いので明るい地の版を使う。
+  形・色・文字・縦横比を変えない (CSS では高さだけを決め、幅は `w-auto` で縦横比のまま)。サイトの地が暗いので dark 版 (黒地に白い文字) を使う。
   alt はバッジに書かれた文と同じ (ja は直書き、英中は `_data/l10n/<lang>/parts.yml` の st_label)。
 
   class の先頭の `store-badge` は外さない。本文の img のスタイル (`src/app.css` の `.rich-prose :where(img…)` の枠・角丸・下の余白) を

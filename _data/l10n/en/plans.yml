@@ -2,7 +2,7 @@
 # tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ。
 # 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/plans.yml"
-_source_hash: "a910704cbfea201d6a49be45db25941ea3e105f9481927e055932492c350ad8a"
+_source_hash: "bc1b98df3ffeb9c6893cf1ba8cc59ef07c33c36c0fc5fc8b903b4612087a93b4"
 tax_note: "excl. tax"
 rollout_note: ""
 currency_prefix: "¥"
@@ -26,7 +26,7 @@ tiers:
         value: "1 device"
       - label: "Payment method"
         value: "Credit card"
-    cta_label: "Download and subscribe"
+    cta_label: "Download the app"
     subscribe_label: "Subscribe"
   pro:
     summary: "For freelance editors and individuals working close to full time."
@@ -39,7 +39,7 @@ tiers:
         value: "Credit card"
       - label: "Cancellation"
         value: "Anytime, no cancellation fee"
-    cta_label: "Download and subscribe"
+    cta_label: "Download the app"
     subscribe_label: "Subscribe"
   enterprise:
     summary: "For production companies and post-production houses. Starting from 1 account."

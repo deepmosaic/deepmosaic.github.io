@@ -239,8 +239,8 @@ test('decorateDownloadUrl は Microsoft Store の掲載ページには何も載�
   assert.equal(decorateDownloadUrl(upper, FULL_RECORD, FULL_FIRST), upper, 'ホスト名の大小は問わない');
 });
 
-// サイトの Store のボタンの行き先 (公式のバッジと同じ形の掲載ページ)。referrer・mode・hl は Microsoft の形のまま残す
-const STORE_BADGE = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP';
+// サイトの Store のボタンの行き先 (Microsoft Store のインストーラを直接ダウンロードする URL)。referrer・source は Microsoft の形のまま残す
+const STORE_BADGE = 'https://get.microsoft.com/installer/download/9PDKMKWHN9RW?referrer=appbadge&source=www.deepmosaic.co.jp';
 
 test('decorateDownloadUrl は Store のバッジの行き先にも何も載せない (utm・ref・lp・dm を付けない)', () => {
   assert.equal(decorateDownloadUrl(STORE_BADGE, FULL_RECORD, FULL_FIRST), STORE_BADGE);

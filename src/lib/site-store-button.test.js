@@ -4,13 +4,14 @@
 //
 //   - `_data/site.yml` の `distribution.store_enabled` は true (false はダウンロードの導線が無くなるので検査がエラーにする)。
 //     公式サイトからインストーラを配る導線 (切り替え・URL・部品) は持たない。
-//   - バッジは `_includes/store-button.html` (置き場所) と、ヘッダー・料金のカードが `_includes/store-badge-img.html` で描く。
+//   - バッジは `_includes/store-button.html` (置き場所と料金のカードの Free の帯) と、ヘッダーが `_includes/store-badge-img.html` で描く。
 //     画像は `assets/img/store-badge/<ja|en|zh-tw>.svg` (Microsoft の配布元の画像をそのまま。README に出所と sha256)、
 //     alt はバッジに書かれた文 (ja は直書き、英中は parts.yml の st_label)。
 //   - 置き場所はヒーロー (hero-store)・DL の CTA (cta-store、トップ / 料金 / 動作環境)・docs の #install (docs-install-store)・
-//     /join/ の「アプリをまだ入れていない方」(join-store)。料金のカード (Free の帯) とヘッダーもバッジ、フッターとドロワーは文字のリンク。
-//   - Store へ向くリンクの href は公式のバッジと同じ形の掲載ページ (`_includes/store-install-url.html` が組む。`hl` はページの言語。
-//     部品に ID や apps.microsoft.com を直書きしない)。クエリの無い掲載ページは JSON-LD の downloadUrl だけ。
+//     /join/ の「アプリをまだ入れていない方」(join-store)。料金のカード (Free の帯) とヘッダーもバッジ、フッターとドロワーは文字のリンク、
+//     料金のカードのダウンロードのカード (Hobby) は文字のボタン「アプリをダウンロード」。
+//   - Store へ向くリンクの href は Microsoft Store のインストーラを直接ダウンロードする URL (`_includes/store-install-url.html` が組む。3 言語で同じ。
+//     部品に ID や get.microsoft.com を直書きしない)。応答がファイルの保存なので target を付けない。クエリの無い掲載ページは JSON-LD の downloadUrl だけ。
 //   - ビルド出力の検査は `scripts/i18n/checks/store.mjs` (check-site のモジュール)。ここではその検査の単体 (作った _site の模型で陽性対照と陰性対照) を見る。
 //   - `_site` は読まない (CI では npm test がビルドの前に走る)。
 
@@ -24,6 +25,7 @@ import { fileURLToPath } from 'node:url'
 import { makeContext } from '../../scripts/i18n/check-site.mjs'
 import check, {
 	badgeSrc,
+	CARD_LABELS,
 	checkStore,
 	expectedPlacements,
 	langOfFile,
@@ -31,8 +33,8 @@ import check, {
 	parseStoreEnabled,
 	readStoreEnabled,
 	SPEC_STORE_KEYS,
-	STORE_HL,
 	STORE_LABELS,
+	STORE_SOURCE,
 	storeBadgeUrl,
 	storeListingUrl,
 	SUBSCRIBE_PAGES,
@@ -41,12 +43,8 @@ import check, {
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..')
 const read = (rel) => readFileSync(join(ROOT, rel), 'utf8')
 
-/** Store へ向くリンクの行き先 (公式のバッジと同じ形の掲載ページ。hl はページの言語、gl は付けない) */
-const STORE_URL = {
-	ja: 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP',
-	en: 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=en-US',
-	'zh-tw': 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=zh-TW',
-}
+/** Store へ向くリンクの行き先 (Microsoft Store のインストーラを直接ダウンロードする URL。3 言語で同じ。source はこのサイトのドメイン) */
+const STORE_URL = 'https://get.microsoft.com/installer/download/9PDKMKWHN9RW?referrer=appbadge&source=www.deepmosaic.co.jp'
 /** クエリの無い掲載ページ (JSON-LD の downloadUrl だけ) */
 const LISTING_URL = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW'
 /** 部品の href (バッジの行き先を組む部品) */
@@ -150,28 +148,23 @@ test('store-button.html: 全体が store_enabled の if の中にあり、false 
 	assert.equal((src.match(/\{%-?\s*(?:if|unless)\b/g) ?? []).length, (src.match(/\{%-?\s*end(?:if|unless)\b/g) ?? []).length)
 })
 
-test('store-install-url.html: 公式のバッジと同じ形の行き先を app_store_product_id とページの言語の hl から空白なしで組む', () => {
+test('store-install-url.html: インストーラを直接ダウンロードする URL を app_store_product_id から空白なしで組む (3 言語で同じ)', () => {
 	const src = stripComments(read('_includes/store-install-url.html'))
-	assert.match(src, /https:\/\/apps\.microsoft\.com\/detail\/\{\{ site\.data\.lang\.ja\.app_store_product_id \}\}\?referrer=appbadge&mode=direct&hl=\{\{ [a-z_]+ -\}\}\s*$/, '形が Microsoft の公式のバッジと違う')
-	for (const [lang, hl] of Object.entries(STORE_HL)) {
-		if (lang === 'ja') assert.match(src, /\{%- else -%\}\{%- assign [a-z_]+ = 'ja-JP' -%\}/, 'ja (既定) は ja-JP')
-		else assert.match(src, new RegExp(`\\{%- when '${lang}' -%\\}\\{%- assign [a-z_]+ = '${hl}' -%\\}`), `${lang} は ${hl}`)
-	}
-	assert.match(src, /case page\.lang/, 'hl はページの言語')
-	assert.doesNotMatch(src, /gl=/, '国 (gl) は付けない')
+	assert.match(src, /\{%- capture ([a-z_]+) -%\}https:\/\/get\.microsoft\.com\/installer\/download\/\{\{ site\.data\.lang\.ja\.app_store_product_id \}\}\?referrer=appbadge&source=www\.deepmosaic\.co\.jp\{%- endcapture -%\}\s*\{\{ \1 -\}\}\s*$/, '形がインストーラの直接のダウンロードと違う')
+	assert.ok(src.includes(`source=${STORE_SOURCE}`), 'source はこのサイトのドメイン')
+	assert.doesNotMatch(src, /page\.lang|hl=|gl=|mode=/, '言語・国・表示の指定は付けない (インストーラは言語で変わらない)')
 	assert.doesNotMatch(src, /9PDKMKWHN9RW/, 'ID を直書きしている')
-	assert.doesNotMatch(src, /get\.microsoft\.com|mode=mini|cid=|source=/)
+	assert.doesNotMatch(src, /apps\.microsoft\.com|cid=/, '掲載ページへ向けない')
 	// 属性やドロワーの JSON の中に置くので、出力の前後に空白・改行を出さない (Liquid の空白の除去)
 	assert.match(src, /^\s*\{%-/, '先頭の空白を除いていない')
 	assert.match(src, /-\}\}\s*$/, '末尾の改行を除いていない')
 	// 検査 (store.mjs) が期待する URL と同じ形
-	for (const lang of LANGS) assert.equal(storeBadgeUrl(ROOT, lang), STORE_URL[lang])
-	assert.throws(() => storeBadgeUrl(ROOT, 'fr'), /言語/)
+	assert.equal(storeBadgeUrl(ROOT), STORE_URL)
 	assert.equal(storeListingUrl(ROOT), LISTING_URL)
 })
 
 test('Store へ向く部品は store-install-url.html を include し、掲載ページも ID の直書きも持たない', () => {
-	for (const rel of ['_includes/store-button.html', '_includes/header.html', '_includes/header-intl.html', '_includes/footer.html', '_includes/footer-intl.html']) {
+	for (const rel of ['_includes/store-button.html', '_includes/pricing-cards.html', '_includes/header.html', '_includes/header-intl.html', '_includes/footer.html', '_includes/footer-intl.html']) {
 		const src = stripComments(read(rel))
 		assert.match(src, INSTALL_INC_RE, `${rel}: バッジの行き先の部品を使っていない`)
 		assert.doesNotMatch(src, /apps\.microsoft\.com|get\.microsoft\.com|9PDKMKWHN9RW|app_store_product_id/, `${rel}: URL か ID を直書きしている`)
@@ -199,7 +192,7 @@ test('store-button.html: href はバッジの行き先、ファイル DL の属�
 	assert.ok(tag.includes(`href="${INSTALL_INC}"`), 'href がバッジの行き先の部品でない')
 	assert.doesNotMatch(tag, /\sdownload(\s|>|=)/, 'download 属性 (ファイル DL ではない)')
 	assert.match(tag, /data-store-button="\{\{ include\.dl \}\}"/, '目印 data-store-button')
-	assert.match(tag, /target="_blank" rel="noopener noreferrer"/)
+	assert.doesNotMatch(tag, /\starget=/, 'インストーラのダウンロードは同じタブで開く (target を付けない)')
 	assert.match(src, /page\.no_tracking/, '計測しないページでは data-dl を出さない')
 	assert.match(src, /<\/a>/)
 	const inner = src.slice(src.indexOf(tag) + tag.length, src.indexOf('</a>'))
@@ -222,9 +215,11 @@ test('バッジの画像: 3 言語の SVG が Microsoft の配布元の画像の
 		const sha = createHash('sha256').update(buf).digest('hex')
 		assert.ok(readme.includes(sha), `${rel}: README に sha256 ${sha} が無い (画像を変えたか、記録が古い)`)
 	}
-	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/ja%20light\.svg/)
-	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/en-us%20light\.svg/)
-	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/zh-tw%20light\.svg/)
+	// サイトの地が暗いので dark 版 (黒地に白い文字)
+	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/ja%20dark\.svg/)
+	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/en-us%20dark\.svg/)
+	assert.match(readme, /https:\/\/get\.microsoft\.com\/images\/zh-tw%20dark\.svg/)
+	for (const lang of LANGS) assert.match(read(`assets/img/store-badge/${lang}.svg`), /^<svg[^>]*>\s*<rect [^>]*fill="#202020"\/>/, `${lang}: dark 版の地の色でない`)
 })
 
 test('parts.yml: st_label の英中はバッジに書かれた文 (用語集の Microsoft Store は訳さない)', () => {
@@ -267,9 +262,9 @@ test('置き場所: ヒーロー (3 言語)・DL の CTA・docs の #install・/
 		assert.equal(includesOf(box, 'join-store'), 1, `${rel} の「アプリをまだ入れていない方」`)
 		assert.equal(/data-dl\b/.test(src), false, `${rel}: data-dl`)
 	}
-	// 料金のカード: Free の帯とダウンロードのカードはバッジの部品 (dl はプランの code)
+	// 料金のカード: Free の帯はバッジの部品 (dl はプランの code)。ダウンロードのカードは文字のボタン (下のテスト)
 	const cards = stripComments(read('_includes/pricing-cards.html'))
-	assert.equal((cards.match(/\{% include store-button\.html dl=plan\.code [^%]*%\}/g) ?? []).length, 2)
+	assert.equal((cards.match(/\{% include store-button\.html dl=plan\.code [^%]*%\}/g) ?? []).length, 1)
 })
 
 test('ヘッダー・ドロワー・フッター・JSON-LD: ヘッダーはバッジ、ドロワーとフッターは文字のリンク、JSON-LD は掲載ページ', () => {
@@ -281,7 +276,7 @@ test('ヘッダー・ドロワー・フッター・JSON-LD: ヘッダーはバ�
 		assert.equal(tags.length, 1, `${rel}: data-dl="${dl}" の <a> が 1 つでない`)
 		const [store] = tags
 		assert.ok(store.includes(`href="${INSTALL_INC}"`), `${rel}: href がバッジの行き先の部品でない`)
-		assert.match(store, /target="_blank" rel="noopener noreferrer"/)
+		assert.doesNotMatch(store, /\starget=/, `${rel}: インストーラのダウンロードは同じタブで開く`)
 		assert.match(store, new RegExp(`data-store-button="${dl}"`))
 		assert.doesNotMatch(store, /\sdownload(\s|>|=)/)
 		const inner = src.slice(src.indexOf(store) + store.length, src.indexOf('</a>', src.indexOf(store)))
@@ -290,15 +285,40 @@ test('ヘッダー・ドロワー・フッター・JSON-LD: ヘッダーはバ�
 	}
 	for (const rel of ['_includes/header.html', '_includes/header-intl.html']) {
 		const src = stripComments(read(rel))
-		const items = [...src.matchAll(/\{"label":"[^"]*","href":"([^"]*)","target":"_blank","dl":"mobile"\}/g)].map((m) => m[0])
-		assert.equal(items.length, 1, `${rel}: ドロワーの DL の項目が 1 つでない`)
-		assert.ok(items[0].includes(`"href":"${INSTALL_INC}","target":"_blank"`), `${rel}: ドロワーの Store の項目がバッジの行き先の部品でない`)
+		const items = [...src.matchAll(/\{"label":"[^"]*","href":"([^"]*)","dl":"mobile"\}/g)].map((m) => m[0])
+		assert.equal(items.length, 1, `${rel}: ドロワーの DL の項目が 1 つでない (target は付けない)`)
+		assert.ok(items[0].includes(`"href":"${INSTALL_INC}","dl":"mobile"`), `${rel}: ドロワーの Store の項目がバッジの行き先の部品でない`)
 		assert.match(src, /data-links='\[\{\{ hd_mobile_dl \}\},\{"label"/, `${rel}: ドロワーの先頭が DL の項目でない`)
 	}
 	const ld = stripComments(read('_includes/schema/software-application.html'))
 	assert.doesNotMatch(ld, /installer_enabled|app_download_link/)
 	assert.match(ld, /"downloadUrl": \{\{ sw_download \| jsonify \}\}/)
 	assert.match(ld, /https:\/\/apps\.microsoft\.com\/detail\/\{\{ L\.app_store_product_id \}\}/)
+})
+
+test('料金のカード: ダウンロードのカードはインストーラを直接ダウンロードする文字のボタン (主ボタン・全幅・プランの code の目印)、申し込みのページへは向けない', () => {
+	const src = stripComments(read('_includes/pricing-cards.html'))
+	assert.doesNotMatch(src, /plan\.subscribe|\/subscribe\//, '料金のカードから申し込みのページへ向けない')
+	const iDl = src.indexOf('{%- if plan.cta.kind == "download" %}')
+	const iElse = src.indexOf('{%- else %}', iDl)
+	assert.ok(iDl >= 0 && iElse > iDl, 'ダウンロードのカードの分岐が無い')
+	const branch = src.slice(iDl, iElse)
+	const tag = tagsOf(branch, /<a\s/g)[0] ?? ''
+	assert.ok(tag.includes(`href="${INSTALL_INC}"`), 'href がバッジの行き先の部品でない')
+	assert.match(tag, /class="\{% if plan\.cta\.variant == 'secondary' %\}btn-secondary\{% else %\}btn-primary\{% endif %\} w-full"/, '青い主ボタン (全幅) のまま')
+	assert.match(tag, /data-store-button="\{\{ plan\.code \}\}"/)
+	assert.match(tag, /\{% unless page\.no_tracking %\} data-dl="\{\{ plan\.code \}\}"\{% endunless %\}/)
+	assert.doesNotMatch(tag, /\starget=|\sdownload(\s|>|=)/)
+	assert.match(branch, /\{% if pc_PL %\}\{\{ pc_T\.cta_label \| default: plan\.cta\.label \}\}\{% else %\}\{\{ plan\.cta\.label \}\}\{% endif %\}<\/a>/)
+	assert.doesNotMatch(branch, /include store-badge-img|include store-button/, 'バッジにしない')
+	// 文 (3 言語)。検査 (store.mjs) の CARD_LABELS と同じ
+	const ja = [...read('_data/plans.yml').matchAll(/^ {6}label: "([^"]*)"\s*\n {6}kind: "download"/gm)].map((m) => m[1])
+	assert.deepEqual(ja, [CARD_LABELS.ja, CARD_LABELS.ja], 'Hobby と Pro の cta.label')
+	for (const lang of ['en', 'zh-tw']) {
+		const l10n = [...read(`_data/l10n/${lang}/plans.yml`).matchAll(/^ {4}cta_label: "([^"]*)"/gm)].map((m) => m[1])
+		assert.deepEqual(l10n.slice(0, 2), [CARD_LABELS[lang], CARD_LABELS[lang]], `${lang}: Hobby と Pro の cta_label`)
+	}
+	assert.deepEqual(CARD_LABELS, { ja: 'アプリをダウンロード', en: 'Download the app', 'zh-tw': '下載應用程式' })
 })
 
 test('expectedPlacements: 4 か所 × 3 言語', () => {
@@ -317,15 +337,18 @@ test('expectedPlacements: 4 か所 × 3 言語', () => {
 // ---- 4. checks/store.mjs の単体 (作った _site の模型) ----
 
 const img = (lang) => `<img src="${badgeSrc(lang)}" alt="${STORE_LABELS[lang]}" width="161" height="44" class="h-[50px] w-auto">`
-const badge = (id, lang, { tracked = true, href = STORE_URL[lang] } = {}) =>
-	`<a class="inline-flex shrink-0 rounded-[5px]" href="${href}" target="_blank" rel="noopener noreferrer" data-store-button="${id}"${tracked ? ` data-dl="${id}"` : ''}>${img(lang)}</a>`
+const badge = (id, lang, { tracked = true, href = STORE_URL } = {}) =>
+	`<a class="inline-flex shrink-0 rounded-[5px]" href="${href}" data-store-button="${id}"${tracked ? ` data-dl="${id}"` : ''}>${img(lang)}</a>`
+
+/** 料金のカードのダウンロードのボタン (文字のボタン) */
+const cardButton = (code, lang) => `<a href="${STORE_URL}" class="btn-primary w-full" data-store-button="${code}" data-dl="${code}">${CARD_LABELS[lang]}</a>`
 
 /** ヘッダー (バッジ)・ドロワー・フッター (文字のリンク) */
 function chrome(lang) {
-	const item = `{"label":"${STORE_LABELS[lang]}","href":"${STORE_URL[lang]}","target":"_blank","dl":"mobile"}`
+	const item = `{"label":"${STORE_LABELS[lang]}","href":"${STORE_URL}","dl":"mobile"}`
 	return {
-		head: `<header><a href="${STORE_URL[lang]}" target="_blank" rel="noopener noreferrer" data-store-button="header" data-dl="header" class="hidden">${img(lang)}</a><div data-island="mobile-nav" data-links='[${item},{"label":"Home","href":"/"}]'></div></header>`,
-		foot: `<footer><a href="${STORE_URL[lang]}" target="_blank" rel="noopener noreferrer" data-store-button="footer" data-dl="footer" class="x">${STORE_LABELS[lang]}</a></footer>`,
+		head: `<header><a href="${STORE_URL}" data-store-button="header" data-dl="header" class="hidden">${img(lang)}</a><div data-island="mobile-nav" data-links='[${item},{"label":"Home","href":"/"}]'></div></header>`,
+		foot: `<footer><a href="${STORE_URL}" data-store-button="footer" data-dl="footer" class="x">${STORE_LABELS[lang]}</a></footer>`,
 	}
 }
 
@@ -343,8 +366,8 @@ function files() {
 	for (const p of expectedPlacements()) add(p.file, badge(p.id, p.lang, { tracked: p.tracked }))
 	for (const rel of SUBSCRIBE_PAGES) add(rel, subscribeInner())
 	for (const rel of ['spec/index.html', 'en/spec/index.html', 'zh-tw/spec/index.html']) add(rel, `<div class="kv-key">${SPEC_STORE_KEYS[langOfFile(rel)]}</div>`)
-	// 料金のカード (Free の帯)
-	for (const rel of ['price/index.html', 'en/price/index.html', 'zh-tw/price/index.html']) add(rel, badge('free', langOfFile(rel)))
+	// 料金のカード (ダウンロードのカードの文字のボタンと Free の帯のバッジ)
+	for (const rel of ['price/index.html', 'en/price/index.html', 'zh-tw/price/index.html']) add(rel, cardButton('light', langOfFile(rel)) + badge('free', langOfFile(rel)))
 	// JSON-LD の downloadUrl
 	for (const rel of ['index.html', 'en/index.html', 'zh-tw/index.html']) {
 		add(rel, `<script type="application/ld+json">{"@type": "SoftwareApplication", "downloadUrl": "${LISTING_URL}"}</script>`)
@@ -415,9 +438,10 @@ test('check: 置き場所のバッジの欠け・URL・画像・alt・寸法・�
 		['バッジが欠ける', (f) => ({ ...f, 'zh-tw/spec/index.html': f['zh-tw/spec/index.html'].replace(/<a [^>]*data-store-button="cta-store"[^>]*><img[^>]*><\/a>/, '') }), /zh-tw\/spec\/index\.html.*cta-store/],
 		['ページが無い', (f) => { const g = { ...f }; delete g['en/join/index.html']; return g }, /en\/join\/index\.html/],
 		['2 つ出ている', (f) => ({ ...f, 'index.html': f['index.html'] + badge('hero-store', 'ja') }), /index\.html.*hero-store.*2/],
-		['href がクエリの無い掲載ページ', (f) => ({ ...f, 'en/spec/index.html': f['en/spec/index.html'].replace(`href="${STORE_URL.en}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`, `href="${LISTING_URL}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`) }), /en\/spec\/index\.html.*cta-store の href.*バッジの行き先/],
-		['href の hl が別の言語', (f) => ({ ...f, 'zh-tw/price/index.html': f['zh-tw/price/index.html'].replace(`href="${STORE_URL['zh-tw']}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`, `href="${STORE_URL.en}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`) }), /zh-tw\/price\/index\.html.*cta-store の href.*hl=zh-TW/],
-		['href がインストーラ', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace(`href="${STORE_URL.ja}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`, `href="${INSTALLER_URL}" target="_blank" rel="noopener noreferrer" data-store-button="cta-store"`) }), /price\/index\.html.*cta-store の href/],
+		['href がクエリの無い掲載ページ', (f) => ({ ...f, 'en/spec/index.html': f['en/spec/index.html'].replace(`href="${STORE_URL}" data-store-button="cta-store"`, `href="${LISTING_URL}" data-store-button="cta-store"`) }), /en\/spec\/index\.html.*cta-store の href.*バッジの行き先/],
+		['href の source が別のドメイン', (f) => ({ ...f, 'zh-tw/price/index.html': f['zh-tw/price/index.html'].replace(`href="${STORE_URL}" data-store-button="cta-store"`, `href="${STORE_URL.replace(STORE_SOURCE, 'app.deepmosaic.co.jp')}" data-store-button="cta-store"`) }), /zh-tw\/price\/index\.html.*cta-store の href.*source=www\.deepmosaic\.co\.jp/],
+		['href がサイト配布版のインストーラ', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace(`href="${STORE_URL}" data-store-button="cta-store"`, `href="${INSTALLER_URL}" data-store-button="cta-store"`) }), /price\/index\.html.*cta-store の href/],
+		['置き場所のバッジが別タブ', (f) => ({ ...f, 'en/index.html': f['en/index.html'].replace('data-store-button="hero-store"', 'target="_blank" data-store-button="hero-store"') }), /en\/index\.html.*hero-store に target/],
 		['画像が別の言語', (f) => swapImg(f, 'en/price/index.html', 'cta-store', img('ja').replace(`alt="${STORE_LABELS.ja}"`, `alt="${STORE_LABELS.en}"`)), /en\/price\/index\.html.*cta-store.*en の版/],
 		['alt が別の言語', (f) => swapImg(f, 'zh-tw/index.html', 'hero-store', img('zh-tw').replace(`alt="${STORE_LABELS['zh-tw']}"`, `alt="${STORE_LABELS.ja}"`)), /zh-tw\/index\.html.*hero-store.*alt/],
 		['alt が無い', (f) => swapImg(f, 'docs/index.html', 'docs-install-store', img('ja').replace(/ alt="[^"]*"/, '')), /docs\/index\.html.*docs-install-store.*alt/],
@@ -441,21 +465,27 @@ test('check: 置き場所のバッジの欠け・URL・画像・alt・寸法・�
 
 test('check: ヘッダー・料金のカード (バッジ)・フッター・ドロワー (文)・JSON-LD の崩れと、出力のインストーラの受け口を検出', () => {
 	expectDetected([
-		['ヘッダーがインストーラ', (f) => ({ ...f, 'spec/index.html': f['spec/index.html'].replace(`<a href="${STORE_URL.ja}" target="_blank" rel="noopener noreferrer" data-store-button="header"`, `<a href="${INSTALLER_URL}" target="_blank" rel="noopener noreferrer" data-store-button="header"`) }), /spec\/index\.html.*header のリンクの href/],
+		['ヘッダーがインストーラ', (f) => ({ ...f, 'spec/index.html': f['spec/index.html'].replace(`<a href="${STORE_URL}" data-store-button="header"`, `<a href="${INSTALLER_URL}" data-store-button="header"`) }), /spec\/index\.html.*header のリンクの href/],
+		['フッターのリンクが別タブ', (f) => ({ ...f, 'zh-tw/docs/index.html': f['zh-tw/docs/index.html'].replace('data-store-button="footer"', 'target="_blank" data-store-button="footer"') }), /zh-tw\/docs\/index\.html.*footer のリンクに target/],
 		['ヘッダーのリンクに download', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace('data-store-button="header"', 'download data-store-button="header"') }), /price\/index\.html.*header.*download/],
 		['ヘッダーのリンクの data-dl が違う', (f) => ({ ...f, 'en/index.html': f['en/index.html'].replace('data-store-button="header" data-dl="header"', 'data-store-button="header" data-dl="x"') }), /en\/index\.html.*header.*data-dl/],
 		['ヘッダーが文字のボタン', (f) => ({ ...f, 'en/spec/index.html': f['en/spec/index.html'].replace(new RegExp(`(data-store-button="header"[^>]*>)<img[^>]*>`), '$1Download for free') }), /en\/spec\/index\.html.*header.*(画像のほかの文|画像が 0 個)/],
 		['ヘッダーのバッジが別の言語', (f) => ({ ...f, 'zh-tw/price/index.html': f['zh-tw/price/index.html'].replace(new RegExp(`(data-store-button="header"[^>]*>)<img[^>]*>`), `$1${img('en')}`) }), /zh-tw\/price\/index\.html.*header.*zh-tw の版/],
 		['フッターに目印が無い', (f) => ({ ...f, 'join/index.html': f['join/index.html'].replace(' data-store-button="footer"', '') }), /join\/index\.html.*footer/],
 		['フッターの文が別の言語', (f) => ({ ...f, 'en/docs/index.html': f['en/docs/index.html'].replace(`data-dl="footer" class="x">${STORE_LABELS.en}</a>`, `data-dl="footer" class="x">Download</a>`) }), /en\/docs\/index\.html.*フッター.*文/],
-		['ドロワーの先頭がインストーラ', (f) => ({ ...f, 'docs/index.html': f['docs/index.html'].replace(`"href":"${STORE_URL.ja}","target":"_blank","dl":"mobile"}`, `"href":"${INSTALLER_URL}","download":true,"dl":"mobile"}`) }), /docs\/index\.html.*ドロワー/],
-		['ドロワーの先頭に download', (f) => ({ ...f, 'index.html': f['index.html'].replace('"target":"_blank","dl":"mobile"', '"target":"_blank","download":true,"dl":"mobile"') }), /^index\.html.*ドロワー/],
+		['ドロワーの先頭がインストーラ', (f) => ({ ...f, 'docs/index.html': f['docs/index.html'].replace(`"href":"${STORE_URL}","dl":"mobile"}`, `"href":"${INSTALLER_URL}","download":true,"dl":"mobile"}`) }), /docs\/index\.html.*ドロワー/],
+		['ドロワーの先頭に download', (f) => ({ ...f, 'index.html': f['index.html'].replace('","dl":"mobile"', '","download":true,"dl":"mobile"') }), /^index\.html.*ドロワー/],
+		['ドロワーの先頭が別タブ', (f) => ({ ...f, 'en/price/index.html': f['en/price/index.html'].replace('","dl":"mobile"', '","target":"_blank","dl":"mobile"') }), /en\/price\/index\.html.*ドロワー/],
 		['ドロワーの先頭の文が「ダウンロード」', (f) => ({ ...f, 'spec/index.html': f['spec/index.html'].replace(`{"label":"${STORE_LABELS.ja}"`, '{"label":"ダウンロード"') }), /^spec\/index\.html.*ドロワー/],
-		['ドロワーの先頭がクエリの無い掲載ページ', (f) => ({ ...f, 'spec/index.html': f['spec/index.html'].replace(`"href":"${STORE_URL.ja}","target"`, `"href":"${LISTING_URL}","target"`) }), /^spec\/index\.html.*ドロワー/],
+		['ドロワーの先頭がクエリの無い掲載ページ', (f) => ({ ...f, 'spec/index.html': f['spec/index.html'].replace(`"href":"${STORE_URL}","dl"`, `"href":"${LISTING_URL}","dl"`) }), /^spec\/index\.html.*ドロワー/],
 		['料金のカードのバッジに download', (f) => ({ ...f, 'zh-tw/price/index.html': f['zh-tw/price/index.html'].replace('data-store-button="free"', 'download data-store-button="free"') }), /zh-tw\/price\/index\.html.*free.*download/],
 		['料金のカードがインストーラのボタン', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace(/<a [^>]*data-store-button="free"[^>]*><img[^>]*><\/a>/, `<a class="btn-secondary" download data-dl="free" href="/x">無料でダウンロード</a>`) }), /^price\/index\.html.*料金のカード/],
+		['料金のカードの文字のボタンの文が別の言語', (f) => ({ ...f, 'en/price/index.html': f['en/price/index.html'].replace(`data-dl="light">${CARD_LABELS.en}</a>`, `data-dl="light">${CARD_LABELS.ja}</a>`) }), /en\/price\/index\.html.*light.*ダウンロードのボタンの文/],
+		['料金のカードの文字のボタンが申し込みのページへ向く', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace(`<a href="${STORE_URL}" class="btn-primary w-full" data-store-button="light"`, '<a href="/subscribe/#plan-light" class="btn-primary w-full" data-store-button="light"') }), /^price\/index\.html.*light のリンクの href/],
+		['料金のカードの文字のボタンが無い', (f) => ({ ...f, 'zh-tw/price/index.html': f['zh-tw/price/index.html'].replace(cardButton('light', 'zh-tw'), '') }), /zh-tw\/price\/index\.html.*ダウンロードのボタン \(文字のボタン\) が無い/],
+		['料金のカードの文字のボタンが別タブ', (f) => ({ ...f, 'price/index.html': f['price/index.html'].replace('data-store-button="light"', 'target="_blank" data-store-button="light"') }), /^price\/index\.html.*light のリンクに target/],
 		['JSON-LD の downloadUrl がインストーラ', (f) => ({ ...f, 'en/index.html': f['en/index.html'].replace(`"downloadUrl": "${LISTING_URL}"`, '"downloadUrl": "https://example.com/x"') }), /en\/index\.html.*downloadUrl/],
-		['JSON-LD の downloadUrl がバッジの行き先', (f) => ({ ...f, 'zh-tw/index.html': f['zh-tw/index.html'].replace(`"downloadUrl": "${LISTING_URL}"`, `"downloadUrl": "${STORE_URL['zh-tw']}"`) }), /zh-tw\/index\.html.*downloadUrl.*掲載ページ/],
+		['JSON-LD の downloadUrl がバッジの行き先', (f) => ({ ...f, 'zh-tw/index.html': f['zh-tw/index.html'].replace(`"downloadUrl": "${LISTING_URL}"`, `"downloadUrl": "${STORE_URL}"`) }), /zh-tw\/index\.html.*downloadUrl.*掲載ページ/],
 	])
 	// 出力のどこか (HTML・txt・JSON) にインストーラの受け口・配布物が 1 件でもあれば検出
 	for (const [rel, body, mark] of [

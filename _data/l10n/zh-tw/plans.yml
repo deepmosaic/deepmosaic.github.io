@@ -2,7 +2,7 @@
 # tiers は ja の tiers[].code をキーにし、ja の tier が持つ文の欄だけを持つ。
 # 円の記号はデータに書かない (currency_prefix / currency_suffix で付ける)。ja を直したら訳も直し、accept-site.mjs で hash を書き直す。
 _source: "_data/plans.yml"
-_source_hash: "a910704cbfea201d6a49be45db25941ea3e105f9481927e055932492c350ad8a"
+_source_hash: "bc1b98df3ffeb9c6893cf1ba8cc59ef07c33c36c0fc5fc8b903b4612087a93b4"
 tax_note: "未稅"
 rollout_note: ""
 currency_prefix: ""
@@ -26,7 +26,7 @@ tiers:
         value: "1 台裝置"
       - label: "付款方式"
         value: "信用卡"
-    cta_label: "下載並訂閱"
+    cta_label: "下載應用程式"
     subscribe_label: "訂閱"
   pro:
     summary: "適合自由接案的剪輯師與接近全職的個人。"
@@ -39,7 +39,7 @@ tiers:
         value: "信用卡"
       - label: "取消訂閱"
         value: "隨時可取消，無違約金"
-    cta_label: "下載並訂閱"
+    cta_label: "下載應用程式"
     subscribe_label: "訂閱"
   enterprise:
     summary: "適合製作公司與後製公司。從 1 個帳號起。"

@@ -146,14 +146,14 @@ test('noindex・referrer なし・サイトマップに載らない', async ({ p
 
 // 「アプリをまだ入れていない方」は Microsoft Store の文と Store のバッジ (その言語の公式の画像) だけ。インストーラのリンクは出さない。
 // 計測しないページなので data-dl を付けない。
-/** ページの言語の掲載ページ (公式のバッジと同じ形、hl はページの言語) */
-const STORE_URL = (hl: string) => `https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=${hl}`;
-for (const [path, text, label, lang, hl] of [
-  ['/join/', 'Microsoft Store から Deepmosaic（Windows 版）を入れてください。', 'Microsoft Store からダウンロード', 'ja', 'ja-JP'],
-  ['/en/join/', 'Get Deepmosaic for Windows from Microsoft Store.', 'Download from the Microsoft Store', 'en', 'en-US'],
-  ['/zh-tw/join/', '請從 Microsoft Store 取得並安裝 Deepmosaic（Windows 版）。', '從 Microsoft Store 下載', 'zh-tw', 'zh-TW'],
+/** Microsoft Store のインストーラを直接ダウンロードする URL (3 言語で同じ) */
+const STORE_URL = 'https://get.microsoft.com/installer/download/9PDKMKWHN9RW?referrer=appbadge&source=www.deepmosaic.co.jp';
+for (const [path, text, label, lang] of [
+  ['/join/', 'Microsoft Store から Deepmosaic（Windows 版）を入れてください。', 'Microsoft Store からダウンロード', 'ja'],
+  ['/en/join/', 'Get Deepmosaic for Windows from Microsoft Store.', 'Download from the Microsoft Store', 'en'],
+  ['/zh-tw/join/', '請從 Microsoft Store 取得並安裝 Deepmosaic（Windows 版）。', '從 Microsoft Store 下載', 'zh-tw'],
 ] as const) {
-  test(`${path}: Microsoft Store のバッジが 1 つ (別タブ・noopener・計測なし)、インストーラのリンクは無い`, async ({ page }) => {
+  test(`${path}: Microsoft Store のバッジが 1 つ (同じタブ・計測なし)、サイト配布版のインストーラのリンクは無い`, async ({ page }) => {
     await page.goto(`${path}#code=ABCD-EFGH-2345`, { waitUntil: 'load' });
     const install = page.locator('[data-join-install]');
     await expect(install).toContainText(text);
@@ -161,9 +161,8 @@ for (const [path, text, label, lang, hl] of [
     await expect(store).toHaveCount(1);
     await expect(store).toHaveAccessibleName(label);
     await expect(store.locator('img')).toHaveAttribute('src', `/assets/img/store-badge/${lang}.svg`);
-    await expect(store).toHaveAttribute('href', STORE_URL(hl));
-    await expect(store).toHaveAttribute('target', '_blank');
-    await expect(store).toHaveAttribute('rel', 'noopener noreferrer');
+    await expect(store).toHaveAttribute('href', STORE_URL);
+    await expect(store).not.toHaveAttribute('target');
     await expect(store).not.toHaveAttribute('download');
     await expect(store).not.toHaveAttribute('data-dl', /.*/);
     await expect(install.locator('[data-join-download]')).toHaveCount(0);

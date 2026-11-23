@@ -88,9 +88,9 @@ test('インストーラの導線 (URL のキー・切り替え・部品) はソ
 		assert.equal(tags.length, 1, `${rel}: Store へ向く <a> が 1 つでない`)
 		assert.doesNotMatch(tags[0], /\sdownload(\s|>|=)/, `${rel}: download 属性 (ファイル DL ではない): ${tags[0]}`)
 		assert.match(tags[0], /data-dl=/, `${rel}: data-dl が無い (計測から漏れる): ${tags[0]}`)
-		assert.match(tags[0], /target="_blank" rel="noopener noreferrer"/, `${rel}: 別タブ・noopener でない`)
+		assert.doesNotMatch(tags[0], /\starget=/, `${rel}: インストーラのダウンロードは同じタブで開く (target を付けない)`)
 	}
-	// モバイルのドロワー (Svelte の data-links) の DL 項目は Store のバッジの行き先を別タブで (download なし)。ほかの項目に download を付けない
+	// モバイルのドロワー (Svelte の data-links) の DL 項目は Store のバッジの行き先を同じタブで (target・download なし)。ほかの項目に download を付けない
 	for (const rel of ['_includes/header.html', '_includes/header-intl.html']) {
 		const src = read(rel)
 		const links = src.match(/data-links='([^']*)'/)?.[1]
@@ -101,7 +101,7 @@ test('インストーラの導線 (URL のキー・切り替え・部品) はソ
 		const items = JSON.parse(links.replace('{{ hd_mobile_dl }}', first).replace(/\{\{[^}]*\}\}/g, 'x'))
 		const dl = items[0]
 		assert.equal(dl.dl, 'mobile', `${rel}: data-links の先頭が DL の項目でない`)
-		assert.ok(dl.target === '_blank' && dl.download === undefined, `${rel}: DL の項目の download / target: ${first}`)
+		assert.ok(dl.target === undefined && dl.download === undefined, `${rel}: DL の項目の download / target: ${first}`)
 		for (const item of items.slice(1)) assert.equal(item.download, undefined, `${rel}: ${item.href} に download`)
 	}
 })

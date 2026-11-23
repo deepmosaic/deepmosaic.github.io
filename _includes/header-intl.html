@@ -27,10 +27,10 @@
       {% include icon.html name="Building2" class="h-4 w-4" %}<span>{{ N.enterprise_short }}<span class="hidden lg:inline">{{ N.enterprise_lg }}</span></span>
     </a>
 
-    <a href="{% include store-install-url.html %}" target="_blank" rel="noopener noreferrer" data-store-button="header" data-dl="header" class="hidden shrink-0 rounded-[5px] md:inline-flex md:-ml-1 lg:-ml-4">{% include store-badge-img.html %}</a>
+    <a href="{% include store-install-url.html %}" data-store-button="header" data-dl="header" class="hidden shrink-0 rounded-[5px] md:inline-flex md:-ml-1 lg:-ml-4">{% include store-badge-img.html %}</a>
 
     <div class="md:hidden">
-      {%- capture hd_mobile_dl -%}{"label":"{{ site.data.l10n[page.lang].parts.st_label }}","href":"{% include store-install-url.html %}","target":"_blank","dl":"mobile"}{%- endcapture %}
+      {%- capture hd_mobile_dl -%}{"label":"{{ site.data.l10n[page.lang].parts.st_label }}","href":"{% include store-install-url.html %}","dl":"mobile"}{%- endcapture %}
       <div data-island="mobile-nav" data-edge="right"
            data-links='[{{ hd_mobile_dl }},{"label":"{{ N.home }}","href":"{{ L.url_prefix }}/"},{"label":"{{ N.pricing }}","href":"{{ L.url_prefix }}/price/"},{"label":"{{ N.docs }}","href":"{{ L.url_prefix }}/docs/"},{"label":"{{ N.spec }}","href":"{{ L.url_prefix }}/spec/"},{"label":"{{ N.contact }}","href":"{{ contact_url }}"},{"label":"{{ N.enterprise }}","href":"{{ L.url_prefix }}/enterprise/inquiry/"}]'></div>
       <noscript>

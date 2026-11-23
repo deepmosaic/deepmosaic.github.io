@@ -5,7 +5,7 @@
 //   - サイトに専用の申し込みページを作り、Web 版のアカウントで決済へ。
 //   - 申し込みのボタンは Web 版の深いリンク `<web_app.url>?checkout=<plan code>` (Web 版が受ける)。
 //     クエリ名は `_data/subscribe.yml` の `checkout_query`、ボタンを出すのは plans.yml で `subscribe` を持つプラン。
-//   - 料金カード (トップと /price/) の Light / Pro は「申し込む → /subscribe/」(Store に戻ってループしない)。
+//   - 料金カード (トップと /price/) の Hobby / Pro のボタンは「アプリをダウンロード」(Store のインストーラ)。申し込みはこのページとアプリのプロフィールメニュー。
 //   - Enterprise は見積のまま (申し込みボタンを出さず、導入相談へ)。
 //   - 配布はサイト配布版と Microsoft Store 版の 2 通り。文は両方に合う形
 //     「Windows 版のアプリのプロフィールメニュー、またはこのページから Web 版のアカウントで申し込める。
@@ -94,7 +94,7 @@ test('/subscribe/: ボタンは Web 版の ?checkout=<code> を指し、web_app_
 	assert.match(btn[0], /data-dl="subscribe-\{\{ plan\.code \}\}-webapp"/)
 	assert.doesNotMatch(btn[0], /\sdownload(\s|=|>)/)
 	assert.doesNotMatch(src, /app\.deepmosaic\.co\.jp/, 'Web 版の URL を直書きしている (site.yml の web_app.url を使う)')
-	// 料金カードの「申し込む」の着地先 (#plan-<code>)
+	// プランごとの着地先 (#plan-<code>)
 	assert.match(src, /id="plan-\{\{ plan\.code \}\}"/)
 })
 
@@ -183,13 +183,10 @@ test('/subscribe/: FAQ は Store の項目を除いて 2〜3 件で、表示と 
 	assert.ok(sch.search(drop) < sch.indexOf('for item in faq_src'), 'schema/faq.html: 外すのがループの後になっている')
 })
 
-test('料金カード: subscribe があれば「申し込む → /subscribe/#plan-<code>」で、Store の DL ボタンより優先する', () => {
+test('料金カード: ボタンは「申し込む」ではなく、申し込みのページへ向けない (subscribe は申し込みのページだけが読む)', () => {
 	const src = stripComments(read('_includes/pricing-cards.html'))
-	const iSub = src.indexOf('{%- if plan.subscribe %}')
-	const iDl = src.indexOf('{%- elsif plan.cta.kind == "download" %}')
-	assert.ok(iSub >= 0 && iDl > iSub, 'subscribe の分岐が DL ボタンより先に無い')
-	assert.match(src.slice(iSub, iDl), /href="\/subscribe\/#plan-\{\{ plan\.code \}\}"/)
-	assert.match(src.slice(iSub, iDl), /\{\{ plan\.subscribe\.label \}\}/)
+	assert.doesNotMatch(src, /plan\.subscribe|subscribe_label|\/subscribe\//)
+	assert.match(src, /\{%- if plan\.cta\.kind == "download" %\}/)
 })
 
 test('導線: フッター・料金ページ・トップの料金節・docs #plan・llms.txt が /subscribe/ を案内する', () => {
@@ -214,7 +211,8 @@ test('導線: フッター・料金ページ・トップの料金節・docs #pla
 test('トップの料金節・料金ページ・llms.txt は両方の配布に合う文 (Store 版の文を書かない)', () => {
 	const sub = read('index.html').match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 	assert.ok(sub, 'トップの料金節の sub が無い')
-	assert.match(sub[1], /^有料プランは、Windows 版のアプリのプロフィールメニュー、または各プランの「申し込む」から Web 版のアカウントでお申し込みいただけます/)
+	assert.match(sub[1], /^有料プランは、Windows 版のアプリのプロフィールメニュー、またはお申し込みページから Web 版のアカウントでお申し込みいただけます/)
+	assert.doesNotMatch(sub[1], /「申し込む」/, '料金のカードに「申し込む」のボタンは無い')
 	assert.match(sub[1], /Desktop 版と Web 版の両方/)
 	assert.doesNotMatch(sub[1], /Microsoft Store/)
 	const price = textOf(read('price/index.html'))
@@ -226,8 +224,8 @@ test('トップの料金節・料金ページ・llms.txt は両方の配布に�
 	assert.doesNotMatch(llms, /Microsoft Store/)
 	// 英中
 	for (const [rel, re] of [
-		['en/index.html', /^You can subscribe to a paid plan from the profile menu in the Windows app, or use/],
-		['zh-tw/index.html', /^付費方案可從 Windows 版應用程式的個人資料選單，或從各方案的「訂閱」以網頁版的帳號申請/],
+		['en/index.html', /^You can subscribe to a paid plan from the profile menu in the Windows app, or on the subscription page with your Web app account\./],
+		['zh-tw/index.html', /^付費方案可從 Windows 版應用程式的個人資料選單，或透過付費方案申請頁面以網頁版的帳號申請/],
 	]) {
 		const s = read(rel).match(/kicker="PRICING"[^%]*sub="([^"]*)"/)
 		assert.ok(s, `${rel}: 料金節の sub が無い`)

@@ -61,7 +61,7 @@ test('#install: Microsoft Store から入手する手順と kv、インストー
 	const install = sectionOf(intro, 'install')
 	assert.ok(install, '01-intro に #install が無い')
 	const text = textOf(install)
-	assert.match(text, /Microsoft Store から入手してください。下の「Microsoft Store からダウンロード」を押すと、Microsoft Store のページが開きます。表示される「ダウンロード」を押すと、小さなインストーラがダウンロードされます。実行するとインストールが始まり、終わると Deepmosaic が起動します。/)
+	assert.match(text, /Microsoft Store から入手してください。下の「Microsoft Store からダウンロード」を押すと、小さなインストーラがダウンロードされます。開くと Microsoft Store を通してインストールが始まり、終わると Deepmosaic が起動します。/)
 	assert.match(install, /<a href="\{\{ site\.data\.lang\.ja\.app_store_protocol_link \}\}">こちら<\/a>/, 'Microsoft Store アプリで直接開くリンク')
 	assert.match(text, /管理者権限は不要です/)
 	assert.match(text, /対応 OS Windows 10（バージョン 2004 以降）\/ 11（64 ビット）。macOS 版は開発中です/)
@@ -75,11 +75,11 @@ test('#install: Microsoft Store から入手する手順と kv、インストー
 	assert.equal((install.match(/class="kv-row/g) ?? []).length, 5)
 })
 
-test('#install (英中): Store のページが開き、表示される「ダウンロード」で小さなインストーラが落ちる手順', () => {
+test('#install (英中): バッジを押すと小さなインストーラがダウンロードされ、開くと Microsoft Store を通して入る手順', () => {
 	const en = textOf(sectionOf(read('_includes/docs/en/01-intro.html'), 'install') ?? '')
-	assert.match(en, /Get it from Microsoft Store\. Select "Download from the Microsoft Store" below to open the Microsoft Store page\. Select "Download" there to download a small installer\. Run it to start the installation; Deepmosaic starts when the installation finishes\./)
+	assert.match(en, /Get it from Microsoft Store\. Select "Download from the Microsoft Store" below to download a small installer\. Open it to start the installation through Microsoft Store; Deepmosaic starts when the installation finishes\./)
 	const zh = textOf(sectionOf(read('_includes/docs/zh-tw/01-intro.html'), 'install') ?? '')
-	assert.match(zh, /請從 Microsoft Store 取得。按下方的「從 Microsoft Store 下載」，會開啟 Microsoft Store 的頁面。按頁面上顯示的「下載」，會下載小型安裝程式。執行後即開始安裝，安裝完成後會啟動 Deepmosaic。/)
+	assert.match(zh, /請從 Microsoft Store 取得。按下方的「從 Microsoft Store 下載」，會下載小型安裝程式。開啟後即透過 Microsoft Store 開始安裝，安裝完成後會啟動 Deepmosaic。/)
 })
 
 test('#install: Store のバッジに補足文・移行の小見出し・違いの部品を置き、インストーラのボタンは無い', () => {

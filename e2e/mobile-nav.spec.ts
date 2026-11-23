@@ -24,7 +24,7 @@ const { defaultBrowserType: _browser, ...PIXEL_7 } = devices['Pixel 7'];
 test.use(PIXEL_7);
 
 const HAMBURGER = '[data-island="mobile-nav"] button';
-const STORE_URL = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP';
+const STORE_URL = 'https://get.microsoft.com/installer/download/9PDKMKWHN9RW?referrer=appbadge&source=www.deepmosaic.co.jp';
 const DRAWER_LINK = 'aside ul li a';
 
 /** download イベントが遅れて届く場合の余裕 (遷移の commit とは別に待つ)。 */
@@ -96,17 +96,16 @@ test('同一オリジンのリンクに download 属性が付かない', async (
   expect(offenders, 'download 属性は値が "false" でも保存に回る').toEqual([]);
 });
 
-test('ドロワーの先頭の DL 項目は公式のバッジと同じ行き先の Microsoft Store の掲載ページ (別タブ・noopener、download 属性なし、流入経路を載せない)', async ({ page }) => {
+test('ドロワーの先頭の DL 項目は Microsoft Store のインストーラを直接ダウンロードする URL (同じタブ、download 属性なし、流入経路を載せない)', async ({ page }) => {
   await openDrawer(page);
   const first = page.locator(DRAWER_LINK).first();
 
   await expect(first).toHaveAttribute('href', STORE_URL);
   await expect(first).toContainText('Microsoft Store からダウンロード');
-  // 第三者 (apps.microsoft.com) の URL には計測の装飾 (utm・ref・lp・dm) を載せない
+  // 第三者 (get.microsoft.com) の URL には計測の装飾 (utm・ref・lp・dm) を載せない
   await expect(first).not.toHaveAttribute('href', /[?&](?:utm_[a-z]+|ref|lp|dm)=/);
   await expect(first).toHaveAttribute('data-dl', 'mobile');
-  await expect(first).toHaveAttribute('target', '_blank');
-  await expect(first).toHaveAttribute('rel', 'noopener noreferrer');
+  await expect(first).not.toHaveAttribute('target');
   await expect(first).not.toHaveAttribute('download');
   // ドロワーのどのリンクにも download 属性が無い (インストーラの導線を出さない)
   const links = await readDrawerLinks(page);

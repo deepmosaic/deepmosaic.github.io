@@ -91,10 +91,12 @@
     {%- endif %}
 
     <div class="mt-auto pt-6">
-      {%- if plan.subscribe %}
-      <a {% if pc_PL %}href="{{ pc_L.url_prefix }}/subscribe/#plan-{{ plan.code }}"{% else %}href="/subscribe/#plan-{{ plan.code }}"{% endif %} class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full">{% if pc_PL %}{{ pc_T.subscribe_label | default: plan.subscribe.label }}{% else %}{{ plan.subscribe.label }}{% endif %}</a>
-      {%- elsif plan.cta.kind == "download" %}
-      {% include store-button.html dl=plan.code wrap="flex justify-center" lazy=true %}
+      {%- comment -%}
+        ダウンロードのカード: 押すと Microsoft Store のインストーラが直接ダウンロードされる文字のボタン (行き先は store-install-url.html)。
+        目印 data-store-button と計測の data-dl はプランの code (Free の帯のバッジと同じ付け方)。
+      {%- endcomment -%}
+      {%- if plan.cta.kind == "download" %}
+      <a href="{% include store-install-url.html %}" class="{% if plan.cta.variant == 'secondary' %}btn-secondary{% else %}btn-primary{% endif %} w-full" data-store-button="{{ plan.code }}"{% unless page.no_tracking %} data-dl="{{ plan.code }}"{% endunless %}>{% if pc_PL %}{{ pc_T.cta_label | default: plan.cta.label }}{% else %}{{ plan.cta.label }}{% endif %}</a>
       {%- else %}
       <a {% if pc_href_prefix != "" %}href="{{ pc_href_prefix }}{{ plan.cta.href }}"{% else %}href="{{ plan.cta.href }}"{% endif %} class="btn-secondary w-full"{% if plan.cta.external %} target="_blank" rel="noopener noreferrer"{% endif %}>
         {% if pc_PL %}{{ pc_T.cta_label | default: plan.cta.label }}{% else %}{{ plan.cta.label }}{% endif %}{% if plan.cta.external %}{% include icon.html name="ExternalLink" class="h-3.5 w-3.5" %}{% endif %}

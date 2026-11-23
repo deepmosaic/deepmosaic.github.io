@@ -23,7 +23,7 @@ const BADGE_HEIGHT = 38;
 const BADGE_RATIO = 161 / 44;
 const HEADER_ROW = 'header > div';
 const DOWNLOAD_CTA = 'header a[data-dl="header"]';
-const STORE_URL = 'https://apps.microsoft.com/detail/9PDKMKWHN9RW?referrer=appbadge&mode=direct&hl=ja-JP';
+const STORE_URL = 'https://get.microsoft.com/installer/download/9PDKMKWHN9RW?referrer=appbadge&source=www.deepmosaic.co.jp';
 const ENTERPRISE_CTA = `${HEADER_ROW} > a[href="${ENTERPRISE_HREF}"]`;
 
 /** ボタン 1 行分の高さの上限 (px)。これを超えたら文字が折り返している。 */
@@ -77,7 +77,7 @@ async function expectDownloadIsRightmost(page: Page): Promise<void> {
   const lastLink = row.locator(':scope > a').last();
   await expect(lastLink).toBeVisible();
   await expect(lastLink).toHaveAttribute('data-dl', 'header');
-  // ダウンロードは公式のバッジと同じ行き先の Microsoft Store の掲載ページ (別タブ、ファイルの保存ではない)。中身は公式のバッジの画像
+  // ダウンロードは Microsoft Store のインストーラを直接ダウンロードする URL (同じタブ)。中身は公式のバッジの画像
   await expect(lastLink).toHaveAttribute('href', STORE_URL);
   await expect(lastLink).toHaveAccessibleName(BADGE_ALT);
   const badge = lastLink.locator('img');
@@ -86,7 +86,7 @@ async function expectDownloadIsRightmost(page: Page): Promise<void> {
   expect(size.done, 'バッジの画像が読み込まれていない').toBe(true);
   expect(size.h).toBeCloseTo(BADGE_HEIGHT, 0);
   expect(size.w / size.h, 'バッジの縦横比が元と違う').toBeCloseTo(BADGE_RATIO, 1);
-  await expect(lastLink).toHaveAttribute('target', '_blank');
+  await expect(lastLink).not.toHaveAttribute('target');
   await expect(lastLink).not.toHaveAttribute('download');
 
   const enterpriseLink = page.locator(ENTERPRISE_CTA);

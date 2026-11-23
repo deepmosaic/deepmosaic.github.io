@@ -5,12 +5,14 @@
 //   - 切り替えを読むのは次の部品と動作環境の表だけ。ほかのページに条件を書かない。
 //       store_enabled: `_includes/store-button.html`・`_includes/docs/store-edition.html`・`_includes/store-subscribe-note.html`・
 //                      `_includes/faq.html`・`_includes/schema/faq.html`・`_includes/legal-distribution.html`、動作環境の表 (`spec/index.html` と英中・`llms-full.txt`)
-//   - Store へ向くリンクの href は公式のバッジと同じ形の掲載ページ (`storeBadgeUrl`。部品 `_includes/store-install-url.html` が
-//       `app_store_product_id` とページの言語 (`STORE_HL`) から作る)。クエリの無い掲載ページ (`storeListingUrl`) は JSON-LD の `downloadUrl` だけ。
+//   - Store へ向くリンクの href は Microsoft Store のインストーラを直接ダウンロードする URL (`storeBadgeUrl`。部品 `_includes/store-install-url.html` が
+//       `app_store_product_id` から作る。3 言語で同じ)。応答がファイルの保存なので target を付けない (同じタブで開く)。
+//       クエリの無い掲載ページ (`storeListingUrl`) は JSON-LD の `downloadUrl` だけ。
 //   - バッジ (目印 `data-store-button` の <a> の中の <img>) は、ページの言語の画像 (`badgeSrc`) と alt (`STORE_LABELS`)、元の寸法を持つ。
-//       置き場所は 4 か所 × 3 言語 (`expectedPlacements`)。href がページの言語のバッジの行き先、download 属性が無い、data-dl は置き場所の値
-//       (計測しない /join/ だけは data-dl を出さない)。ヘッダーと料金のカードもバッジ。
-//   - フッターは文字のリンク (文は `STORE_LABELS`)、ドロワーの `data-links` の先頭はバッジの行き先・`dl: mobile`・download なし・同じ文。
+//       置き場所は 4 か所 × 3 言語 (`expectedPlacements`)。href がバッジの行き先、target と download 属性が無い、data-dl は置き場所の値
+//       (計測しない /join/ だけは data-dl を出さない)。ヘッダーと料金のカードの Free の帯もバッジ。
+//   - フッターは文字のリンク (文は `STORE_LABELS`)、料金のカードのダウンロードのボタンは文字のボタン (文は `CARD_LABELS`)、
+//       ドロワーの `data-links` の先頭はバッジの行き先・`dl: mobile`・target なし・download なし・同じ文。
 //       JSON-LD の `downloadUrl` はクエリの無い掲載ページ。出力のどのファイル (HTML・txt・xml・JSON) にもインストーラの受け口・配布物 (`INSTALLER_MARKS`) が無い。
 //   - 申し込みのページ (3 言語) の Store 版の文 (目印 `data-store-note`) と FAQ (`store_only: true` の項目、表示と FAQPage の JSON-LD)、
 //       法務文書の配信ストア版の記述 (`LEGAL_STORE_MARKS`)、動作環境の Windows の表の「Microsoft Store 版」の行 (`SPEC_STORE_KEYS`) が出る。
@@ -24,6 +26,13 @@ export const STORE_LABELS = {
 	ja: 'Microsoft Store からダウンロード',
 	en: 'Download from the Microsoft Store',
 	'zh-tw': '從 Microsoft Store 下載',
+}
+
+/** 料金のカードのダウンロードのボタン (文字のボタン) の文 (ja は `_data/plans.yml` の cta.label、英中は `_data/l10n/<lang>/plans.yml` の cta_label と同じ値) */
+export const CARD_LABELS = {
+	ja: 'アプリをダウンロード',
+	en: 'Download the app',
+	'zh-tw': '下載應用程式',
 }
 
 const LANG_PREFIX = { ja: '', en: 'en/', 'zh-tw': 'zh-tw/' }
@@ -110,13 +119,12 @@ export function storeListingUrl(root) {
 	return `https://apps.microsoft.com/detail/${productIdOf(root)}`
 }
 
-/** バッジの行き先の掲載ページの言語 (`hl`)。国 (`gl`) は付けない */
-export const STORE_HL = { ja: 'ja-JP', en: 'en-US', 'zh-tw': 'zh-TW' }
+/** インストーラの URL の `source` (このサイトのドメイン) */
+export const STORE_SOURCE = 'www.deepmosaic.co.jp'
 
-/** 公式のバッジと同じ形の行き先 (`_includes/store-install-url.html` と同じ形)。Store へ向くボタン・リンクの href */
-export function storeBadgeUrl(root, lang) {
-	if (!STORE_HL[lang]) throw new Error(`知らない言語: ${lang}`)
-	return `${storeListingUrl(root)}?referrer=appbadge&mode=direct&hl=${STORE_HL[lang]}`
+/** Microsoft Store のインストーラを直接ダウンロードする URL (`_includes/store-install-url.html` と同じ形)。Store へ向くボタン・リンクの href (3 言語で同じ) */
+export function storeBadgeUrl(root) {
+	return `https://get.microsoft.com/installer/download/${productIdOf(root)}?referrer=appbadge&source=${STORE_SOURCE}`
 }
 
 /** 目印付きの <a> を { id, tag, text, imgs } で返す (imgs は中の <img> の開始タグ) */
@@ -130,6 +138,8 @@ function buttonsOf(html) {
 }
 
 const hasDownloadAttr = (tag) => /\sdownload(?:[\s=]|$)/.test(tag)
+/** target を持つ (インストーラのダウンロードは同じタブで開く) */
+const hasTarget = (tag) => /\starget=/.test(tag)
 const attr = (tag, name) => tag.match(new RegExp(`\\s${name}="([^"]*)"`))?.[1]
 
 /** バッジの中身: 画像 1 つ・ページの言語の画像と alt・元の寸法・画像のほかに文が無い。問題の文の配列 */
@@ -145,7 +155,7 @@ function badgeProblems(b, lang) {
 }
 
 /** 置き場所のバッジ (4 か所 × 3 言語) */
-function placementErrors(ctx, urlOf) {
+function placementErrors(ctx, url) {
 	const errors = []
 	for (const p of expectedPlacements()) {
 		if (!ctx.exists(p.file)) {
@@ -158,10 +168,10 @@ function placementErrors(ctx, urlOf) {
 			continue
 		}
 		const { tag } = mine[0]
-		const url = urlOf(p.lang)
 		if (!tag.includes(`href="${url}"`)) errors.push(`${p.file}: ${p.id} の href がバッジの行き先 (${url}) でない`)
 		for (const problem of badgeProblems(mine[0], p.lang)) errors.push(`${p.file}: ${p.id} の${problem}`)
-		if (hasDownloadAttr(tag)) errors.push(`${p.file}: ${p.id} に download 属性がある (ファイル DL ではない)`)
+		if (hasDownloadAttr(tag)) errors.push(`${p.file}: ${p.id} に download 属性がある (別のオリジンなので効かない。保存は応答の指定による)`)
+		if (hasTarget(tag)) errors.push(`${p.file}: ${p.id} に target がある (インストーラのダウンロードは同じタブで開く)`)
 		const dl = attr(tag, 'data-dl')
 		if (p.tracked && dl !== p.id) errors.push(`${p.file}: ${p.id} の data-dl が ${dl ?? '無い'} (計測の目印は ${p.id})`)
 		if (!p.tracked && dl !== undefined) errors.push(`${p.file}: 計測しないページの ${p.id} に data-dl="${dl}" がある`)
@@ -227,21 +237,27 @@ function listTextFiles(siteDir) {
 	return out.sort()
 }
 
-/** 置き場所でない所 (ヘッダー・フッター・料金のカード)・ドロワー・JSON-LD・インストーラの受け口。urlOf は言語 → バッジの行き先、listing はクエリの無い掲載ページ */
-function singleLinkErrors(ctx, urlOf, listing) {
+/** 料金のカードのダウンロードのボタン (文字のボタン): 目印付きで、ヘッダー・フッターでなく、画像を持たない */
+const isCardTextButton = (b) => !PLACEMENT_IDS.has(b.id) && b.id !== 'header' && b.id !== 'footer' && b.imgs.length === 0
+
+/** 置き場所でない所 (ヘッダー・フッター・料金のカード)・ドロワー・JSON-LD・インストーラの受け口。url はバッジの行き先、listing はクエリの無い掲載ページ */
+function singleLinkErrors(ctx, url, listing) {
 	const errors = []
 	for (const rel of ctx.listHtml()) {
 		const html = ctx.read(rel)
 		const lang = langOfFile(rel)
-		const url = urlOf(lang)
 		const buttons = buttonsOf(html)
-		// 置き場所でない目印のリンク: バッジの行き先・download なし・data-dl が同じ値。フッターは文字のリンク、ほか (ヘッダー・料金のカード) はバッジ
+		// 置き場所でない目印のリンク: バッジの行き先・target なし・download なし・data-dl が同じ値。
+		// フッターは文字のリンク、料金のカードのダウンロードのボタンは文字のボタン、ほか (ヘッダー・料金のカードの Free の帯) はバッジ
 		for (const b of buttons.filter((x) => !PLACEMENT_IDS.has(x.id))) {
 			if (!b.tag.includes(`href="${url}"`)) errors.push(`${rel}: ${b.id} のリンクの href がバッジの行き先 (${url}) でない`)
-			if (hasDownloadAttr(b.tag)) errors.push(`${rel}: ${b.id} のリンクに download 属性がある (ファイル DL ではない)`)
+			if (hasDownloadAttr(b.tag)) errors.push(`${rel}: ${b.id} のリンクに download 属性がある (別のオリジンなので効かない。保存は応答の指定による)`)
+			if (hasTarget(b.tag)) errors.push(`${rel}: ${b.id} のリンクに target がある (インストーラのダウンロードは同じタブで開く)`)
 			if (attr(b.tag, 'data-dl') !== b.id) errors.push(`${rel}: ${b.id} のリンクの data-dl が ${attr(b.tag, 'data-dl') ?? '無い'} (${b.id} のはず)`)
 			if (b.id === 'footer') {
 				if (b.text !== STORE_LABELS[lang] || b.imgs.length > 0) errors.push(`${rel}: フッターの Store のリンクの文が ${lang} のもの (${STORE_LABELS[lang]}) でない: ${b.text}`)
+			} else if (isCardTextButton(b)) {
+				if (b.text !== CARD_LABELS[lang]) errors.push(`${rel}: 料金のカード (${b.id}) のダウンロードのボタンの文が ${lang} のもの (${CARD_LABELS[lang]}) でない: ${b.text}`)
 			} else {
 				for (const problem of badgeProblems(b, lang)) errors.push(`${rel}: ${b.id} の${problem}`)
 			}
@@ -249,8 +265,8 @@ function singleLinkErrors(ctx, urlOf, listing) {
 		const links = drawerLinks(html)
 		if (links !== undefined) {
 			const first = links?.[0]
-			if (!first || first.href !== url || first.dl !== 'mobile' || first.download !== undefined || first.target !== '_blank' || first.label !== STORE_LABELS[lang]) {
-				errors.push(`${rel}: ドロワーの先頭がバッジの行き先 (href ${url}・dl mobile・target _blank・download なし・文 ${STORE_LABELS[lang]}) でない: ${JSON.stringify(first ?? null)}`)
+			if (!first || first.href !== url || first.dl !== 'mobile' || first.download !== undefined || first.target !== undefined || first.label !== STORE_LABELS[lang]) {
+				errors.push(`${rel}: ドロワーの先頭がバッジの行き先 (href ${url}・dl mobile・target なし・download なし・文 ${STORE_LABELS[lang]}) でない: ${JSON.stringify(first ?? null)}`)
 			}
 			const headers = buttons.filter((b) => b.id === 'header').length
 			if (headers !== 1) errors.push(`${rel}: ヘッダーの Store のリンク (data-store-button="header") が ${headers} 個 (1 個のはず)`)
@@ -270,6 +286,8 @@ function singleLinkErrors(ctx, urlOf, listing) {
 		if (!ctx.exists(rel)) continue
 		const cards = buttonsOf(ctx.read(rel)).filter((b) => !PLACEMENT_IDS.has(b.id) && b.id !== 'header' && b.id !== 'footer')
 		if (cards.length === 0) errors.push(`${rel}: 料金のカードに Store へのリンク (data-store-button) が無い`)
+		if (!cards.some(isCardTextButton)) errors.push(`${rel}: 料金のカードにダウンロードのボタン (文字のボタン) が無い`)
+		if (!cards.some((b) => b.imgs.length > 0)) errors.push(`${rel}: 料金のカード (Free の帯) に Store のバッジが無い`)
 	}
 	for (const rel of listTextFiles(ctx.siteDir)) {
 		const text = ctx.read(rel)
@@ -297,8 +315,8 @@ function misplacedPlacementErrors(ctx) {
 /** 検査し、エラーの文の配列を返す。store は `distribution.store_enabled` の値 */
 export function checkStore(ctx, store) {
 	if (!store) return ['_data/site.yml: store_enabled が false (ダウンロードの導線が無くなる)']
-	const urlOf = (lang) => storeBadgeUrl(ctx.root, lang)
-	return [...placementErrors(ctx, urlOf), ...storeContentErrors(ctx), ...misplacedPlacementErrors(ctx), ...singleLinkErrors(ctx, urlOf, storeListingUrl(ctx.root))]
+	const url = storeBadgeUrl(ctx.root)
+	return [...placementErrors(ctx, url), ...storeContentErrors(ctx), ...misplacedPlacementErrors(ctx), ...singleLinkErrors(ctx, url, storeListingUrl(ctx.root))]
 }
 
 /**

@@ -15,7 +15,9 @@
 #   public             false のプランは料金カード・申し込みのページ・ROI 計算機に出さない
 #                      public: false のプランと quote_label のあるプランは price / price_display /
 #                      price_incl_display / price_unit を持たない
-#   subscribe          あると料金カードのボタンは申し込みのページ (/subscribe/#plan-<code>) へ向く
+#   subscribe          あると申し込みのページ (/subscribe/#plan-<code>) にそのプランの申し込みボタンを出す
+#   cta                料金カードのボタン。kind: download は Microsoft Store のインストーラを直接ダウンロードする文字のボタン
+#                      (文は label)、kind: link は href へのボタン
 #   quote_label        あると料金カードは金額・単位・税の代わりにこれを出し、直下に quote_note を出す
 #   note_title / note  料金カードの囲み (見出し + 本文)
 
@@ -72,7 +74,7 @@ tiers:
       - label: "支払方法"
         value: "クレジットカード"
     cta:
-      label: "ダウンロードして申し込む"
+      label: "アプリをダウンロード"
       kind: "download"
     subscribe:
       label: "申し込む"
@@ -99,7 +101,7 @@ tiers:
       - label: "解約"
         value: "いつでも可能・違約金なし"
     cta:
-      label: "ダウンロードして申し込む"
+      label: "アプリをダウンロード"
       kind: "download"
     subscribe:
       label: "申し込む"

@@ -11,10 +11,11 @@ params:
   wrap    (任意) 包む <div> の class。省くと包みを出さない。
   lazy    (任意) 真値で画像を遅延読み込み (ファーストビューの外の所)
 
-href は公式のバッジと同じ形の Store の掲載ページ (`store-install-url.html` の出力)。別のオリジンのファイルで `download` 属性は効かないので付けない (保存は応答の指定による)。
+href は Microsoft Store のインストーラを直接ダウンロードする URL (`store-install-url.html` の出力)。応答がファイルの保存なので同じタブで開く (target を付けない)。
+別のオリジンのファイルで `download` 属性は効かないので付けない (保存は応答の指定による)。
 画像と alt は `store-badge-img.html`。検査は scripts/i18n/checks/store.mjs。
 {%- endcomment -%}
 {%- if site.data.site.distribution.store_enabled -%}
 {%- if include.size == 'large' -%}{%- assign st_img = 'h-[50px] w-auto' -%}{%- else -%}{%- assign st_img = 'h-[38px] w-auto' -%}{%- endif -%}
-{% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="inline-flex shrink-0 rounded-[5px]" href="{% include store-install-url.html %}" target="_blank" rel="noopener noreferrer" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include store-badge-img.html class=st_img lazy=include.lazy %}</a>{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}{% if include.wrap %}</div>{% endif %}
+{% if include.wrap %}<div class="{{ include.wrap }}">{% endif %}<a class="inline-flex shrink-0 rounded-[5px]" href="{% include store-install-url.html %}" data-store-button="{{ include.dl }}"{% unless page.no_tracking %} data-dl="{{ include.dl }}"{% endunless %}>{% include store-badge-img.html class=st_img lazy=include.lazy %}</a>{% if include.note %}<p class="mt-2 text-sm text-ink-4">{{ include.note }}</p>{% endif %}{% if include.wrap %}</div>{% endif %}
 {%- endif -%}
