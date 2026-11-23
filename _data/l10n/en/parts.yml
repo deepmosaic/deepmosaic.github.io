@@ -9,9 +9,8 @@ cta_title_default: "Available for free"                       # 無料でご利�
 cta_free_line: "Import up to %HOURS% hours of video in total for free for %DAYS% days from the first launch. No credit card required."   # 初回起動から{日}日間、累計{時間}時間分の動画インポートが無料。クレジットカード不要。
 cta_offline_line: "After setup, it works even when disconnected from the network."   # セットアップ後はネットワークを切断した状態でも動作します。
 cta_os_line: "Windows 10 / 11 (64-bit)"                        # Windows 10 / 11（64bit）
-cta_webapp_before: "You can also use the "                     # インストール不要の (リンクの前)
-cta_webapp_link: "Web app"                                     # Web 版 (リンクの文)
-cta_webapp_after: ", which needs no installation (Chrome / Edge). It is for trials (up to %MINUTES% minutes per video). Videos are not sent to a server; they are processed in your browser."   # （Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
+cta_webapp_try: "Try it in your browser"                       # ブラウザでお試し (バッジの下の Web 版への文字のリンク。トップの冒頭と同じ文)
+cta_webapp_line: "You can also use the Web app, which needs no installation (Chrome / Edge). It is for trials (up to %MINUTES% minutes per video). Videos are not sent to a server; they are processed in your browser."   # インストール不要の Web 版（Chrome / Edge 対応）もご利用いただけます。お試し用（1 本 {分} 分まで）です。…
 # store-button.html・store-badge-img.html (Microsoft Store のバッジの alt。バッジに書かれた文と同じ) とヘッダーのドロワー・フッターの Store へのリンクの文
 st_label: "Download from the Microsoft Store"                  # Microsoft Store からダウンロード
 # pricing-cards.html

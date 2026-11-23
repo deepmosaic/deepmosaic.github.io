@@ -79,8 +79,8 @@ test('陽性対照: 既存のテストが照合する ja の直書き・href・�
 		/初回起動から\{\{ free_plan\.free_window_days \}\}日間、累計\{\{ free_plan\.included_hours \}\}時間分の動画インポートが無料。クレジットカード不要。/,
 	)
 	// site-copy-web-trial: Web 版の説明行は 1 行で、お試しの分数は site.yml から
-	const line = stripComments(SRC['cta-download']).match(/<p[^>]*>[^\n]*data-dl="cta-webapp"[^\n]*<\/p>/)?.[0]
-	assert.ok(line, 'cta-webapp の説明行が 1 行で無い')
+	const line = stripComments(SRC['cta-download']).match(/<p[^>]*>[^\n]*お試し用（1 本[^\n]*<\/p>/)?.[0]
+	assert.ok(line, 'Web 版の説明行が 1 行で無い')
 	assert.match(line, /お試し用（1 本 \{\{\s*site\.data\.site\.web_app\.trial_minutes\s*\}\} 分まで）/)
 	// site-copy-usage-limits / t1922 / t1941
 	const cards = stripComments(SRC['pricing-cards'])
@@ -193,7 +193,7 @@ test('parts.yml: 差し込みの印が en と zh-tw で同じ', () => {
 	}
 	// 数値を差し込む文には印がある
 	assert.deepEqual(placeholdersOf(PARTS.en.cta_free_line), ['%DAYS%', '%HOURS%'])
-	assert.deepEqual(placeholdersOf(PARTS.en.cta_webapp_after), ['%MINUTES%'])
+	assert.deepEqual(placeholdersOf(PARTS.en.cta_webapp_line), ['%MINUTES%'])
 	assert.deepEqual(placeholdersOf(PARTS.en.cq_text), ['%HOURS%', '%MAX%'])
 	assert.deepEqual(placeholdersOf(PARTS.en.cl_item), ['%MAX%', '%NAME%'])
 	assert.deepEqual(placeholdersOf(PARTS.en.pc_tax_incl), ['%PRICE%'])

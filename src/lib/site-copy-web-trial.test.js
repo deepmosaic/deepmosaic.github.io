@@ -4,8 +4,8 @@
 //
 //   - 分数は `_data/site.yml` の `web_app.trial_minutes` が唯一の出所。テンプレートに数字を直書きしない
 //     (Web 版のお試しの上限と同じ値)。
-//   - トップ hero の Web 版への文字のリンクは「ブラウザでお試し →」(分数は DL CTA の説明行で案内する)。
-//   - DL CTA の説明行に「お試し用（1 本 N 分まで）」。
+//   - トップ hero と DL CTA の Web 版への文字のリンクは「ブラウザでお試し →」(分数は DL CTA の説明行で案内する)。
+//   - DL CTA の説明行 (リンクを含まない) に「お試し用（1 本 N 分まで）」。
 //   - GA4: `data-dl` が `-webapp` で終わるリンクは `web_app_open`、それ以外は `file_download`
 //     (純関数 `ga4EventNameFor` は attribution.test.js が固定。ここでは main.js の配線を見る)。
 //   - docs/web: リードに「Web 版はお試し用です」、要件表に「動画の長さ」、Desktop 版との違いに「動画の長さ」。
@@ -104,14 +104,25 @@ test('hero: 「ブラウザでお試し →」で、分数を直書きしない'
 	assert.ok(!text.includes('ブラウザで試す'), '旧文言が残っている')
 })
 
-test('CTA: 説明行に「お試し用（1 本 N 分まで）」があり、N は site.yml から読む', () => {
+test('CTA: Web 版へのリンクは「ブラウザでお試し →」で、分数を直書きしない', () => {
 	// Act
-	const line = cta.match(/<p[^>]*>[^\n]*data-dl="cta-webapp"[^\n]*<\/p>/)?.[0]
+	const link = linkOf(cta, 'cta-webapp')
 
 	// Assert
-	assert.ok(line, 'cta-webapp の説明行が無い')
+	assert.ok(link, 'cta-webapp のリンクが無い')
+	assert.doesNotMatch(link, HARDCODED_MINUTES)
+	assert.equal(textOf(link.replace(/\{%[\s\S]*?%\}/g, '').replace(/\{\{[^}]*\}\}/g, '')), 'ブラウザでお試し →')
+})
+
+test('CTA: 説明行に「お試し用（1 本 N 分まで）」があり、N は site.yml から読む', () => {
+	// Act
+	const line = cta.match(/<p[^>]*>[^\n]*お試し用（1 本[^\n]*<\/p>/)?.[0]
+
+	// Assert
+	assert.ok(line, 'Web 版の説明行が無い')
 	assert.match(line, /お試し用（1 本 \{\{\s*site\.data\.site\.web_app\.trial_minutes\s*\}\} 分まで）/)
 	assert.doesNotMatch(line, HARDCODED_MINUTES)
+	assert.doesNotMatch(line, /<a\b/, '説明行に Web 版へのリンクがある (リンクはバッジの下の 1 つだけ)')
 })
 
 test('Web 版リンクの href に utm を焼き込まない (装飾は実行時)', () => {

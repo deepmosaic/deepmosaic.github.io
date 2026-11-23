@@ -177,7 +177,7 @@ test('リンク: サイト内は /en/ の接頭辞、docs は同じ言語の doc
 	}
 	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="hero" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
 	assert.doesNotMatch(body, /download-button|app_download_link/, 'インストーラの DL の部品が残っている')
-	assert.match(body, /secondary_href="\/en\/price\/"/)
+	assert.match(body, /\{% include cta-download\.html %\}/) // ページ末尾の案内 (ja と同じく引数なし)
 })
 
 test('画像: 日本語の画面・日本語の文字が写った画像の alt に (Japanese UI)、英語の画面の画像 (screenshots/en/) には無い', () => {

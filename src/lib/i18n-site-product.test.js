@@ -200,14 +200,11 @@ for (const page of PAGES) {
 			}[page.key]
 			for (const w of docsWant) assert.ok(hrefs.includes(`/${lang}${w}`), `/${lang}${w} へのリンクが無い`)
 			assert.deepEqual(jaLinkHrefs(b).filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
-			// cta-download の副ボタンは同じ言語の docs で、日本語のページの印を持たない
+			// cta-download はバッジ + Web 版への文字のリンクだけで、副ボタンの引数を渡さない
 			if (page.key === 'price' || page.key === 'spec') {
 				const m = b.match(/\{%\s*include cta-download\.html([^%]*)%\}/)
 				assert.ok(m, 'cta-download.html が無い')
-				assert.match(m[1], new RegExp(`secondary_href="/${lang}/docs/"`))
-				assert.doesNotMatch(m[1], /secondary_hreflang=/)
-				const label = m[1].match(/secondary_label="([^"]*)"/)?.[1] ?? ''
-				assert.ok(label && !/\(Japanese\)|（日文）/.test(label), `secondary_label に日本語のページの印がある: ${label}`)
+				assert.doesNotMatch(m[1], /secondary_/)
 			}
 		})
 

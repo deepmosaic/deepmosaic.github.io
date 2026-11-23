@@ -220,7 +220,7 @@ test('リンク: サイト内は /zh-tw/ の接頭辞、docs は同じ言語の 
 	}
 	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="hero" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
 	assert.doesNotMatch(body, /download-button|app_download_link/, 'インストーラの DL の部品が残っている')
-	assert.match(body, /secondary_href="\/zh-tw\/price\/"/)
+	assert.match(body, /\{% include cta-download\.html %\}/) // ページ末尾の案内 (ja と同じく引数なし)
 })
 
 test('画像: alt が繁体字で、日本語の画面・日本語の文字が写った画像の alt に（日文介面）、繁体字の画面の画像 (screenshots/zh-tw/) には無い', () => {
