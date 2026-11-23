@@ -228,23 +228,21 @@ test('HERO のボタン列より前に検出対象の図 (埋め込み SVG の�
 	assert.doesNotMatch(part, /fetchpriority/, 'LCP は hero 動画のまま (図に fetchpriority を付けない)')
 })
 
-test('図の語: HERO の見える文字列と図の読み上げ名に 男性器・女性器・男性の顔・女性の顔・モザイク (陰性対照つき)', () => {
+test('図の語: 図の読み上げ名に 男性器・女性器・男性の顔・女性の顔・モザイク (陰性対照つき)、HERO の図の下に説明文を置かない', () => {
 	// Arrange
-	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
+	const hero = stripComments(markedSection(index, 'HERO') ?? '')
 	const part = stripComments(read('_includes', 'detectable-objects.html'))
 	const title = part.match(/<title[^>]*>([\s\S]*?)<\/title>/)?.[1] ?? ''
-	const sources = [
-		['HERO の表示文字列', heroText],
-		['図の読み上げ名', title],
-	]
+	const sources = [['図の読み上げ名', title]]
 
 	// Act
 	const missing = missingTerms(sources, FIGURE_TERMS)
-	const negative = missingTerms([['HERO の表示文字列', heroText.replaceAll('男性の顔', '')]], FIGURE_TERMS)
+	const negative = missingTerms([['図の読み上げ名', title.replaceAll('男性の顔', '')]], FIGURE_TERMS)
 
 	// Assert
 	assert.deepEqual(missing, [], `検出対象の語が無い: ${missing.join(' / ')}`)
-	assert.deepEqual(negative, ['HERO の表示文字列: 男性の顔'])
+	assert.deepEqual(negative, ['図の読み上げ名: 男性の顔'])
+	assert.doesNotMatch(hero, /<figcaption/, 'HERO の図の下に説明文がある')
 })
 
 test('検出対象の語がトップの description・meta_desc・llms にある', () => {
@@ -394,10 +392,9 @@ test('EXISTING MOSAIC の節が RELIABILITY の後・MOSAIC の前にあり、id
 	const at = index.indexOf('{% comment %} EXISTING MOSAIC {% endcomment %}')
 
 	// Assert
-	assert.match(section, /<section\s[^>]*id="existing-mosaic"/, '節に id="existing-mosaic" が無い (hero の「詳しく」のリンク先)')
+	assert.match(section, /<section\s[^>]*id="existing-mosaic"/, '節に id="existing-mosaic" が無い (検出対象の節のリンク先)')
 	assert.ok(index.indexOf('{% comment %} RELIABILITY {% endcomment %}') < at, 'RELIABILITY より前にある')
 	assert.ok(at < index.indexOf('{% comment %} MOSAIC {% endcomment %}'), 'MOSAIC より後ろにある')
-	assert.match(stripComments(markedSection(index, 'HERO') ?? ''), /href="#existing-mosaic"/, 'hero の検出対象の説明から節へのリンクが無い')
 })
 
 test('EXISTING MOSAIC の比較画像 2 枚は WebP で実在し、alt / width / height / lazy と素材の表記を持つ', () => {
@@ -442,10 +439,9 @@ test('EXISTING MOSAIC の節に否定文・3 つの要点・docs へのリンク
 	assert.match(section, /href="\/docs\/#detect-mosaic"/, 'docs の #detect-mosaic へのリンクが無い')
 })
 
-test('すでにかかっているモザイクが description・hero・できること・FAQ・llms に入っている', () => {
+test('すでにかかっているモザイクが description・できること・FAQ・llms に入っている', () => {
 	// Arrange
 	const description = index.split(/\r?\n/).find((l) => l.startsWith('description:')) ?? ''
-	const heroText = textOf(stripComments(markedSection(index, 'HERO') ?? ''))
 	const entity = stripYamlComments(read('_data', 'entity.yml'))
 	const faq = stripYamlComments(read('_data', 'faq.yml'))
 	const faqQ = 'すでにモザイクがかかっている動画はどうなりますか？'
@@ -457,7 +453,6 @@ test('すでにかかっているモザイクが description・hero・できる�
 
 	// Assert
 	assert.match(description, /女性の顔、すでにかかっているモザイクの位置/, `description: ${description}`)
-	assert.match(heroText, /すでにかかっているモザイクの位置も見つけられます/, 'hero の検出対象の説明に無い')
 	assert.match(entity, /素材にすでにかかっているモザイクの位置と範囲を見つけ、その上から新しいモザイクをかけ直す/, 'entity.yml の can に無い')
 	assert.match(entity, /Locate mosaics already present in the footage/, 'entity.yml の can (en) に無い')
 	assert.ok(faqAt > removalQAt && removalQAt >= 0, 'FAQ は「モザイクを除去することはできますか？」の後に置く')

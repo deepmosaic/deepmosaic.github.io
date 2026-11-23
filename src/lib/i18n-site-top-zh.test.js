@@ -215,7 +215,7 @@ test('リンク: サイト内は /zh-tw/ の接頭辞、docs は同じ言語の 
 	}
 	const jaLinks = [...body.matchAll(/\{%-?\s*include ja-link\.html href="([^"]*)"/g)].map((m) => m[1])
 	assert.deepEqual(jaLinks.filter((h) => h.startsWith('/docs')), [], '日本語の docs への ja-link.html がある')
-	for (const want of ['/docs/#detect-mosaic', '/docs/#detect-options', '/docs/#team']) {
+	for (const want of ['/docs/#detect-mosaic', '/docs/#team']) {
 		assert.ok(hrefs.includes(`/zh-tw${want}`), `/zh-tw${want} へのリンクが無い`)
 	}
 	assert.match(body, /\{%- include store-button\.html dl="hero-store" size="hero" %\}/) // Microsoft Store のバッジの部品 (ja と同じ)
@@ -241,17 +241,14 @@ test('画像: alt が繁体字で、日本語の画面・日本語の文字が�
 	}
 })
 
-test('検出対象の図: 埋め込み SVG の部品を呼び、figcaption に（日文介面）が無く、男性臉部・女性臉部を分けて書く', () => {
+test('検出対象の図: 埋め込み SVG の部品を呼び、図の下に説明文 (figcaption) を置かない', () => {
 	assert.ok(zhExists)
 	const body = stripComments(splitFrontMatter(ZH).body)
 	const figure = body.match(/<figure id="hero-detectable"[\s\S]*?<\/figure>/)?.[0] ?? ''
 	assert.ok(figure, '#hero-detectable の figure が無い')
 	assert.match(figure, /\{%-?\s*include detectable-objects\.html/)
 	assert.doesNotMatch(figure, /detectable-objects\.webp/)
-	const caption = figure.match(/<figcaption[^>]*>([\s\S]*?)<\/figcaption>/)?.[1] ?? ''
-	assert.ok(caption, 'figcaption が無い')
-	assert.ok(!caption.includes('日文介面'), `figcaption に（日文介面）が残っている: ${caption}`)
-	assert.ok(caption.includes('男性臉部') && caption.includes('女性臉部'), `figcaption に 男性臉部・女性臉部 が無い: ${caption}`)
+	assert.doesNotMatch(figure, /<figcaption/, '図の下に説明文がある')
 })
 
 test('本文: stats の値とラベルの数が ja (_data/site.yml の stats) の件数と同じで、数字の部分が ja と同じ', () => {
