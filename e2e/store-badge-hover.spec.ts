@@ -1,6 +1,7 @@
 // Microsoft Store のバッジにポインタを載せたときの動きの E2E (`src/app.css` の .store-badge-link)。
 //
 // - ポインタを載せると、リンクが上へ少し (4px) 動く。周りの配置 (次の要素の位置) は変わらず、外側の明るい縁もリンクと一緒に動く
+// - 浮いた分の下の端の帯の中でポインタを動かしても、載せた状態が外れない (上下に揺れない)
 // - キーボードでフォーカスしたときも同じに動く
 // - 動きを減らす設定 (prefers-reduced-motion: reduce) のときは動かない
 // - ヘッダーのバッジは動いてもヘッダーの中に収まる
@@ -56,6 +57,28 @@ for (const where of ['hero-store', 'header']) {
 
     await page.mouse.move(0, 790);
     expect(translateY(await settledTransform(page, link)), 'ポインタを外すと戻る').toBe(0);
+  });
+}
+
+for (const where of ['hero-store', 'header']) {
+  test(`${where}: 下の端から ${SHIFT}px の帯の中でポインタを動かしても、載せた状態が外れず揺れない`, async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'no-preference' });
+    await page.goto('/', { waitUntil: 'load' });
+    const link = page.locator(`a[data-store-button="${where}"]`);
+    await expect(link).toBeVisible();
+    const box = (await link.boundingBox())!;
+    const y = box.y + box.height - 2;
+
+    await page.mouse.move(box.x + 20, y);
+    await settledTransform(page, link);
+    const samples: string[] = [];
+    for (let k = 0; k < 15; k++) {
+      await page.mouse.move(box.x + 22 + k * 2, y);
+      await page.waitForTimeout(120);
+      samples.push(await link.evaluate((el) => (el.matches(':hover') ? 'H' : '-')));
+    }
+    expect(samples.join(''), '帯の中では載せた状態のまま').toBe('H'.repeat(15));
+    expect(translateY(await settledTransform(page, link)), '浮いたまま').toBeCloseTo(-SHIFT, 1);
   });
 }
 

@@ -170,15 +170,24 @@
     box-shadow: 0 0 0 1px rgb(255 255 255 / 0.7);
   }
   /* ポインタを載せたとき・キーボードでフォーカスしたときは少し浮かせ、押している間は元の位置に戻す。
-     transform なので周りの配置は動かず、外側の縁も一緒に動く。動きを減らす設定のときは動かさない
-     (e2e/store-badge-hover.spec.ts) */
+     transform なので周りの配置は動かず、外側の縁も一緒に動く。動きを減らす設定のときは動かさない。
+     浮かせると下の端に浮いた分の隙間ができ、そこにあるポインタが外れて上下に揺れるので、載せている間は
+     透明な ::after で押せる範囲を元の下の端まで延ばす (e2e/store-badge-hover.spec.ts) */
   @media (prefers-reduced-motion: no-preference) {
     .store-badge-link {
+      position: relative;
       transition: transform 0.35s ease;
     }
     .store-badge-link:hover,
     .store-badge-link:focus-visible {
       transform: translateY(-4px);
+    }
+    .store-badge-link:hover::after {
+      content: '';
+      position: absolute;
+      inset-inline: 0;
+      top: 100%;
+      height: 4px;
     }
     .store-badge-link:active {
       transform: none;
