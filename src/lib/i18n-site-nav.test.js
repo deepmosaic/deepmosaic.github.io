@@ -609,9 +609,9 @@ function jaCssBody(css) {
 }
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 
-// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer と、本文の img の規則から Store のバッジを外すこと・バッジのリンクの外側の縁 .store-badge-link を含む)。
+// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer と、本文の img の規則から Store のバッジを外すこと・バッジのリンクの外側の縁とポインタを載せたときの動き .store-badge-link を含む)。
 // ja の見た目を意図して変えるときは、この値を新しい app.css から取り直す。
-const BASE_JA_CSS_SHA256 = 'e0c631a448a1795634d3ba4f92eb7c6cc7ce01dbc188e8425590e19967baba0f'
+const BASE_JA_CSS_SHA256 = '84b2710434098039dc9e217653eb17534e2c8695aeba56aba49b13f9c5e3c2ac'
 
 test('app.css: 言語の規則を除いた本文は基点と同じ (ja の CSS を変えていない)', () => {
 	const css = read('src/app.css')

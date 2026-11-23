@@ -169,6 +169,21 @@
   .store-badge-link {
     box-shadow: 0 0 0 1px rgb(255 255 255 / 0.7);
   }
+  /* ポインタを載せたとき・キーボードでフォーカスしたときは少し浮かせ、押している間は元の位置に戻す。
+     transform なので周りの配置は動かず、外側の縁も一緒に動く。動きを減らす設定のときは動かさない
+     (e2e/store-badge-hover.spec.ts) */
+  @media (prefers-reduced-motion: no-preference) {
+    .store-badge-link {
+      transition: transform 0.35s ease;
+    }
+    .store-badge-link:hover,
+    .store-badge-link:focus-visible {
+      transform: translateY(-4px);
+    }
+    .store-badge-link:active {
+      transform: none;
+    }
+  }
 
   /* Section kicker (blue eyebrow) */
   .kicker {
