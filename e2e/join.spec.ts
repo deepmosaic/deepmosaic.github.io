@@ -82,7 +82,7 @@ for (const hash of ['', '#', '#code=ABCD-EFGH', '#code=%3Cimg%20src%3Dx%20onerro
     await expect(page.locator(OPEN_CODE)).not.toHaveAttribute('href', /.*/);
     await expect(page.locator('[data-join-code]').first()).toHaveText('');
     // 入力値から作られた画像が無い (原稿にある画像は Microsoft Store のバッジ 1 つだけ)
-    await expect(page.locator('[data-join] img:not([src="/assets/img/store-badge/ja.svg"])')).toHaveCount(0);
+    await expect(page.locator('[data-join] img:not([src="/assets/img/store-badge/ja.svg?v=dark"])')).toHaveCount(0);
     expect(dialog, 'HTML を含む値が実行された').toBe(false);
   });
 }
@@ -160,7 +160,7 @@ for (const [path, text, label, lang] of [
     const store = install.locator('a[data-store-button="join-store"]');
     await expect(store).toHaveCount(1);
     await expect(store).toHaveAccessibleName(label);
-    await expect(store.locator('img')).toHaveAttribute('src', `/assets/img/store-badge/${lang}.svg`);
+    await expect(store.locator('img')).toHaveAttribute('src', `/assets/img/store-badge/${lang}.svg?v=dark`);
     await expect(store).toHaveAttribute('href', STORE_URL);
     await expect(store).not.toHaveAttribute('target');
     await expect(store).not.toHaveAttribute('download');

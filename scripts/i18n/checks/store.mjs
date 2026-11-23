@@ -38,7 +38,7 @@ export const CARD_LABELS = {
 const LANG_PREFIX = { ja: '', en: 'en/', 'zh-tw': 'zh-tw/' }
 
 /** ページの言語のバッジの画像 (`assets/img/store-badge/<lang>.svg`。Microsoft の配布元の画像) */
-export const badgeSrc = (lang) => `/assets/img/store-badge/${lang}.svg`
+export const badgeSrc = (lang) => `/assets/img/store-badge/${lang}.svg?v=dark`
 
 /** 出力のパスからページの言語 */
 export const langOfFile = (rel) => (rel.startsWith('en/') ? 'en' : rel.startsWith('zh-tw/') ? 'zh-tw' : 'ja')

@@ -175,7 +175,7 @@ test('store-badge-img.html: ページの言語の画像・alt (ja は直書き�
 	const src = stripComments(read('_includes/store-badge-img.html'))
 	const tag = tagsOf(src, /<img\s/g)[0] ?? ''
 	assert.ok(tag, '<img> が無い')
-	assert.match(tag, /src="\/assets\/img\/store-badge\/\{\{ page\.lang \| default: 'ja' \}\}\.svg"/)
+	assert.match(tag, /src="\/assets\/img\/store-badge\/\{\{ page\.lang \| default: 'ja' \}\}\.svg\?v=dark"/, '画像を替えたら ?v= の値も替える (古い画像のキャッシュを使わせない)')
 	assert.match(tag, /width="161" height="44"/, '元の寸法 (縦横比を変えない)')
 	assert.match(tag, /alt="\{% if sbi_P %\}\{\{ sbi_P\.st_label \}\}\{% else %\}Microsoft Store からダウンロード\{% endif %\}"/)
 	assert.match(src, /assign sbi_P = site\.data\.l10n\[page\.lang\]\.parts/)
@@ -209,7 +209,7 @@ test('バッジの画像: 3 言語の SVG が Microsoft の配布元の画像の
 	for (const lang of LANGS) {
 		const rel = `assets/img/store-badge/${lang}.svg`
 		assert.ok(existsSync(join(ROOT, rel)), `${rel} が無い`)
-		assert.equal(badgeSrc(lang), `/${rel}`)
+		assert.equal(badgeSrc(lang), `/${rel}?v=dark`)
 		const buf = readFileSync(join(ROOT, rel))
 		const svg = buf.toString('utf8')
 		assert.match(svg, /^<svg width="161" height="44" viewBox="0 0 161 44"/)

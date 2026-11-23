@@ -17,7 +17,7 @@ const ENTERPRISE_SHORT_LABEL = '法人様';
 const ENTERPRISE_HREF = '/enterprise/inquiry/';
 /** バッジの alt (バッジに書かれた文) と画像 */
 const BADGE_ALT = 'Microsoft Store からダウンロード';
-const BADGE_SRC = '/assets/img/store-badge/ja.svg';
+const BADGE_SRC = '/assets/img/store-badge/ja.svg?v=dark';
 /** バッジの高さ (px。普通のボタンとそろえる) と元の縦横比 (161 × 44) */
 const BADGE_HEIGHT = 38;
 const BADGE_RATIO = 161 / 44;
