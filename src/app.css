@@ -163,6 +163,13 @@
     @apply px-5 py-3 text-base;
   }
 
+  /* Microsoft Store のバッジを包むリンク (store-button.html・ヘッダー)。配布元の dark 版は地 #202020 と縁 (黒 10%) が
+     サイトの地に溶けて形が見えないので、画像は変えずにリンクの外側へ明るい 1px の縁を描く。
+     box-shadow なのでリンクの寸法は変わらない (e2e/store-badge.spec.ts がリンクの高さ = バッジの高さと縁の有無を見る) */
+  .store-badge-link {
+    box-shadow: 0 0 0 1px rgb(255 255 255 / 0.7);
+  }
+
   /* Section kicker (blue eyebrow) */
   .kicker {
     color: var(--color-accent);

@@ -184,8 +184,8 @@ for (const [name, src] of [
 		assert.match(dlTag, /\smd:-ml-1\s/)
 		assert.match(dlTag, /\slg:-ml-4[\s"]/)
 		assert.doesNotMatch(enterpriseTag, /-ml-/)
-		// ほかの class は変えない (DL はバッジ。md 以上だけに出す)
-		assert.match(dlTag, /class="hidden shrink-0 rounded-\[5px\] md:inline-flex /)
+		// ほかの class は変えない (DL はバッジ。外側の明るい縁 store-badge-link を付け、md 以上だけに出す)
+		assert.match(dlTag, /class="store-badge-link hidden shrink-0 rounded-\[5px\] md:inline-flex /)
 		assert.match(enterpriseTag, /class="btn-secondary hidden md:inline-flex /)
 	})
 
@@ -609,9 +609,9 @@ function jaCssBody(css) {
 }
 const sha256 = (text) => createHash('sha256').update(text).digest('hex')
 
-// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer と、本文の img の規則から Store のバッジを外すことを含む)。
+// 基点の src/app.css の jaCssBody の sha256 (ja の規則。base 層の button の cursor: pointer と、本文の img の規則から Store のバッジを外すこと・バッジのリンクの外側の縁 .store-badge-link を含む)。
 // ja の見た目を意図して変えるときは、この値を新しい app.css から取り直す。
-const BASE_JA_CSS_SHA256 = 'acb08d6e6e4164d0db8c151338f7336ff494248763eb56a251b7204817e274f7'
+const BASE_JA_CSS_SHA256 = 'e0c631a448a1795634d3ba4f92eb7c6cc7ce01dbc188e8425590e19967baba0f'
 
 test('app.css: 言語の規則を除いた本文は基点と同じ (ja の CSS を変えていない)', () => {
 	const css = read('src/app.css')

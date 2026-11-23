@@ -21,7 +21,7 @@
       {% include icon.html name="Building2" class="h-4 w-4" %}<span>法人様<span class="hidden lg:inline">はこちら</span></span>
     </a>
 
-    <a href="{% include store-install-url.html %}" data-store-button="header" data-dl="header" class="hidden shrink-0 rounded-[5px] md:inline-flex md:-ml-1 lg:-ml-4">{% include store-badge-img.html %}</a>
+    <a href="{% include store-install-url.html %}" data-store-button="header" data-dl="header" class="store-badge-link hidden shrink-0 rounded-[5px] md:inline-flex md:-ml-1 lg:-ml-4">{% include store-badge-img.html %}</a>
 
     <div class="md:hidden">
       {%- capture hd_mobile_dl -%}{"label":"Microsoft Store からダウンロード","href":"{% include store-install-url.html %}","dl":"mobile"}{%- endcapture %}

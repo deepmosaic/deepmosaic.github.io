@@ -181,6 +181,7 @@ test('store-badge-img.html: ページの言語の画像・alt (ja は直書き�
 	assert.match(src, /assign sbi_P = site\.data\.l10n\[page\.lang\]\.parts/)
 	assert.match(tag, /class="store-badge \{\{ include\.class \| default: 'h-\[38px\] w-auto' \}\}"/, '既定は普通のボタンの高さで、幅は縦横比のまま。目印 store-badge は常に付く')
 	assert.match(read('src/app.css'), /\.rich-prose :where\(img:not\(\.store-badge\)\)/, '本文の img のスタイルをバッジに当てない')
+	assert.match(read('src/app.css'), /\.store-badge-link \{\s*box-shadow: 0 0 0 1px rgb\(255 255 255 \/ 0\.7\);/, 'バッジのリンクの外側の縁は寸法を変えない box-shadow')
 	assert.match(tag, /\{% if include\.lazy %\} loading="lazy" decoding="async"\{% endif %\}/)
 })
 
@@ -192,6 +193,7 @@ test('store-button.html: href はバッジの行き先、ファイル DL の属�
 	assert.ok(tag.includes(`href="${INSTALL_INC}"`), 'href がバッジの行き先の部品でない')
 	assert.doesNotMatch(tag, /\sdownload(\s|>|=)/, 'download 属性 (ファイル DL ではない)')
 	assert.match(tag, /data-store-button="\{\{ include\.dl \}\}"/, '目印 data-store-button')
+	assert.match(tag, /class="store-badge-link /, '外側の明るい縁 (暗い地でバッジの形を見せる)')
 	assert.doesNotMatch(tag, /\starget=/, 'インストーラのダウンロードは同じタブで開く (target を付けない)')
 	assert.match(src, /page\.no_tracking/, '計測しないページでは data-dl を出さない')
 	assert.match(src, /<\/a>/)
@@ -278,6 +280,7 @@ test('ヘッダー・ドロワー・フッター・JSON-LD: ヘッダーはバ�
 		assert.ok(store.includes(`href="${INSTALL_INC}"`), `${rel}: href がバッジの行き先の部品でない`)
 		assert.doesNotMatch(store, /\starget=/, `${rel}: インストーラのダウンロードは同じタブで開く`)
 		assert.match(store, new RegExp(`data-store-button="${dl}"`))
+		if (dl === 'header') assert.match(store, /class="store-badge-link /, `${rel}: バッジの外側の明るい縁 (store-button.html と同じ class)`)
 		assert.doesNotMatch(store, /\sdownload(\s|>|=)/)
 		const inner = src.slice(src.indexOf(store) + store.length, src.indexOf('</a>', src.indexOf(store)))
 		if (dl === 'header') assert.equal(inner, '{% include store-badge-img.html %}', `${rel}: ヘッダーの中身はバッジの画像だけ`)

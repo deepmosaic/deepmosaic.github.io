@@ -11,6 +11,7 @@
 // - 高さが 38px (普通のボタン) か 50px (大きいボタン)
 // - 枠の線が 0、角丸が 0 (画像の角はそのまま)
 // - 包むリンクの高さがバッジと同じ (押せる範囲・フォーカスの枠が下の空白へ広がらない)
+// - 包むリンクの外側に明るい 1px の縁 (box-shadow) がある (配布元の dark 版の地と縁は暗い地に溶けるため。`src/app.css` の .store-badge-link)
 //
 // 対象はバッジを置くページ (トップ・料金・docs のインストールの節) を 3 言語で、2 つの幅。
 import { test, expect, type Page } from '@playwright/test';
@@ -30,6 +31,7 @@ type Measured = {
   border: number;
   radius: string;
   linkH: number;
+  linkShadow: string;
 };
 
 async function measureBadges(page: Page): Promise<Measured[]> {
@@ -54,6 +56,7 @@ async function measureBadges(page: Page): Promise<Measured[]> {
             parseFloat(cs.borderLeftWidth),
           radius: cs.borderTopLeftRadius,
           linkH: link ? link.getBoundingClientRect().height : r.height,
+          linkShadow: link ? getComputedStyle(link).boxShadow : 'none',
         };
       }),
   );
@@ -64,7 +67,7 @@ for (const vp of VIEWPORTS) {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
     for (const path of PAGES) {
-      test(`${path}: 見えているバッジは元の縦横比・高さ 38/50・枠なし・リンクの高さが同じ`, async ({ page }) => {
+      test(`${path}: 見えているバッジは元の縦横比・高さ 38/50・枠なし・リンクの高さが同じ・外側の明るい縁`, async ({ page }) => {
         await page.goto(path, { waitUntil: 'load' });
         const badges = await measureBadges(page);
         if (path.endsWith('/docs/')) {
@@ -78,6 +81,7 @@ for (const vp of VIEWPORTS) {
           expect(b.border, `${label}: 枠の線`).toBe(0);
           expect(b.radius, `${label}: 角丸`).toBe('0px');
           expect(Math.abs(b.linkH - b.h), `${label}: リンクの高さ ${b.linkH.toFixed(1)}`).toBeLessThan(1);
+          expect(b.linkShadow, `${label}: リンクの外側の明るい縁`).toMatch(/rgba\(255, 255, 255, 0\.7\) 0px 0px 0px 1px/);
         }
       });
     }
