@@ -37,6 +37,7 @@ import check, {
 	STORE_SOURCE,
 	storeBadgeUrl,
 	storeListingUrl,
+	strayStoreInstallerCount,
 	SUBSCRIBE_PAGES,
 } from '../../scripts/i18n/checks/store.mjs'
 
@@ -503,4 +504,28 @@ test('check: ヘッダー・料金のカード (バッジ)・フッター・ド�
 			assert.ok(errors.some((e) => e.startsWith(`${rel}:`) && mark.test(e)), `${rel}: ${errors.join(' / ')}`)
 		}, { extra: { [rel]: body } })
 	}
+	// Store のインストーラの URL が目印の外 (目印の無いリンク・txt・JSON・ドロワーの 2 件目以降) にあれば検出
+	const drawerItem = `{"label":"${STORE_LABELS.ja}","href":"${STORE_URL}","dl":"mobile"}`
+	for (const [rel, edit] of [
+		['company/about.html', () => `<a href="${STORE_URL}">x</a>`],
+		['llms.txt', () => `- DL: ${STORE_URL}`],
+		['data/x.json', () => `{"u": "${STORE_URL}"}`],
+		['index.html', (f) => f['index.html'].replace(`${drawerItem},{"label":"Home","href":"/"}`, `${drawerItem},{"label":"Home","href":"${STORE_URL}"}`)],
+	]) {
+		const f = files()
+		withSite({ ...f, [rel]: edit(f) }, (ctx) => {
+			const errors = checkStore(ctx, true)
+			assert.ok(errors.some((e) => e.startsWith(`${rel}:`) && /目印/.test(e) && /Microsoft Store のインストーラの URL/.test(e)), `${rel}: ${errors.join(' / ')}`)
+		})
+	}
+})
+
+test('strayStoreInstallerCount: 目印の付いた <a> の開始タグとドロワーの先頭は数えず、その外は数える', () => {
+	const tag = `<a class="x" href="${STORE_URL}" data-store-button="hero-store" data-dl="hero-store">`
+	const drawer = (second) => `<div data-island="mobile-nav" data-links='[{"label":"a","href":"${STORE_URL}","dl":"mobile"},{"label":"b","href":"${second}"}]'></div>`
+	assert.equal(strayStoreInstallerCount(''), 0)
+	assert.equal(strayStoreInstallerCount(`${tag}x</a>${drawer('/')}`), 0)
+	assert.equal(strayStoreInstallerCount(drawer(STORE_URL)), 1)
+	assert.equal(strayStoreInstallerCount(`<a href="${STORE_URL}">x</a>`), 1)
+	assert.equal(strayStoreInstallerCount(`${tag}x</a><p>${STORE_URL}</p> ${STORE_URL}`), 2)
 })

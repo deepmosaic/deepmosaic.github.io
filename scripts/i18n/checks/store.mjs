@@ -14,6 +14,7 @@
 //   - フッターは文字のリンク (文は `STORE_LABELS`)、料金のカードのダウンロードのボタンは文字のボタン (文は `CARD_LABELS`)、
 //       ドロワーの `data-links` の先頭はバッジの行き先・`dl: mobile`・target なし・download なし・同じ文。
 //       JSON-LD の `downloadUrl` はクエリの無い掲載ページ。出力のどのファイル (HTML・txt・xml・JSON) にもインストーラの受け口・配布物 (`INSTALLER_MARKS`) が無い。
+//       Store のインストーラの URL (`STORE_INSTALLER_MARK`) は目印の付いた <a> とドロワーの先頭だけ。
 //   - 申し込みのページ (3 言語) の Store 版の文 (目印 `data-store-note`) と FAQ (`store_only: true` の項目、表示と FAQPage の JSON-LD)、
 //       法務文書の配信ストア版の記述 (`LEGAL_STORE_MARKS`)、動作環境の Windows の表の「Microsoft Store 版」の行 (`SPEC_STORE_KEYS`) が出る。
 //   - check-site からは、置き場所のページがそろった実際のビルドのときだけ検査する (default export の説明)。
@@ -53,6 +54,25 @@ const PRICE_PAGES = Object.values(LANG_PREFIX).map((pre) => `${pre}price/index.h
 /** インストーラの受け口と配布物 (出力に 1 件も出さない) */
 export const INSTALLER_PATH = 'download/latest/windows'
 export const INSTALLER_MARKS = [INSTALLER_PATH, 'download/latest', '/download/issue', 'releases/latest', 'latest.json', 'setup.exe']
+/** Microsoft Store のインストーラの URL の印。目印 (data-store-button) の付いた <a> とドロワーの先頭のリンクにだけ出す */
+export const STORE_INSTALLER_MARK = 'installer/download'
+const STORE_BUTTON_TAG_RE = /<a\b[^>]*\sdata-store-button="[^"]*"[^>]*>/g
+const DRAWER_LINKS_RE = /data-island="mobile-nav"[^>]*\sdata-links='([^']*)'/
+
+/** テキストに残る Store のインストーラの URL のうち、目印の付いた <a> の開始タグとドロワーの先頭のリンクの外にある件数 */
+export function strayStoreInstallerCount(text) {
+	let rest = text.replace(STORE_BUTTON_TAG_RE, '')
+	let stray = 0
+	const raw = rest.match(DRAWER_LINKS_RE)?.[1]
+	if (raw !== undefined) {
+		const firstHref = drawerLinks(rest)?.[0]?.href
+		const allowed = typeof firstHref === 'string' && firstHref.includes(STORE_INSTALLER_MARK) ? 1 : 0
+		stray += Math.max(0, countOf(raw, STORE_INSTALLER_MARK) - allowed)
+		rest = rest.replace(raw, '')
+	}
+	return stray + countOf(rest, STORE_INSTALLER_MARK)
+}
+
 const TEXT_EXT = /\.(?:html|txt|xml|json)$/
 
 /** 法務文書 (ja だけ) の配信ストア版の記述。ページごとに出るはずの文 (部品 `_includes/legal-distribution.html` が出す) */
@@ -214,7 +234,7 @@ function storeContentErrors(ctx) {
 
 /** ドロワーの data-links の JSON (HTML の属性の実体参照を戻して読む。読めなければ null) */
 function drawerLinks(html) {
-	const raw = html.match(/data-island="mobile-nav"[^>]*\sdata-links='([^']*)'/)?.[1]
+	const raw = html.match(DRAWER_LINKS_RE)?.[1]
 	if (raw === undefined) return undefined
 	try {
 		return JSON.parse(raw.replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&amp;/g, '&'))
@@ -294,6 +314,8 @@ function singleLinkErrors(ctx, url, listing) {
 		for (const mark of INSTALLER_MARKS) {
 			if (text.includes(mark)) errors.push(`${rel}: インストーラの受け口・配布物 (${mark}) が出力に残っている`)
 		}
+		const stray = strayStoreInstallerCount(text)
+		if (stray > 0) errors.push(`${rel}: Microsoft Store のインストーラの URL が目印 (data-store-button / ドロワーの先頭) の外に ${stray} 件ある`)
 	}
 	return errors
 }
