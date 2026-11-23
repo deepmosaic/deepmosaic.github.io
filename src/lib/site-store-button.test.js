@@ -340,9 +340,9 @@ test('expectedPlacements: 4 か所 × 3 言語', () => {
 
 // ---- 4. checks/store.mjs の単体 (作った _site の模型) ----
 
-const img = (lang) => `<img src="${badgeSrc(lang)}" alt="${STORE_LABELS[lang]}" width="161" height="44" class="h-[50px] w-auto">`
+const img = (lang) => `<img src="${badgeSrc(lang)}" alt="${STORE_LABELS[lang]}" width="161" height="44" class="h-[38px] w-auto">`
 const badge = (id, lang, { tracked = true, href = STORE_URL } = {}) =>
-	`<a class="inline-flex shrink-0 rounded-[5px]" href="${href}" data-store-button="${id}"${tracked ? ` data-dl="${id}"` : ''}>${img(lang)}</a>`
+	`<a class="store-badge-link inline-flex shrink-0 rounded-[5px]" href="${href}" data-store-button="${id}"${tracked ? ` data-dl="${id}"` : ''}>${img(lang)}</a>`
 
 /** 料金のカードのダウンロードのボタン (文字のボタン) */
 const cardButton = (code, lang) => `<a href="${STORE_URL}" class="btn-primary w-full" data-store-button="${code}" data-dl="${code}">${CARD_LABELS[lang]}</a>`
