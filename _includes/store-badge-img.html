@@ -8,7 +8,7 @@ Microsoft Store の公式バッジの画像 (ページの言語の版)。Store �
   バッジに当てないための目印 (docs のインストールの節は本文の中に置く)。
 
 params:
-  class (任意) <img> の class (`store-badge` の後ろに付く)。既定 `h-[38px] w-auto` (普通のボタンの高さ)。大きいボタンの所は `h-[50px] w-auto`
+  class (任意) <img> の class (`store-badge` の後ろに付く)。既定 `h-[38px] w-auto` (普通のボタンの高さ)。トップの冒頭とページ末尾の案内は `h-[60px] w-auto sm:h-[72px]` (`store-button.html` の `size="hero"`)
   lazy  (任意) 真値で `loading="lazy" decoding="async"` (ファーストビューの外の所)
 {%- endcomment -%}
 {%- assign sbi_P = site.data.l10n[page.lang].parts -%}
