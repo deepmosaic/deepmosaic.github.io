@@ -9,7 +9,7 @@
 //     alt はバッジに書かれた文 (ja は直書き、英中は parts.yml の st_label)。
 //   - 置き場所はヒーロー (hero-store)・DL の CTA (cta-store、トップ / 料金 / 動作環境)・docs の #install (docs-install-store)・
 //     /join/ の「アプリをまだ入れていない方」(join-store)。料金のカード (Free の帯) とヘッダーもバッジ、フッターとドロワーは文字のリンク、
-//     料金のカードのダウンロードのカード (Hobby) は文字のボタン「アプリをダウンロード」。
+//     料金のカードのダウンロードのカード (HOBBY) は文字のボタン「アプリをダウンロード」。
 //   - Store へ向くリンクの href は Microsoft Store のインストーラを直接ダウンロードする URL (`_includes/store-install-url.html` が組む。3 言語で同じ。
 //     部品に ID や get.microsoft.com を直書きしない)。応答がファイルの保存なので target を付けない。クエリの無い掲載ページは JSON-LD の downloadUrl だけ。
 //   - ビルド出力の検査は `scripts/i18n/checks/store.mjs` (check-site のモジュール)。ここではその検査の単体 (作った _site の模型で陽性対照と陰性対照) を見る。
@@ -318,10 +318,10 @@ test('料金のカード: ダウンロードのカードはインストーラを
 	assert.doesNotMatch(branch, /include store-badge-img|include store-button/, 'バッジにしない')
 	// 文 (3 言語)。検査 (store.mjs) の CARD_LABELS と同じ
 	const ja = [...read('_data/plans.yml').matchAll(/^ {6}label: "([^"]*)"\s*\n {6}kind: "download"/gm)].map((m) => m[1])
-	assert.deepEqual(ja, [CARD_LABELS.ja, CARD_LABELS.ja], 'Hobby と Pro の cta.label')
+	assert.deepEqual(ja, [CARD_LABELS.ja, CARD_LABELS.ja], 'HOBBY と Pro の cta.label')
 	for (const lang of ['en', 'zh-tw']) {
 		const l10n = [...read(`_data/l10n/${lang}/plans.yml`).matchAll(/^ {4}cta_label: "([^"]*)"/gm)].map((m) => m[1])
-		assert.deepEqual(l10n.slice(0, 2), [CARD_LABELS[lang], CARD_LABELS[lang]], `${lang}: Hobby と Pro の cta_label`)
+		assert.deepEqual(l10n.slice(0, 2), [CARD_LABELS[lang], CARD_LABELS[lang]], `${lang}: HOBBY と Pro の cta_label`)
 	}
 	assert.deepEqual(CARD_LABELS, { ja: 'アプリをダウンロード', en: 'Download the app', 'zh-tw': '下載應用程式' })
 })

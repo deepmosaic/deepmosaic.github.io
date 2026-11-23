@@ -4,7 +4,7 @@ lang: zh-tw
 permalink: /zh-tw/
 ja_url: /
 source: index.html
-source_hash: "8ed0ebf79792b5fa2a1fc4ba409568fef716223de6bb0745c4eb12a3dbb5544a"
+source_hash: "5d4bfa7cd681653556eb17897939317c12784bae008c217a51d840d8c92ca9ea"
 title: 讓馬賽克作業只剩最終確認
 seo_title: AI 偵測臉部與身體部位，自動為影片加上馬賽克｜Deepmosaic
 description: Deepmosaic 是由 AI 偵測影片中的男性與女性身體部位、男性臉部、女性臉部，並加上馬賽克的 Windows 應用程式。也能找出既有馬賽克，並在其上重新套用馬賽克。無法去掉馬賽克。所有處理都在您的電腦上完成。
@@ -174,11 +174,11 @@ schemas:
          data-default-length="{{ S.roi.default_length_hours }}"
          data-manual-multiplier="{{ S.roi.manual_work_multiplier }}"></div>
     {%- comment -%}
-      JS 無効時のフォールバック。数値は ja と同じ確定値 (月 10 時間は Hobby の 5 時間を超えるのでお見積り。JS 版 roiFit と同じ結論)。ja の数値を変えたらここも変える。
+      JS 無効時のフォールバック。数値は ja と同じ確定値 (月 10 時間は HOBBY の 5 時間を超えるのでお見積り。JS 版 roiFit と同じ結論)。ja の数値を変えたらここも変える。
     {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
-        試算需要瀏覽器的 JavaScript。每月 5 部影片、每部 2 小時時，已超出 Hobby 的內含時數（每月 5 小時），將為您介紹企業方案 Enterprise（個別報價）。每月 5 小時以內，Hobby 固定為 2,980 日圓／月（{{ ZH.plans.tax_note }}）。各方案包含的時數刊登於<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格頁面</a>。
+        試算需要瀏覽器的 JavaScript。每月 5 部影片、每部 2 小時時，已超出 HOBBY 的內含時數（每月 5 小時），將為您介紹企業方案 Enterprise（個別報價）。每月 5 小時以內，HOBBY 固定為 2,980 日圓／月（{{ ZH.plans.tax_note }}）。各方案包含的時數刊登於<a href="/zh-tw/price/" class="text-accent-soft hover:underline">價格頁面</a>。
       </div>
     </noscript>
     <p class="mt-4 text-[12.5px] leading-[1.9] text-ink-4">

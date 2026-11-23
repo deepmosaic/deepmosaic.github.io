@@ -2,7 +2,7 @@
 //
 // ## 何を守るのか
 //
-// - 料金のカード (トップと /price/、3 言語) のダウンロードのカード (Hobby) のボタンは、青い主ボタンの「アプリをダウンロード」
+// - 料金のカード (トップと /price/、3 言語) のダウンロードのカード (HOBBY) のボタンは、青い主ボタンの「アプリをダウンロード」
 //   (en「Download the app」、zh-TW「下載應用程式」) で、押すと Microsoft Store のインストーラが直接ダウンロードされる URL へ向く。
 // - 同じタブで開く (target なし)・download 属性なし・計測の目印 data-dl はプランの code。
 // - 料金のカードから申し込みのページ (/subscribe/) へは向けない (申し込みはアプリのプロフィールメニューと /subscribe/)。
@@ -30,7 +30,7 @@ for (const vp of VIEWPORTS) {
     test.use({ viewport: { width: vp.width, height: vp.height } });
 
     for (const { path, label } of CASES) {
-      test(`${path}: Hobby のカードのボタンは「${label}」でインストーラを直接ダウンロードする`, async ({ page }) => {
+      test(`${path}: HOBBY のカードのボタンは「${label}」でインストーラを直接ダウンロードする`, async ({ page }) => {
         await page.goto(path, { waitUntil: 'load' });
         const button = page.locator('a[data-store-button="light"]');
         await expect(button).toHaveCount(1);

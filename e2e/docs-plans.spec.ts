@@ -49,7 +49,7 @@ test('/docs/ の Pro は契約中の人への案内の 1 か所だけで、契�
   }
   expect(countOf(text, '次の更新日に利用枠が戻ります')).toBeGreaterThanOrEqual(2);
   // 料金カードの名前と同じ表記
-  await expect(page.locator('#plan')).toContainText('Hobby のカード');
+  await expect(page.locator('#plan')).toContainText('HOBBY のカード');
 });
 
 test('/docs/#team はプランの名前が無料プラン / 有料プランで、金額が無い', async ({ page }) => {

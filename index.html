@@ -167,14 +167,14 @@ schemas:
       JS 無効時のフォールバック。数値は Liquid で組まず**確定値を直接書く**
       (プランを増やしたときに index 参照 `tiers[1]` が別プランを指す事故を防ぐ)。
       **JS 版 (pricing.js の roiFit) と同じ結論を書くこと。** 既定の月 10 時間 (site.yml の roi) は
-      Hobby (5 時間) の枠を超えるので、Enterprise (お見積り) の案内になる (金額は出さない)。
+      HOBBY (5 時間) の枠を超えるので、Enterprise (お見積り) の案内になる (金額は出さない)。
       同じプランは 1 本までしか契約できないので、5 時間を超えると自己申込のプランでは賄えない。
       超過料金は無いので「込み時間 + 超過分」で足し上げる試算は書かない。
     {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
         試算にはブラウザの JavaScript が必要です。
-        月 5 本 × 2 時間の場合、Hobby の込み時間（月 5 時間）を超えるため、法人向けプランの Enterprise（お見積り）をご相談ください。月 5 時間までは Hobby の月額 ¥2,980 の固定です（{{ site.data.plans.tax_note }}）。
+        月 5 本 × 2 時間の場合、HOBBY の込み時間（月 5 時間）を超えるため、法人向けプランの Enterprise（お見積り）をご相談ください。月 5 時間までは HOBBY の月額 ¥2,980 の固定です（{{ site.data.plans.tax_note }}）。
         プランごとの込み時間は<a href="/price/" class="text-accent-soft hover:underline">料金ページ</a>に掲載しています。
       </div>
     </noscript>

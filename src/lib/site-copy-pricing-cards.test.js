@@ -3,7 +3,7 @@
 //   node --test src/lib/site-copy-pricing-cards.test.js
 //
 //   - Pro はカードに出さない。tier は `public: false` で残し (込み時間の突き合わせ・英中の欄のため)、金額の欄を持たない。
-//   - Hobby (tier の id は `light`) は 1 アカウントあたり 1 本まで (`max_contracts: 1`)。主ボタンの配色の featured は Hobby だけ。
+//   - HOBBY (tier の id は `light`) は 1 アカウントあたり 1 本まで (`max_contracts: 1`)。主ボタンの配色の featured は HOBBY だけ。
 //   - Enterprise は「お見積り」のカードで、金額の欄を持たない。
 //   - API の語は料金カードの囲み (`note_title` / `note`) だけに許す (ほかの検査は site-copy-enterprise-integration.test.js)。
 //
@@ -91,9 +91,9 @@ test('陰性対照: pro の public を true にした plans.yml は落ちる', (
 	assertPublicTiers(tiersFromText(PLANS_TEXT))
 })
 
-test('featured は Hobby (code は light) だけで、名前は Hobby、max_contracts は 1', () => {
+test('featured は HOBBY (code は light) だけで、名前は HOBBY、max_contracts は 1', () => {
 	assert.equal(byCode('light').featured, true)
-	assert.equal(byCode('light').name, 'Hobby')
+	assert.equal(byCode('light').name, 'HOBBY')
 	assert.equal(byCode('light').max_contracts, 1)
 	for (const t of TIERS.filter((x) => x.code !== 'light')) assert.equal(t.featured, false, `${t.code} が featured`)
 })
@@ -162,7 +162,7 @@ test('jekyll.yml: お見積りと quote_note の grep と相談導線の grep �
 	assert.ok(ci.includes(`grep -q 'href="/enterprise/inquiry/"' _site/price/index.html`), '相談導線の grep が消えた')
 })
 
-test('境界値: Hobby の合計時間は included_hours × max_contracts = 5 で、手書きの契約の本数と込み時間に無い時間が無い', () => {
+test('境界値: HOBBY の合計時間は included_hours × max_contracts = 5 で、手書きの契約の本数と込み時間に無い時間が無い', () => {
 	const light = byCode('light')
 	assert.equal(light.included_hours * light.max_contracts, 5)
 	const hours = new Set(['light', 'free', 'enterprise', 'pro'].map((c) => String(byCode(c).included_hours)))

@@ -2,7 +2,7 @@
 //
 //   node --test src/lib/site-copy-current-pricing.test.js
 //
-//   今の料金: 公開しているのは Hobby (tier の id は `light`) だけ (1 アカウント 1 本まで・合計 月 5 時間)。Pro は新規の受付を終了 (契約中の人はそのまま)。
+//   今の料金: 公開しているのは HOBBY (tier の id は `light`) だけ (1 アカウント 1 本まで・合計 月 5 時間)。Pro は新規の受付を終了 (契約中の人はそのまま)。
 //   Enterprise はお見積り (アカウント数 × 20 時間をプール共有・月ごとの請求書払い)。
 //
 //   - docs (日本語だけ) の見える文で、Premiere Pro 以外の「Pro」は `02-account.html` の #plan の案内の 1 か所だけ。
@@ -183,8 +183,8 @@ test('findPlanTextWords: 今の文は拾わない (陽性対照)', () => {
     'Adobe Premiere Pro 25.3 以降',
     'Premiere Pro 連携',
     'H.265・ProRes・DNxHR',
-    'Hobby は月 5 時間',
-    'Hobby: 5 hours / month',
+    'HOBBY は月 5 時間',
+    'HOBBY: 5 hours / month',
     '2 hours in total',
     'アカウント数 × 20 時間をプール共有',
     '表示形式は 3 種類から選択',
@@ -268,10 +268,10 @@ test('docs: 「維持管理費用」は見積書の記載事項の <li> の中�
   }
 });
 
-test('docs #license: 個人向けプラン（Hobby）はクレジットカード、Enterprise は請求書による銀行振込', () => {
+test('docs #license: 個人向けプラン（HOBBY）はクレジットカード、Enterprise は請求書による銀行振込', () => {
   const lic = visible(sectionOf(read('_includes/docs/02-account.html'), 'license'));
   const text = textOf(lic);
-  assert.ok(text.includes('個人向けプラン（Hobby）のお支払いはクレジットカードです'), text);
+  assert.ok(text.includes('個人向けプラン（HOBBY）のお支払いはクレジットカードです'), text);
   assert.ok(text.includes('次の更新日に利用枠が戻ります'), '利用枠を使い切ったときの案内が無い');
   assert.ok(!text.includes('追加でご契約'), '追加の契約の案内が残っている');
   assert.ok(text.includes('請求書による銀行振込'));
@@ -279,10 +279,10 @@ test('docs #license: 個人向けプラン（Hobby）はクレジットカード
   assert.doesNotMatch(text, PRO_WORD);
 });
 
-test('docs #plan: カードの月額は Hobby の説明で、Enterprise は金額がお見積り', () => {
+test('docs #plan: カードの月額は HOBBY の説明で、Enterprise は金額がお見積り', () => {
   const text = textOf(visible(sectionOf(read('_includes/docs/02-account.html'), 'plan')));
   assert.ok(!text.includes('各プランのカードに月額'), '各プランのカードに月額 が残っている');
-  assert.ok(text.includes('Hobby のカードには月額'));
+  assert.ok(text.includes('HOBBY のカードには月額'));
   assert.ok(text.includes('お見積り'));
   assert.ok(text.includes('同じプランの契約は 1 アカウントにつき 1 つまでです'));
   assert.ok(!text.includes('「契約アカウント数」を選べます'));

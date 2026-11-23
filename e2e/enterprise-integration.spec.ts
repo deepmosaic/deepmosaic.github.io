@@ -104,7 +104,7 @@ for (const [path, t] of PRICING_PAGES) {
 }
 
 for (const path of ['/subscribe/', '/en/subscribe/', '/zh-tw/subscribe/']) {
-  test(`${path} に Pro の申し込みが無く、Hobby のボタンは主ボタン`, async ({ page }) => {
+  test(`${path} に Pro の申し込みが無く、HOBBY のボタンは主ボタン`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     await expect(page.locator('#plan-pro')).toHaveCount(0);
     await expect(page.locator('a[href*="checkout=pro"]')).toHaveCount(0);

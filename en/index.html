@@ -4,7 +4,7 @@ lang: en
 permalink: /en/
 ja_url: /
 source: index.html
-source_hash: "8ed0ebf79792b5fa2a1fc4ba409568fef716223de6bb0745c4eb12a3dbb5544a"
+source_hash: "5d4bfa7cd681653556eb17897939317c12784bae008c217a51d840d8c92ca9ea"
 title: Mosaic work, down to a final check
 seo_title: AI that adds mosaic to faces and body areas in videos | Deepmosaic
 description: "Deepmosaic for Windows: AI automatically detects male and female body areas, male faces, and female faces in videos and adds mosaic, all on your PC. It also finds existing mosaic and applies mosaic over it again. It cannot take mosaic off."
@@ -176,12 +176,12 @@ schemas:
          data-default-length="{{ S.roi.default_length_hours }}"
          data-manual-multiplier="{{ S.roi.manual_work_multiplier }}"></div>
     {%- comment -%}
-      JS 無効時のフォールバック。数値は ja と同じ確定値 (月 10 時間は Hobby の 5 時間を超えるのでお見積り。JS 版 roiFit と同じ結論)。ja の数値を変えたらここも変える。
+      JS 無効時のフォールバック。数値は ja と同じ確定値 (月 10 時間は HOBBY の 5 時間を超えるのでお見積り。JS 版 roiFit と同じ結論)。ja の数値を変えたらここも変える。
     {%- endcomment -%}
     <noscript>
       <div class="card p-6 text-[14px] leading-[1.9] text-ink-2">
         The estimate requires JavaScript in your browser.
-        For 5 videos a month at 2 hours each, your usage exceeds the hours included in Hobby (5 hours a month), so we will guide you to Enterprise, our plan for businesses (custom quote). Up to 5 hours a month, Hobby costs a fixed ¥2,980 / month ({{ site.data.l10n.en.plans.tax_note }}).
+        For 5 videos a month at 2 hours each, your usage exceeds the hours included in HOBBY (5 hours a month), so we will guide you to Enterprise, our plan for businesses (custom quote). Up to 5 hours a month, HOBBY costs a fixed ¥2,980 / month ({{ site.data.l10n.en.plans.tax_note }}).
         The hours included in each plan are listed on the <a href="/en/price/" class="text-accent-soft hover:underline">pricing page</a>.
       </div>
     </noscript>

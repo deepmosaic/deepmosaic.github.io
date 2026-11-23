@@ -204,7 +204,7 @@ bundle exec jekyll build --strict_front_matter   # 出力: _site/
 - 縁: dark 版の地 (#202020) と縁 (黒 10%) はサイトの地 (#1f1f1f) に溶けて形が見えないので、画像は変えずに包むリンクの外側へ明るい 1px の縁を描く (`src/app.css` の `.store-badge-link`、box-shadow なので寸法は変わらない)。`store-button.html` とヘッダーのリンクに付ける。
 - alt はバッジに書かれた文 (ja「Microsoft Store からダウンロード」、en「Download from the Microsoft Store」、zh-tw「從 Microsoft Store 下載」)。
 - 行き先は Microsoft Store のインストーラを直接ダウンロードする URL `https://get.microsoft.com/installer/download/<ID>?referrer=appbadge&source=www.deepmosaic.co.jp` (`_includes/store-install-url.html` が組む。3 言語で同じ)。押すと小さなインストーラ (`Deepmosaic Installer.exe`) がダウンロードされ、開くと Microsoft Store を通して入る。応答は常にファイルの保存なので、リンクに `target` を付けない (同じタブ)。
-- 料金のカードのダウンロードのカード (Hobby) は、バッジではなく青い主ボタン「アプリをダウンロード」(行き先は同じ)。Free の帯はバッジ。
+- 料金のカードのダウンロードのカード (HOBBY) は、バッジではなく青い主ボタン「アプリをダウンロード」(行き先は同じ)。Free の帯はバッジ。
 - 差し替えるときは同じ URL から取り直し、表の sha256 を書き直す (`src/lib/site-store-button.test.js` が照合する)。配布元のバイトのまま置くため、`.gitattributes` で改行を変換しない。
 
 ## トラブルシューティング

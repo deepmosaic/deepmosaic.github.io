@@ -2,18 +2,18 @@
 //
 // ## 何を守るのか
 //
-// - SoftwareApplication の JSON-LD の AggregateOffer はお見積りの Enterprise を外す (lowPrice 0・highPrice = Hobby・offerCount 2)。
+// - SoftwareApplication の JSON-LD の AggregateOffer はお見積りの Enterprise を外す (lowPrice 0・highPrice = HOBBY・offerCount 2)。
 // - FAQ (表示と FAQPage の JSON-LD) は利用枠を使い切ったら次の更新日に戻ることを案内し、追加の契約と Pro の句が無い。
-// - /price/・/subscribe/ と英中の meta description の金額は Hobby の価格・税込額だけ。
-// - ROI 計算機の既定は月 10 時間で、Hobby の込み時間 (月 5 時間) を超えるので Enterprise (お見積り) の案内を出す。
-//   月 5 時間以内に減らすと Hobby (¥2,980) になる。JS 無効では noscript の確定文 (¥2,980) が出る。
-// - llms-full.txt の Enterprise は「お見積り」の見出しで、料金の節の金額は Hobby の価格・税込額だけ。
+// - /price/・/subscribe/ と英中の meta description の金額は HOBBY の価格・税込額だけ。
+// - ROI 計算機の既定は月 10 時間で、HOBBY の込み時間 (月 5 時間) を超えるので Enterprise (お見積り) の案内を出す。
+//   月 5 時間以内に減らすと HOBBY (¥2,980) になる。JS 無効では noscript の確定文 (¥2,980) が出る。
+// - llms-full.txt の Enterprise は「お見積り」の見出しで、料金の節の金額は HOBBY の価格・税込額だけ。
 // - /docs/#team に「Enterprise プランの内容」の一覧がある。
 //
 // 文言・データの細かい検査は `src/lib/site-copy-pricing-text.test.js`。ここは Liquid / 島 → HTML の継ぎ目だけを見る。
 import { test, expect, type Page } from '@playwright/test';
 
-/** 画面に出している有料プランの金額 (Hobby の価格・税込額) */
+/** 画面に出している有料プランの金額 (HOBBY の価格・税込額) */
 const SHOWN_AMOUNTS = ['2,980', '3,278'];
 /** 桁区切りの数 (金額) */
 const AMOUNT = /\d{1,3}(?:,\d{3})+/g;
@@ -75,7 +75,7 @@ for (const [path, renewal, forbidden] of FAQ_RENEWAL) {
 }
 
 for (const path of ['/price/', '/subscribe/', '/en/price/', '/en/subscribe/', '/zh-tw/price/', '/zh-tw/subscribe/']) {
-  test(`${path} の meta description の金額は Hobby の価格・税込額だけで、Pro が無い`, async ({ page }) => {
+  test(`${path} の meta description の金額は HOBBY の価格・税込額だけで、Pro が無い`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     const desc = (await page.locator('meta[name="description"]').getAttribute('content')) ?? '';
     expect(desc).not.toBe('');
@@ -91,7 +91,7 @@ const ROI: Array<[string, { hours: string; hobbyHours: string; hobby: string; qu
 ];
 
 for (const [path, t] of ROI) {
-  test(`${path} の ROI 計算機は既定 (月 10 時間) で Enterprise のお見積りの案内、Hobby の込み時間以内なら Hobby になる`, async ({ page }) => {
+  test(`${path} の ROI 計算機は既定 (月 10 時間) で Enterprise のお見積りの案内、HOBBY の込み時間以内なら HOBBY になる`, async ({ page }) => {
     await page.goto(path, { waitUntil: 'domcontentloaded' });
     const island = page.locator('[data-island="roi"]');
     const results = island.locator('dl');
@@ -103,10 +103,10 @@ for (const [path, t] of ROI) {
     await expect(plan).not.toContainText(/\d{1,3}(?:,\d{3})+|¥|日圓/);
     await expect(results).not.toContainText('Light');
 
-    // 月 2 本 × 2 時間 = 月 4 時間は Hobby の込み時間 (月 5 時間) に収まる
+    // 月 2 本 × 2 時間 = 月 4 時間は HOBBY の込み時間 (月 5 時間) に収まる
     await page.locator('#roi-videos').fill('2');
     await expect(results).toContainText(t.hobbyHours);
-    await expect(plan).toContainText('Hobby');
+    await expect(plan).toContainText('HOBBY');
     await expect(plan).toContainText(t.hobby);
 
     await page.locator('#roi-videos').fill('5');
@@ -114,7 +114,7 @@ for (const [path, t] of ROI) {
   });
 }
 
-test('JS 無効の / では ROI の noscript の確定文 (Hobby の ¥2,980 とお見積りの案内) が出る', async ({ browser, baseURL }) => {
+test('JS 無効の / では ROI の noscript の確定文 (HOBBY の ¥2,980 とお見積りの案内) が出る', async ({ browser, baseURL }) => {
   const context = await browser.newContext({ javaScriptEnabled: false });
   try {
     const page = await context.newPage();
@@ -130,7 +130,7 @@ test('JS 無効の / では ROI の noscript の確定文 (Hobby の ¥2,980 と
   }
 });
 
-test('/llms-full.txt の Enterprise はお見積りの見出しで、料金の節に Pro が無く金額は Hobby のものだけ', async ({ request }) => {
+test('/llms-full.txt の Enterprise はお見積りの見出しで、料金の節に Pro が無く金額は HOBBY のものだけ', async ({ request }) => {
   const res = await request.get('/llms-full.txt');
   expect(res.ok()).toBe(true);
   const body = await res.text();
@@ -141,7 +141,7 @@ test('/llms-full.txt の Enterprise はお見積りの見出しで、料金の�
   expect(start).toBeGreaterThanOrEqual(0);
   const next = body.indexOf('\n## ', start + 1);
   const pricing = body.slice(start, next < 0 ? undefined : next);
-  expect(pricing).toContain('### Hobby');
+  expect(pricing).toContain('### HOBBY');
   expect(pricing).not.toContain('Light');
   expect(pricing).not.toContain('追加契約');
   expect(pricing).not.toMatch(/^### Pro\b/m);

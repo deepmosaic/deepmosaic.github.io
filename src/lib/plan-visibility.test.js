@@ -64,7 +64,7 @@ test('roiTiers: 公開のプランのうち、有料のものとお見積りの�
 	assert.deepEqual(roiTiers([]), [])
 })
 
-test('roiFit: 試算の結果は 5 時間まで Hobby、超えたら Enterprise (お見積り・金額なし)', () => {
+test('roiFit: 試算の結果は 5 時間まで HOBBY、超えたら Enterprise (お見積り・金額なし)', () => {
 	const tiers = roiTiers(publicTiers)
 	const light = byCode('light')
 	for (const h of [0.5, 1, 5]) {

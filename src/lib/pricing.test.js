@@ -248,7 +248,7 @@ const roiDefault = (key) => Number(SITE_YML.match(new RegExp(`^\\s+${key}:\\s*([
 const ROI_HOURS = roiDefault('default_videos_per_month') * roiDefault('default_length_hours');
 const paidPublic = roiTiers(TIERS);
 
-test('既定値 (月 10 時間) は Hobby の込み時間を超えるので Enterprise (お見積り・金額なし)', () => {
+test('既定値 (月 10 時間) は HOBBY の込み時間を超えるので Enterprise (お見積り・金額なし)', () => {
   assert.equal(ROI_HOURS, 10);
   const fit = roiFit(paidPublic, ROI_HOURS);
   assert.equal(fit.tier.code, 'enterprise');
@@ -256,18 +256,18 @@ test('既定値 (月 10 時間) は Hobby の込み時間を超えるので Ente
   assert.equal(fit.quote, true);
 });
 
-test('既定値より少ない月 5 時間では Hobby (月額 2,980 円) が適合する', () => {
+test('既定値より少ない月 5 時間では HOBBY (月額 2,980 円) が適合する', () => {
   const fit = roiFit(paidPublic, 5);
   assert.equal(fit.tier.code, 'light');
   assert.equal(fit.cost, 2980);
   assert.equal(fit.quote, false);
 });
 
-test('作業量が増えると Hobby → Pro → Enterprise に切り替わる (仮の単価)', () => {
+test('作業量が増えると HOBBY → Pro → Enterprise に切り替わる (仮の単価)', () => {
   // 切替点は「込み時間 × 契約本数」で決まる (超過単価は無い)
-  //   5h: Hobby×1                                   → Hobby
+  //   5h: HOBBY×1                                   → HOBBY
   assert.equal(cheapestPlan(paidPriced, 5).tier.code, 'light');
-  //   6h: Hobby は 1 本 (5h) までで候補外           → Pro
+  //   6h: HOBBY は 1 本 (5h) までで候補外           → Pro
   assert.equal(cheapestPlan(paidPriced, 6).tier.code, 'pro');
   //  40h: Pro×2 で賄える (Enterprise は月次プランで賄えないときだけ) → まだ Pro
   assert.equal(cheapestPlan(paidPriced, 40).tier.code, 'pro');

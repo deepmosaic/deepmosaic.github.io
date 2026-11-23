@@ -51,7 +51,7 @@ tiers:
       - "無料期間の終了後も、既存プロジェクトの編集・書き出しは続けてご利用いただけます"
 
   - code: light
-    name: "Hobby"
+    name: "HOBBY"
     display: card
     price: 2980
     price_display: "2,980"
