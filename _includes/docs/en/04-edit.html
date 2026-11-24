@@ -10,8 +10,8 @@ hash:
   edit-toolbar: 404de0fc6f2757b2
   edit-mosaic: 7255d56ccc21d5ca
   edit-persons: 5738e40c9482638b
-  shortcuts: c7bf751ef46a11af
-  edit-sidebar: 382da0e993875ac0
+  shortcuts: b148554186933890
+  edit-sidebar: 6153c15d31c3ee08
   timeline-edit: 9b9790138c3544d6
   edit-media: be1280c18a091c35
   edit-text: 93ef1e830ba73747
@@ -809,11 +809,10 @@ hash:
           <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>Copy the selected element (when you last worked on the timeline)</td></tr>
           <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>Paste the copied element (text and audio at the playhead, clips after the selected clip. When you last worked on the timeline)</td></tr>
           <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>Delete the selected element (when you last worked on the timeline)</td></tr>
-          <tr data-shortcut="person_gallery_toggle"><td rowspan="8">Page</td><td><kbd>P</kbd></td><td>Open / close person gallery</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="7">Page</td><td><kbd>P</kbd></td><td>Open / close person gallery</td></tr>
           <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>Open / close media (sidebar)</td></tr>
           <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>Open / close the text / watermark / audio / fade / transition drawer (the item you opened last)</td></tr>
           <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>Collapse / expand timeline</td></tr>
-          <tr data-shortcut="sidebar_collapse_toggle"><td><kbd>Ctrl+Shift+B</kbd></td><td>Minimize / expand sidebar</td></tr>
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>Open export dialog</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>Open project folder</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Import into Premiere Pro</td></tr>
@@ -876,11 +875,11 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} Settings</div>
-        <div class="kv-val">The gear at the bottom of the sidebar opens "Settings", where you choose the default values for editing: the persistence of BBoxes you draw (this and later frames / this frame only), their shape (rectangle / ellipse / polygon) and type (mosaic / exclusion mask), whether the HUD (boxes and chips) is shown, whether the box chips are shown ("Show BBox labels (name, ID, probability)"; the boxes stay visible when it's off), the eraser's erase mode, shape, and size, whether tracking mode is on when you open the edit page, and whether the sections in the tracking queue are shown on the seek bar ("Show tracking segments on the seek bar"). "Settings" opens without darkening the screen, and you can drag its header to move it, so you can change settings while looking at the preview (it appears in the center each time you open it). Changed values are saved immediately and become the defaults when you start the app (values you switch in the toolbar while editing are not saved). "Reset to default" restores the factory values. The gear isn't shown while the sidebar is minimized</div>
+        <div class="kv-val">The gear at the bottom of the sidebar opens "Settings", where you choose the default values for editing: the persistence of BBoxes you draw (this and later frames / this frame only), their shape (rectangle / ellipse / polygon) and type (mosaic / exclusion mask), whether the HUD (boxes and chips) is shown, whether the box chips are shown ("Show BBox labels (name, ID, probability)"; the boxes stay visible when it's off), the eraser's erase mode, shape, and size, whether tracking mode is on when you open the edit page, and whether the sections in the tracking queue are shown on the seek bar ("Show tracking segments on the seek bar"). "Settings" opens without darkening the screen, and you can drag its header to move it, so you can change settings while looking at the preview (it appears in the center each time you open it). Changed values are saved immediately and become the defaults when you start the app (values you switch in the toolbar while editing are not saved). "Reset to default" restores the factory values</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} Position</div>
-        <div class="kv-val">The button at the end of the sidebar switches whether the sidebar and drawer are on the left or the right side of the screen</div>
+        <div class="kv-key">Position</div>
+        <div class="kv-val">In "Settings", "Position" (Left / Right) under "Display" chooses whether the sidebar and drawer are on the left or the right side of the screen. The default is left, and "Reset to default" puts them back on the left</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Drawer width</div>

@@ -2,8 +2,8 @@
 //
 //   node --test src/lib/site-copy-docs-language-button.test.js
 //
-//   - アプリの表示言語は、プロフィールメニューの「テーマ」の行のすぐ下の 3 つのボタンで切り替える。
-//     ボタンの言語名はそれぞれの言語での呼び名 (日本語・English・繁體中文)。
+//   - アプリの表示言語は、プロフィールメニューの「テーマ」の行のすぐ下の言語の行で切り替える。
+//     押すと開く一覧の言語名はそれぞれの言語での呼び名 (日本語・English・繁體中文)。
 //   - #install の「インストーラの言語」の行はプロフィールメニューの言語の行で切り替えると書き、画面の構成 (#layout) へ案内する。
 //   - #layout の「表示言語」の見出しはプロフィールメニューの説明の前に置く。
 //     プロフィールメニューの項目の並びは許可の一覧のとおり (最後が表示言語の切り替え)。
@@ -72,15 +72,15 @@ test('「インストーラの言語」の行: 切り替えはプロフィール
 	assert.ok(install.includes('href="#layout"'), '画面の構成 (#layout) へのリンクが無い')
 })
 
-test('画面の構成: 表示言語はプロフィールメニューの「テーマ」の行の下の 3 つのボタンで、言語名はそれぞれの言語での呼び名', () => {
+test('画面の構成: 表示言語はプロフィールメニューの「テーマ」の行の下の言語の行で、押すと開く一覧の言語名はそれぞれの言語での呼び名', () => {
 	const layout = sectionOf(intro, 'layout')
 	assert.ok(layout, '陽性対照: #layout が無い')
 	const block = h3BlockOf(layout, '表示言語')
 	assert.ok(block, '「表示言語」の見出しが無い')
 	const text = textOf(block)
 	assert.match(text, /プロフィールメニュー（右上）の「テーマ」の行のすぐ下に/)
-	for (const name of SELF_NAMES) assert.ok(text.includes(name), `ボタンの言語名「${name}」が無い`)
-	assert.match(text, /3 つのボタン/)
+	for (const name of SELF_NAMES) assert.ok(text.includes(name), `一覧の言語名「${name}」が無い`)
+	assert.match(text, /今の言語の名前の行があります。押すと .+ の一覧が開き/)
 	assert.match(text, /次に起動したときも選んだ言語で表示されます/)
 	assert.doesNotMatch(text, /アイコンだけ/)
 	assert.doesNotMatch(layout, /表示言語のボタン/)

@@ -10,8 +10,8 @@ hash:
   edit-toolbar: 404de0fc6f2757b2
   edit-mosaic: 7255d56ccc21d5ca
   edit-persons: 5738e40c9482638b
-  shortcuts: c7bf751ef46a11af
-  edit-sidebar: 382da0e993875ac0
+  shortcuts: b148554186933890
+  edit-sidebar: 6153c15d31c3ee08
   timeline-edit: 9b9790138c3544d6
   edit-media: be1280c18a091c35
   edit-text: 93ef1e830ba73747
@@ -809,11 +809,10 @@ hash:
           <tr data-shortcut="timeline_copy"><td><kbd>Ctrl+C</kbd></td><td>複製選取的元素（最後操作的是時間軸時）</td></tr>
           <tr data-shortcut="timeline_paste"><td><kbd>Ctrl+V</kbd></td><td>貼上複製的元素（文字與音訊貼在播放指標的位置，片段貼在選取片段的後面。最後操作的是時間軸時）</td></tr>
           <tr data-shortcut="timeline_delete"><td><kbd>Delete</kbd></td><td>刪除選取的元素（最後操作的是時間軸時）</td></tr>
-          <tr data-shortcut="person_gallery_toggle"><td rowspan="8">頁面</td><td><kbd>P</kbd></td><td>開啟 / 關閉人物圖庫</td></tr>
+          <tr data-shortcut="person_gallery_toggle"><td rowspan="7">頁面</td><td><kbd>P</kbd></td><td>開啟 / 關閉人物圖庫</td></tr>
           <tr data-shortcut="media_panel_toggle"><td><kbd>A</kbd></td><td>開啟 / 關閉媒體（側邊欄）</td></tr>
           <tr data-shortcut="timeline_panel_toggle"><td><kbd>T</kbd></td><td>開啟 / 關閉文字 / 浮水印 / 音訊 / 淡化 / 轉場的抽屜面板（上次開啟的項目）</td></tr>
           <tr data-shortcut="timeline_collapse_toggle"><td><kbd>Ctrl+Shift+T</kbd></td><td>摺疊 / 展開時間軸</td></tr>
-          <tr data-shortcut="sidebar_collapse_toggle"><td><kbd>Ctrl+Shift+B</kbd></td><td>最小化 / 展開側邊欄</td></tr>
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>開啟匯出對話方塊</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>開啟專案資料夾</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>匯入至 Premiere Pro</td></tr>
@@ -876,11 +875,11 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} 設定</div>
-        <div class="kv-val">以側邊欄下方的齒輪，開啟用來選擇編輯初始值的「設定」。可設定繪製 BBox 的持續（此後的影格也套用 / 僅此影格）、形狀（矩形 / 橢圓 / 多邊形）、類型（馬賽克 / 排除遮罩）、HUD（框與標籤）的顯示、是否顯示框的標籤（「顯示 BBox 標籤（名稱、ID、機率）」。關閉時框仍會顯示）、橡皮擦的擦除方式、形狀與大小、開啟編輯頁面時是否開啟追蹤模式，以及是否在進度列上顯示追蹤佇列的區段（「在進度列顯示追蹤區段」）。「設定」開啟時不會讓畫面變暗，並可拖曳頁首移動，因此能一邊看預覽一邊變更（每次開啟時都會顯示在中央）。變更的值會立即儲存，並成為啟動應用程式時的初始值（編輯中在工具列切換的值不會儲存）。按「重設為預設」即可恢復為出廠時的值。側邊欄最小化時不會顯示</div>
+        <div class="kv-val">以側邊欄下方的齒輪，開啟用來選擇編輯初始值的「設定」。可設定繪製 BBox 的持續（此後的影格也套用 / 僅此影格）、形狀（矩形 / 橢圓 / 多邊形）、類型（馬賽克 / 排除遮罩）、HUD（框與標籤）的顯示、是否顯示框的標籤（「顯示 BBox 標籤（名稱、ID、機率）」。關閉時框仍會顯示）、橡皮擦的擦除方式、形狀與大小、開啟編輯頁面時是否開啟追蹤模式，以及是否在進度列上顯示追蹤佇列的區段（「在進度列顯示追蹤區段」）。「設定」開啟時不會讓畫面變暗，並可拖曳頁首移動，因此能一邊看預覽一邊變更（每次開啟時都會顯示在中央）。變更的值會立即儲存，並成為啟動應用程式時的初始值（編輯中在工具列切換的值不會儲存）。按「重設為預設」即可恢復為出廠時的值</div>
       </div>
       <div class="kv-row">
-        <div class="kv-key">{% include icon.html name="PanelRight" class="inline h-3.5 w-3.5 align-[-2px]" %} 位置</div>
-        <div class="kv-val">以側邊欄最末端的按鈕，切換側邊欄與抽屜面板要放在畫面的左側或右側</div>
+        <div class="kv-key">位置</div>
+        <div class="kv-val">在「設定」的「顯示」中以「位置」（左側 / 右側）選擇側邊欄與抽屜面板要放在畫面的左側或右側。預設為左側，按「重設為預設」即可回到左側</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">抽屜面板的寬度</div>

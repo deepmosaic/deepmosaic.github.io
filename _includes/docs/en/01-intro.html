@@ -4,8 +4,8 @@ hash:
   _head: f97072e0e98f2a64
   about: bac4ce37afa0da1f
   install: 5dd284a8908748cc
-  setup: 3a8a5016951f0997
-  layout: 7568623de4f469c8
+  setup: fe509bdca2356f8b
+  layout: 6cd7ea3a4f6af89c
   theme: 1ad3ef16adc8f0cd
 {%- endcomment -%}
 {%- assign free_plan = site.data.plans.tiers | where: "code", "free" | first -%}
@@ -118,7 +118,7 @@ hash:
     </div>
     <h3 class="mt-6 text-[16px] font-bold text-ink">Preparing GPU acceleration (PCs with an NVIDIA GPU only)</h3>
     <p>On PCs with an NVIDIA GPU, the acceleration components (from NVIDIA; about 1.7 GB to download, about 2.4 GB after extraction) are fetched automatically the first time. They are not fetched on PCs without an NVIDIA GPU. Until they are fetched, the app runs on the CPU (the features are the same, but processing is slower). While they are being fetched, the progress appears in "GPU acceleration" at the bottom right of the screen, and once they are fetched, later detections run on the GPU.</p>
-    <p>If fetching fails, the indicator at the bottom right shows 'Failed to get the files. Press "Retry", or they will be fetched again the next time the app starts'. Check your connection and press "Retry", or restart the app (the files are fetched again automatically the next time it starts). For how these are handled as third-party software, see <a href="#licenses">Bundled third-party software and licenses</a>.</p>
+    <p>If fetching fails, the indicator at the bottom right shows 'Failed to get the files. Press "Retry", or they will be fetched again the next time the app starts', with the reason for the failure below it (for example, "Couldn't connect. Check your internet connection"). After you press "Retry", "Retrying…" is shown while it tries again. Check your connection and press "Retry", or restart the app (the files are fetched again automatically the next time it starts). For how these are handled as third-party software, see <a href="#licenses">Bundled third-party software and licenses</a>.</p>
   </div>
 </section>
 
@@ -176,7 +176,7 @@ hash:
     </figure>
     <p>"Licenses" and "Documentation" in "Help" are available even during the initial setup. In versions before 2.13 and in 2.14, these two items were also in the profile menu.</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">Display language</h3>
-    <p>Just below the "Theme" row in the profile menu (top right), there are 3 buttons: Japanese, English, and Traditional Chinese, each written in its own language. When you press one, the screen language switches immediately, and the app also uses the selected language the next time it starts.</p>
+    <p>Just below the "Theme" row in the profile menu (top right), there is a row showing the name of the current language. Press it to open a list of Japanese, English, and Traditional Chinese, each written in its own language (the current language is checked). When you choose one, the screen language switches immediately, and the app also uses the selected language the next time it starts.</p>
     <h3 class="mt-6 text-[16px] font-bold text-ink">Profile menu (top right)</h3>
     <p>Click your avatar (or user name) to open it. It shows your sign-in status and plan, and has items to sign in, open your organization (when you belong to an organization on a business plan), manage your plan subscription (the plan selection screen opens on the Free plan, and the payment portal opens on a paid plan), contact us, sign out, switch the theme, and switch the display language. "Licenses" and "Documentation" are in "Help" on the menu bar.</p>
     <figure class="my-4">

@@ -138,7 +138,6 @@ const EDIT_SHORTCUTS_FIXTURE = [
 	['media_panel_toggle', 'ページ', ['A']],
 	['timeline_panel_toggle', 'ページ', ['T']],
 	['timeline_collapse_toggle', 'ページ', ['Ctrl', 'Shift', 'T']],
-	['sidebar_collapse_toggle', 'ページ', ['Ctrl', 'Shift', 'B']],
 	['encode_dialog_open', 'ページ', ['Ctrl', 'Enter']],
 	['open_folder', 'ページ', ['Ctrl', 'Shift', 'O']],
 	['premiere_send', 'ページ', ['Ctrl', 'Shift', 'P']],
@@ -167,7 +166,7 @@ const EDIT_SHORTCUTS_FIXTURE = [
  * BBox のコピー / 貼り付け (bbox_copy / bbox_paste、delete_bbox の直後) と BBox A→B をつなぐ
  * (bbox_bridge = Y、中間地点の bbox_bridge_mid = Shift+Y、凡例専用の bbox_bridge_cancel = Esc、bbox_paste の直後) も含む。
  */
-const SHORTCUT_ROW_COUNT = 76
+const SHORTCUT_ROW_COUNT = 75
 
 /** タイムライン編集の節。/docs/#… の深いリンクになるので、変えるときは参照元も直す。 */
 const NEW_SECTIONS = [

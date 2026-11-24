@@ -50,10 +50,11 @@ test('「プランを選ぶ」の説明が同じプランの契約は 1 つま�
 	assert.doesNotMatch(html, /追加でご契約/)
 })
 
-test('プラン選択のスクリーンショットの alt が「契約アカウント数」を表示すると書く', () => {
+test('プラン選択のスクリーンショットの alt が支払方法を表示すると書き、画面に無い契約の数の欄を書かない', () => {
 	const alt = planSelectAlt(readFileSync(ACCOUNT_DOC, 'utf8'))
 	assert.ok(alt, 'plan-select.webp の img と alt がある')
-	assert.match(alt, /契約アカウント数/)
+	assert.match(alt, /支払方法/)
+	assert.doesNotMatch(alt, /契約アカウント数/)
 	assert.doesNotMatch(alt, /契約本数/)
 })
 
