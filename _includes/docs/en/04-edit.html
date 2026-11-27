@@ -1,17 +1,17 @@
 {%- comment -%}
 source: _includes/docs/04-edit.html
 hash:
-  edit-overview: 565879aecd57fc2e
-  edit-player: 7bfb22ddfc87c73d
+  edit-overview: a6eeaec08c90adfb
+  edit-player: 69de7b7ca32fdce8
   edit-zoom: feda739f7e19206f
-  edit-bbox: 41e173027e8fb025
+  edit-bbox: 3c929e61f83cce2e
   edit-track: 162072e3ff60e2d3
   edit-scenes: 5c6de5784d7983d1
   edit-toolbar: 404de0fc6f2757b2
-  edit-mosaic: 7255d56ccc21d5ca
+  edit-mosaic: 69d0ea18e9c0a67d
   edit-persons: 5738e40c9482638b
-  shortcuts: b148554186933890
-  edit-sidebar: 6153c15d31c3ee08
+  shortcuts: 8e8dcce9349c402b
+  edit-sidebar: a79fa6a7d8ebf971
   timeline-edit: 9b9790138c3544d6
   edit-media: be1280c18a091c35
   edit-text: 93ef1e830ba73747
@@ -35,7 +35,7 @@ hash:
       </div>
       <div class="kv-row">
         <div class="kv-key">Header (right)</div>
-        <div class="kv-val">The Open folder / <a href="#edit-persons">Person gallery</a> / <a href="#premiere">Import into Premiere Pro</a> / <a href="#edit-encode">Export</a> buttons and the save status. Check the export queue under "<a href="#queue">Queue</a>" in the menu bar</div>
+        <div class="kv-val">The Open folder / <a href="#edit-persons">Person gallery</a> / <a href="#premiere">Import into Premiere Pro</a> / Multi-window / <a href="#edit-encode">Export</a> buttons and the save status. While the same project is open in two or more windows, a link switch also appears to the right of "Multi-window" ("Editing in multiple windows" below). Check the export queue under "<a href="#queue">Queue</a>" in the menu bar</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Save status</div>
@@ -66,6 +66,19 @@ hash:
       <img src="/assets/img/screenshots/en/edit-overview.webp" alt="The whole edit page (header, player, and timeline)" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">The whole edit page</figcaption>
     </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">Editing in multiple windows</h3>
+    <p>Press "Multi-window" in the header to open the edit page for the same project in another window (it opens at the same playback position as the window where you pressed it). You can also press it in the added windows, and there is no limit on how many you can open. The window that was open from the start is called the main window.</p>
+    <ul>
+      <li>When you change boxes, mosaic settings, or the timeline in any window, the change is reflected in the other windows as soon as the operation is finished (for example, when you release the mouse button; about 0.1 seconds). Changes in the middle of a drag aren't reflected</li>
+      <li>The <kbd>Ctrl+Z</kbd> history (<kbd>Ctrl+Shift+Z</kbd> for timeline editing) is shared by all windows. Pressing it in any window undoes the last operation in that history (including operations made in other windows), and the result is reflected in all windows. In a window opened later, you can't undo operations made before it opened</li>
+      <li>The playback position, zoom, selected box, preview toggle (boxes / mosaic preview), and playback speed are separate for each window</li>
+      <li>While the project is open in two or more windows, a link switch appears to the right of "Multi-window" (hovering over it shows "Link with the main window"). Windows with the switch turned on stay on the same frame when you step frames, seek, or use the wheel, and play together when you press <kbd>Space</kbd> (sound comes only from the window where playback started; during playback they can be off by 1 to 2 frames, and they line up again when you stop). The switch is off by default, and windows with it off don't move. Linking pauses during the trim preview and in tracking mode</li>
+      <li>If operations in two windows hit the same part at almost the same time (within about 0.1 seconds), the operation that arrived later is undone as a whole, and "Your last change was undone because it overlapped with a change in another window." is shown</li>
+      <li><a href="#edit-encode">Export</a> includes the latest edits made in the other windows. When you press "Regroup people" in the <a href="#edit-persons">Person gallery</a>, the other windows can't be used until the processing finishes, and then they reload automatically and return to their playback positions (the <kbd>Ctrl+Z</kbd> history is cleared in every window)</li>
+      <li><a href="#edit-track">Tracking</a> runs in only one window at a time. If you start tracking in another window, tracking in the previous window stops</li>
+      <li>While the project is open in another window, some operations, such as deleting the project, aren't available (close that window first)</li>
+      <li>Added windows don't have the menu bar or the footer (use the main window for the menu bar and profile menu, such as your account, display language, theme, and "Queue"). Closing an added window with × or "Back" closes only that window. If you return to the home screen in the main window, the added windows stay open, and closing the main window quits the whole app (your edits are saved). When you restart the app, the added windows aren't reopened</li>
+    </ul>
   </div>
 </section>
 
@@ -73,7 +86,7 @@ hash:
   {% include docs-h2.html kicker="Editing" title="Player and timeline" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>The player overlays detection boxes (BBoxes) in a different color for each class. Drag a box to edit its position and size directly. The player supports stepping frame by frame and seeking. The timeline at the bottom shows the distribution of detections and the scene (cut) strip, and you can click it to jump to any frame.</p>
-    <p>Detection classes are color-coded: body areas (red) / male face (blue) / female face (pink) / user-created (yellow) / exclusion mask (teal) / mosaic (purple: mosaic already in your footage, only in projects detected with "Mosaic" turned on in the detection options). The label (chip) above each box shows "class name #ID (3-character code) confidence%". Boxes you added manually are labeled "User", exclusion masks are labeled "Exclude", and tracks excluded from mosaic get "[mosaic excluded]". To hide the chips, turn off "Show BBox labels (name, ID, probability)" in "Settings" in the sidebar (the boxes stay visible. <a href="#edit-sidebar">Sidebar and drawers</a>).</p>
+    <p>Detection classes are color-coded: body areas (red) / male face (blue) / female face (pink) / user-created (yellow) / exclusion mask (teal) / mosaic (purple: mosaic already in your footage, only in projects detected with "Mosaic" turned on in the detection options). The label (chip) above each box shows "class name #ID (3-character code) confidence%". Boxes you added manually are labeled "User", exclusion masks are labeled "Exclude", tracks excluded from mosaic get "[mosaic excluded]", and boxes with "Apply mosaic" turned off in <a href="#edit-mosaic">Mosaic settings</a> get "[mosaic off]". The chips aren't shown by default. To show them, turn on "Show BBox labels (name, ID, probability)" in "Settings" in the sidebar (the boxes stay visible when it's off. <a href="#edit-sidebar">Sidebar and drawers</a>).</p>
     <p>Mosaic (purple) boxes are polygons (up to 255 points), and as with other polygon boxes, you can move their points to fix the shape ("Range-selecting and bending points" below, <a href="#detect-mosaic">Finding existing mosaic and reapplying it</a>).</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/en/edit-player.webp" alt="The player with detection box overlays and the timeline. The area inside each box is where mosaic is applied" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -83,7 +96,7 @@ hash:
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">Play / step frames</div>
-        <div class="kv-val">Go to start (<kbd>Home</kbd>) / Back 1 frame (<kbd>←</kbd>) / Play/pause (<kbd>Space</kbd>) / Forward 1 frame (<kbd>→</kbd>) / Go to end (<kbd>End</kbd>). <kbd>PageUp</kbd> / <kbd>PageDown</kbd> move 10 frames. You can also step frames with the mouse wheel, and <kbd>Shift</kbd>+wheel moves 10 frames. If you move forward with <kbd>Shift</kbd>+<kbd>→</kbd> (or <kbd>Shift</kbd>+wheel up) while a BBox is selected, you advance one frame at a time while keeping that box's shape ("Step frames while carrying over the shape" under "Working with detection boxes" below)</div>
+        <div class="kv-val">Go to start (<kbd>Home</kbd>) / Back 1 frame (<kbd>←</kbd>) / Play/pause (<kbd>Space</kbd>) / Forward 1 frame (<kbd>→</kbd>) / Go to end (<kbd>End</kbd>). <kbd>PageUp</kbd> / <kbd>PageDown</kbd> move 10 frames. You can also step frames with the mouse wheel, and <kbd>Shift</kbd>+wheel moves 10 frames. If you move forward with <kbd>Shift</kbd>+<kbd>→</kbd> (or <kbd>Shift</kbd>+wheel up) while a BBox is selected, you advance one frame at a time while keeping that box's shape ("Step frames while carrying over the shape" under "Working with detection boxes" below). By default, scrolling the wheel up moves forward. If you turn on "Step forward when scrolling the wheel down" in "Settings" in the sidebar, scrolling down moves forward instead (the 10-frame step with <kbd>Shift</kbd>, shape carry-over, and tracking mode follow the same direction, and zooming with <kbd>Ctrl</kbd>+wheel doesn't change). "Wheel up" on this page refers to the default direction</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Seek</div>
@@ -95,7 +108,7 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Toggle overlay (<kbd>H</kbd>)</div>
-        <div class="kv-val">Hides all detection boxes, labels, IDs, and confidence scores so you can check only the video. Your edits don't change</div>
+        <div class="kv-val">Hides all detection boxes, labels, IDs, and confidence scores so you can check only the video. Your edits don't change. It's shown when you open the edit page (turn off "Show detection overlay" in "Settings" in the sidebar to open the page with it hidden)</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">Playback speed</div>
@@ -284,7 +297,7 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Changing a whole class at once</div>
-        <div class="kv-val">In the "By class" tab of <a href="#edit-mosaic">Mosaic settings</a> (<kbd>G</kbd>), choose a class and press "Make all of this class exclusion masks". A confirmation showing the number of IDs appears. It applies to the detected IDs of that class that exist at that time (for "Face", both male and female faces; manually added boxes and IDs added later aren't included). "Change all of this class back to mosaic" changes them back all at once. Either way, one <kbd>Ctrl+Z</kbd> undoes it</div>
+        <div class="kv-val">In the "By class" tab of <a href="#edit-mosaic">Mosaic settings</a> (<kbd>G</kbd>), choose a class and press "Make all of this class exclusion masks". A confirmation showing the number of IDs appears. It applies to the detected IDs of that class that exist at that time (male face and female face are separate classes, and faces whose gender is unknown count as female face; manually added boxes and IDs added later aren't included. These buttons don't appear while "Manually added masks" is selected). "Change all of this class back to mosaic" changes them back all at once. Either way, one <kbd>Ctrl+Z</kbd> undoes it</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">Display</div>
@@ -584,7 +597,7 @@ hash:
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">Scope tabs</div>
-        <div class="kv-val">All (global defaults) / By class (body areas, face, and so on. In projects that have boxes for <a href="#detect-mosaic">existing mosaic</a>, "Mosaic" also appears) / By ID (individual tracked subjects) / By scene (per cut) / By time (a time range. "By time" below). On the By ID, By scene, and By time tabs, choose the target from the drop-down list. A scope with an override shows "Overridden", and you can remove each override individually with "Clear". The "By class" tab also has "Make all of this class exclusion masks" and "Change all of this class back to mosaic" (<a href="#edit-bbox">Changing existing boxes into exclusion masks</a>)</div>
+        <div class="kv-val">All (global defaults) / By class (choose "Body areas" / "Male face" / "Female face" / "Manually added masks" in "Target class:". In projects that have boxes for <a href="#detect-mosaic">existing mosaic</a>, "Mosaic" also appears. Faces whose gender is unknown use the female face setting, and if you change the gender in the <a href="#edit-persons">Person gallery</a>, the setting for that gender is used. "Manually added masks" applies to boxes you added yourself) / By ID (individual tracked subjects) / By scene (per cut) / By time (a time range. "By time" below). On the By ID, By scene, and By time tabs, choose the target from the drop-down list. A scope with an override shows "Overridden", and you can remove each override individually with "Clear". The "By class" tab also has "Make all of this class exclusion masks" and "Change all of this class back to mosaic" (<a href="#edit-bbox">Changing existing boxes into exclusion masks</a>)</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Confidence threshold</div>
@@ -638,6 +651,10 @@ hash:
         <div class="kv-val">Takes each block's color from a single sample point instead of the area average (equivalent to Sharp Colors in Premiere Pro; off by default)</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">Apply mosaic</div>
+        <div class="kv-val">A switch at the top of each tab (on by default). When it's off, no mosaic is applied to the target chosen on that tab (all, a class, an ID, a scene, or a time range) in the preview or the export. The boxes stay, and you can turn it back on at any time. On the "By ID", "By scene", and "By time" tabs, you can press it after choosing a target. The labels (chips) of boxes with it off show "[mosaic off]". While any setting is off, "N settings turn mosaic off. If you export now, mosaic won't be applied to those parts." and a "Turn all back on" button appear at the top of the edit page, and the <a href="#edit-encode">Export</a> settings also show "N settings turn mosaic off. Mosaic won't be applied to those parts." As with the other items, the setting changed last takes priority ("Setting priority" below)</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">Invert (apply outside)</div>
         <div class="kv-val">Shown only when you select a detected subject or an added box on the "By ID" tab (not available for exclusion masks or on the "All", "By class", "By scene", and "By time" tabs; off by default). When it's on, the inside of the box stays as the original video, and mosaic / blur (using that box's type, block, and blur settings) is applied outside the box (the background). It affects both the mosaic preview (<kbd>M</kbd>) and the export. When several inverted boxes are in the same frame, areas inside any of them are kept. It isn't included in "Make these settings the default", and it isn't carried over when settings are copied automatically to a box you add (pieces split off with the eraser inherit all the settings of the original box). It is the same setting as "Invert (mosaic outside)" and "Invert (blur outside)" in the box's right-click menu (<a href="#edit-player">Working with detection boxes</a>). Projects with inverted boxes can't be sent to Premiere Pro (<a href="#premiere">Premiere Pro integration</a>)</div>
       </div>
@@ -816,7 +833,7 @@ hash:
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>Open export dialog</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>Open project folder</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>Import into Premiere Pro</td></tr>
-          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">Mouse</td><td>Wheel</td><td>Step forward / back a frame (10 frames with <kbd>Shift</kbd>. While a box is selected, scrolling up with <kbd>Shift</kbd> held moves forward 1 frame and carries over the shape, like <kbd>Shift</kbd>+<kbd>→</kbd>, and scrolling down moves back 1 frame. While carry-over is locked, scrolling up carries over the shape even without <kbd>Shift</kbd>)</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">Mouse</td><td>Wheel</td><td>Step forward / back a frame (10 frames with <kbd>Shift</kbd>. While a box is selected, scrolling up with <kbd>Shift</kbd> held moves forward 1 frame and carries over the shape, like <kbd>Shift</kbd>+<kbd>→</kbd>, and scrolling down moves back 1 frame. While carry-over is locked, scrolling up carries over the shape even without <kbd>Shift</kbd>. You can reverse the direction with "Step forward when scrolling the wheel down" in "Settings" in the sidebar)</td></tr>
           <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+wheel</td><td>Zoom the frame in or out around the cursor position</td></tr>
           <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+left-drag</td><td>Pan the frame (works only while zoomed in. Dragging with the middle button also works)</td></tr>
           <tr data-shortcut="mouse_draw"><td>Left-drag</td><td>Left-drag on an empty area to draw a BBox in the shape chosen in the shape picker (rectangle / ellipse / polygon). For polygons, click to place points, and close the shape with the start point / <kbd>Enter</kbd> / double-click. A short tap clears the selection</td></tr>
@@ -875,11 +892,11 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} Settings</div>
-        <div class="kv-val">The gear at the bottom of the sidebar opens "Settings", where you choose the default values for editing: the persistence of BBoxes you draw (this and later frames / this frame only), their shape (rectangle / ellipse / polygon) and type (mosaic / exclusion mask), whether the HUD (boxes and chips) is shown, whether the box chips are shown ("Show BBox labels (name, ID, probability)"; the boxes stay visible when it's off), the eraser's erase mode, shape, and size, whether tracking mode is on when you open the edit page, and whether the sections in the tracking queue are shown on the seek bar ("Show tracking segments on the seek bar"). "Settings" opens without darkening the screen, and you can drag its header to move it, so you can change settings while looking at the preview (it appears in the center each time you open it). Changed values are saved immediately and become the defaults when you start the app (values you switch in the toolbar while editing are not saved). "Reset to default" restores the factory values</div>
+        <div class="kv-val">The gear at the bottom of the sidebar opens "Settings", where you choose the default values for editing: "Position" at the top (next row); the persistence of BBoxes you draw (this and later frames / this frame only), their shape (rectangle / ellipse / polygon) and type (mosaic / exclusion mask); under "Display", "Show detection overlay" (whether boxes and labels are overlaid when you open the edit page; on by default), "Show BBox labels (name, ID, probability)" (whether the box chips are shown; off by default, and the boxes stay visible when it's off), and "Step forward when scrolling the wheel down" (off by default, so scrolling up moves forward); the eraser's erase mode, shape, and size; whether tracking mode is on when you open the edit page; and whether the sections in the tracking queue are shown on the seek bar ("Show tracking segments on the seek bar"). "Settings" opens without darkening the screen, and you can drag its header to move it, so you can change settings while looking at the preview (it appears in the center each time you open it). Click outside the panel, or press × or <kbd>Esc</kbd>, to close it (a click outside only closes the panel and doesn't act on the preview or the timeline). Changed values are saved immediately and become the defaults when you start the app (values you switch in the toolbar while editing are not saved). "Reset to default" restores the factory values</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">Position</div>
-        <div class="kv-val">In "Settings", "Position" (Left / Right) under "Display" chooses whether the sidebar and drawer are on the left or the right side of the screen. The default is left, and "Reset to default" puts them back on the left</div>
+        <div class="kv-val">"Position" (Left / Right) at the top of "Settings" chooses whether the sidebar and drawer are on the left or the right side of the screen. The default is left, and "Reset to default" puts them back on the left</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">Drawer width</div>

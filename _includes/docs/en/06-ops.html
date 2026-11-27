@@ -6,7 +6,7 @@ hash:
   uninstall: ace89672cd475884
   usage: 74ceb93e983f5c2b
   spec: 07b3e14544016446
-  trouble: 4a8ff06983eb17f7
+  trouble: d73364798b674d7c
   web: 70f28eb8f301c594
   licenses: 80968f0a3bfde9cc
 {%- endcomment -%}
@@ -140,7 +140,7 @@ hash:
       <li>If no preview appears on the detection options screen: If "Could not get the video information" is shown, the file may be corrupted or in an unsupported format. If "The video processing files needed for the preview were not found" is shown, restart the app and let it finish downloading the required files.</li>
       <li>If "Could not create the project folder in the save location for detection results" appears (on the detection options screen, "Can't create the project folder in the save location for detection results" is shown): The problem is not the video's location: the app can't write to the save location for detection results (the project folder). Choose the save location again ("File ▸ Select a project folder" in the menu, or "Choose the project folder again" on the detection options screen), or press "Use the default location". If folder protection in your security software is blocking writes, allow Deepmosaic, and also check the folder's access permissions. If the save location is on an external drive or a network folder, check the connection (<a href="#import">Project folder</a>).</li>
       <li>If "No videos that can be processed were found" appears even though you chose a folder: Videos in subfolders aren't included. Choose the folder that directly contains the videos.</li>
-      <li>If you can't press "Start": The model files are being checked. Wait a while, or press "Retry" if an error is shown. If you have reached your limit, you need to change your plan (or sign in, if you aren't signed in). You also can't press it if your remaining available detection time is shorter than the full length of the video; the reason is shown above "Start" (the full length is counted even if you narrow the range; see <a href="#detect-options">Detection options</a>).</li>
+      <li>If you can't press "Start": The files needed for detection are being checked. Wait a while, or press "Retry" if an error is shown. If you have reached your limit, you need to change your plan (or sign in, if you aren't signed in). You also can't press it if your remaining available detection time is shorter than the full length of the video; the reason is shown above "Start" (the full length is counted even if you narrow the range; see <a href="#detect-options">Detection options</a>).</li>
       <li>If a video you ran detection on doesn't appear on the home screen: "All videos" shows only videos in the current project folder that were created with the account you are signed in with. Videos saved in another project folder can be found from the "Other folders" row in the sidebar (<a href="#import">Project folder</a>).</li>
       <li>If "Sign in to use the high-accuracy model" appears: Once you sign in, PCs with a GPU can use the high-accuracy model from the next detection (until then, detection uses the lightweight model). If "Preparing the high-accuracy model" appears, detection uses the lightweight model until the download finishes.</li>
       <li>If an interrupted detection can't be resumed: Check the reason shown on the card. It can't be resumed if, for example, the original video was moved or changed, or the project has been edited. In that case, "Discard" it, then load the video again (<a href="#detect">AI detection</a>).</li>

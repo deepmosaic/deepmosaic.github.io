@@ -1,17 +1,17 @@
 {%- comment -%}
 source: _includes/docs/04-edit.html
 hash:
-  edit-overview: 565879aecd57fc2e
-  edit-player: 7bfb22ddfc87c73d
+  edit-overview: a6eeaec08c90adfb
+  edit-player: 69de7b7ca32fdce8
   edit-zoom: feda739f7e19206f
-  edit-bbox: 41e173027e8fb025
+  edit-bbox: 3c929e61f83cce2e
   edit-track: 162072e3ff60e2d3
   edit-scenes: 5c6de5784d7983d1
   edit-toolbar: 404de0fc6f2757b2
-  edit-mosaic: 7255d56ccc21d5ca
+  edit-mosaic: 69d0ea18e9c0a67d
   edit-persons: 5738e40c9482638b
-  shortcuts: b148554186933890
-  edit-sidebar: 6153c15d31c3ee08
+  shortcuts: 8e8dcce9349c402b
+  edit-sidebar: a79fa6a7d8ebf971
   timeline-edit: 9b9790138c3544d6
   edit-media: be1280c18a091c35
   edit-text: 93ef1e830ba73747
@@ -35,7 +35,7 @@ hash:
       </div>
       <div class="kv-row">
         <div class="kv-key">頁首右側</div>
-        <div class="kv-val">開啟資料夾 / <a href="#edit-persons">人物圖庫</a> / <a href="#premiere">匯入至 Premiere Pro</a> / <a href="#edit-encode">匯出</a> 等按鈕，以及儲存狀態的顯示。匯出的等候清單可在選單列的「<a href="#queue">佇列</a>」中查看</div>
+        <div class="kv-val">開啟資料夾 / <a href="#edit-persons">人物圖庫</a> / <a href="#premiere">匯入至 Premiere Pro</a> / 多視窗 / <a href="#edit-encode">匯出</a> 等按鈕，以及儲存狀態的顯示。同一專案在 2 個以上的視窗中開啟時，「多視窗」右側也會出現連動開關（下方的「在多個視窗中編輯」）。匯出的等候清單可在選單列的「<a href="#queue">佇列</a>」中查看</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">儲存狀態</div>
@@ -66,6 +66,19 @@ hash:
       <img src="/assets/img/screenshots/zh-tw/edit-overview.webp" alt="整個編輯頁面（頁首、播放器、時間軸）" width="1280" height="800" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
       <figcaption class="mt-2 text-[12.5px] text-ink-4">整個編輯頁面</figcaption>
     </figure>
+    <h3 class="mt-6 text-[16px] font-bold text-ink">在多個視窗中編輯</h3>
+    <p>按下頁首的「多視窗」，會在另一個視窗中開啟同一專案的編輯頁面（從與按下按鈕的視窗相同的播放位置開啟）。新增的視窗中也能按，開啟的數量沒有上限。從一開始就開啟的視窗稱為主視窗。</p>
+    <ul>
+      <li>在任一視窗中變更框、馬賽克設定或時間軸時，會在操作確定的時間點（例如放開滑鼠時，約 0.1 秒後）同步到其他視窗。拖曳途中不會同步</li>
+      <li><kbd>Ctrl+Z</kbd>（時間軸編輯為 <kbd>Ctrl+Shift+Z</kbd>）的記錄在所有視窗中共用。在任一視窗按下都會復原該記錄中的最後一個操作（包含在其他視窗進行的操作），並同步到所有視窗。在之後才開啟的視窗中，無法復原開啟前的操作</li>
+      <li>播放位置、縮放、選取中的框、切換預覽（框的顯示 / 馬賽克套用預覽）與播放速度，每個視窗各自獨立</li>
+      <li>在 2 個以上的視窗中開啟時，「多視窗」右側會出現連動開關（滑鼠移到上方會顯示「與主視窗連動」）。開啟開關的視窗之間，逐格移動、跳轉與滾輪會對齊到同一影格，按 <kbd>Space</kbd> 播放時會一起播放（聲音只會從開始播放的視窗發出。播放中可能會相差 1～2 個影格，停止時會對齊）。開關預設為關閉，關閉的視窗不會移動。修剪的預覽中與追蹤模式期間會暫停連動</li>
+      <li>2 個視窗的操作幾乎同時（約 0.1 秒以內）碰到同一處時，會整個取消較晚送達的操作，並顯示「因與其他視窗的變更重疊，已復原上一個操作。」</li>
+      <li><a href="#edit-encode">匯出</a>會連同其他視窗最近的編輯一起匯出。在<a href="#edit-persons">人物圖庫</a>按下「重新歸類人物」時，其他視窗在處理完成前無法操作，完成後會自動重新載入並回到原本的播放位置（所有視窗的 <kbd>Ctrl+Z</kbd> 記錄都會清除）</li>
+      <li><a href="#edit-track">追蹤</a>同一時間只會在 1 個視窗中執行。在其他視窗開始追蹤時，前一個視窗的追蹤會停止</li>
+      <li>該專案在其他視窗中開啟時，無法進行刪除該專案等部分操作（請先關閉該視窗）</li>
+      <li>新增的視窗沒有選單列與頁尾（帳戶、顯示語言、主題與「佇列」等選單列與個人資料選單的操作，請在主視窗中進行）。以 × 或「返回」只會關閉該視窗。在主視窗回到首頁畫面時，新增的視窗仍會保持開啟；關閉主視窗則會結束整個應用程式（編輯已儲存）。重新啟動應用程式時，不會重新開啟新增的視窗</li>
+    </ul>
   </div>
 </section>
 
@@ -73,7 +86,7 @@ hash:
   {% include docs-h2.html kicker="編輯" title="播放器與時間軸" %}
   <div class="rich-prose pt-1.5 text-[14.5px] leading-[2.1] text-ink-2">
     <p>播放器會以各類別的顏色疊加顯示偵測框（BBox）。可直接拖曳框來編輯位置與大小。支援逐格移動與跳轉，下方的時間軸會繪製偵測的分布與場景（鏡頭）列，按一下即可跳至任意影格。</p>
-    <p>偵測類別會以顏色區分：身體部位（紅）/ 男性臉部（藍）/ 女性臉部（粉紅）/ 使用者建立（黃）/ 排除遮罩（青綠）/ 馬賽克（紫，素材上原本就有的馬賽克。僅限在偵測選項中開啟「馬賽克」後偵測的專案）。框上方的標籤會顯示「類別名稱 #ID（3 字元的代碼） 信賴度%」；手動新增的框會標示「使用者」，排除遮罩會標示「排除」，排除於馬賽克對象之外的追蹤軌跡則會加上「[已排除馬賽克]」。在側邊欄的「設定」中關閉「顯示 BBox 標籤（名稱、ID、機率）」後，就不會顯示標籤（框仍會顯示。<a href="#edit-sidebar">側邊欄與抽屜面板</a>）。</p>
+    <p>偵測類別會以顏色區分：身體部位（紅）/ 男性臉部（藍）/ 女性臉部（粉紅）/ 使用者建立（黃）/ 排除遮罩（青綠）/ 馬賽克（紫，素材上原本就有的馬賽克。僅限在偵測選項中開啟「馬賽克」後偵測的專案）。框上方的標籤會顯示「類別名稱 #ID（3 字元的代碼） 信賴度%」；手動新增的框會標示「使用者」，排除遮罩會標示「排除」，排除於馬賽克對象之外的追蹤軌跡會加上「[已排除馬賽克]」，在<a href="#edit-mosaic">馬賽克設定</a>中關閉「套用馬賽克」的框會加上「[馬賽克關閉]」。標籤預設不會顯示。在側邊欄的「設定」中開啟「顯示 BBox 標籤（名稱、ID、機率）」後就會顯示（關閉時框仍會顯示。<a href="#edit-sidebar">側邊欄與抽屜面板</a>）。</p>
     <p>馬賽克（紫）的框是多邊形（最多 255 點），與其他多邊形的框一樣，可以移動頂點來修正形狀（下方的「頂點的範圍選取與彎曲」、<a href="#detect-mosaic">找出既有馬賽克並重新套用</a>）。</p>
     <figure class="my-4">
       <img src="/assets/img/screenshots/zh-tw/edit-player.webp" alt="疊加顯示偵測框的播放器與時間軸。框的內側就是套用馬賽克的範圍" width="1188" height="987" loading="lazy" decoding="async" class="w-full rounded-[10px] border border-edge">
@@ -83,7 +96,7 @@ hash:
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">播放 / 逐格移動</div>
-        <div class="kv-val">移至開頭（<kbd>Home</kbd>）/ 後退 1 個影格（<kbd>←</kbd>）/ 播放、暫停（<kbd>Space</kbd>）/ 前進 1 個影格（<kbd>→</kbd>）/ 移至結尾（<kbd>End</kbd>）。按 <kbd>PageUp</kbd> / <kbd>PageDown</kbd> 移動 10 個影格。也可用滑鼠滾輪逐格移動，<kbd>Shift</kbd>+滾輪則移動 10 個影格。選取 BBox 時，以 <kbd>Shift</kbd>+<kbd>→</kbd>（或 <kbd>Shift</kbd>+滾輪向上）前進，會沿用該框的形狀逐格前進（下方「偵測框的操作」中的「沿用形狀逐格前進」）</div>
+        <div class="kv-val">移至開頭（<kbd>Home</kbd>）/ 後退 1 個影格（<kbd>←</kbd>）/ 播放、暫停（<kbd>Space</kbd>）/ 前進 1 個影格（<kbd>→</kbd>）/ 移至結尾（<kbd>End</kbd>）。按 <kbd>PageUp</kbd> / <kbd>PageDown</kbd> 移動 10 個影格。也可用滑鼠滾輪逐格移動，<kbd>Shift</kbd>+滾輪則移動 10 個影格。選取 BBox 時，以 <kbd>Shift</kbd>+<kbd>→</kbd>（或 <kbd>Shift</kbd>+滾輪向上）前進，會沿用該框的形狀逐格前進（下方「偵測框的操作」中的「沿用形狀逐格前進」）。滾輪預設為向上捲動時前進。在側邊欄的「設定」中開啟「滾輪向下捲動時前進」後，改為向下捲動時前進（按住 <kbd>Shift</kbd> 的 10 個影格、沿用形狀與追蹤模式也會是相同方向，<kbd>Ctrl</kbd>+滾輪的縮放不變）。本頁的「滾輪向上」是以預設方向來描述</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">跳轉</div>
@@ -95,7 +108,7 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">切換疊加層顯示（<kbd>H</kbd>）</div>
-        <div class="kv-val">隱藏所有偵測框、標籤、ID 與機率，只確認影像。編輯內容不會改變</div>
+        <div class="kv-val">隱藏所有偵測框、標籤、ID 與機率，只確認影像。編輯內容不會改變。開啟編輯頁面時會顯示（在側邊欄的「設定」中關閉「顯示偵測疊加層」後，開啟時會是隱藏狀態）</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">播放速度</div>
@@ -284,7 +297,7 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">依類別一次變更</div>
-        <div class="kv-val">在<a href="#edit-mosaic">馬賽克設定</a>（<kbd>G</kbd>）的「依類別」分頁選擇類別，按下「將此類別全部設為排除遮罩」。會出現顯示對象 ID 數量的確認。對象為當時存在的、該類別中偵測到的 ID（臉部包含男性臉部與女性臉部兩者。不包含手動新增的框，以及之後才增加的 ID）。按「將此類別全部改回馬賽克」即可一次改回馬賽克。兩者都可用 <kbd>Ctrl+Z</kbd> 按 1 次復原</div>
+        <div class="kv-val">在<a href="#edit-mosaic">馬賽克設定</a>（<kbd>G</kbd>）的「依類別」分頁選擇類別，按下「將此類別全部設為排除遮罩」。會出現顯示對象 ID 數量的確認。對象為當時存在的、該類別中偵測到的 ID（男性臉部與女性臉部是不同的類別，無法判斷性別的臉部會歸入女性臉部。不包含手動新增的框，以及之後才增加的 ID。選擇「手動新增的遮罩」時不會出現這些按鈕）。按「將此類別全部改回馬賽克」即可一次改回馬賽克。兩者都可用 <kbd>Ctrl+Z</kbd> 按 1 次復原</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">顯示</div>
@@ -584,7 +597,7 @@ hash:
     <div class="kv my-3.5" style="--kv-label-w: 200px">
       <div class="kv-row">
         <div class="kv-key">套用範圍分頁</div>
-        <div class="kv-val">全部（全域預設值）/ 依類別（身體部位、臉部等。在有<a href="#detect-mosaic">既有馬賽克</a>框的專案中也會出現「馬賽克」）/ 依 ID（被追蹤的各個對象）/ 依場景（以鏡頭為單位）/ 依時間（時間範圍。下方的「依時間」）。在依 ID、依場景與依時間中，以下拉式選單選擇對象。正在覆寫的範圍會顯示「已覆寫」，可用「清除」個別解除。「依類別」分頁中也有「將此類別全部設為排除遮罩」「將此類別全部改回馬賽克」（<a href="#edit-bbox">將既有的框改為排除遮罩</a>）</div>
+        <div class="kv-val">全部（全域預設值）/ 依類別（在「目標類別：」中從「身體部位」/「男性臉部」/「女性臉部」/「手動新增的遮罩」選擇。在有<a href="#detect-mosaic">既有馬賽克</a>框的專案中也會出現「馬賽克」。無法判斷性別的臉部會使用女性臉部的設定，在<a href="#edit-persons">人物圖庫</a>中變更性別後，會使用變更後性別的設定。「手動新增的遮罩」會套用於自行新增的框）/ 依 ID（被追蹤的各個對象）/ 依場景（以鏡頭為單位）/ 依時間（時間範圍。下方的「依時間」）。在依 ID、依場景與依時間中，以下拉式選單選擇對象。正在覆寫的範圍會顯示「已覆寫」，可用「清除」個別解除。「依類別」分頁中也有「將此類別全部設為排除遮罩」「將此類別全部改回馬賽克」（<a href="#edit-bbox">將既有的框改為排除遮罩</a>）</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">信賴度臨界值</div>
@@ -638,6 +651,10 @@ hash:
         <div class="kv-val">馬賽克格的顏色不取區域平均，而改用單點取樣（相當於 Premiere Pro 的 Sharp Colors，預設關閉）</div>
       </div>
       <div class="kv-row">
+        <div class="kv-key">套用馬賽克</div>
+        <div class="kv-val">位於各分頁開頭的開關（預設為開啟）。關閉後，在該分頁選擇的對象（全部 / 類別 / ID / 場景 / 時間範圍）在預覽與匯出時都不會套用馬賽克。框會保留，可隨時重新開啟。在「依 ID」「依場景」「依時間」分頁中，選擇對象後即可按下。關閉的框的標籤會加上「[馬賽克關閉]」。有關閉的設定時，編輯頁面上方會顯示「有 N 項設定不套用馬賽克。若在此狀態下匯出，這些部分將不會套用馬賽克。」與「全部重新開啟」按鈕，<a href="#edit-encode">匯出</a>設定中也會顯示「有 N 項設定不套用馬賽克。這些部分將不會套用馬賽克。」與其他項目相同，以最後設定的為優先（下方的「設定的優先」）</div>
+      </div>
+      <div class="kv-row kv-alt">
         <div class="kv-key">反轉（套用於外側）</div>
         <div class="kv-val">只有在「依 ID」分頁中選擇偵測到的對象或新增的框時才會顯示（排除遮罩，以及「全部」「依類別」「依場景」「依時間」分頁中沒有此項目。預設關閉）。開啟後，該框的內側會保留原本的影像，並在框的外側（背景）套用馬賽克 / 模糊（使用該框的類型、馬賽克格與模糊設定）。同時作用於馬賽克套用預覽（<kbd>M</kbd>）與匯出。同一畫面中有多個反轉的框時，會保留位於任一框內側的部分。此設定不包含在「將此設定設為預設」中，新增框時的設定自動沿用也不會沿用（以橡皮擦分割出的區塊，會連同原本框的設定一起沿用）。與框的右鍵選單中的「反轉（外側套用馬賽克）」「反轉（外側套用模糊）」是相同的設定（<a href="#edit-player">偵測框的操作</a>）。有反轉框的專案無法傳送到 Premiere Pro（<a href="#premiere">Premiere Pro 整合</a>）</div>
       </div>
@@ -816,7 +833,7 @@ hash:
           <tr data-shortcut="encode_dialog_open"><td><kbd>Ctrl+Enter</kbd></td><td>開啟匯出對話方塊</td></tr>
           <tr data-shortcut="open_folder"><td><kbd>Ctrl+Shift+O</kbd></td><td>開啟專案資料夾</td></tr>
           <tr data-shortcut="premiere_send"><td><kbd>Ctrl+Shift+P</kbd></td><td>匯入至 Premiere Pro</td></tr>
-          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">滑鼠</td><td>滾輪</td><td>前進 / 後退影格（按住 <kbd>Shift</kbd> 時為 10 個影格。選取框時，按住 <kbd>Shift</kbd> 向上滾動，會與 <kbd>Shift</kbd>+<kbd>→</kbd> 一樣沿用形狀前進 1 個影格，向下滾動則後退 1 個影格。固定沿用時，不按 <kbd>Shift</kbd> 向上滾動也會沿用）</td></tr>
+          <tr data-shortcut="mouse_wheel_step"><td rowspan="18">滑鼠</td><td>滾輪</td><td>前進 / 後退影格（按住 <kbd>Shift</kbd> 時為 10 個影格。選取框時，按住 <kbd>Shift</kbd> 向上滾動，會與 <kbd>Shift</kbd>+<kbd>→</kbd> 一樣沿用形狀前進 1 個影格，向下滾動則後退 1 個影格。固定沿用時，不按 <kbd>Shift</kbd> 向上滾動也會沿用。可在側邊欄「設定」的「滾輪向下捲動時前進」反轉方向）</td></tr>
           <tr data-shortcut="mouse_wheel_zoom"><td><kbd>Ctrl</kbd>+滾輪</td><td>以游標位置為中心放大或縮小影格</td></tr>
           <tr data-shortcut="mouse_pan"><td><kbd>Ctrl</kbd>+左鍵拖曳</td><td>平移影格（僅在放大時可移動。也可用中鍵拖曳）</td></tr>
           <tr data-shortcut="mouse_draw"><td>左鍵拖曳</td><td>在空白區域按住左鍵拖曳，以形狀選擇中目前選取的形狀（矩形 / 橢圓 / 多邊形）繪製 BBox。多邊形可按一下放置點，以起點 / <kbd>Enter</kbd> / 按兩下封閉。短按則取消選取</td></tr>
@@ -875,11 +892,11 @@ hash:
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">{% include icon.html name="Settings" class="inline h-3.5 w-3.5 align-[-2px]" %} 設定</div>
-        <div class="kv-val">以側邊欄下方的齒輪，開啟用來選擇編輯初始值的「設定」。可設定繪製 BBox 的持續（此後的影格也套用 / 僅此影格）、形狀（矩形 / 橢圓 / 多邊形）、類型（馬賽克 / 排除遮罩）、HUD（框與標籤）的顯示、是否顯示框的標籤（「顯示 BBox 標籤（名稱、ID、機率）」。關閉時框仍會顯示）、橡皮擦的擦除方式、形狀與大小、開啟編輯頁面時是否開啟追蹤模式，以及是否在進度列上顯示追蹤佇列的區段（「在進度列顯示追蹤區段」）。「設定」開啟時不會讓畫面變暗，並可拖曳頁首移動，因此能一邊看預覽一邊變更（每次開啟時都會顯示在中央）。變更的值會立即儲存，並成為啟動應用程式時的初始值（編輯中在工具列切換的值不會儲存）。按「重設為預設」即可恢復為出廠時的值</div>
+        <div class="kv-val">以側邊欄下方的齒輪，開啟用來選擇編輯初始值的「設定」。可設定最上方的「位置」（下一列）、繪製 BBox 的持續（此後的影格也套用 / 僅此影格）、形狀（矩形 / 橢圓 / 多邊形）、類型（馬賽克 / 排除遮罩），「顯示」中的「顯示偵測疊加層」（開啟編輯頁面時是否疊加顯示框與標籤。預設為開啟）、「顯示 BBox 標籤（名稱、ID、機率）」（是否顯示框的標籤。預設為關閉，關閉時框仍會顯示）、「滾輪向下捲動時前進」（預設為關閉，向上捲動時前進），橡皮擦的擦除方式、形狀與大小、開啟編輯頁面時是否開啟追蹤模式，以及是否在進度列上顯示追蹤佇列的區段（「在進度列顯示追蹤區段」）。「設定」開啟時不會讓畫面變暗，並可拖曳頁首移動，因此能一邊看預覽一邊變更（每次開啟時都會顯示在中央）。按一下面板外側，或按 × 或 <kbd>Esc</kbd> 即可關閉（按一下外側只會關閉面板，不會操作預覽或時間軸）。變更的值會立即儲存，並成為啟動應用程式時的初始值（編輯中在工具列切換的值不會儲存）。按「重設為預設」即可恢復為出廠時的值</div>
       </div>
       <div class="kv-row">
         <div class="kv-key">位置</div>
-        <div class="kv-val">在「設定」的「顯示」中以「位置」（左側 / 右側）選擇側邊欄與抽屜面板要放在畫面的左側或右側。預設為左側，按「重設為預設」即可回到左側</div>
+        <div class="kv-val">在「設定」最上方的「位置」（左側 / 右側）選擇側邊欄與抽屜面板要放在畫面的左側或右側。預設為左側，按「重設為預設」即可回到左側</div>
       </div>
       <div class="kv-row kv-alt">
         <div class="kv-key">抽屜面板的寬度</div>
